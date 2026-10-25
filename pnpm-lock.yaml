@@ -44,6 +44,9 @@ importers:
       '@pandapaylens/fixtures':
         specifier: workspace:*
         version: link:../../fixtures
+      '@pandapaylens/providers':
+        specifier: workspace:*
+        version: link:../../packages/providers
       '@pandapaylens/rules':
         specifier: workspace:*
         version: link:../../packages/rules
@@ -134,6 +137,9 @@ importers:
       '@pandapaylens/core':
         specifier: workspace:*
         version: link:../core
+      '@pandapaylens/providers':
+        specifier: workspace:*
+        version: link:../providers
       '@pandapaylens/rules':
         specifier: workspace:*
         version: link:../rules
@@ -146,6 +152,18 @@ importers:
         version: 26.6.5
 
   packages/core: {}
+
+  packages/providers:
+    dependencies:
+      '@pandapaylens/adyen':
+        specifier: workspace:*
+        version: link:../adapters/adyen
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../core
+      '@pandapaylens/stripe':
+        specifier: workspace:*
+        version: link:../adapters/stripe
 
   packages/rules:
     dependencies:

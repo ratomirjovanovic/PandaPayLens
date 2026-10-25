@@ -37,7 +37,8 @@
     "@pandapaylens/adyen": "workspace:*",
     "@pandapaylens/core": "workspace:*",
     "@pandapaylens/rules": "workspace:*",
-    "@pandapaylens/stripe": "workspace:*"
+    "@pandapaylens/stripe": "workspace:*",
+    "@pandapaylens/providers": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "26.6.5"

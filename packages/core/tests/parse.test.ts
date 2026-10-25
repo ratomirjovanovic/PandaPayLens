@@ -4,7 +4,12 @@ import { locateSyntaxError, parseInput, positionToLineColumn } from "@pandapayle
 describe("parseInput", () => {
   it("parses a single object as one record", () => {
     const r = parseInput('{"a":1}');
-    expect(r.ok && r.value).toEqual({ format: "json", records: [{ a: 1 }], removedKeys: [] });
+    expect(r.ok && r.value).toEqual({
+      format: "json",
+      records: [{ a: 1 }],
+      meta: [{ format: "json" }],
+      removedKeys: [],
+    });
   });
 
   it("splits a top-level array into records", () => {
@@ -122,5 +127,87 @@ describe("locateSyntaxError", () => {
     expect(locateSyntaxError("[1, 2,]")).toBe(6);
     expect(locateSyntaxError('{"a":1')).toBe(6);
     expect(locateSyntaxError("[] x")).toBe(3);
+  });
+});
+
+describe("format detection", () => {
+  it("parses URL-encoded form data into one record", () => {
+    const r = parseInput("transactionid=123&status=0&errormessage=Approved+ok&x=1&x=2\n");
+    expect(r.ok && r.value.format).toBe("form");
+    expect(r.ok && r.value.records[0]).toEqual({
+      transactionid: "123",
+      status: "0",
+      errormessage: "Approved ok",
+      x: ["1", "2"],
+    });
+    expect(r.ok && r.value.meta[0]).toEqual({ format: "form" });
+  });
+
+  it("does not treat JSON as form data", () => {
+    const r = parseInput('{"a=b":1}');
+    expect(r.ok && r.value.format).toBe("json");
+  });
+
+  it("drops dangerous form keys", () => {
+    const r = parseInput("__proto__=x&a=1");
+    expect(r.ok && r.value.records[0]).toEqual({ a: "1" });
+  });
+
+  it("parses a raw HTTP request with a form body and redacts sensitive headers", () => {
+    const text = [
+      "POST /webhooks/psp?token=abc HTTP/1.1",
+      "Host: example.com",
+      "Content-Type: application/x-www-form-urlencoded",
+      "X-Signature: deadbeef",
+      "Authorization: Bearer abc",
+      "",
+      "id=tr_123",
+    ].join("\r\n");
+    const r = parseInput(text);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.value.format).toBe("http");
+      expect(r.value.records[0]).toEqual({ id: "tr_123" });
+      expect(r.value.meta[0]!.http).toEqual({
+        kind: "request",
+        method: "POST",
+        path: "/webhooks/psp",
+        contentType: "application/x-www-form-urlencoded",
+        headers: {
+          host: "example.com",
+          "content-type": "application/x-www-form-urlencoded",
+          "x-signature": "[redacted]",
+          authorization: "[redacted]",
+        },
+      });
+    }
+  });
+
+  it("parses a raw HTTP response with a JSON body and keeps the status", () => {
+    const r = parseInput(
+      [
+        "HTTP/1.1 402 Payment Required",
+        "Content-Type: application/json",
+        "",
+        '{"error":{"type":"card_error"}}',
+      ].join("\n"),
+    );
+    expect(r.ok && r.value.meta[0]!.http).toMatchObject({ kind: "response", status: 402 });
+    expect(r.ok && r.value.records[0]).toEqual({ error: { type: "card_error" } });
+  });
+
+  it("rejects HTTP messages without a body or with malformed headers", () => {
+    expect(parseInput("GET / HTTP/1.1\nHost: x\n\n")).toMatchObject({
+      ok: false,
+      error: { code: "INVALID_HTTP" },
+    });
+    expect(parseInput("POST / HTTP/1.1\nnot a header\n\n{}")).toMatchObject({
+      ok: false,
+      error: { code: "INVALID_HTTP" },
+    });
+  });
+
+  it("still reports JSON errors for broken JSON", () => {
+    expect(parseInput("{ broken")).toMatchObject({ ok: false, error: { code: "INVALID_JSON" } });
   });
 });

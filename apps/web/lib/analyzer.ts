@@ -5,11 +5,10 @@ import {
   type SourceSummary,
   type SourceText,
 } from "@pandapaylens/core";
-import { adyenAdapter } from "@pandapaylens/adyen";
+import { ADAPTERS } from "@pandapaylens/providers";
 import { defaultRules, RULE_CATALOG_VERSION } from "@pandapaylens/rules";
-import { stripeAdapter } from "@pandapaylens/stripe";
 
-export const ADAPTERS = [stripeAdapter, adyenAdapter];
+export { ADAPTERS };
 
 export type AnalyzeRequest = { sources: SourceText[]; provider: string | null };
 

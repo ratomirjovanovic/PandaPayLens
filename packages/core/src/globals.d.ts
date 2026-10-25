@@ -4,3 +4,7 @@ declare const performance: { now(): number };
 declare class TextEncoder {
   encode(input?: string): Uint8Array;
 }
+declare class URLSearchParams {
+  constructor(init?: string);
+  [Symbol.iterator](): IterableIterator<[string, string]>;
+}

@@ -40,7 +40,9 @@ import {
   type CatalogEntry,
 } from "./catalog.js";
 
-export const ADYEN_ADAPTER_VERSION = "0.1.0";
+import { adyenManifest, ADYEN_ADAPTER_VERSION } from "./manifest.js";
+
+export { adyenManifest, ADYEN_ADAPTER_VERSION };
 
 const Amount = z.looseObject({
   value: z.number().int().optional(),
@@ -461,6 +463,7 @@ export const adyenAdapter: ProviderAdapter<AdyenParsed> = {
   id: "adyen",
   displayName: "Adyen",
   version: ADYEN_ADAPTER_VERSION,
+  manifest: adyenManifest,
   supportedFormats: [
     {
       id: "adyen.webhook.standard",

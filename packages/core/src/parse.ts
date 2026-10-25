@@ -1,5 +1,9 @@
 /**
- * Strict, bounded JSON / JSONL parsing for untrusted input.
+ * Strict, bounded parsing for untrusted input.
+ *
+ * Format detection runs before provider detection. Supported input formats:
+ * JSON, JSON arrays, JSON Lines, URL-encoded form data (e.g. IPN callbacks)
+ * and raw HTTP request/response messages whose body is JSON or form data.
  *
  * Input is treated as data only: no revivers that construct objects, no eval,
  * no URL fetching. Limits are checked with a linear pre-scan before
@@ -34,7 +38,9 @@ export type ParseErrorCode =
   | "INVALID_JSON"
   | "NESTING_TOO_DEEP"
   | "STRING_TOO_LONG"
-  | "TOO_MANY_RECORDS";
+  | "TOO_MANY_RECORDS"
+  | "INVALID_FORM"
+  | "INVALID_HTTP";
 
 export type ParseError = {
   code: ParseErrorCode;
@@ -43,12 +49,33 @@ export type ParseError = {
   column?: number;
 };
 
+export type InputFormat = "json" | "jsonl" | "form" | "http";
+
+/** How a record arrived. HTTP metadata is untrusted and already redacted. */
+export type RecordMeta = {
+  format: InputFormat;
+  http?: {
+    kind: "request" | "response";
+    method?: string;
+    /** Path without query string. */
+    path?: string;
+    status?: number;
+    contentType?: string;
+    /** Lowercased names; sensitive values replaced with "[redacted]". */
+    headers: Record<string, string>;
+  };
+};
+
 export type ParsedInput = {
-  format: "json" | "jsonl";
+  format: InputFormat;
   /** Top-level records. A JSON array is split into its elements. */
   records: unknown[];
+  /** Parallel to `records`. */
+  meta: RecordMeta[];
   removedKeys: { recordIndex: number; path: string }[];
 };
+
+type Parsed = { ok: true; value: ParsedInput } | { ok: false; error: ParseError };
 
 /** Keys that could be used for prototype pollution if a consumer merges objects. */
 const DANGEROUS_KEYS = new Set(["__proto__", "constructor", "prototype"]);
@@ -57,10 +84,7 @@ export function byteLength(text: string): number {
   return new TextEncoder().encode(text).length;
 }
 
-export function parseInput(
-  text: string,
-  limits: Partial<InputLimits> = {},
-): { ok: true; value: ParsedInput } | { ok: false; error: ParseError } {
+export function parseInput(text: string, limits: Partial<InputLimits> = {}): Parsed {
   const lim: InputLimits = { ...DEFAULT_LIMITS, ...limits };
 
   // Cheap upper bound first, exact count only when it could matter.
@@ -76,6 +100,19 @@ export function parseInput(
     return fail("EMPTY_INPUT", "The input is empty.");
   }
 
+  const start = body.trimStart();
+  if (/^HTTP\/\d(?:\.\d)? \d{3}/.test(start) || /^[A-Z]{3,7} \S+ HTTP\/\d/.test(start)) {
+    return parseHttp(start, lim);
+  }
+  if (FORM_LIKE.test(start.trimEnd()))
+    return parseFormText(start.trimEnd(), lim, { format: "form" });
+  return parseJsonText(body, lim, { format: "json" });
+}
+
+/** key=value pairs joined by &, no whitespace: application/x-www-form-urlencoded. */
+const FORM_LIKE = /^[^=&\s{}[\]"]+=[^&\s]*(?:&[^=&\s]+=[^&\s]*)*$/;
+
+function parseJsonText(body: string, lim: InputLimits, meta: RecordMeta): Parsed {
   const whole = parseDocument(body, lim, 0);
   if (whole.ok) {
     const records = Array.isArray(whole.value) ? whole.value : [whole.value];
@@ -85,7 +122,7 @@ export function parseInput(
         `Input contains ${records.length} records; the limit is ${lim.maxRecords}.`,
       );
     }
-    return finish("json", records);
+    return finish(meta.format === "http" ? "http" : "json", records, meta);
   }
 
   // Not a single document: try JSON Lines, but only if there is more than one
@@ -117,13 +154,92 @@ export function parseInput(
     }
     records.push(parsed.value);
   }
-  return finish("jsonl", records);
+  return meta.format === "http"
+    ? finish("http", records, meta)
+    : finish("jsonl", records, { format: "jsonl" });
 }
 
-function finish(format: "json" | "jsonl", raw: unknown[]): { ok: true; value: ParsedInput } {
+function finish(
+  format: InputFormat,
+  raw: unknown[],
+  meta: RecordMeta,
+): { ok: true; value: ParsedInput } {
   const removedKeys: ParsedInput["removedKeys"] = [];
   const records = raw.map((r, i) => sanitize(r, i, "", removedKeys));
-  return { ok: true, value: { format, records, removedKeys } };
+  return { ok: true, value: { format, records, meta: records.map(() => meta), removedKeys } };
+}
+
+const MAX_FORM_FIELDS = 1000;
+
+/** Parses URL-encoded form data into one record of string (or string[]) values. */
+function parseFormText(text: string, lim: InputLimits, meta: RecordMeta): Parsed {
+  let params: URLSearchParams;
+  try {
+    params = new URLSearchParams(text);
+  } catch {
+    return fail("INVALID_FORM", "The input looks like form data but could not be decoded.");
+  }
+  const out: Record<string, string | string[]> = {};
+  let n = 0;
+  for (const [key, value] of params) {
+    if (++n > MAX_FORM_FIELDS)
+      return fail("INVALID_FORM", `Form data has more than ${MAX_FORM_FIELDS} fields.`);
+    if (key.length > 256 || value.length > lim.maxStringLength) {
+      return fail("STRING_TOO_LONG", "A form field exceeds the length limit.");
+    }
+    if (key === "") continue;
+    const prev = out[key];
+    out[key] = prev === undefined ? value : Array.isArray(prev) ? [...prev, value] : [prev, value];
+  }
+  if (Object.keys(out).length === 0)
+    return fail("INVALID_FORM", "The form data contains no fields.");
+  return finish(meta.format === "http" ? "http" : "form", [out], meta);
+}
+
+const SENSITIVE_HEADER =
+  /authorization|cookie|signature|token|secret|key|hmac|auth|password|session/i;
+
+/**
+ * Raw HTTP request or response, e.g. copied from a webhook log. Headers are
+ * kept as untrusted context only; a pasted signature header is never treated
+ * as proof that the message came from the provider.
+ */
+function parseHttp(text: string, lim: InputLimits): Parsed {
+  const split = /\r?\n\r?\n/.exec(text);
+  const head = split ? text.slice(0, split.index) : text;
+  const body = split ? text.slice(split.index + split[0].length) : "";
+  const lines = head.split(/\r?\n/);
+  const first = lines.shift() ?? "";
+  if (lines.length > 200)
+    return fail("INVALID_HTTP", "The HTTP message has too many header lines.");
+  const http: NonNullable<RecordMeta["http"]> = { kind: "request", headers: {} };
+  const res = /^HTTP\/\d(?:\.\d)? (\d{3})/.exec(first);
+  if (res) {
+    http.kind = "response";
+    http.status = Number(res[1]);
+  } else {
+    const req = /^([A-Z]{3,7}) (\S+) HTTP\/\d/.exec(first);
+    if (!req) return fail("INVALID_HTTP", "Unrecognized HTTP start line.");
+    http.method = req[1]!;
+    http.path = req[2]!.split("?")[0]!.slice(0, 512);
+  }
+  for (const line of lines) {
+    const i = line.indexOf(":");
+    if (i <= 0) return fail("INVALID_HTTP", "Malformed HTTP header line.");
+    const name = line.slice(0, i).trim().toLowerCase();
+    const value = line.slice(i + 1).trim();
+    if (name === "__proto__" || name === "constructor" || name === "prototype") continue;
+    http.headers[name] = SENSITIVE_HEADER.test(name) ? "[redacted]" : value.slice(0, 256);
+  }
+  const ct = http.headers["content-type"]?.split(";")[0]?.trim().toLowerCase();
+  if (ct) http.contentType = ct;
+  const meta: RecordMeta = { format: "http", http };
+  const trimmed = body.trim();
+  if (trimmed === "") return fail("INVALID_HTTP", "The HTTP message has no body to analyze.");
+  if (ct === "application/x-www-form-urlencoded" || (!ct && FORM_LIKE.test(trimmed))) {
+    return parseFormText(trimmed, lim, meta);
+  }
+  return parseJsonText(trimmed, lim, meta);
 }
 
 function parseDocument(

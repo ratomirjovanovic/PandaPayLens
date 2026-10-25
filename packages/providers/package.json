@@ -1,0 +1,37 @@
+{
+  "name": "@pandapaylens/providers",
+  "version": "0.1.0",
+  "description": "Registry of PandaPayLens provider adapters and their capability manifests.",
+  "license": "Apache-2.0",
+  "author": "Ratomir Jovanovic (https://github.com/ratomirjovanovic)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ratomirjovanovic/PandaPayLens.git",
+    "directory": "packages/providers"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./manifests": {
+      "types": "./dist/manifests.d.ts",
+      "default": "./dist/manifests.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@pandapaylens/adyen": "workspace:*",
+    "@pandapaylens/core": "workspace:*",
+    "@pandapaylens/stripe": "workspace:*"
+  }
+}

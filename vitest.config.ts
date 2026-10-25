@@ -7,10 +7,25 @@ export default defineConfig({
   resolve: {
     // Tests run against source, not built output.
     alias: [
-      { find: "@pandapaylens/core", replacement: src("./packages/core/src/index.ts") },
-      { find: "@pandapaylens/stripe", replacement: src("./packages/adapters/stripe/src/index.ts") },
-      { find: "@pandapaylens/adyen", replacement: src("./packages/adapters/adyen/src/index.ts") },
-      { find: "@pandapaylens/rules", replacement: src("./packages/rules/src/index.ts") },
+      { find: /^@pandapaylens\/core$/, replacement: src("./packages/core/src/index.ts") },
+      {
+        find: /^@pandapaylens\/stripe$/,
+        replacement: src("./packages/adapters/stripe/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/adyen$/,
+        replacement: src("./packages/adapters/adyen/src/index.ts"),
+      },
+      { find: /^@pandapaylens\/rules$/, replacement: src("./packages/rules/src/index.ts") },
+      { find: /^@pandapaylens\/providers$/, replacement: src("./packages/providers/src/index.ts") },
+      {
+        find: /^@pandapaylens\/stripe\/manifest$/,
+        replacement: src("./packages/adapters/stripe/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/adyen\/manifest$/,
+        replacement: src("./packages/adapters/adyen/src/manifest.ts"),
+      },
       { find: /^@\/(.*)$/, replacement: `${src("./apps/web/")}$1` },
     ],
   },

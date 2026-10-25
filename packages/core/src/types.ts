@@ -4,6 +4,8 @@
  * Nothing in this file may depend on a UI framework, a database, or the network.
  */
 
+import type { RecordMeta } from "./parse.js";
+
 export type SafePrimitive = string | number | boolean | null;
 
 export type Outcome = "success" | "failure" | "pending" | "unknown";
@@ -47,8 +49,11 @@ export type LifecycleStage =
   | "authentication"
   | "capture"
   | "cancellation"
+  | "void"
   | "refund"
+  | "reversal"
   | "dispute"
+  | "settlement"
   | "error"
   | "other";
 
@@ -169,18 +174,57 @@ export type TransactionGroup = {
   latestOutcome: Outcome;
 };
 
+export type CapabilityStatus =
+  "supported" | "limited" | "experimental" | "unsupported" | "deprecated";
+
+export type ProviderCapabilities = {
+  errorDecoding: CapabilityStatus;
+  paymentResponses: CapabilityStatus;
+  webhookParsing: CapabilityStatus;
+  timeline: CapabilityStatus;
+  correlation: CapabilityStatus;
+  diagnosticRules: CapabilityStatus;
+};
+
+export type DocumentationReference = { topic: string; title: string; url: string };
+
+/**
+ * Public, reviewable description of what an adapter can do. Values must
+ * reflect tested behavior, never intent.
+ */
+export type ProviderManifest = {
+  id: string;
+  displayName: string;
+  version: string;
+  /** Rollout wave from the provider roadmap (0 = initial providers). */
+  wave: 0 | 1 | 2 | 3;
+  /** Overall maturity; experimental adapters are labeled as such in the UI. */
+  status: "supported" | "limited" | "experimental";
+  apiFamilies: readonly { id: string; description: string; status: CapabilityStatus }[];
+  capabilities: ProviderCapabilities;
+  documentation: readonly DocumentationReference[];
+  /** ISO date when the documentation was last reviewed. */
+  verifiedAt: string;
+  limitations: readonly string[];
+  /** Sample ids from the shared sample catalog. */
+  samples: readonly string[];
+};
+
 export type ProviderAdapter<Parsed = unknown> = {
   id: string;
   displayName: string;
   version: string;
+  manifest: ProviderManifest;
   /** Input families this adapter fully supports. */
   supportedFormats: readonly { id: string; description: string }[];
 
-  detect(input: unknown): DetectionResult;
+  /** `meta` says how the record arrived (JSON, form data, HTTP message). */
+  detect(input: unknown, meta?: RecordMeta): DetectionResult;
   /** Validate the input against the detected format. Never throws. */
   parse(
     input: unknown,
     format: string,
+    meta?: RecordMeta,
   ): { ok: true; value: Parsed } | { ok: false; issues: string[] };
   normalize(parsed: Parsed, ctx: NormalizeContext): NormalizedEventDraft[];
   /** Errors carried by the input. A webhook batch can contain several. */
@@ -195,6 +239,7 @@ export type ProviderAdapter<Parsed = unknown> = {
 export type NormalizeContext = {
   format: string;
   recordIndex: number;
+  meta?: RecordMeta;
   /** Receipt time supplied via the PandaPayLens envelope, if any. */
   observedTimestamp?: string;
 };

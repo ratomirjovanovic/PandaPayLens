@@ -4,6 +4,8 @@ import {
   DEFAULT_SESSION_MAX_BYTES,
   formatBytes,
   parseInput,
+  type InputFormat,
+  type RecordMeta,
   type InputLimits,
   type ParseError,
 } from "./parse.js";
@@ -67,7 +69,7 @@ export function analyzeText(
 ): { ok: true; result: AnalysisResult } | AnalyzeFailure {
   const parsed = parseInput(text, options.limits);
   if (!parsed.ok) return parsed;
-  const result = analyzeRecords(parsed.value.records, options);
+  const result = analyzeRecords(parsed.value.records, options, parsed.value.meta);
   if (result.ok) {
     for (const r of parsed.value.removedKeys) {
       result.result.warnings.unshift({
@@ -86,7 +88,7 @@ export type SourceSummary = {
   name: string;
   recordStart: number;
   recordCount: number;
-  format: "json" | "jsonl";
+  format: InputFormat;
 };
 
 /**
@@ -119,6 +121,7 @@ export function analyzeSources(
     };
   }
   const records: unknown[] = [];
+  const metas: RecordMeta[] = [];
   const summaries: SourceSummary[] = [];
   const removed: { recordIndex: number; path: string }[] = [];
   for (const s of sources) {
@@ -133,6 +136,7 @@ export function analyzeSources(
     for (const r of parsed.value.removedKeys)
       removed.push({ ...r, recordIndex: r.recordIndex + records.length });
     records.push(...parsed.value.records);
+    metas.push(...parsed.value.meta);
   }
   const maxRecords = options.limits?.maxRecords ?? DEFAULT_LIMITS.maxRecords;
   if (records.length > maxRecords) {
@@ -144,7 +148,7 @@ export function analyzeSources(
       },
     };
   }
-  const r = analyzeRecords(records, options);
+  const r = analyzeRecords(records, options, metas);
   if (!r.ok) return r;
   for (const k of removed.reverse()) {
     r.result.warnings.unshift({
@@ -160,6 +164,7 @@ export function analyzeSources(
 export function analyzeRecords(
   records: readonly unknown[],
   options: AnalyzeOptions,
+  meta: readonly RecordMeta[] = [],
 ): { ok: true; result: AnalysisResult } | AnalyzeFailure {
   if (options.provider && !options.adapters.some((a) => a.id === options.provider)) {
     return {
@@ -168,7 +173,7 @@ export function analyzeRecords(
     };
   }
   try {
-    return { ok: true, result: runAnalysis(records, options) };
+    return { ok: true, result: runAnalysis(records, options, meta) };
   } catch (e) {
     // Adapters and rules are expected never to throw; if one does, it is an
     // internal defect and must be distinguishable from bad input.
@@ -182,7 +187,11 @@ export function analyzeRecords(
   }
 }
 
-function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): AnalysisResult {
+function runAnalysis(
+  records: readonly unknown[],
+  options: AnalyzeOptions,
+  metaList: readonly RecordMeta[],
+): AnalysisResult {
   const started = performance.now();
   const now = options.now ?? (() => new Date());
   const override = options.provider ?? null;
@@ -194,14 +203,19 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
   const sensitivePaths: string[] = [];
 
   records.forEach((record, recordIndex) => {
-    const { payload, observedTimestamp } = unwrapEnvelope(record);
+    const meta: RecordMeta = metaList[recordIndex] ?? { format: "json" };
+    // The receivedAt envelope only exists for JSON input.
+    const { payload, observedTimestamp } =
+      meta.format === "form"
+        ? { payload: record, observedTimestamp: undefined }
+        : unwrapEnvelope(record);
 
     for (const p of findSensitivePaths(payload))
       sensitivePaths.push(`[${recordIndex}]${p ? `.${p}` : ""}`);
 
     const candidates = options.adapters
       .filter((a) => !override || a.id === override)
-      .map((a) => ({ adapter: a, detection: safeDetect(a, payload) }))
+      .map((a) => ({ adapter: a, detection: safeDetect(a, payload, meta) }))
       .filter((c) => c.detection.confidence > 0)
       .sort((a, b) => b.detection.confidence - a.detection.confidence);
 
@@ -227,7 +241,7 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
         code: "UNSUPPORTED_RECORD",
         message:
           best?.detection.unsupportedReason ??
-          "This record does not match any supported Stripe or Adyen format.",
+          "This record does not match any supported provider format.",
         recordIndex,
       });
       return;
@@ -269,7 +283,7 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
 
     const adapter = best.adapter;
     const format = best.detection.format;
-    const parsed = adapter.parse(payload, format);
+    const parsed = adapter.parse(payload, format, meta);
     if (!parsed.ok) {
       summaries.push({
         recordIndex,
@@ -289,8 +303,8 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
     }
 
     const ctx = observedTimestamp
-      ? { format, recordIndex, observedTimestamp }
-      : { format, recordIndex };
+      ? { format, recordIndex, observedTimestamp, meta }
+      : { format, recordIndex, meta };
     for (const draft of adapter.normalize(parsed.value, ctx)) {
       events.push({ ...draft, id: "", provider: adapter.id, sourceIndex: events.length });
     }
@@ -384,9 +398,13 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
 
 const SEVERITY_ORDER = { critical: 0, high: 1, medium: 2, low: 3, info: 4 } as const;
 
-function safeDetect(adapter: ProviderAdapter<any>, payload: unknown): DetectionResult {
+function safeDetect(
+  adapter: ProviderAdapter<any>,
+  payload: unknown,
+  meta: RecordMeta,
+): DetectionResult {
   try {
-    return adapter.detect(payload);
+    return adapter.detect(payload, meta);
   } catch {
     return { provider: adapter.id, format: null, confidence: 0, supported: false, reasons: [] };
   }

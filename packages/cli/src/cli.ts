@@ -19,15 +19,13 @@ import {
   type AnalysisResult,
   type Severity,
 } from "@pandapaylens/core";
-import { adyenAdapter } from "@pandapaylens/adyen";
+import { ADAPTERS } from "@pandapaylens/providers";
 import { defaultRules, RULE_CATALOG_VERSION } from "@pandapaylens/rules";
-import { stripeAdapter } from "@pandapaylens/stripe";
 
 export const CLI_VERSION = "0.1.0";
 
 export const EXIT = { OK: 0, FINDINGS: 1, INVALID_INPUT: 2, UNSUPPORTED: 3, INTERNAL: 4 } as const;
 
-const ADAPTERS = [stripeAdapter, adyenAdapter];
 const SEVERITIES: Severity[] = ["critical", "high", "medium", "low", "info"];
 
 export type Io = {

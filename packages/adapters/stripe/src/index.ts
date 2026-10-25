@@ -38,7 +38,9 @@ import {
   type CatalogEntry,
 } from "./catalog.js";
 
-export const STRIPE_ADAPTER_VERSION = "0.1.0";
+import { stripeManifest, STRIPE_ADAPTER_VERSION } from "./manifest.js";
+
+export { stripeManifest, STRIPE_ADAPTER_VERSION };
 
 const ERROR_TYPE_SET = new Set([
   "api_error",
@@ -593,6 +595,7 @@ export const stripeAdapter: ProviderAdapter<StripeParsed> = {
   id: "stripe",
   displayName: "Stripe",
   version: STRIPE_ADAPTER_VERSION,
+  manifest: stripeManifest,
   supportedFormats: [
     {
       id: "stripe.api_error",
