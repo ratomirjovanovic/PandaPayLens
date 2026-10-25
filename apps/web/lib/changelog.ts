@@ -8,6 +8,17 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.5.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "Documentation verified for Worldpay, Cybersource, Authorize.net and Nuvei; adapters are next.",
+      "Plain-text HTTP error bodies are passed to adapters, and HTML error pages keep their status code.",
+      "DECTA decodes its documented plain-text error texts when DECTA is selected.",
+      "The repeated-attempt retry finding gives payout and non-card advice instead of card-only advice.",
+    ],
+  },
+  {
     version: "0.4.0",
     date: "2026-10-25",
     status: "released",

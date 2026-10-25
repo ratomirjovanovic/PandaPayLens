@@ -2,7 +2,11 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.5.0] - 2026-10-25
+
+### Providers
+
+- Research for Worldpay (Access Worldpay JSON), Cybersource (REST Payments API), Authorize.net (JSON API and webhooks) and Nuvei (REST API 1.0 and DMNs). All four passed the documentation gate and are now listed as documentation verified.
 
 ### Analyzer
 
