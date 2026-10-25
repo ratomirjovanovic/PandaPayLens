@@ -19,7 +19,7 @@ import type {
 } from "@pandapaylens/core";
 import { LIFECYCLE_RULES } from "./lifecycle.js";
 
-export const RULE_CATALOG_VERSION = "2026.10.3";
+export const RULE_CATALOG_VERSION = "2026.10.4";
 
 type Finding = Omit<DiagnosticFinding, "ruleId" | "ruleVersion">;
 
@@ -257,12 +257,18 @@ export const unknownEventType: DiagnosticRule = {
 
 export const missingReference: DiagnosticRule = {
   id: "MISSING_REFERENCE",
-  version: "1.1.0",
+  version: "1.2.0",
   providers: ["*"],
   description: "An event cannot be linked to a payment.",
   evaluate(ctx) {
     const out: Finding[] = [];
-    const noRef = ctx.events.filter((e) => !e.paymentReference && e.stage !== "error");
+    // An event that shares a correlation group with other events is linked,
+    // whatever documented identifier linked it.
+    const groupSize = new Map<string, number>();
+    for (const g of ctx.groups) for (const id of g.eventIds) groupSize.set(id, g.eventIds.length);
+    const noRef = ctx.events.filter(
+      (e) => !e.paymentReference && e.stage !== "error" && (groupSize.get(e.id) ?? 1) < 2,
+    );
     if (noRef.length) {
       out.push({
         severity: "low",

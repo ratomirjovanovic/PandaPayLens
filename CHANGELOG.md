@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Fixed
+
+- `MISSING_REFERENCE` no longer reports events that share a correlation group with other events, for example events linked by a transaction or root id instead of a payment id (rule catalog 2026.10.4).
+
 ### Security
 
 - Redaction now covers Authorize.net card, track, credential and verification fields (`cardCode`, `expirationDate`, `track1`, `track2`, `tlvData`, `dataValue`, `cardholderAuthenticationValue`, `transactionKey`, `nameOnAccount`, `customerIP`, `PayerEmail`, `SecureAcceptanceUrl`, `transHash`, `transHashSha2`).
