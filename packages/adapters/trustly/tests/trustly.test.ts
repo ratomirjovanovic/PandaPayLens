@@ -337,8 +337,9 @@ describe("trustly parsing", () => {
     const r = analyzeText(unclosed, options);
     expect(r.ok).toBe(false);
     expect(!r.ok && r.error.code).toBe("INVALID_JSON");
+    // Comments and trailing commas (as in the KYC examples) are removed with a warning.
     const commented = analyzeText('{"method": "kyc", // comment\n "version": "1.1",}', options);
-    expect(commented.ok).toBe(false);
+    expect(commented.ok && commented.result.warnings.map((w) => w.code)).toContain("LENIENT_JSON");
     const xml = analyzeText("<methodResponse></methodResponse>", options);
     expect(!xml.ok && xml.error.code).toBe("UNSUPPORTED_FORMAT");
   });

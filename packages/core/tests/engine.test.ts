@@ -317,3 +317,39 @@ describe("toIsoTimestamp zones", () => {
     expect(toIsoTimestamp("2026-10-25")).toBe("2026-10-25T00:00:00.000Z");
   });
 });
+
+describe("lenient JSON warning", () => {
+  it("tells the user which non-standard syntax was removed", () => {
+    const r = analyzeText('{"fake": "x", // comment\n}', opts);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.result.events).toHaveLength(1);
+      expect(r.result.warnings[0]).toEqual({
+        code: "LENIENT_JSON",
+        message:
+          "The input is not strict JSON. Removed trailing commas and comments before parsing.",
+      });
+    }
+  });
+
+  it("names the source file in a multi-file session", () => {
+    const r = analyzeSources(
+      [
+        { name: "strict.json", text: '{"fake":"x"}' },
+        { name: "docs.json", text: '{"fake":"y",}' },
+      ],
+      opts,
+    );
+    expect(r.ok && r.result.warnings.filter((w) => w.code === "LENIENT_JSON")).toEqual([
+      {
+        code: "LENIENT_JSON",
+        message: "docs.json: The input is not strict JSON. Removed trailing commas before parsing.",
+      },
+    ]);
+  });
+
+  it("adds no warning for strict JSON", () => {
+    const r = analyzeText('{"fake": "x"}', opts);
+    expect(r.ok && r.result.warnings.map((w) => w.code)).not.toContain("LENIENT_JSON");
+  });
+});

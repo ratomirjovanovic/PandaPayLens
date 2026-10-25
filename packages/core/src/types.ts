@@ -331,6 +331,7 @@ export type DiagnosticRule = {
 
 export type WarningCode =
   | "DANGEROUS_KEY_REMOVED"
+  | "LENIENT_JSON"
   | "SENSITIVE_DATA_DETECTED"
   | "UNSUPPORTED_RECORD"
   | "AMBIGUOUS_PROVIDER"

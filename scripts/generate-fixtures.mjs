@@ -449,7 +449,7 @@ for (const [rel, data] of Object.entries(files)) {
 // Raw text fixtures that are intentionally not valid JSON.
 writeFileSync(
   join(root, "malformed/invalid-json.txt"),
-  '{ "id": "evt_1PPLsynthBAD", "object": "event", "type": "charge.failed", }\n',
+  '{ id: "evt_1PPLsynthBAD", "object": "event", "type": "charge.failed" }\n',
 );
 writeFileSync(
   join(root, "stripe/events.jsonl"),
