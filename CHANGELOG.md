@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+
+- `POSSIBLE_RETRY_RISK` no longer gives card-only advice for payouts and non-card payments. Card network penalties are mentioned only for card declines, and payouts get recipient-focused advice (rule catalog 2026.10.3).
+
 ## [0.4.0] - 2026-10-25
 
 High-risk wave HR-3.
