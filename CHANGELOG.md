@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Providers
+
+- Checkout.com no longer appears as a 0.4 alternative for records whose only Checkout.com trait is a `pay_` id, such as Razorpay payment entities. A bare `pay_` id now scores 0.3 (documented length) or 0.15 (other lengths), below a record with documented fields.
+
 ## [0.11.0] - 2026-10-25
 
 ### Analyzer

@@ -71,7 +71,8 @@ describe("checkout detection", () => {
     [{ request_id: "R", error_type: "something_new" }, "checkout.api_error", 0.45, true],
     [payment({ status: "Authorized", approved: true }), "checkout.payment_response", 0.9, true],
     [{ id: PAY, status: "Authorized" }, "checkout.payment_response", 0.65, true],
-    [{ id: PAY }, "checkout.payment_response", 0.4, true],
+    [{ id: PAY }, "checkout.payment_response", 0.3, true],
+    [{ id: "pay_PPLsynth000001" }, "checkout.payment_response", 0.15, true],
     [
       { response_code: "20051", response_summary: "Insufficient funds" },
       "checkout.payment_response",
