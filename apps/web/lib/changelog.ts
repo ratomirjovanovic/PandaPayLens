@@ -8,6 +8,17 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.12.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "Worldpay WPG and cnpAPI XML responses and notifications are analyzed.",
+      'Event times are used only with a time zone; times read as UTC because the provider documents no zone are marked "UTC assumed".',
+      "Findings show documentation links for every provider, and the unsafe retry finding links more providers' idempotency pages.",
+      "Checkout.com no longer appears as a strong alternative for Razorpay payment ids.",
+    ],
+  },
+  {
     version: "0.11.0",
     date: "2026-10-25",
     status: "released",

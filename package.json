@@ -1,7 +1,7 @@
 {
   "name": "pandapaylens-monorepo",
   "private": true,
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Decode payment errors. Visualize transaction events. Understand what went wrong.",
   "license": "Apache-2.0",
   "author": "Ratomir Jovanovic (https://github.com/ratomirjovanovic)",
