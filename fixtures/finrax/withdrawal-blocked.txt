@@ -1,0 +1,25 @@
+POST /pplsynth/finrax/withdrawals HTTP/1.1
+Host: merchant.pplsynth.example
+Content-Type: application/json
+Signature: PLANTEDRSASIGNATURE0003
+Timestamp: 1792770601
+
+{
+  "status": "BLOCKED",
+  "clientWithdrawalId": "PPLSYNTH-PAYOUT-0003",
+  "businessId": "PPLsynth-biz-PLANTED01",
+  "withdrawalId": "PPLsynth-wd-0003",
+  "displayCurrency": "EUR",
+  "withdrawCurrency": "ETH",
+  "settlementCurrency": "EUR",
+  "expectedDisplayAmount": "300.00",
+  "actualDisplayAmount": "0",
+  "estimatedWithdrawAmount": "0.11400000",
+  "actualWithdrawAmount": "0",
+  "deductedSettlementAmount": "0",
+  "withdrawFee": "0",
+  "displayFee": "0",
+  "toTxAddress": "PLANTEDRECIPIENTADDRESS0003",
+  "transactionId": null,
+  "txAddressOwner": { "name": "PLANTEDOWNERNAME0003", "category": "Darknet" }
+}

@@ -1,0 +1,18 @@
+{
+  "transactionId": "PPLsynthT5002",
+  "transactionType": 3,
+  "status": 10,
+  "statusMessage": "Reversed",
+  "merchantReference": "PPLsynth-ref-e001",
+  "originalTransactionId": "PPLsynthT5001",
+  "amount": "125.40",
+  "currency": "CAD",
+  "createdAt": 1792400000000,
+  "updatedAt": 1792600000000,
+  "paymentProviderTransaction": {
+    "paymentProviderTransactionId": "PPLsynthPPT5002",
+    "status": "901",
+    "statusMessage": "Insufficient funds",
+    "signature": "PLANTEDPPTSIGNATURE0001"
+  }
+}

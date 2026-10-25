@@ -1,0 +1,12 @@
+POST /v1/payments HTTP/1.1
+Host: api.pplsynth.example
+Content-Type: application/json
+Authorization: FRX-API api-key=PLANTEDAPIKEY0001,signature=PLANTEDREQUESTSIG0001,timestamp=1792790000000
+
+{
+  "clientPaymentId": "PPLSYNTH-ORDER-0007",
+  "displayCurrency": "EUR",
+  "expectedDisplayAmount": "45.00",
+  "depositCurrency": "LTC",
+  "expectedNetwork": "LITECOIN"
+}

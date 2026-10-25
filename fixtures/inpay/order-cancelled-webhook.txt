@@ -1,0 +1,33 @@
+POST /webhooks/inpay/orders HTTP/1.1
+Host: merchant.example.test
+Content-Type: application/json
+X-Request-ID: PPLsynth-req-0101
+
+{
+  "business_unit": "default",
+  "amount": "20.00",
+  "amount_cents": 2000,
+  "currency": "EUR",
+  "language": "en",
+  "expires_at": "2026-10-21T09:30:00Z",
+  "uuid": "0b1c2d3e-4f50-4a61-8b72-c3d4e5f60002",
+  "redirect_url": "https://pay.example.test/?token=PLANTEDREDIRECTTOKEN",
+  "back_to_merchant_url": "https://merchant.example.test/welcome_back",
+  "reference": "PPLsynth-order-0002",
+  "status": "cancelled",
+  "status_reasons": ["Order cancelled by user"],
+  "refund": null,
+  "payments": [
+    {
+      "uuid": "1a2b3c4d-5e6f-4a70-8b81-92a3b4c50002",
+      "status": "user_cancelled",
+      "type": "instant_bank_transfer",
+      "inpay_unique_reference": "PPLSYNTH2",
+      "debtor_country_iso": "FI",
+      "debtor_full_name": "Planted Synthetic Payer",
+      "debtor_bank_uuid": "PPLSYNTH-BANKUUID-PLANTED",
+      "debtor_account_number": "NL02PPLS0123456789"
+    }
+  ],
+  "primary_payment": "PPLSYNTH2"
+}

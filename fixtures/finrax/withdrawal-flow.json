@@ -1,0 +1,42 @@
+[
+  {
+    "withdrawId": "PPLsynth-wd-0001",
+    "clientWithdrawId": "PPLSYNTH-PAYOUT-0001",
+    "recipientAddress": "PLANTEDRECIPIENTADDRESS0001",
+    "recipientTag": "PLANTEDRECIPIENTTAG0001",
+    "network": "TRON",
+    "initiatedBy": "planted.user@example.com",
+    "status": "PENDING",
+    "displayCurrency": "EUR",
+    "estimatedDisplayAmount": "200.00",
+    "withdrawCurrency": "USDT",
+    "estimatedWithdrawAmount": "215.400000",
+    "settlementCurrency": "EUR",
+    "settlementDeductedAmount": "202.00",
+    "settlementServiceFee": "2.00",
+    "uniformCurrency": "EUR",
+    "uniformAmount": "200.00",
+    "createdAt": 1792760000
+  },
+  {
+    "status": "COMPLETED",
+    "clientWithdrawalId": "PPLSYNTH-PAYOUT-0001",
+    "businessId": "PPLsynth-biz-PLANTED01",
+    "withdrawalId": "PPLsynth-wd-0001",
+    "displayCurrency": "EUR",
+    "withdrawCurrency": "USDT",
+    "settlementCurrency": "EUR",
+    "expectedDisplayAmount": "200.00",
+    "actualDisplayAmount": "200.00",
+    "estimatedWithdrawAmount": "215.400000",
+    "actualWithdrawAmount": "215.400000",
+    "deductedSettlementAmount": "202.00",
+    "withdrawFee": "1.000000",
+    "displayFee": "0.93",
+    "displayRateDepegLossAmount": "0",
+    "settlementRateDepegLossAmount": "0",
+    "toTxAddress": "PLANTEDRECIPIENTADDRESS0001",
+    "transactionId": "PLANTEDWDTXHASH0001",
+    "txAddressOwner": { "name": "PLANTEDOWNERNAME0011", "category": "Exchange" }
+  }
+]

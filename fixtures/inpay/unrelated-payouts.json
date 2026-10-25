@@ -1,0 +1,27 @@
+[
+  {
+    "debtor_account": { "id": "PPLSYNTH-VACCOUNT-PLANTED", "scheme_name": "VirtualAccount" },
+    "end_to_end_id": "PPLsynth-e2e-0006",
+    "inpay_unique_reference": "PPLsynthPO0006",
+    "amount": "10.00",
+    "currency": "EUR",
+    "timestamp": "2026-10-22 10:00:00",
+    "state": "completed"
+  },
+  {
+    "debtor_account": { "id": "PPLSYNTH-VACCOUNT-PLANTED", "scheme_name": "VirtualAccount" },
+    "end_to_end_id": "PPLsynth-e2e-0007",
+    "inpay_unique_reference": "PPLsynthPO0007",
+    "amount": "10.00",
+    "currency": "EUR",
+    "timestamp": "2026-10-22 10:00:00",
+    "state": "rejected",
+    "reasons": [
+      {
+        "category": "contract_issue",
+        "code": "not_supported_by_your_contract",
+        "details": { "general": ["Product not supported by contract"] }
+      }
+    ]
+  }
+]

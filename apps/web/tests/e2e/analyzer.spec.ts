@@ -181,9 +181,7 @@ test("provider directory lists all roadmap providers honestly and filters them",
   await page.getByLabel("Category").selectOption("high_risk");
   await expect(page.getByText("20 of 42 providers")).toBeVisible();
   await expect(page.getByRole("listitem").filter({ hasText: "CCBill" })).toContainText("limited");
-  await expect(page.getByRole("listitem").filter({ hasText: "Finrax" })).toContainText(
-    "docs verified",
-  );
+  await expect(page.getByRole("listitem").filter({ hasText: "Trustly" })).toContainText("limited");
   await expect(page.getByRole("listitem").filter({ hasText: "Epoch" })).toContainText("blocked");
   await page.getByLabel("Category").selectOption("");
   await page.getByLabel("Provider", { exact: true }).fill("stripe");

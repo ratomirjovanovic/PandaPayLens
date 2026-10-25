@@ -1,0 +1,44 @@
+[
+  {
+    "receivedAt": "2026-10-22T10:00:01Z",
+    "payload": {
+      "method": "credit",
+      "params": {
+        "signature": "PLANTEDSIGNATURECREDIT0003+abc/def==",
+        "uuid": "9c4d5e6f-3a4b-4c7d-8e8f-2a3b4c5d6e01",
+        "data": {
+          "amount": "40.00",
+          "currency": "EUR",
+          "messageid": "PPLsynth-msg-4001",
+          "orderid": "PPLsynth4000001",
+          "enduserid": "PPLSYNTH-ENDUSER-PLANTED",
+          "notificationid": "PPLsynthN0000301",
+          "timestamp": "2026-10-22 11:00:00.000000+01",
+          "attributes": {}
+        }
+      },
+      "version": "1.1"
+    }
+  },
+  {
+    "receivedAt": "2026-10-22T10:00:07Z",
+    "payload": {
+      "method": "credit",
+      "params": {
+        "signature": "PLANTEDSIGNATURECREDIT0003+abc/def==",
+        "uuid": "9c4d5e6f-3a4b-4c7d-8e8f-2a3b4c5d6e01",
+        "data": {
+          "amount": "40.00",
+          "currency": "EUR",
+          "messageid": "PPLsynth-msg-4001",
+          "orderid": "PPLsynth4000001",
+          "enduserid": "PPLSYNTH-ENDUSER-PLANTED",
+          "notificationid": "PPLsynthN0000301",
+          "timestamp": "2026-10-22 11:00:00.000000+01",
+          "attributes": {}
+        }
+      },
+      "version": "1.1"
+    }
+  }
+]

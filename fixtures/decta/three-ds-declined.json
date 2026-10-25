@@ -1,0 +1,12 @@
+{
+  "next_step": null,
+  "next_step_url": null,
+  "processing_status": "116",
+  "status": "tds_completed",
+  "three_d_secure_details": {
+    "mdstatus": "1",
+    "protocol": "3DS2.2.0",
+    "txid": "PPLsynth-txid-0008",
+    "xid": "UExBTlRFRFhJRDAwMDI="
+  }
+}

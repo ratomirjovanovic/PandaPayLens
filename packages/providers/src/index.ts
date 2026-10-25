@@ -11,6 +11,10 @@ import { checkoutAdapter } from "@pandapaylens/checkout";
 import { paypalAdapter } from "@pandapaylens/paypal";
 import { mollieAdapter } from "@pandapaylens/mollie";
 import { squareAdapter } from "@pandapaylens/square";
+import { trustlyAdapter } from "@pandapaylens/trustly";
+import { dectaAdapter } from "@pandapaylens/decta";
+import { inpayAdapter } from "@pandapaylens/inpay";
+import { finraxAdapter } from "@pandapaylens/finrax";
 import { astropayAdapter } from "@pandapaylens/astropay";
 import { ezeewalletAdapter } from "@pandapaylens/ezeewallet";
 import { skrillAdapter } from "@pandapaylens/skrill";
@@ -35,6 +39,10 @@ export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   paypalAdapter,
   mollieAdapter,
   squareAdapter,
+  trustlyAdapter,
+  dectaAdapter,
+  inpayAdapter,
+  finraxAdapter,
   astropayAdapter,
   ezeewalletAdapter,
   skrillAdapter,

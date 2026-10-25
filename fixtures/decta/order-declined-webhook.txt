@@ -1,0 +1,38 @@
+POST /PPLsynth/webhooks/decta HTTP/1.1
+Host: merchant.example
+Content-Type: application/json
+X-Webhook-Event: order.payment_failure
+X-Webhook-Version: v0.6
+
+{
+  "type": "order",
+  "id": "PPLsynth-order-0002",
+  "number": "DE1002",
+  "status": "failed",
+  "is_payable": true,
+  "payment_system": "SMS",
+  "status_changes": [
+    {
+      "new_status": "created",
+      "currency": "EUR",
+      "operation_amount": "40.00"
+    },
+    {
+      "new_status": "issued",
+      "currency": "EUR",
+      "operation_amount": "40.00"
+    },
+    {
+      "new_status": "failed",
+      "currency": "EUR",
+      "operation_amount": "40.00"
+    }
+  ],
+  "transaction_details": {
+    "processing_status": {
+      "code": "116",
+      "description": "Not sufficient funds"
+    },
+    "processing_payment_id": "PPLsynth-proc-0002"
+  }
+}

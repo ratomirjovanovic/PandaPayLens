@@ -1,0 +1,27 @@
+[
+  {
+    "debtor_account": { "id": "PPLSYNTH-VACCOUNT-PLANTED", "scheme_name": "VirtualAccount" },
+    "end_to_end_id": "PPLsynth-e2e-0004",
+    "inpay_unique_reference": "PPLsynthPO0004",
+    "amount": "1200.00",
+    "currency": "SEK",
+    "timestamp": "2026-10-21 09:00:00",
+    "state": "completed"
+  },
+  {
+    "debtor_account": { "id": "PPLSYNTH-VACCOUNT-PLANTED", "scheme_name": "VirtualAccount" },
+    "end_to_end_id": "PPLsynth-e2e-0004",
+    "inpay_unique_reference": "PPLsynthPO0004",
+    "amount": "1200.00",
+    "currency": "SEK",
+    "timestamp": "2026-10-23 14:30:00",
+    "state": "returned",
+    "reasons": [
+      {
+        "category": "suspicious",
+        "code": "beneficiary_bank_account_closed",
+        "details": { "general": ["Beneficiary account closed"] }
+      }
+    ]
+  }
+]

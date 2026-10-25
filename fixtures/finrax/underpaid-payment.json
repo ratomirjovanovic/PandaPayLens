@@ -1,0 +1,36 @@
+{
+  "paymentId": "PPLsynth-pay-0002",
+  "clientPaymentId": "PPLSYNTH-ORDER-0002",
+  "status": "DEPOSITED",
+  "type": "ONE_TIME",
+  "rateType": "FIXED",
+  "displayCurrency": "EUR",
+  "expectedDisplayAmount": "45.00",
+  "actualDisplayAmount": "22.50",
+  "depositCurrency": "USDT",
+  "expectedNetwork": "TRON",
+  "expectedDepositAmount": "48.600000",
+  "expectedUniformAmount": "45.00",
+  "actualUniformAmount": "22.50",
+  "overpaymentPolicy": "PROCESS",
+  "processorType": "BLOCKCHAIN",
+  "expirationMinutes": 30,
+  "paymentInitiatedAt": 1792710000,
+  "paymentRequestedAt": 1792710000,
+  "archived": false,
+  "deposits": [
+    {
+      "id": "PPLsynth-dep-0002",
+      "transactionId": "PLANTEDTXHASH0002",
+      "status": "CONFIRMED",
+      "fromAddress": "PLANTEDFROMADDRESS0002",
+      "toAddress": "PLANTEDWALLETADDRESS0002",
+      "depositCurrency": "USDT",
+      "network": "TRON",
+      "depositAmount": "24.300000",
+      "onChainFee": "1.000000",
+      "depositReceivedAt": 1792710420,
+      "refund": null
+    }
+  ]
+}

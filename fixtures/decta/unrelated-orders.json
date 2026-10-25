@@ -1,0 +1,52 @@
+[
+  {
+    "type": "order",
+    "id": "PPLsynth-order-0014",
+    "number": "DE1014",
+    "status": "failed",
+    "status_changes": [
+      {
+        "new_status": "created",
+        "currency": "EUR",
+        "operation_amount": "10.00"
+      },
+      {
+        "new_status": "failed",
+        "currency": "EUR",
+        "operation_amount": "10.00"
+      }
+    ],
+    "transaction_details": {
+      "processing_status": {
+        "code": "104",
+        "description": "Restricted card"
+      },
+      "processing_payment_id": "PPLsynth-proc-0014"
+    }
+  },
+  {
+    "type": "order",
+    "id": "PPLsynth-order-0015",
+    "number": "DE1015",
+    "status": "paid",
+    "status_changes": [
+      {
+        "new_status": "created",
+        "currency": "EUR",
+        "operation_amount": "10.00"
+      },
+      {
+        "new_status": "paid",
+        "currency": "EUR",
+        "operation_amount": "10.00"
+      }
+    ],
+    "transaction_details": {
+      "processing_status": {
+        "code": "000",
+        "description": "Approved"
+      },
+      "processing_payment_id": "PPLsynth-proc-0015"
+    }
+  }
+]

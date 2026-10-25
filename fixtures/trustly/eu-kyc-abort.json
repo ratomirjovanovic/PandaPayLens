@@ -1,0 +1,26 @@
+{
+  "method": "kyc",
+  "params": {
+    "signature": "PLANTEDSIGNATUREKYC0001+abc/def==",
+    "uuid": "5b6c7d8e-9f0a-4b12-c3d4-e5f6a7b8c901",
+    "data": {
+      "notificationid": "PPLsynthN0000601",
+      "messageid": "PPLsynth-msg-7001",
+      "orderid": "PPLsynth7000001",
+      "kycentityid": "PPLSYNTH-KYCENTITY-PLANTED",
+      "abort": "1",
+      "abortmessage": "underage",
+      "attributes": {
+        "personid": "PLANTEDPERSONID19990101",
+        "firstname": "Plantedfirst",
+        "lastname": "Plantedlast",
+        "dob": "2010-01-01",
+        "street": "Planted Street 1",
+        "zipcode": "PLANTEDZIP99",
+        "city": "Plantedcity",
+        "country": "SE"
+      }
+    }
+  },
+  "version": "1.1"
+}

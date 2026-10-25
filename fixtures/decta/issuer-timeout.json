@@ -1,0 +1,31 @@
+{
+  "type": "order",
+  "id": "PPLsynth-order-0013",
+  "number": "DE1013",
+  "status": "failed",
+  "is_payable": true,
+  "status_changes": [
+    {
+      "new_status": "created",
+      "currency": "EUR",
+      "operation_amount": "75.00"
+    },
+    {
+      "new_status": "issued",
+      "currency": "EUR",
+      "operation_amount": "75.00"
+    },
+    {
+      "new_status": "failed",
+      "currency": "EUR",
+      "operation_amount": "75.00"
+    }
+  ],
+  "transaction_details": {
+    "processing_status": {
+      "code": "911",
+      "description": "Issuer timed out"
+    },
+    "processing_payment_id": "PPLsynth-proc-0013"
+  }
+}

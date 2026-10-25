@@ -1,0 +1,10 @@
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "timestamp": 1792780000,
+  "httpStatus": 400,
+  "httpError": "Bad Request",
+  "message": "Request failed validation",
+  "path": "/api/v1/payments"
+}

@@ -205,6 +205,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/decta:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/ecommpay:
     dependencies:
       '@pandapaylens/core':
@@ -224,6 +233,24 @@ importers:
         version: 4.6.7
 
   packages/adapters/ezeewallet:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/finrax:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/inpay:
     dependencies:
       '@pandapaylens/core':
         specifier: workspace:*
@@ -349,6 +376,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/trustly:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/verotel:
     dependencies:
       '@pandapaylens/core':
@@ -402,6 +438,9 @@ importers:
       '@pandapaylens/core':
         specifier: workspace:*
         version: link:../core
+      '@pandapaylens/decta':
+        specifier: workspace:*
+        version: link:../adapters/decta
       '@pandapaylens/ecommpay':
         specifier: workspace:*
         version: link:../adapters/ecommpay
@@ -411,6 +450,12 @@ importers:
       '@pandapaylens/ezeewallet':
         specifier: workspace:*
         version: link:../adapters/ezeewallet
+      '@pandapaylens/finrax':
+        specifier: workspace:*
+        version: link:../adapters/finrax
+      '@pandapaylens/inpay':
+        specifier: workspace:*
+        version: link:../adapters/inpay
       '@pandapaylens/mifinity':
         specifier: workspace:*
         version: link:../adapters/mifinity
@@ -450,6 +495,9 @@ importers:
       '@pandapaylens/trust-payments':
         specifier: workspace:*
         version: link:../adapters/trust-payments
+      '@pandapaylens/trustly':
+        specifier: workspace:*
+        version: link:../adapters/trustly
       '@pandapaylens/verotel':
         specifier: workspace:*
         version: link:../adapters/verotel

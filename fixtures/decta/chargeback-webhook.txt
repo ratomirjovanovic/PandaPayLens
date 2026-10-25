@@ -1,0 +1,45 @@
+POST /PPLsynth/webhooks/decta HTTP/1.1
+Host: merchant.example
+Content-Type: application/json
+X-Webhook-Event: order.chargeback
+X-Webhook-Version: v0.6
+
+{
+  "type": "order",
+  "id": "PPLsynth-order-0005",
+  "number": "DE1005",
+  "status": "chargeback",
+  "status_changes": [
+    {
+      "new_status": "created",
+      "currency": "EUR",
+      "operation_amount": "60.00"
+    },
+    {
+      "new_status": "issued",
+      "currency": "EUR",
+      "operation_amount": "60.00"
+    },
+    {
+      "new_status": "paid",
+      "currency": "EUR",
+      "operation_amount": "60.00"
+    },
+    {
+      "new_status": "chargeback",
+      "currency": "EUR",
+      "operation_amount": "60.00"
+    }
+  ],
+  "transaction_details": {
+    "processing_status": {
+      "code": "000",
+      "description": "Approved"
+    },
+    "processing_payment_id": "PPLsynth-proc-0005",
+    "chargebacks": "60.00",
+    "chargebacks_reason_code": "4837",
+    "arn": "PLANTEDARN00000000000001",
+    "rrn": "PLANTEDRRN01"
+  }
+}

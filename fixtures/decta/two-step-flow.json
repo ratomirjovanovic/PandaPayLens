@@ -1,0 +1,111 @@
+[
+  {
+    "type": "order",
+    "id": "PPLsynth-order-0003",
+    "number": "DE1003",
+    "status": "hold",
+    "payment_system": "DMS",
+    "status_changes": [
+      {
+        "new_status": "created",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      },
+      {
+        "new_status": "issued",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      },
+      {
+        "new_status": "hold",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      }
+    ],
+    "transaction_details": {
+      "processing_status": {
+        "code": "000",
+        "description": "Approved"
+      },
+      "processing_payment_id": "PPLsynth-proc-0003"
+    }
+  },
+  {
+    "type": "order",
+    "id": "PPLsynth-order-0003",
+    "number": "DE1003",
+    "status": "paid",
+    "payment_system": "DMS",
+    "status_changes": [
+      {
+        "new_status": "created",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      },
+      {
+        "new_status": "issued",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      },
+      {
+        "new_status": "hold",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      },
+      {
+        "new_status": "paid",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      }
+    ],
+    "transaction_details": {
+      "processing_status": {
+        "code": "000",
+        "description": "Approved"
+      },
+      "processing_payment_id": "PPLsynth-proc-0003"
+    }
+  },
+  {
+    "type": "order",
+    "id": "PPLsynth-order-0003",
+    "number": "DE1003",
+    "status": "refunded",
+    "payment_system": "DMS",
+    "status_changes": [
+      {
+        "new_status": "created",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      },
+      {
+        "new_status": "issued",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      },
+      {
+        "new_status": "hold",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      },
+      {
+        "new_status": "paid",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      },
+      {
+        "new_status": "refunded",
+        "currency": "EUR",
+        "operation_amount": "99.00"
+      }
+    ],
+    "transaction_details": {
+      "processing_status": {
+        "code": "000",
+        "description": "Approved"
+      },
+      "processing_payment_id": "PPLsynth-proc-0003",
+      "amount_refunded": "20.00"
+    }
+  }
+]
