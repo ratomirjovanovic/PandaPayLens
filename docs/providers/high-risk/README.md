@@ -34,10 +34,10 @@ Research files for each candidate are in [research/](research/).
 | AstroPay          | HR-2 | documentation verified                                         | tested, limited |
 | Skrill            | HR-2 | documentation verified                                         | tested, limited |
 | eZeeWallet        | HR-2 | documentation verified                                         | tested, limited |
-| Finrax            | HR-3 | documentation verified                                         | not yet         |
-| Inpay             | HR-3 | documentation verified                                         | not yet         |
-| DECTA             | HR-3 | documentation verified                                         | not yet         |
-| Trustly           | HR-3 | documentation verified                                         | not yet         |
+| Finrax            | HR-3 | documentation verified                                         | tested, limited |
+| Inpay             | HR-3 | documentation verified                                         | tested, limited |
+| DECTA             | HR-3 | documentation verified                                         | tested, limited |
+| Trustly           | HR-3 | documentation verified                                         | tested, limited |
 | Pavilion Payments | HR-3 | blocked: no public developer documentation or API access route | none            |
 | Epoch             | HR-3 | blocked: integration documentation only after merchant sign-up | none            |
 

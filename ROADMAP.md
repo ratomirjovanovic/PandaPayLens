@@ -11,10 +11,11 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 | 0.1.0   | Analyzer, Stripe and Adyen, wave 1 providers, CLI, GitHub Pages demo, optional admin area                |
 | 0.2.0   | High-risk wave HR-1: CCBill, Segpay, Verotel, NETbilling, PXP Financial, Trust Payments; lifecycle rules |
 | 0.3.0   | High-risk wave HR-2: emerchantpay, Ecommpay, Paymentwall, NMI, MiFinity, AstroPay, Skrill, eZeeWallet    |
+| 0.4.0   | High-risk wave HR-3: Finrax, Inpay, DECTA, Trustly                                                       |
 
 ## In progress
 
-- **High-risk wave HR-3** ([#11](https://github.com/ratomirjovanovic/PandaPayLens/issues/11), milestone 0.4.0): Finrax, Inpay, DECTA and Trustly. Documentation is verified; adapters are being built and are released only when tested.
+- Nothing large right now. Smaller items are tracked as [issues](https://github.com/ratomirjovanovic/PandaPayLens/issues).
 
 ## Planned
 

@@ -8,6 +8,16 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.4.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "High-risk wave HR-3 with limited support: Finrax (crypto payments and payouts), Inpay (bank transfers and payouts), DECTA (card acquiring) and Trustly (pay-by-bank, EU and North America).",
+      "Underpaid crypto payments are shown as an unknown outcome, never as a success.",
+      "26 of 42 roadmap providers can now be analyzed.",
+    ],
+  },
+  {
     version: "0.3.0",
     date: "2026-10-25",
     status: "released",
