@@ -27,7 +27,7 @@ export const emerchantpayManifest: ProviderManifest = {
     "UK: emerchantpay Ltd is an FCA-authorised EMI (register no. 900778). EU: emerchantpay collaborates with UAB Phoenix Payments, an EMI supervised by the Bank of Lithuania (licence LB000477). US: emerchantpay Corp. is a registered partner/ISO of Elavon, Inc. and Westamerica Bank. Supported card brands are acquirer-specific, AVS codes are only valid for US and UK issued cards, and Visa purpose_of_payment is required for cards issued in some countries. A sector page does not mean a merchant will be approved; eligibility depends on jurisdiction, licensing and underwriting.",
   documentationAccess: "public",
   fixtureProvenance:
-    "Synthetic fixtures with PPLsynth identifiers. Notifications follow the field tables and the transcribed notification examples of the public Genesis API reference; JSON payment response objects follow the documented payment_response field table (the wire format is XML). None is an official emerchantpay example.",
+    "Synthetic fixtures with PPLsynth identifiers. Notifications follow the field tables and the transcribed notification examples of the public Genesis API reference; XML payment responses follow the transcribed payment_response XML example and field table, and JSON payment response objects follow the same field table. None is an official emerchantpay example.",
   dependencies: [
     "Elavon, Inc. and Westamerica Bank (US; emerchantpay Corp. is their registered partner/ISO)",
     "UAB Phoenix Payments (EU EMI that emerchantpay collaborates with)",
@@ -47,15 +47,21 @@ export const emerchantpayManifest: ProviderManifest = {
       status: "limited",
     },
     {
+      id: "emerchantpay.payment_response.xml",
+      description:
+        "Processing API, reconcile and Smart Routing responses in their XML wire format (root payment_response), pasted as XML or as the body of a raw HTTP response",
+      status: "supported",
+    },
+    {
       id: "emerchantpay.payment_response.object",
       description:
-        "JSON object with the documented payment_response fields (SDK renderings or logs of a Processing API response); the wire format itself is XML",
+        "JSON object with the documented payment_response fields (SDK renderings or logs of a Processing API response), flat or wrapped in payment_response",
       status: "limited",
     },
     {
       id: "emerchantpay.xml",
       description:
-        "Processing API, reconcile and WPF XML (payment_response, wpf_payment, notification_echo, reconcile, payment_transaction, blacklist_response); recognized inside a JSON string, never parsed",
+        "Other Genesis XML (wpf_payment, notification_echo, reconcile, payment_transaction, blacklist_response) and Genesis XML inside a JSON string; recognized, not analyzed",
       status: "unsupported",
     },
     {
@@ -141,7 +147,7 @@ export const emerchantpayManifest: ProviderManifest = {
     docsUrl: API_DOCS,
   },
   limitations: [
-    "Genesis responses are XML, and core does not parse XML. Processing API, reconcile and WPF XML pasted as text cannot be imported; XML inside a JSON string is recognized and reported as unsupported. Only JSON objects with the documented payment_response fields (as rendered by the SDKs or written to logs) are analyzed as payment responses.",
+    "Payment responses are read from XML documents with root payment_response (also as the body of a raw HTTP response) and from JSON objects with the same fields. One XML document is one response. XML values are text: amount must be an integer in minor units as documented, and a field PandaPayLens reads that arrives as an element with attributes, child elements or repeats makes the record invalid. WPF create and reconcile XML (wpf_payment), notification_echo acknowledgements, reconcile and Processing API requests (payment_transaction) and blacklist responses are recognized and reported as unsupported, because the research does not record their fields or they carry no payment result. Genesis XML inside a JSON string is recognized but not read; paste the XML itself.",
     "Detection is structural. The same Genesis platform also runs as another operator's instance (E-ComProcessing, per the official PHP SDK), with identical payloads; without a hostname a payload can only be identified as the Genesis platform, not as emerchantpay specifically. Hostnames and brand names are never used for detection.",
     "Notifications have no event id, delivery id or timestamp. The delivery key is the field combination suggested by the research (unique_id + status, plus event + chargeback_unique_id for disputes; wpf_unique_id + wpf_status for WPF); two genuinely different notifications with equal values are treated as repeated deliveries. Notification events have no event time, so their order is the input order.",
     "Genesis resends a notification periodically until it receives the notification_echo XML. The retry interval, the maximum number of attempts and the delivery order are not documented.",

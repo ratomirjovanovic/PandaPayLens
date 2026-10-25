@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.002.001.11">
+  <CstmrPmtStsRpt>
+    <GrpHdr>
+      <MsgId>PPLsynth-iso-msg-0003</MsgId>
+      <CreDtTm>2026-10-20T10:05:00+00:00</CreDtTm>
+      <InitgPty><Nm>Inpay</Nm></InitgPty>
+    </GrpHdr>
+    <OrgnlGrpInfAndSts>
+      <OrgnlMsgId>PPLsynth-iso-orig-0002</OrgnlMsgId>
+      <OrgnlMsgNmId>pain.001.001.10</OrgnlMsgNmId>
+      <GrpSts>ACCP</GrpSts>
+    </OrgnlGrpInfAndSts>
+    <OrgnlPmtInfAndSts>
+      <OrgnlPmtInfId>PPLsynth-iso-pmtinf-0002</OrgnlPmtInfId>
+      <PmtInfSts>ACCP</PmtInfSts>
+      <TxInfAndSts>
+        <OrgnlEndToEndId>PPLsynth-e2e-iso-0002</OrgnlEndToEndId>
+        <TxSts>ACSP</TxSts>
+        <OrgnlTxRef>
+          <Amt><InstdAmt Ccy="EUR">100.00</InstdAmt></Amt>
+          <Dbtr><Pty><Nm>Planted Synthetic Payer</Nm></Pty></Dbtr>
+          <DbtrAcct><Id><IBAN>GB33PPLS00000000000002</IBAN></Id></DbtrAcct>
+          <Cdtr><Pty><Nm>Planted Refund Creditor</Nm></Pty></Cdtr>
+          <CdtrAcct><Id><IBAN>DE89PPLS00000000000001</IBAN></Id></CdtrAcct>
+        </OrgnlTxRef>
+      </TxInfAndSts>
+    </OrgnlPmtInfAndSts>
+  </CstmrPmtStsRpt>
+</Document>

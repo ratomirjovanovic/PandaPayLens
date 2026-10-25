@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment_response>
+  <transaction_type>sale</transaction_type>
+  <status>approved</status>
+  <mode>test</mode>
+  <transaction_id>PPLsynth-order-6001</transaction_id>
+  <unique_id>PPLsynth-uid-sale-6001</unique_id>
+  <response_code>00</response_code>
+  <scheme_response_code>00</scheme_response_code>
+  <avs_response_code>A</avs_response_code>
+  <cvv_result_code>M</cvv_result_code>
+  <technical_message>Transaction successful!</technical_message>
+  <message>Transaction successful!</message>
+  <timestamp>2026-10-21T08:30:00Z</timestamp>
+  <descriptor>PPLsynth xml descriptor</descriptor>
+  <amount>4999</amount>
+  <currency>EUR</currency>
+  <consumer_id>PPLsynthCONSUMER61</consumer_id>
+  <token>PPLsynth-token-planted-6001</token>
+  <card_holder>Planted Xml Holder</card_holder>
+  <card_number>420000...0000</card_number>
+  <customer_email>planted.xml@example.invalid</customer_email>
+  <remote_ip>203.0.113.61</remote_ip>
+  <sent_to_acquirer>true</sent_to_acquirer>
+</payment_response>

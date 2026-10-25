@@ -1,0 +1,5 @@
+HTTP/1.1 403 Forbidden
+Content-Type: text/html
+X-PPL-Fixture: synthetic; documented MQI repost error text, the body layout is not documented
+
+Transaction not found: PPLsynth-order-4040

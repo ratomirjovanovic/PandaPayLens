@@ -15,7 +15,7 @@ const cases = readdirSync(root)
   .filter((d) => ids.has(d) && statSync(join(root, d)).isDirectory())
   .flatMap((d) =>
     readdirSync(join(root, d))
-      .filter((f) => /\.(json|jsonl|txt|http)$/.test(f) && !/malformed|invalid/i.test(f))
+      .filter((f) => /\.(json|jsonl|txt|http|xml)$/.test(f) && !/malformed|invalid/i.test(f))
       .map((f) => [d, f] as const),
   );
 

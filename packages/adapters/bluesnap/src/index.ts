@@ -1,19 +1,23 @@
 /**
- * BlueSnap adapter (Payment API JSON and webhooks).
+ * BlueSnap adapter (Payment API JSON and XML, webhooks).
  *
  * Supported input families:
- * - `bluesnap.card_transaction`  Payment API card transaction response
- *                                (cardTransactionType, transactionId, processingInfo.processingStatus),
- *                                including the refunds and chargebacks lists of a retrieved transaction
- * - `bluesnap.refund`            refund response (refundTransactionId, refundStatus)
- * - `bluesnap.error`             error body { message: [{ errorName, code, description,
- *                                invalidProperty, fraudEvents }] }
- * - `bluesnap.webhook`           form-encoded webhook (IPN) named by transactionType
- * - `bluesnap.throttling`        HTTP 429 or 503 with one of the documented plain-text messages
+ * - `bluesnap.card_transaction`      Payment API card transaction response
+ *                                    (cardTransactionType, transactionId, processingInfo.processingStatus),
+ *                                    including the refunds and chargebacks lists of a retrieved transaction
+ * - `bluesnap.refund`                refund response (refundTransactionId, refundStatus)
+ * - `bluesnap.error`                 error body { message: [{ errorName, code, description,
+ *                                    invalidProperty, fraudEvents }] }
+ * - `bluesnap.card_transaction_xml`  the same card transaction in XML (<card-transaction>)
+ * - `bluesnap.error_xml`             the same error body in XML (<messages> with <message> elements)
+ * - `bluesnap.webhook`               form-encoded webhook (IPN) named by transactionType
+ * - `bluesnap.throttling`            HTTP 429 or 503 with one of the documented plain-text messages
  *
- * Recognized but not analyzed: alt transaction responses (`bluesnap.alt_transaction`).
- * The XML Payment API and the Extended Payment API never reach the adapter
- * (XML input is rejected before detection).
+ * XML documents are claimed only in the namespace http://ws.plimus.com and are
+ * read through the JSON logic (see xml.ts). Recognized but not analyzed: alt
+ * transaction responses (`bluesnap.alt_transaction`) and any other XML root in
+ * that namespace (`bluesnap.payment_api_xml`), which covers the Extended
+ * Payment API.
  *
  * BlueSnap's numeric error code is a group, not a reason (37 card error names
  * share 14002), so every error is decoded by errorName first. Webhooks carry no
@@ -76,6 +80,17 @@ import {
   type WebhookInfo,
 } from "./catalog.js";
 import { bluesnapManifest, BLUESNAP_ADAPTER_VERSION } from "./manifest.js";
+import {
+  PLIMUS_NAMESPACE,
+  XML_CARD_TRANSACTION_ROOT,
+  XML_ERROR_ROOT,
+  XML_OTHER_ROOTS,
+  kebabName,
+  plimusRoot,
+  xmlCardTransactionView,
+  xmlErrorView,
+  xmlItemPath,
+} from "./xml.js";
 
 export { bluesnapManifest, BLUESNAP_ADAPTER_VERSION };
 
@@ -87,8 +102,14 @@ export const BLUESNAP_FORMATS = {
   error: "bluesnap.error",
   webhook: "bluesnap.webhook",
   throttling: "bluesnap.throttling",
+  cardTransactionXml: "bluesnap.card_transaction_xml",
+  errorXml: "bluesnap.error_xml",
   altTransaction: "bluesnap.alt_transaction",
+  otherXml: "bluesnap.payment_api_xml",
 } as const;
+
+const isXmlFormat = (format: string) =>
+  format === BLUESNAP_FORMATS.cardTransactionXml || format === BLUESNAP_FORMATS.errorXml;
 
 type Obj = Record<string, unknown>;
 
@@ -332,6 +353,55 @@ function detectAltTransaction(o: Obj): Detected | null {
   };
 }
 
+/** JSON field names in a detection reason, written as the XML element names. */
+const xmlReason = (reason: string) =>
+  reason
+    .replace(/\bmessage is an array of objects with\b/, "message elements have")
+    .replace(/\bmessage items\b/, "message elements")
+    .replace(/\b[a-z]+(?:[A-Z][a-z0-9]*)+\b/g, kebabName);
+
+/**
+ * XML in BlueSnap's namespace. The namespace is BlueSnap's own, so a
+ * document in it is attributed to BlueSnap even when it is not analyzed.
+ */
+function detectXml(input: Obj, meta: RecordMeta | undefined): Detected | null {
+  const root = plimusRoot(input, meta);
+  if (root === undefined) return null;
+  const rootText = safeText(root, 64) ?? "unknown";
+  const nsReason = `root element <${rootText}> in BlueSnap's XML namespace ${PLIMUS_NAMESPACE}`;
+  const boost = (d: Detected, format: string): Detected => ({
+    format,
+    confidence: round(d.confidence + 0.15),
+    supported: true,
+    reasons: [nsReason, ...d.reasons.map(xmlReason)],
+  });
+  let missing: string | undefined;
+  if (root === XML_ERROR_ROOT) {
+    const view = xmlErrorView(input);
+    const d = view ? detectError(view, meta) : null;
+    if (d) return boost(d, BLUESNAP_FORMATS.errorXml);
+    missing = "it has no message element with an upper snake case error-name";
+  } else if (root === XML_CARD_TRANSACTION_ROOT) {
+    const view = xmlCardTransactionView(input);
+    const d = view ? detectCardTransaction(view) : null;
+    if (d) return boost(d, BLUESNAP_FORMATS.cardTransactionXml);
+    missing = "it has no card-transaction-type element";
+  }
+  const kind = lookup(XML_OTHER_ROOTS, root);
+  const unsupportedReason = missing
+    ? `This is a BlueSnap XML <${rootText}> document, but ${missing}, so it cannot be analyzed.`
+    : kind
+      ? `This is a BlueSnap Payment API ${kind} in XML. In XML only card transactions (<card-transaction>) and error messages (<messages>) are analyzed.`
+      : `This is a BlueSnap XML document with the root <${rootText}>, which is not a Payment API resource named in the reviewed sources. It may belong to the Extended Payment API or another BlueSnap API, which are not analyzed.`;
+  return {
+    format: BLUESNAP_FORMATS.otherXml,
+    confidence: kind || missing ? 0.6 : 0.55,
+    supported: false,
+    reasons: [nsReason],
+    unsupportedReason,
+  };
+}
+
 function throttlingMessage(meta: RecordMeta | undefined) {
   const status = meta?.http?.status;
   if (status !== 429 && status !== 503) return undefined;
@@ -352,7 +422,11 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
   // Stripe payloads carry `object`; BlueSnap payloads never do.
   if ("object" in input) return none;
   let found: Detected | null = null;
-  if (Object.keys(input).length === 0) {
+  if (meta?.xml) {
+    // An XML record keeps its root element as the only key; the JSON and
+    // form shapes below never apply to it.
+    found = detectXml(input, meta);
+  } else if (Object.keys(input).length === 0) {
     const t = throttlingMessage(meta);
     if (t)
       found = {
@@ -364,7 +438,7 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
   } else if (isFlatStrings(input)) {
     found = detectWebhook(input, meta);
   }
-  if (!found && meta?.format !== "form" && Object.keys(input).length > 0) {
+  if (!found && !meta?.xml && meta?.format !== "form" && Object.keys(input).length > 0) {
     found =
       detectError(input, meta) ??
       detectCardTransaction(input) ??
@@ -437,6 +511,8 @@ const FORMATS = {
   [BLUESNAP_FORMATS.error]: ["error", ErrorBody],
   [BLUESNAP_FORMATS.webhook]: ["webhook", Webhook],
   [BLUESNAP_FORMATS.throttling]: ["throttling", Loose],
+  [BLUESNAP_FORMATS.cardTransactionXml]: ["card_transaction", CardTransaction],
+  [BLUESNAP_FORMATS.errorXml]: ["error", ErrorBody],
 } as const;
 
 function parse(
@@ -445,7 +521,16 @@ function parse(
 ): { ok: true; value: BluesnapParsed } | { ok: false; issues: string[] } {
   const entry = lookup(FORMATS, format);
   if (!entry) return { ok: false, issues: [`Unsupported BlueSnap format "${format}".`] };
-  const r = entry[1].safeParse(input);
+  // XML records are read in the JSON shape (element names in camelCase).
+  const view =
+    format === BLUESNAP_FORMATS.cardTransactionXml
+      ? xmlCardTransactionView(input)
+      : format === BLUESNAP_FORMATS.errorXml
+        ? xmlErrorView(input)
+        : input;
+  if (view === undefined)
+    return { ok: false, issues: [`(root): not a BlueSnap XML document for "${format}".`] };
+  const r = entry[1].safeParse(view);
   if (!r.success) {
     return {
       ok: false,
@@ -503,6 +588,12 @@ function webhookAmount(v: string | undefined, currency: string | undefined): str
   return decimalToMinor(t.replace(/,/g, ""), currency);
 }
 
+/** Booleans are JSON true/false, or the text "true"/"false" in XML. */
+function boolOf(v: unknown): boolean | undefined {
+  if (typeof v === "boolean") return v;
+  return v === "true" ? true : v === "false" ? false : undefined;
+}
+
 const yesNo = (v: string | undefined) => (v === "Y" || v === "N" ? v : undefined);
 const digits = (v: string | undefined) => (v && /^\d{1,6}$/.test(v.trim()) ? v.trim() : undefined);
 
@@ -540,6 +631,11 @@ function normalizeCardTransaction(
   const refundList = asList(refundsObj?.refund);
   const chargebackList = asList((c.chargebacks as Obj | undefined)?.chargeback);
   const name = safeText(t, 64) ?? "unknown";
+  const xml = isXmlFormat(ctx.format);
+  const listPath = (list: string, item: string, i: number, n: number) =>
+    xml
+      ? xmlItemPath(`${XML_CARD_TRANSACTION_ROOT}.${list}.${item}`, i, n)
+      : `${list}.${item}[${i}]`;
 
   const events: NormalizedEventDraft[] = [
     clean({
@@ -573,12 +669,7 @@ function normalizeCardTransaction(
           "authorizationCodePresent",
           pi?.authorizationCode !== undefined && pi.authorizationCode !== "" ? true : undefined,
         ],
-        [
-          "supportsMultiPartialCapture",
-          typeof pi?.supportsMultiPartialCapture === "boolean"
-            ? pi.supportsMultiPartialCapture
-            : undefined,
-        ],
+        ["supportsMultiPartialCapture", boolOf(pi?.supportsMultiPartialCapture)],
         ["cardBrand", documented(card?.cardType, CARD_BRANDS)],
         ["cardSubType", word(card?.cardSubType, 20)],
         ["binCategory", word(card?.binCategory, 20)],
@@ -635,7 +726,10 @@ function normalizeCardTransaction(
           ["relatedReferenceKind", rid ? "refund" : undefined],
           ["refundDate", ISO_DATE.test(str(r.date) ?? "") ? str(r.date) : undefined],
         ]),
-        source: { recordIndex: ctx.recordIndex, path: `refunds.refund[${i}]` },
+        source: {
+          recordIndex: ctx.recordIndex,
+          path: listPath("refunds", "refund", i, refundList.length),
+        },
         ...observed,
       }),
     );
@@ -660,7 +754,10 @@ function normalizeCardTransaction(
           ["relatedReferenceKind", cid ? "chargeback" : undefined],
           ["chargebackDate", ISO_DATE.test(str(cb.date) ?? "") ? str(cb.date) : undefined],
         ]),
-        source: { recordIndex: ctx.recordIndex, path: `chargebacks.chargeback[${i}]` },
+        source: {
+          recordIndex: ctx.recordIndex,
+          path: listPath("chargebacks", "chargeback", i, chargebackList.length),
+        },
         ...observed,
       }),
     );
@@ -1459,10 +1556,13 @@ function decodeWebhook(o: Obj, ctx: NormalizeContext): DecodedErrorDraft[] {
 function decodeErrors(parsed: BluesnapParsed, ctx: NormalizeContext): DecodedErrorDraft[] {
   if (parsed.kind === "error") {
     const status = ctx.meta?.http?.status;
+    const n = parsed.value.message.length;
+    const path = (i: number) =>
+      isXmlFormat(ctx.format) ? xmlItemPath(`${XML_ERROR_ROOT}.message`, i, n) : `message[${i}]`;
     return parsed.value.message.map((m, i) =>
       decodeMessage(m, status, {
         sourceFormat: ctx.format,
-        source: { recordIndex: ctx.recordIndex, path: `message[${i}]` },
+        source: { recordIndex: ctx.recordIndex, path: path(i) },
       }),
     );
   }
@@ -1514,6 +1614,16 @@ export const bluesnapAdapter: ProviderAdapter<BluesnapParsed> = {
     {
       id: BLUESNAP_FORMATS.error,
       description: "Payment API (JSON) error body (message[] with errorName, code, description)",
+    },
+    {
+      id: BLUESNAP_FORMATS.cardTransactionXml,
+      description:
+        "Payment API (XML, namespace http://ws.plimus.com) card transaction response (<card-transaction> with card-transaction-type, transaction-id, processing-info)",
+    },
+    {
+      id: BLUESNAP_FORMATS.errorXml,
+      description:
+        "Payment API (XML, namespace http://ws.plimus.com) error body (<messages> with message elements holding error-name, code, description)",
     },
     {
       id: BLUESNAP_FORMATS.webhook,

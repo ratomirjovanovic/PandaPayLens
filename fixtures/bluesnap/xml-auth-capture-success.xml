@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<card-transaction xmlns="http://ws.plimus.com">
+  <card-transaction-type>AUTH_CAPTURE</card-transaction-type>
+  <transaction-id>PPLsynth1000000041</transaction-id>
+  <merchant-transaction-id>PPLsynth-order-0041</merchant-transaction-id>
+  <soft-descriptor>BLS*PPLsynth</soft-descriptor>
+  <amount>11.00</amount>
+  <usd-amount>11.00</usd-amount>
+  <currency>USD</currency>
+  <transaction-approval-date>10/24/2026</transaction-approval-date>
+  <transaction-approval-time>13:08:47</transaction-approval-time>
+  <card-holder-info>
+    <first-name>Planted</first-name>
+    <last-name>Synthetic Holder</last-name>
+    <email>planted.synthetic@example.com</email>
+    <zip>PL47NT</zip>
+  </card-holder-info>
+  <vaulted-shopper-id>PPLSYNTHSHOPPER01</vaulted-shopper-id>
+  <credit-card>
+    <card-last-four-digits>9071</card-last-four-digits>
+    <bin-number>457173</bin-number>
+    <card-type>VISA</card-type>
+    <card-sub-type>CREDIT</card-sub-type>
+    <card-category>PLATINUM</card-category>
+    <bin-category>CONSUMER</bin-category>
+    <card-regulated>N</card-regulated>
+    <issuing-bank>Planted Synthetic Bank</issuing-bank>
+    <issuing-country-code>us</issuing-country-code>
+  </credit-card>
+  <processing-info>
+    <processing-status>success</processing-status>
+    <cvv-response-code>MA</cvv-response-code>
+    <authorization-code>PPL771</authorization-code>
+    <avs-response-code-zip>U</avs-response-code-zip>
+    <avs-response-code-address>U</avs-response-code-address>
+    <avs-response-code-name>U</avs-response-code-name>
+    <network-transaction-id>PPLSYNTHNETWORK0001</network-transaction-id>
+    <transaction-region>US</transaction-region>
+  </processing-info>
+  <fraud-result-info/>
+</card-transaction>

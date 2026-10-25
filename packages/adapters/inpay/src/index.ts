@@ -7,6 +7,8 @@
  * - `inpay.order`  Collections API Order: GetOrder and order webhook body
  *                  (`uuid`, `status`, `payments[]`, `refund`)
  * - `inpay.error`  Error bodies (`errors[]`, `error`, `message`)
+ * - `inpay.iso20022` ISO 20022 payment status reports (pain.002 / pacs.002 XML):
+ *                  group status and status reasons of a payout message
  *
  * A payout is its own operation (`payout`); `completed` means accepted by the
  * banking layer, not credited to the beneficiary. A pay-in order is a bank
@@ -50,6 +52,12 @@ import {
   FX_OPENAPI_URL,
   HTTP_STATUSES,
   INSTANT_BANK_TRANSFER_STATUS_URL,
+  ISO_DOCUMENTED_VERSIONS,
+  ISO_GROUP_STATUSES,
+  ISO_INTRO_URL,
+  ISO_REASON_CODES,
+  ISO_REASON_TEXTS,
+  ISO_STATUS_URL,
   JWT_ERRORS,
   JWT_ERRORS_URL,
   NEXT_ACTION,
@@ -170,9 +178,51 @@ const ErrorBody = z.looseObject({
 
 const MessageBody = z.looseObject({ message: z.string().max(2000) });
 
+// ISO 20022 status reports arrive as XML; core turns every value into a
+// string, a single element into a value and repeated elements into an array.
+// Repeatable elements are validated as arrays so issues name the element.
+const oneOrMany = <T extends z.ZodType>(item: T, max: number) =>
+  z.preprocess(
+    (v) => (v === undefined || Array.isArray(v) ? v : [v]),
+    z.array(item).max(max).optional(),
+  );
+const IsoText = (max: number) => z.string().max(max).optional();
+
+const IsoReason = z.looseObject({
+  Rsn: z
+    .union([z.looseObject({ Cd: IsoText(35), Prtry: IsoText(35) }), z.string().max(0)])
+    .optional(),
+  AddtlInf: oneOrMany(z.string().max(2000), 20),
+});
+
+const IsoGroup = z.looseObject({
+  OrgnlMsgId: IsoText(256),
+  OrgnlMsgNmId: IsoText(64),
+  GrpSts: IsoText(64),
+  StsRsnInf: oneOrMany(IsoReason, 50),
+});
+
+const IsoTx = z.looseObject({ TxSts: IsoText(64) });
+
+const IsoPmtInf = z.looseObject({
+  PmtInfSts: IsoText(64),
+  TxInfAndSts: oneOrMany(IsoTx, 10_000),
+});
+
+const IsoReport = z.looseObject({
+  GrpHdr: z
+    .looseObject({ MsgId: IsoText(256), CreDtTm: IsoText(64), InitgPty: z.unknown().optional() })
+    .optional(),
+  OrgnlGrpInfAndSts: oneOrMany(IsoGroup, 100),
+  OrgnlPmtInfAndSts: oneOrMany(IsoPmtInf, 1000),
+  TxInfAndSts: oneOrMany(IsoTx, 10_000),
+});
+
 type PayoutT = z.infer<typeof Payout>;
 type OrderT = z.infer<typeof Order>;
 type AttemptT = z.infer<typeof Attempt>;
+type IsoReportT = z.infer<typeof IsoReport>;
+type IsoGroupT = z.infer<typeof IsoGroup>;
 
 /** One error item, flattened from any of the three documented body shapes. */
 type ErrorItem = { code?: string; title?: string; detail?: unknown };
@@ -180,7 +230,15 @@ type ErrorItem = { code?: string; title?: string; detail?: unknown };
 export type InpayParsed =
   | { kind: "payout"; value: PayoutT }
   | { kind: "order"; value: OrderT }
-  | { kind: "error"; shape: "errors" | "error" | "message"; items: ErrorItem[] };
+  | { kind: "error"; shape: "errors" | "error" | "message"; items: ErrorItem[] }
+  | {
+      kind: "iso20022";
+      element: IsoElement;
+      message: "pain.002" | "pacs.002";
+      /** Message version from the namespace, e.g. pain.002.001.11. */
+      version?: string;
+      report: IsoReportT;
+    };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const PAYOUT_TIMESTAMP = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
@@ -358,11 +416,117 @@ function detectError(
   return undefined;
 }
 
+// ISO 20022 status reports
+
+const ISO_FORMAT = "inpay.iso20022";
+const ISO_REPORTS = { CstmrPmtStsRpt: "pain.002", FIToFIPmtStsRpt: "pacs.002" } as const;
+type IsoElement = keyof typeof ISO_REPORTS;
+const ISO_NAMESPACE = /^urn:iso:std:iso:20022:tech:xsd:((pain|pacs)\.002\.\d{3}\.\d{2})$/;
+const ISO_CODE = /^[A-Za-z0-9_.-]{1,35}$/;
+const ISO_TIMESTAMP = /^\d[\dT:./+ Z-]{0,39}$/;
+
+const listOf = <T>(v: T | T[] | undefined): T[] =>
+  v === undefined ? [] : Array.isArray(v) ? v : [v];
+
+const isoCode = (v: unknown): string | undefined =>
+  typeof v === "string" && ISO_CODE.test(v.trim()) ? v.trim() : undefined;
+
+/** The report element of a `Document` record, if it is a payment status report. */
+function isoShapeOf(
+  input: Record<string, unknown>,
+): { element: IsoElement; report: Record<string, unknown> } | undefined {
+  if (Object.keys(input).length !== 1 || !isObj(input.Document)) return undefined;
+  const children = Object.keys(input.Document).filter((k) => !k.startsWith("@"));
+  const element = children[0];
+  if (
+    children.length !== 1 ||
+    !element ||
+    !Object.prototype.hasOwnProperty.call(ISO_REPORTS, element)
+  )
+    return undefined;
+  const report = input.Document[element];
+  return isObj(report) ? { element: element as IsoElement, report } : undefined;
+}
+
+/**
+ * Message version from the root namespace. Undefined when no namespace is
+ * declared; null when the namespace is not the status report of the element.
+ */
+function isoVersionOf(
+  meta: RecordMeta | undefined,
+  element: IsoElement,
+): string | undefined | null {
+  const ns = meta?.xml?.namespace;
+  if (ns === undefined) return undefined;
+  const m = ISO_NAMESPACE.exec(ns.trim());
+  return m && m[2] === ISO_REPORTS[element].slice(0, 4) ? m[1]! : null;
+}
+
+/** GrpHdr/InitgPty/Nm "Inpay", as in Inpay's status report examples. */
+function isoNamesInpay(report: Record<string, unknown>): boolean {
+  const header = report.GrpHdr;
+  const party = isObj(header) ? header.InitgPty : undefined;
+  return isObj(party) && typeof party.Nm === "string" && party.Nm.trim().toLowerCase() === "inpay";
+}
+
+const ISO_NOT_PROVEN =
+  "ISO 20022 is a generic standard, and nothing in this status report shows that Inpay sent it. Select Inpay manually to analyze it as an Inpay status report.";
+
+function detectIso(
+  input: Record<string, unknown>,
+  meta: RecordMeta | undefined,
+): DetectionResult | undefined {
+  const shape = isoShapeOf(input);
+  if (!shape) return undefined;
+  const version = isoVersionOf(meta, shape.element);
+  if (version === null) return undefined;
+  const reasons = [`root Document with ${shape.element} (ISO 20022 payment status report)`];
+  let score: number;
+  if (version === undefined) {
+    score = 0.15;
+    reasons.push("no ISO 20022 namespace is declared");
+  } else if (lookup(ISO_DOCUMENTED_VERSIONS, version)) {
+    score = 0.35;
+    reasons.push(`namespace is ${version}, a version Inpay documents`);
+  } else {
+    score = 0.25;
+    reasons.push(`namespace is ${version}, a version Inpay does not document`);
+  }
+  const statuses = listOf(shape.report.OrgnlGrpInfAndSts as unknown)
+    .filter(isObj)
+    .map((g) => g.GrpSts);
+  if (statuses.length && statuses.every((s) => lookup(ISO_GROUP_STATUSES, isoCode(s)))) {
+    score += 0.05;
+    reasons.push("GrpSts is one of the four group statuses Inpay documents");
+  }
+  // The initiating party name is the only Inpay-specific marker. Without a
+  // namespace the record may not be ISO 20022 at all, so it does not count.
+  const named = version !== undefined && isoNamesInpay(shape.report);
+  if (named) {
+    score += 0.3;
+    reasons.push("GrpHdr/InitgPty/Nm is Inpay, as in Inpay's examples");
+  }
+  return {
+    ...none(),
+    format: ISO_FORMAT,
+    confidence: round(score),
+    supported: true,
+    reasons,
+    ...(named ? {} : { unsupportedReason: ISO_NOT_PROVEN }),
+  };
+}
+
 function detect(input: unknown, meta?: RecordMeta): DetectionResult {
   if (!isObj(input)) return none();
   // Stripe payloads carry `object`; Inpay payloads never do.
   if ("object" in input) return none();
-  return detectPayout(input) ?? detectOrder(input) ?? detectError(input, meta) ?? none();
+  return (
+    detectIso(input, meta) ??
+    detectPayout(input) ??
+    detectOrder(input) ??
+    detectError(input, meta) ??
+    none()
+  );
 }
 
 type ParseResult = { ok: true; value: InpayParsed } | { ok: false; issues: string[] };
@@ -371,8 +535,43 @@ function issuesOf(error: z.ZodError): string[] {
   return error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`);
 }
 
-function parse(input: unknown, format: string): ParseResult {
+function parseIso(input: unknown, meta: RecordMeta | undefined): ParseResult {
+  const shape = isObj(input) ? isoShapeOf(input) : undefined;
+  if (!shape)
+    return {
+      ok: false,
+      issues: ["(root): expected a Document with CstmrPmtStsRpt or FIToFIPmtStsRpt"],
+    };
+  const version = isoVersionOf(meta, shape.element);
+  if (version === null)
+    return {
+      ok: false,
+      issues: [`(root): the namespace is not a ${ISO_REPORTS[shape.element]} status report`],
+    };
+  const r = IsoReport.safeParse(shape.report);
+  if (!r.success)
+    return {
+      ok: false,
+      issues: r.error.issues.map(
+        (i) => `Document.${shape.element}.${i.path.join(".")}: ${i.message}`,
+      ),
+    };
+  return {
+    ok: true,
+    value: {
+      kind: "iso20022",
+      element: shape.element,
+      message: ISO_REPORTS[shape.element],
+      ...(version ? { version } : {}),
+      report: r.data,
+    },
+  };
+}
+
+function parse(input: unknown, format: string, meta?: RecordMeta): ParseResult {
   switch (format) {
+    case ISO_FORMAT:
+      return parseIso(input, meta);
     case "inpay.payout": {
       const r = Payout.safeParse(input);
       return r.success
@@ -798,8 +997,136 @@ function errorEvent(
   });
 }
 
+// ISO 20022 status reports
+
+type IsoParsed = Extract<InpayParsed, { kind: "iso20022" }>;
+type IsoReasonInfo = { code?: string; proprietary?: boolean; texts: string[] };
+
+function isoReasonsOf(g: IsoGroupT | undefined): IsoReasonInfo[] {
+  return listOf(g?.StsRsnInf)
+    .map((r) => {
+      const rsn = isObj(r.Rsn) ? r.Rsn : undefined;
+      const cd = isoCode(rsn?.Cd);
+      const prtry = cd ? undefined : isoCode(rsn?.Prtry);
+      const texts = listOf(r.AddtlInf)
+        .map((t) => t.trim())
+        .filter((t) => t !== "");
+      return { code: cd ?? prtry, ...(prtry ? { proprietary: true } : {}), texts };
+    })
+    .filter((i) => i.code || i.texts.length);
+}
+
+/** Payment information and transaction statuses; Inpay documents neither. */
+function isoTransactionsOf(r: IsoReportT) {
+  const pmtInf = listOf(r.OrgnlPmtInfAndSts);
+  const txs = [...listOf(r.TxInfAndSts), ...pmtInf.flatMap((p) => listOf(p.TxInfAndSts))];
+  const unique = (values: unknown[]) => [
+    ...new Set(values.map(isoCode).filter((v): v is string => v !== undefined)),
+  ];
+  return {
+    count: txs.length,
+    statuses: unique(txs.map((t) => t.TxSts)).slice(0, 20),
+    paymentInformationStatuses: unique(pmtInf.map((p) => p.PmtInfSts)).slice(0, 20),
+  };
+}
+
+const isoMessageOf = (p: IsoParsed) => p.version ?? p.message;
+
+function isoPath(p: IsoParsed, i: number, count: number): string {
+  const base = `Document.${p.element}`;
+  if (count === 0) return base;
+  return `${base}.OrgnlGrpInfAndSts${count > 1 ? `[${i}]` : ""}`;
+}
+
+function isoEvent(
+  p: IsoParsed,
+  g: IsoGroupT | undefined,
+  i: number,
+  count: number,
+  ctx: NormalizeContext,
+): NormalizedEventDraft {
+  const header = p.report.GrpHdr;
+  const status = isoCode(g?.GrpSts);
+  const entry = status ? lookup(ISO_GROUP_STATUSES, status) : undefined;
+  const tx = isoTransactionsOf(p.report);
+  const created = str(header?.CreDtTm);
+  const stamp = toIsoTimestamp(created);
+  const named = Boolean(p.version) && isoNamesInpay(p.report);
+  const delivery = deliveryFields(ctx);
+  const msgId = refOf(header?.MsgId);
+  const codes = isoReasonsOf(g)
+    .map((r) => r.code)
+    .filter((c): c is string => c !== undefined)
+    .slice(0, 20);
+  const undocumentedParts = tx.count > 0 || tx.paymentInformationStatuses.length > 0;
+
+  return clean({
+    sourceFormat: ctx.format,
+    eventType: `iso20022.group_status.${safeText(status, 35) ?? "unknown"}`,
+    eventTypeKnown: Boolean(entry),
+    stage: "payout",
+    providerStatus: safeText(status, 35),
+    // The report names the original payout message only by the merchant's
+    // message id, so OrgnlMsgId is the reference that links its reports.
+    paymentReference: merchantRefOf(g?.OrgnlMsgId),
+    ...delivery,
+    eventReference: msgId ?? delivery.eventReference,
+    eventTimestamp: stamp,
+    outcome: entry?.outcome ?? "unknown",
+    attributes: attrs([
+      ["operation", "ISO 20022 status report on a payout message sent to Inpay"],
+      ["message", isoMessageOf(p)],
+      [
+        "messageVersionDocumented",
+        p.version ? Boolean(lookup(ISO_DOCUMENTED_VERSIONS, p.version)) : undefined,
+      ],
+      ["namespaceDeclared", p.version ? undefined : false],
+      ["originalMessageType", safeId(g?.OrgnlMsgNmId, 64)],
+      ["paymentReferenceSource", g?.OrgnlMsgId ? "OrgnlMsgId (original message id)" : undefined],
+      ["groupStatus", status],
+      ["groupStatusMeaning", entry?.meaning],
+      ["groupStatusFinal", entry?.final],
+      ["groupStatusNote", entry?.note],
+      ["groupStatusUndocumented", status && !entry ? true : undefined],
+      ["groupStatusMissing", status ? undefined : true],
+      ["reasonCodes", codes.length ? codes : undefined],
+      ["transactionCount", tx.count || undefined],
+      ["transactionStatuses", tx.statuses.length ? tx.statuses : undefined],
+      [
+        "paymentInformationStatuses",
+        tx.paymentInformationStatuses.length ? tx.paymentInformationStatuses : undefined,
+      ],
+      ["transactionStatusesDocumented", undocumentedParts ? false : undefined],
+      [
+        "providerIdentification",
+        named
+          ? "GrpHdr/InitgPty/Nm is Inpay"
+          : "not shown by the report (ISO 20022 is a generic standard)",
+      ],
+      ["providerTimestamp", created && ISO_TIMESTAMP.test(created) ? created : undefined],
+      [
+        "timestampZone",
+        created && !stamp
+          ? "no ISO date-time with a time zone (not placed on the timeline)"
+          : undefined,
+      ],
+      ...deliveryAttrs(ctx),
+    ]),
+    source: { recordIndex: ctx.recordIndex, path: isoPath(p, i, count) },
+    ...observedOf(ctx),
+  });
+}
+
+function isoEvents(p: IsoParsed, ctx: NormalizeContext): NormalizedEventDraft[] {
+  const groups = listOf(p.report.OrgnlGrpInfAndSts);
+  if (groups.length === 0) return [isoEvent(p, undefined, 0, 0, ctx)];
+  return groups.map((g, i) => isoEvent(p, g, i, groups.length, ctx));
+}
+
 function normalize(parsed: InpayParsed, ctx: NormalizeContext): NormalizedEventDraft[] {
   switch (parsed.kind) {
+    case "iso20022":
+      return isoEvents(parsed, ctx);
     case "payout":
       return [payoutEvent(parsed.value, ctx)];
     case "order": {
@@ -846,6 +1173,8 @@ const DOC_TITLES: Record<string, string> = {
   [RESPONSE_CODES_URL]: "Inpay HTTP response codes",
   [JWT_ERRORS_URL]: "Inpay JWT signing errors",
   [X_REQUEST_ID_URL]: "Inpay X-Request-ID header",
+  [ISO_STATUS_URL]: "Inpay ISO 20022 status codes",
+  [ISO_INTRO_URL]: "Inpay ISO 20022 introduction",
 };
 
 const docLink = (url: string): DocumentationLink => ({
@@ -1184,8 +1513,106 @@ function decodeErrorItem(
   };
 }
 
+const ISO_NEXT_ACTION_UNKNOWN =
+  "Contact Inpay support with the status report's GrpHdr/MsgId and the original message id (OrgnlMsgId) if the cause is unclear.";
+
+function decodeIsoReason(
+  info: IsoReasonInfo | undefined,
+  p: IsoParsed,
+  loc: Location,
+): DecodedErrorDraft {
+  const subCodes: Record<string, string> = { group_status: "RJCT", message: isoMessageOf(p) };
+  if (info?.proprietary) subCodes.reason_type = "proprietary";
+  const missing: string[] = [];
+  const code = safeText(info?.code, 35);
+  const known = code && !info?.proprietary ? lookup(ISO_REASON_CODES, code) : undefined;
+  const textKey = info?.texts.find((t) => lookup(ISO_REASON_TEXTS, t));
+  const text = textKey ? ISO_REASON_TEXTS[textKey] : undefined;
+  let mapping: ErrorMapping;
+  let confidence: Confidence;
+  let explanation = `Inpay rejected the original payout message (group status RJCT: ${ISO_GROUP_STATUSES.RJCT!.meaning}).`;
+
+  if (!info) {
+    mapping = { meaning: "", category: "unknown", retry: "manual_review" };
+    confidence = "possible";
+    explanation += " The report carries no status reason.";
+    missing.push("No StsRsnInf was supplied, so the cause is unknown.");
+  } else if (text) {
+    mapping = text;
+    confidence = "possible";
+    explanation += ` The reason text "${textKey}" appears in Inpay's rejected example: ${text.meaning}.`;
+    if (known) explanation += ` Reason code ${code} appears there too; ${known.note}.`;
+    else
+      missing.push(
+        code
+          ? `Reason code "${code}" is not in Inpay's ISO 20022 documentation.`
+          : "No reason code was supplied.",
+      );
+  } else if (known) {
+    mapping = { meaning: "", category: "unknown", retry: "manual_review" };
+    confidence = "possible";
+    explanation += ` Reason code ${code} appears in ${known.seenIn}; ${known.note}.`;
+    missing.push(
+      info.texts.length
+        ? "The AddtlInf text is not one Inpay documents; it is shown as the provider message."
+        : "No AddtlInf text was supplied, so the reason is unknown.",
+    );
+  } else {
+    mapping = { meaning: "", category: "unknown", retry: "unknown" };
+    confidence = "insufficient";
+    explanation += code
+      ? ` PandaPayLens does not recognize the reason code "${code}"; Inpay publishes no ISO 20022 reason code list.`
+      : " The status reason carries no code.";
+    if (code) missing.push(`Reason code "${code}" is not in Inpay's ISO 20022 documentation.`);
+  }
+  if (!loc.paymentReference) missing.push("No OrgnlMsgId was supplied.");
+  const providerMessage = safeText((info?.texts ?? []).slice(0, 3).join("; "), 200);
+
+  return {
+    ...withRefs(loc),
+    code: code ?? "RJCT",
+    subCodes,
+    category: mapping.category,
+    ...(providerMessage ? { providerMessage } : {}),
+    explanation,
+    nextAction:
+      mapping.category === "unknown" ? ISO_NEXT_ACTION_UNKNOWN : NEXT_ACTION[mapping.category],
+    retry: mapping.retry,
+    retryExplanation: RETRY_TEXT[mapping.retry],
+    confidence,
+    documentation: docsOf(ISO_STATUS_URL, ISO_INTRO_URL),
+    missingInformation: missing,
+    outcomeKnown: true,
+  };
+}
+
+function decodeIso(p: IsoParsed, ctx: NormalizeContext): DecodedErrorDraft[] {
+  const groups = listOf(p.report.OrgnlGrpInfAndSts);
+  const out: DecodedErrorDraft[] = [];
+  groups.forEach((g, i) => {
+    if (isoCode(g.GrpSts) !== "RJCT") return;
+    const ref = merchantRefOf(g.OrgnlMsgId);
+    const path = isoPath(p, i, groups.length);
+    const loc = (sub: string): Location => ({
+      sourceFormat: ctx.format,
+      source: { recordIndex: ctx.recordIndex, path: sub },
+      ...(ref ? { paymentReference: ref } : {}),
+    });
+    const reasons = isoReasonsOf(g);
+    if (reasons.length === 0) out.push(decodeIsoReason(undefined, p, loc(path)));
+    reasons.forEach((r, k) =>
+      out.push(
+        decodeIsoReason(r, p, loc(`${path}.StsRsnInf${reasons.length > 1 ? `[${k}]` : ""}`)),
+      ),
+    );
+  });
+  return out;
+}
+
 function decodeErrors(parsed: InpayParsed, ctx: NormalizeContext): DecodedErrorDraft[] {
   switch (parsed.kind) {
+    case "iso20022":
+      return decodeIso(parsed, ctx);
     case "payout":
       return decodePayout(parsed.value, ctx);
     case "order":
@@ -1223,12 +1650,23 @@ export const inpayAdapter: ProviderAdapter<InpayParsed> = {
       description:
         "Error body ({ errors: [...] }, { error: { code, title, details } } or { message })",
     },
+    {
+      id: ISO_FORMAT,
+      description:
+        "ISO 20022 payment status report (XML Document with CstmrPmtStsRpt or FIToFIPmtStsRpt): group status and status reasons",
+    },
   ],
   detect,
   parse,
   normalize,
   decodeErrors,
   correlationKeys(event: NormalizedEvent): string[] {
+    if (event.sourceFormat === ISO_FORMAT) {
+      // Reports on the same original message share its OrgnlMsgId. Inpay
+      // documents no per-transaction ids, so they are not linked to JSON
+      // payouts by end_to_end_id.
+      return event.paymentReference ? [`iso-orgnl-msg:${event.paymentReference}`] : [];
+    }
     const keys: string[] = [];
     if (event.paymentReference) keys.push(event.paymentReference);
     if (event.stage === "payout") {

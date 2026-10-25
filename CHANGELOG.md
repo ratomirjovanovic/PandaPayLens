@@ -10,6 +10,16 @@ All notable changes to this project are documented here. The format follows [Kee
 - XML is read safely: documents with a DOCTYPE or entity declarations are rejected, so external entities and entity expansion cannot happen; only predefined and numeric character references are decoded; depth, element count and text length are limited, and parsing is a single linear pass.
 - The getting-started page and the CLI help list every accepted input format.
 
+### Providers
+
+- XML responses are analyzed for five providers, each detected by its documented root element, namespace and fields, and decoded with the same logic as the JSON form:
+  - emerchantpay: Genesis `payment_response` (Processing API, reconcile and Smart Routing). Other Genesis XML roots are recognized and reported as unsupported.
+  - Skrill: `refund.pl`, `pay.pl` and `ondemand_request.pl` responses and API error strings. A refund response is never read as a payment, and where the documentation does not say whether a transfer was a payout or a 1-Tap payment, the event says so. Plain-text MQI errors are used when Skrill is selected manually.
+  - Authorize.net: XML API `createTransactionResponse` and `ErrorResponse` in the `AnetApi` namespace.
+  - BlueSnap: XML Payment API card transactions and error messages in the `http://ws.plimus.com` namespace, decoded by error name.
+  - Inpay: ISO 20022 pain.002 and pacs.002 status reports as payout events. ISO 20022 is a generic standard, so a report is attributed to Inpay automatically only when it names Inpay as initiating party; otherwise select Inpay manually.
+- XML fixtures are included in the cross-provider detection test, and the demo has two XML examples.
+
 ## [0.10.0] - 2026-10-25
 
 ### Analyzer

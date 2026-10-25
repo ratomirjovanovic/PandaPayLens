@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment_response>
+  <transaction_type>authorize</transaction_type>
+  <status>declined</status>
+  <mode>live</mode>
+  <transaction_id>PPLsynth-order-6002</transaction_id>
+  <unique_id>PPLsynth-uid-auth-6002</unique_id>
+  <response_code>51</response_code>
+  <scheme_response_code>51</scheme_response_code>
+  <code>500</code>
+  <technical_message>Transaction declined by issuer.</technical_message>
+  <message>Transaction declined.</message>
+  <timestamp>2026-10-21T09:05:12Z</timestamp>
+  <amount>12500</amount>
+  <currency>GBP</currency>
+  <sent_to_acquirer>true</sent_to_acquirer>
+</payment_response>

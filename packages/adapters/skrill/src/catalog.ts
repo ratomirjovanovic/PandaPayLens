@@ -216,6 +216,65 @@ export const RECURRING_STATUSES: Readonly<Record<string, StatusInfo>> = {
   },
 };
 
+/**
+ * `status` of the refund.pl execution response (`action=refund`). A pending
+ * refund is completed later by a refund status report.
+ */
+export const REFUND_EXECUTION_STATUSES: Readonly<Record<string, StatusInfo>> = {
+  "2": { name: "processed", meaning: "Refund processed", stage: "refund", outcome: "success" },
+  "0": {
+    name: "pending",
+    meaning: "Refund pending; a refund status report sent to refund_status_url gives the result",
+    stage: "refund",
+    outcome: "pending",
+  },
+  "-2": { name: "failed", meaning: "Refund failed", stage: "refund", outcome: "failure" },
+};
+
+/** Operations that answer with the XML `<transaction>` element. */
+export type TransactionOperation = "send_money" | "quick_checkout_payout" | "one_tap_payment";
+
+export type TransactionStatusInfo = {
+  name: string;
+  meaning: string;
+  outcome: Outcome;
+  /** Operations whose documentation lists this status value. */
+  operations: readonly TransactionOperation[];
+};
+
+/**
+ * `status` of the `<transaction>` execution response. pay.pl (send money and
+ * Quick Checkout payouts) and ondemand_request.pl (1-Tap) share this element,
+ * so a value documented for several operations does not say which one ran.
+ */
+export const TRANSACTION_STATUSES: Readonly<Record<string, TransactionStatusInfo>> = {
+  "2": {
+    name: "processed",
+    meaning: "Processed",
+    outcome: "success",
+    operations: ["send_money", "quick_checkout_payout", "one_tap_payment"],
+  },
+  "1": {
+    name: "scheduled",
+    meaning:
+      "Scheduled: the beneficiary is not registered at Skrill yet; the money is returned after 14 days if it is not claimed",
+    outcome: "pending",
+    operations: ["send_money"],
+  },
+  "0": {
+    name: "pending",
+    meaning: "Pending; a payout status report gives the result",
+    outcome: "pending",
+    operations: ["quick_checkout_payout"],
+  },
+  "-2": {
+    name: "failed",
+    meaning: "Failed",
+    outcome: "failure",
+    operations: ["quick_checkout_payout", "one_tap_payment"],
+  },
+};
+
 /** `payment_type` values the status_url field table documents for payments. */
 export const PAYMENT_TYPES_DOCUMENTED = ["WLT", "MDB"] as const;
 

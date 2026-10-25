@@ -189,6 +189,8 @@ describe("bluesnap manifest and exports", () => {
       BLUESNAP_FORMATS.cardTransaction,
       BLUESNAP_FORMATS.refund,
       BLUESNAP_FORMATS.error,
+      BLUESNAP_FORMATS.cardTransactionXml,
+      BLUESNAP_FORMATS.errorXml,
       BLUESNAP_FORMATS.webhook,
       BLUESNAP_FORMATS.throttling,
     ]);
@@ -372,6 +374,8 @@ describe("bluesnap detection", () => {
       "processing-timeout.txt",
       "idempotency-in-progress.txt",
       "rate-limit-429.txt",
+      "xml-decline-do-not-honor.txt",
+      "xml-validation-errors.xml",
     ]);
     for (const file of readdirSync(OWN)) {
       const text = readFileSync(`${OWN}/${file}`, "utf8");
@@ -966,7 +970,7 @@ describe("bluesnap webhooks", () => {
     expect(r.records[0]!.status).toBe("invalid");
   });
 
-  it("does not throw on malformed input and reports XML as an unsupported record", () => {
+  it("does not throw on malformed input and reports an XML message without error-name as unsupported", () => {
     expect(analyzeText("{not json", options).ok).toBe(false);
     const xml = analyzeText(
       '<messages xmlns="http://ws.plimus.com"><message/></messages>',
@@ -1070,5 +1074,311 @@ describe("bluesnap sensitive data", () => {
       ),
     ).events[0]!;
     expect(e.merchantReference).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+
+describe("bluesnap XML Payment API", () => {
+  const NS = "http://ws.plimus.com";
+  const parsed = (text: string) => {
+    const p = parseInput(text);
+    if (!p.ok) throw new Error(`parse failed: ${p.error.message}`);
+    return { record: p.value.records[0], meta: p.value.meta[0]! };
+  };
+  const xmlMessages = (inner: string) => `<messages xmlns="${NS}">${inner}</messages>`;
+  const xmlMessage = (fields: string) => `<message>${fields}</message>`;
+  // The format, the record path and the engine's fingerprint (a hash that
+  // includes the format) necessarily differ between the two forms.
+  const withoutFormat = <T extends { sourceFormat: string; source: unknown }>(items: T[]) =>
+    items.map(({ sourceFormat: _f, source: _s, ...rest }) => {
+      const { contentFingerprint: _c, ...same } = rest as typeof rest & {
+        contentFingerprint?: string;
+      };
+      return same;
+    });
+  const XML_FIXTURES = [
+    "xml-auth-capture-success.xml",
+    "xml-decline-do-not-honor.txt",
+    "xml-validation-errors.xml",
+  ];
+
+  it("detects card transactions and errors by root, namespace and documented elements", () => {
+    const card = parsed(fixture("bluesnap/xml-auth-capture-success.xml"));
+    expect(card.meta).toMatchObject({
+      format: "xml",
+      xml: { root: "card-transaction", namespace: NS },
+    });
+    const d = bluesnapAdapter.detect(card.record, card.meta);
+    expect(d).toMatchObject({
+      format: BLUESNAP_FORMATS.cardTransactionXml,
+      confidence: 0.95,
+      supported: true,
+    });
+    expect(d.reasons[0]).toBe(`root element <card-transaction> in BlueSnap's XML namespace ${NS}`);
+    expect(d.reasons).toContain(
+      'card-transaction-type "AUTH_CAPTURE" is a documented BlueSnap value',
+    );
+    expect(d.reasons).toContain("has processing-info.processing-status");
+
+    const err = parsed(fixture("bluesnap/xml-validation-errors.xml"));
+    const e = bluesnapAdapter.detect(err.record, err.meta);
+    expect(e).toMatchObject({ format: BLUESNAP_FORMATS.errorXml, supported: true });
+    expect(e.confidence).toBeGreaterThanOrEqual(0.9);
+    expect(e.reasons).toContain("message elements have an upper snake case error-name");
+  });
+
+  it("does not claim the same elements without BlueSnap's namespace", () => {
+    for (const file of XML_FIXTURES) {
+      const text = fixture(`bluesnap/${file}`).replace(` xmlns="${NS}"`, "");
+      const p = parsed(text);
+      expect(p.meta.xml?.namespace, file).toBeUndefined();
+      expect(bluesnapAdapter.detect(p.record, p.meta).confidence, file).toBe(0);
+      const r = analyzeText(text, { ...options, adapters: ADAPTERS, rules: [] });
+      expect(r.ok && r.result.records[0]!.provider, file).toBe(null);
+    }
+    const other = parsed(
+      `<messages xmlns="urn:example:other">${xmlMessage("<error-name>DO_NOT_HONOR</error-name><code>14002</code>")}</messages>`,
+    );
+    expect(bluesnapAdapter.detect(other.record, other.meta).confidence).toBe(0);
+    // An XML record never matches the JSON shapes, even when its keys look alike.
+    expect(
+      bluesnapAdapter.detect(
+        { message: [{ errorName: "DO_NOT_HONOR", code: "14002" }] },
+        { format: "xml", xml: { root: "message" } },
+      ).confidence,
+    ).toBe(0);
+  });
+
+  it("accepts a namespace prefix on the root element", () => {
+    const r = analyze(
+      `<bs:messages xmlns:bs="${NS}"><bs:message><bs:error-name>DO_NOT_HONOR</bs:error-name><bs:code>14002</bs:code></bs:message></bs:messages>`,
+    );
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: BLUESNAP_FORMATS.errorXml });
+    expect(r.errors[0]).toMatchObject({ code: "DO_NOT_HONOR", confidence: "strong" });
+  });
+
+  it("analyzes a card transaction like its JSON form", () => {
+    const r = analyzeFixture("xml-auth-capture-success.xml");
+    expect(r.records[0]).toMatchObject({
+      status: "analyzed",
+      provider: "bluesnap",
+      format: BLUESNAP_FORMATS.cardTransactionXml,
+    });
+    expect(r.events).toHaveLength(1);
+    const e = r.events[0]!;
+    expect(e).toMatchObject({
+      sourceFormat: BLUESNAP_FORMATS.cardTransactionXml,
+      eventType: "card_transaction.AUTH_CAPTURE",
+      eventTypeKnown: true,
+      stage: "payment",
+      providerStatus: "success",
+      paymentReference: "PPLsynth1000000041",
+      merchantReference: "PPLsynth-order-0041",
+      amountMinor: "1100",
+      currency: "USD",
+      outcome: "success",
+    });
+    const fromJson = analyzeFixture("auth-capture-success.json").events[0]!;
+    expect(e.attributes).toEqual(fromJson.attributes);
+    expect(r.errors).toEqual([]);
+  });
+
+  it("reads lists, booleans and repeated elements of a retrieved transaction", () => {
+    const tx = (refunds: string) =>
+      analyze(
+        `<card-transaction xmlns="${NS}"><card-transaction-type>AUTH_CAPTURE</card-transaction-type><transaction-id>PPLsynth42</transaction-id><amount>20.00</amount><currency>EUR</currency><processing-info><processing-status>SUCCESS</processing-status><supports-multi-partial-capture>true</supports-multi-partial-capture></processing-info><refunds><balance-amount>5.00</balance-amount>${refunds}</refunds></card-transaction>`,
+      );
+    const refund = (id: string, amount: string) =>
+      `<refund><refund-transaction-id>${id}</refund-transaction-id><amount>${amount}</amount><refund-status>SUCCESS</refund-status></refund>`;
+    const one = tx(refund("PPLsynthR42", "15.00"));
+    expect(one.events[0]!.attributes).toMatchObject({
+      supportsMultiPartialCapture: true,
+      refundsBalanceMinor: "500",
+      refundCount: 1,
+    });
+    expect(one.events[1]).toMatchObject({
+      eventType: "card_transaction.refund",
+      paymentReference: "PPLsynth42",
+      relatedReference: "PPLsynthR42",
+      amountMinor: "1500",
+      currency: "EUR",
+      outcome: "success",
+      source: { path: "card-transaction.refunds.refund" },
+    });
+    const two = tx(refund("PPLsynthR43", "10.00") + refund("PPLsynthR44", "5.00"));
+    expect(two.events.slice(1).map((e) => [e.relatedReference, e.source.path])).toEqual([
+      ["PPLsynthR43", "card-transaction.refunds.refund[0]"],
+      ["PPLsynthR44", "card-transaction.refunds.refund[1]"],
+    ]);
+  });
+
+  it("analyzes a raw HTTP response with an XML error body", () => {
+    const r = analyzeFixture("xml-decline-do-not-honor.txt");
+    expect(r.records[0]).toMatchObject({
+      status: "analyzed",
+      format: BLUESNAP_FORMATS.errorXml,
+    });
+    expect(r.events[0]).toMatchObject({
+      sourceFormat: BLUESNAP_FORMATS.errorXml,
+      eventType: "error.DO_NOT_HONOR",
+      providerStatus: "HTTP 400",
+      outcome: "failure",
+      attributes: { errorNames: ["DO_NOT_HONOR"], errorCodes: ["14002"], httpStatus: 400 },
+    });
+    expect(r.errors).toHaveLength(1);
+    expect(r.errors[0]).toMatchObject({
+      code: "DO_NOT_HONOR",
+      confidence: "strong",
+      subCodes: { bluesnap_code: "14002", http_status: "400" },
+      source: { path: "messages.message" },
+    });
+  });
+
+  it("decodes the JSON and XML forms of the same error identically", () => {
+    const pairs: [AnalysisResult, AnalysisResult][] = [
+      [analyzeFixture("decline-do-not-honor.txt"), analyzeFixture("xml-decline-do-not-honor.txt")],
+      [
+        // The JSON body of validation-errors.txt, without its HTTP status line.
+        analyze(fixture("bluesnap/validation-errors.txt").replace(/^[\s\S]*?\n\s*\n/, "")),
+        analyzeFixture("xml-validation-errors.xml"),
+      ],
+    ];
+    for (const [fromJson, fromXml] of pairs) {
+      expect(fromXml.errors.length).toBeGreaterThan(0);
+      expect(withoutFormat(fromXml.errors)).toEqual(withoutFormat(fromJson.errors));
+      expect(withoutFormat(fromXml.events)).toEqual(withoutFormat(fromJson.events));
+      expect(fromXml.findings.map((f) => f.ruleId)).toEqual(fromJson.findings.map((f) => f.ruleId));
+    }
+  });
+
+  it("decodes by error-name, not by the shared numeric code", () => {
+    const decode = (name: string) =>
+      analyze(xmlMessages(xmlMessage(`<error-name>${name}</error-name><code>14002</code>`)))
+        .errors[0]!;
+    const honor = decode("DO_NOT_HONOR");
+    const funds = decode("INSUFFICIENT_FUNDS");
+    expect(honor.code).toBe("DO_NOT_HONOR");
+    expect(funds.code).toBe("INSUFFICIENT_FUNDS");
+    expect(honor.explanation).not.toBe(funds.explanation);
+    const unknown = analyze(
+      xmlMessages(xmlMessage("<error-name>PPLSYNTH_NEW</error-name><code>14002</code>")),
+    ).errors[0]!;
+    expect(unknown.confidence).toBe("insufficient");
+    expect(unknown.explanation).toMatch(/shared by \d+ documented error names/);
+  });
+
+  it("decodes every message element with its own path and never reads the rejected value", () => {
+    const r = analyzeFixture("xml-validation-errors.xml");
+    expect(r.errors.map((e) => [e.code, e.source.path])).toEqual([
+      ["VALIDATION_GENERAL_FAILURE", "messages.message[0]"],
+      ["INVALID_MERCHANT_TRANSACTION_ID", "messages.message[1]"],
+    ]);
+    expect(r.errors[0]!.subCodes.invalid_property).toBe("cardHolderInfo.zip");
+    expect(json(r)).not.toContain("PLANTEDZIP99");
+    expect(toJsonReport(r)).not.toContain("PLANTEDZIP99");
+  });
+
+  it("reads fraud events in XML", () => {
+    const r = analyze(
+      xmlMessages(
+        xmlMessage(
+          "<error-name>FRAUD_DETECTED</error-name><code>15011</code><fraud-events><fraud-reference-id>PPLsynthFRAUD0042</fraud-reference-id><fraud-event><fraud-event-code>blacklistshippingcountrydecline</fraud-event-code><fraud-event-decision>D</fraud-event-decision><fraud-event-expression>PLANTEDEXPRESSION</fraud-event-expression></fraud-event></fraud-events>",
+        ),
+      ),
+    );
+    expect(r.errors[0]).toMatchObject({
+      code: "FRAUD_DETECTED",
+      category: "fraud_or_risk",
+      subCodes: { fraud_event_codes: "blacklistShippingCountryDecline", fraud_decisions: "D" },
+    });
+    expect(r.events[0]!.attributes.fraudReferenceId).toBe("PPLsynthFRAUD0042");
+    expect(toJsonReport(r)).not.toContain("PLANTEDEXPRESSION");
+  });
+
+  it("keeps planted values out of events and the JSON report", () => {
+    const planted = [
+      "Planted",
+      "Synthetic Holder",
+      "planted.synthetic",
+      "PL47NT",
+      "9071",
+      "457173",
+      "PPL771",
+      "PPLSYNTHNETWORK0001",
+      "PPLSYNTHSHOPPER01",
+    ];
+    const r = analyzeFixture("xml-auth-capture-success.xml");
+    expect(r.sensitiveData.detected).toBe(true);
+    const events = json(r.events);
+    const report = toJsonReport(r);
+    for (const v of planted) {
+      expect(events, v).not.toContain(v);
+      expect(report, v).not.toContain(v);
+    }
+  });
+
+  it("recognizes other BlueSnap XML roots without analyzing them", () => {
+    const one = (text: string) => {
+      const r = analyze(text);
+      expect(r.records[0]).toMatchObject({
+        status: "unsupported",
+        provider: "bluesnap",
+        format: BLUESNAP_FORMATS.otherXml,
+      });
+      expect(r.events).toEqual([]);
+      return r.warnings.find((w) => w.code === "UNSUPPORTED_RECORD")!;
+    };
+    expect(
+      one(
+        `<refund xmlns="${NS}"><refund-transaction-id>PPLsynthR45</refund-transaction-id></refund>`,
+      ).message,
+    ).toMatch(/refund response in XML/);
+    expect(
+      one(
+        `<alt-transaction xmlns="${NS}"><vaulted-shopper-id>PPLsynth46</vaulted-shopper-id></alt-transaction>`,
+      ).message,
+    ).toMatch(/alt transaction response in XML/);
+    expect(one(`<order xmlns="${NS}"><order-id>PPLsynth47</order-id></order>`).message).toMatch(
+      /Extended Payment API/,
+    );
+    expect(
+      one(
+        `<card-transaction xmlns="${NS}"><transaction-id>PPLsynth48</transaction-id></card-transaction>`,
+      ).message,
+    ).toMatch(/no card-transaction-type element/);
+    expect(one(xmlMessages(xmlMessage("<code>14002</code>"))).message).toMatch(
+      /no message element with an upper snake case error-name/,
+    );
+  });
+
+  it("is the only registered adapter that claims the XML records", () => {
+    const others = ADAPTERS.filter((a) => a.id !== "bluesnap");
+    expect(others.length).toBeGreaterThan(0);
+    for (const file of XML_FIXTURES) {
+      const p = parsed(fixture(`bluesnap/${file}`));
+      for (const a of others)
+        expect(a.detect(p.record, p.meta).confidence, `${a.id} on ${file}`).toBeLessThan(0.5);
+      const r = analyzeText(fixture(`bluesnap/${file}`), {
+        ...options,
+        adapters: ADAPTERS,
+        rules: [],
+      });
+      expect(r.ok && r.result.records[0], file).toMatchObject({
+        provider: "bluesnap",
+        status: "analyzed",
+        alternatives: [],
+      });
+    }
+  });
+
+  it("returns parse issues instead of throwing for mismatched XML records", () => {
+    expect(bluesnapAdapter.parse({ refund: {} }, BLUESNAP_FORMATS.cardTransactionXml).ok).toBe(
+      false,
+    );
+    expect(bluesnapAdapter.parse({ messages: "" }, BLUESNAP_FORMATS.errorXml).ok).toBe(false);
+    expect(bluesnapAdapter.parse({ messages: { message: "" } }, BLUESNAP_FORMATS.errorXml).ok).toBe(
+      false,
+    );
   });
 });

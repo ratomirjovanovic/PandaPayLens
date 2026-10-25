@@ -4,10 +4,14 @@
  * Supported input families:
  * - `emerchantpay.notification`             processing notification (form-encoded), incl. dispute events
  * - `emerchantpay.wpf.notification`         WPF notification (form-encoded)
+ * - `emerchantpay.payment_response.xml`     XML document with root payment_response (Processing API,
+ *                                           reconcile and Smart Routing responses), also as an HTTP body
  * - `emerchantpay.payment_response.object`  JSON object with the documented payment_response fields
  *
  * Recognized but not supported:
- * - `emerchantpay.xml`                      Genesis XML inside a JSON string (core does not parse XML)
+ * - `emerchantpay.xml`                      other Genesis XML roots (wpf_payment, notification_echo,
+ *                                           reconcile, payment_transaction, blacklist_response), and
+ *                                           Genesis XML inside a JSON string
  * - `emerchantpay.apm_external_event`       APM external event notification
  *
  * Detection is structural only. The same Genesis payloads are produced by
@@ -74,6 +78,7 @@ export const EMERCHANTPAY_FORMATS = {
   notification: "emerchantpay.notification",
   wpfNotification: "emerchantpay.wpf.notification",
   paymentResponse: "emerchantpay.payment_response.object",
+  paymentResponseXml: "emerchantpay.payment_response.xml",
   xml: "emerchantpay.xml",
   apmExternalEvent: "emerchantpay.apm_external_event",
 } as const;
@@ -149,7 +154,14 @@ type PaymentResponseValue = z.infer<typeof PaymentResponse>;
 export type EmerchantpayParsed =
   | { kind: "notification"; value: NotificationValue; repeatedKeysCollapsed: boolean }
   | { kind: "wpf_notification"; value: WpfNotificationValue; repeatedKeysCollapsed: boolean }
-  | { kind: "payment_response"; value: PaymentResponseValue; wrapped: boolean };
+  | {
+      kind: "payment_response";
+      value: PaymentResponseValue;
+      /** A JSON `{ "payment_response": {...} }` wrapper (not the XML root element). */
+      wrapped: boolean;
+      /** Read from an XML document with root payment_response. */
+      xml: boolean;
+    };
 
 function isObj(v: unknown): v is Record<string, unknown> {
   return v !== null && typeof v === "object" && !Array.isArray(v);
@@ -196,7 +208,63 @@ function str(v: unknown): string | undefined {
 // ---------------------------------------------------------------------------
 // Detection
 
-function detectXml(input: string): DetectionResult | null {
+/** Children of a payment_response or payment_transaction that identify a Genesis transaction. */
+const TRANSACTION_CHILDREN = ["transaction_type", "unique_id", "transaction_id", "status"];
+
+/**
+ * Structural check of a Genesis XML root and its child element names: each
+ * root needs documented children before it is attributed to Genesis.
+ */
+function xmlRootMatch(
+  root: string,
+  children: readonly string[],
+): { confidence: number; reasons: string[] } | null {
+  const what = get(XML_ROOTS, root);
+  if (!what) return null;
+  const has = (c: string) => children.includes(c);
+  const contains = (found: string[]) => `contains ${found.map((c) => `<${c}>`).join(", ")}`;
+  const reasons = [`XML root <${root}> (${what})`];
+  if (root === "payment_response" || root === "payment_transaction") {
+    const found = TRANSACTION_CHILDREN.filter(has);
+    if (found.length < 2) return null;
+    return { confidence: 0.8, reasons: [...reasons, contains(found)] };
+  }
+  if (root === "notification_echo" || root === "wpf_payment") {
+    const found = ["unique_id", "wpf_unique_id"].filter(has);
+    if (!found.length) return null;
+    return { confidence: 0.75, reasons: [...reasons, contains(found)] };
+  }
+  if (root === "reconcile") {
+    const found = ["unique_id", "transaction_id"].filter(has);
+    if (!found.length) return null;
+    return { confidence: 0.6, reasons: [...reasons, contains(found)] };
+  }
+  if (root === "blacklist_response") {
+    // Error responses of other Genesis APIs carry code and message under their own root.
+    if (!has("code") || !has("message")) return null;
+    return { confidence: 0.6, reasons: [...reasons, contains(["code", "message"])] };
+  }
+  return null;
+}
+
+/** Why a recognized Genesis XML document is not analyzed, by root element. */
+const XML_UNSUPPORTED: Record<string, string> = {
+  payment_response:
+    "This Genesis payment_response XML lacks the fields needed to analyze it: transaction_type and status, with unique_id or with code and technical_message.",
+  wpf_payment:
+    "This is Genesis WPF create or reconcile XML (wpf_payment). It is recognized but not analyzed, because the PandaPayLens research does not record its fields. Paste the WPF notification, or the payment_response of the payment inside it, instead.",
+  notification_echo:
+    "This is a notification_echo, the acknowledgement a merchant returns for a Genesis notification. It carries no payment result, so there is nothing to analyze.",
+  reconcile:
+    "This is a Genesis reconcile request, not a response. Paste the payment_response XML that reconcile returns instead.",
+  payment_transaction:
+    "This is a Genesis Processing API request (payment_transaction), which may contain card data. It is not analyzed; paste the payment_response XML instead.",
+  blacklist_response:
+    "This is a Genesis blacklist API response. It is recognized but not analyzed, because that API is outside the scope of the PandaPayLens research.",
+};
+
+/** Genesis XML pasted inside a JSON string: recognized, but the string is not read as XML. */
+function detectXmlString(input: string): DetectionResult | null {
   const text = input
     .trimStart()
     .replace(/^<\?xml[^>]{0,200}\?>\s*/, "")
@@ -204,29 +272,43 @@ function detectXml(input: string): DetectionResult | null {
   const m = /^<([a-z_]+)[\s>]/.exec(text);
   if (!m) return null;
   const root = m[1]!;
-  const what = get(XML_ROOTS, root);
-  if (!what) return null;
-  let confidence = 0.55;
-  const reasons = [`text starts with the Genesis XML root <${root}> (${what})`];
-  if (root === "payment_response" || root === "payment_transaction") {
-    const children = ["transaction_type", "unique_id", "transaction_id", "status"].filter((c) =>
-      text.includes(`<${c}>`),
-    );
-    if (children.length < 2) return null;
-    confidence = 0.8;
-    reasons.push(`contains ${children.map((c) => `<${c}>`).join(", ")}`);
-  } else if (root === "notification_echo" || root === "wpf_payment") {
-    if (!/<(?:wpf_)?unique_id>/.test(text)) return null;
-    confidence = 0.75;
-  }
+  const children = [...text.matchAll(/<([a-z_]+)>/g)].map((x) => x[1]!).filter((c) => c !== root);
+  const match = xmlRootMatch(root, children);
+  if (!match) return null;
   return {
     provider: "emerchantpay",
     format: EMERCHANTPAY_FORMATS.xml,
-    confidence,
+    confidence: match.confidence,
     supported: false,
-    reasons,
+    reasons: [`text starts with the Genesis ${match.reasons[0]!}`, ...match.reasons.slice(1)],
     unsupportedReason:
-      "This is Genesis XML. PandaPayLens does not parse XML. Paste the form-encoded notification, or the response as a JSON object with the payment_response fields, instead.",
+      "This is Genesis XML inside a JSON string, which is not read as XML. Paste the XML document itself, or the raw HTTP response, instead.",
+  };
+}
+
+/** A parsed XML document: `{ <root>: {...} }` with string values. */
+function detectXmlRecord(
+  input: Record<string, unknown>,
+  xml: NonNullable<RecordMeta["xml"]>,
+): DetectionResult | null {
+  // Genesis XML is documented without a namespace.
+  if (xml.namespace !== undefined) return null;
+  const root = xml.root;
+  const body = Object.hasOwn(input, root) ? input[root] : undefined;
+  if (!isObj(body)) return null;
+  if (root === "payment_response") {
+    const found = detectPaymentResponse(input, "xml");
+    if (found) return found;
+  }
+  const match = xmlRootMatch(root, Object.keys(body));
+  if (!match) return null;
+  return {
+    provider: "emerchantpay",
+    format: EMERCHANTPAY_FORMATS.xml,
+    confidence: match.confidence,
+    supported: false,
+    reasons: [`document has the Genesis ${match.reasons[0]!}`, ...match.reasons.slice(1)],
+    unsupportedReason: get(XML_UNSUPPORTED, root) ?? "This Genesis XML is not analyzed.",
   };
 }
 
@@ -343,8 +425,12 @@ function unwrapResponse(input: Record<string, unknown>): {
   return { value: input, wrapped: false };
 }
 
-function detectPaymentResponse(input: Record<string, unknown>): DetectionResult | null {
+function detectPaymentResponse(
+  input: Record<string, unknown>,
+  source: "json" | "xml",
+): DetectionResult | null {
   const { value: o, wrapped } = unwrapResponse(input);
+  if (source === "xml" && !wrapped) return null;
   const has = (k: string) => Object.hasOwn(o, k);
   const scalarField = (k: string) =>
     typeof o[k] === "string" || typeof o[k] === "number" || typeof o[k] === "boolean";
@@ -354,10 +440,13 @@ function detectPaymentResponse(input: Record<string, unknown>): DetectionResult 
   if (!identified) return null;
   let c = 0.3;
   const reasons = [
-    wrapped
-      ? "payment_response object with transaction_type and status"
-      : "has transaction_type and status with unique_id or code and technical_message, like a Genesis payment_response",
+    source === "xml"
+      ? "XML root <payment_response> with transaction_type and status, like a Genesis Processing API or reconcile response"
+      : wrapped
+        ? "payment_response object with transaction_type and status"
+        : "has transaction_type and status with unique_id or code and technical_message, like a Genesis payment_response",
   ];
+  // The root element name is the documented wire format; a JSON wrapper mirrors it.
   if (wrapped) c += 0.2;
   const markers = ["mode", "sent_to_acquirer"].filter(has);
   if (o.mode === "test" || o.mode === "live") {
@@ -372,10 +461,14 @@ function detectPaymentResponse(input: Record<string, unknown>): DetectionResult 
   if (get(TRANSACTION_STATES, typeof o.status === "string" ? o.status : undefined)) c += 0.1;
   if (has("technical_message") && has("message")) c += 0.05;
   if (code !== undefined && GATEWAY_CODE.test(code)) c += 0.05;
+  const format =
+    source === "xml"
+      ? EMERCHANTPAY_FORMATS.paymentResponseXml
+      : EMERCHANTPAY_FORMATS.paymentResponse;
   if (markers.length === 0 && !wrapped) {
     return {
       provider: "emerchantpay",
-      format: EMERCHANTPAY_FORMATS.paymentResponse,
+      format,
       confidence: Math.min(round(c), 0.45),
       supported: true,
       reasons,
@@ -385,7 +478,7 @@ function detectPaymentResponse(input: Record<string, unknown>): DetectionResult 
   }
   return {
     provider: "emerchantpay",
-    format: EMERCHANTPAY_FORMATS.paymentResponse,
+    format,
     confidence: round(c),
     supported: true,
     reasons,
@@ -400,15 +493,17 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
     supported: false,
     reasons: [],
   };
-  if (typeof input === "string") return detectXml(input) ?? none;
+  if (typeof input === "string") return detectXmlString(input) ?? none;
   if (!isObj(input)) return none;
+  // An XML document (or XML HTTP body) is only read as Genesis XML.
+  if (meta?.xml) return detectXmlRecord(input, meta.xml) ?? none;
 
   if (formTransport(meta) && isFlatStrings(input)) {
     const found = detectApmEvent(input) ?? detectWpf(input) ?? detectNotification(input);
     if (found) return found;
   }
   if (jsonTransport(meta)) {
-    const found = detectPaymentResponse(input);
+    const found = detectPaymentResponse(input, "json");
     if (found) return found;
   }
   return none;
@@ -482,14 +577,24 @@ function parse(
     };
   }
 
-  if (format === EMERCHANTPAY_FORMATS.paymentResponse) {
+  if (
+    format === EMERCHANTPAY_FORMATS.paymentResponse ||
+    format === EMERCHANTPAY_FORMATS.paymentResponseXml
+  ) {
+    const xml = format === EMERCHANTPAY_FORMATS.paymentResponseXml;
     const { value, wrapped } = unwrapResponse(input);
+    if (xml && !wrapped)
+      return { ok: false, issues: ["(root): expected an XML document with root payment_response"] };
     const r = PaymentResponse.safeParse(value);
     if (!r.success) return { ok: false, issues: issuesOf(r.error) };
+    // XML values are text; amount is documented as an integer in minor units.
     const amount = r.data.amount;
     if (amount !== undefined && amount !== "" && minorUnits(amount) === undefined)
       return { ok: false, issues: ["amount: expected an integer amount in minor units"] };
-    return { ok: true, value: { kind: "payment_response", value: r.data, wrapped } };
+    return {
+      ok: true,
+      value: { kind: "payment_response", value: r.data, wrapped: wrapped && !xml, xml },
+    };
   }
 
   return { ok: false, issues: [`Unsupported emerchantpay format "${format}".`] };
@@ -1118,6 +1223,11 @@ export const emerchantpayAdapter: ProviderAdapter<EmerchantpayParsed> = {
     {
       id: EMERCHANTPAY_FORMATS.wpfNotification,
       description: "Genesis WPF notification (form-encoded wpf_unique_id, wpf_status)",
+    },
+    {
+      id: EMERCHANTPAY_FORMATS.paymentResponseXml,
+      description:
+        "Genesis XML response with root payment_response (Processing API, reconcile, Smart Routing), pasted as XML or as the body of an HTTP response",
     },
     {
       id: EMERCHANTPAY_FORMATS.paymentResponse,

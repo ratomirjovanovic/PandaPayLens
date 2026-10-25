@@ -1,0 +1,11 @@
+HTTP/1.1 400 Bad Request
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+<messages xmlns="http://ws.plimus.com">
+  <message>
+    <error-name>DO_NOT_HONOR</error-name>
+    <code>14002</code>
+    <description>Transaction failed because of payment processing failure.: 530 - This transaction has been declined. Please check card details and try again, or contact your bank for assistance</description>
+  </message>
+</messages>

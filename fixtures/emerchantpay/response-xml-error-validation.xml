@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<payment_response>
+  <transaction_type>sale</transaction_type>
+  <status>error</status>
+  <mode>live</mode>
+  <transaction_id>PPLsynth-order-6003</transaction_id>
+  <unique_id>PPLsynth-uid-sale-6003</unique_id>
+  <response_code>57</response_code>
+  <code>340</code>
+  <technical_message>billing_address[zip_code] is invalid!</technical_message>
+  <message>billing_address[zip_code] is invalid!</message>
+  <timestamp>2026-10-19T11:55:33Z</timestamp>
+  <descriptor>PPLsynth xml descriptor</descriptor>
+  <amount>100</amount>
+  <currency>USD</currency>
+  <sent_to_acquirer>false</sent_to_acquirer>
+</payment_response>

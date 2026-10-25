@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic fixture: follows the published <response><error><error_msg> shape of the Skrill API. -->
+<response>
+  <error>
+    <error_msg>BALANCE_NOT_ENOUGH</error_msg>
+  </error>
+</response>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic fixture: Quick Checkout payout transfer response with status 0. The status_msg text for status 0 is not documented, so the element is left out. -->
+<response>
+  <transaction>
+    <amount>80</amount>
+    <currency>EUR</currency>
+    <id>PPLsynth497033</id>
+    <status>0</status>
+  </transaction>
+</response>

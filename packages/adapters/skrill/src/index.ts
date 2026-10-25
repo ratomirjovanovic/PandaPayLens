@@ -7,10 +7,19 @@
  * - `skrill.refund_status`     refund status report posted to refund_status_url
  * - `skrill.recurring_status`  recurring billing post to rec_status_url
  * - `skrill.ubp.error`         Unlinked Merchant Bank Payout JSON error response
+ * - `skrill.api.error`         XML `<response><error><error_msg>` of refund.pl, pay.pl
+ *                              and ondemand_request.pl
+ * - `skrill.api.refund`        XML refund.pl execution response (flat mb_* elements)
+ * - `skrill.api.transaction`   XML `<response><transaction>` execution response of
+ *                              pay.pl (send money, Quick Checkout payouts) and
+ *                              ondemand_request.pl (1-Tap)
+ * - `skrill.mqi.http_error`    MQI HTTP error with a plain-text body; only offered
+ *                              below the detection threshold
  *
  * Recognized but not supported: `skrill.return_url` (redirect parameters that
- * only show the customer finished the checkout) and `skrill.balance.webhook`
- * (treasury notification).
+ * only show the customer finished the checkout), `skrill.balance.webhook`
+ * (treasury notification) and `skrill.api.prepare` (the `<sid>` answer of a
+ * prepare request, which carries no outcome).
  *
  * Skrill used inside Paysafe Checkout sends Paysafe JSON, which is left to a
  * Paysafe adapter: nothing here matches it. Detection relies on field
@@ -48,15 +57,18 @@ import {
   PAYMENT_TYPES_DOCUMENTED,
   QC_INTRODUCTION_URL,
   RECURRING_STATUSES,
+  REFUND_EXECUTION_STATUSES,
   REFUND_STATUSES,
   RETRY_EXPLANATION,
   STATUS_TEXT_REASONS,
+  TRANSACTION_STATUSES,
   UBP_EXECUTION_ERRORS,
   UBP_GENERIC_CODES,
   UBP_PREPARATION_ERRORS,
   type CatalogEntry,
   type CodeFamily,
   type StatusInfo,
+  type TransactionOperation,
 } from "./catalog.js";
 import { skrillManifest, SKRILL_ADAPTER_VERSION } from "./manifest.js";
 
@@ -69,6 +81,11 @@ export const SKRILL_FORMATS = {
   ubpError: "skrill.ubp.error",
   returnUrl: "skrill.return_url",
   balanceWebhook: "skrill.balance.webhook",
+  apiError: "skrill.api.error",
+  apiRefund: "skrill.api.refund",
+  apiTransaction: "skrill.api.transaction",
+  apiPrepare: "skrill.api.prepare",
+  mqiHttpError: "skrill.mqi.http_error",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -340,6 +357,155 @@ function detectForm(input: Obj): DetectionResult | null {
   return null;
 }
 
+/**
+ * Shape of a documented error string: upper snake case. One documented
+ * example splits a code with a single space after an underscore.
+ */
+const ERROR_MSG_SHAPE = /^[A-Z][A-Z0-9_]*(?:_ [A-Z0-9_]+)?$/;
+
+const isCodeShaped = (v: string) => v.trim().length <= 80 && ERROR_MSG_SHAPE.test(v.trim());
+
+/** Children of the documented `<transaction>` element. */
+const TRANSACTION_FIELDS = ["amount", "currency", "id", "status"] as const;
+
+/** Elements of the documented refund.pl execution response. */
+const REFUND_RESPONSE_FIELDS = ["mb_amount", "mb_currency", "mb_transaction_id", "status"] as const;
+
+/**
+ * The `<response>` element of an XML API answer, when the record is one.
+ * Skrill declares no namespace, so a namespaced root is not claimed.
+ */
+function xmlResponse(input: Obj, meta?: RecordMeta): Obj | undefined {
+  if (meta?.xml?.root !== "response" || meta.xml.namespace !== undefined) return undefined;
+  const keys = Object.keys(input);
+  if (keys.length !== 1 || keys[0] !== "response") return undefined;
+  return isObj(input.response) ? input.response : undefined;
+}
+
+function detectXml(r: Obj): DetectionResult | null {
+  const base = { provider: "skrill" };
+  const keys = Object.keys(r);
+
+  // <response><error><error_msg>CODE</error_msg></error></response>
+  const error = r.error;
+  if (isObj(error) && typeof error.error_msg === "string") {
+    const msg = error.error_msg;
+    const reasons = ["XML <response> with <error><error_msg>, like a Skrill API error"];
+    let c = 0.45;
+    if (keys.length === 1) c += 0.05;
+    if (Object.keys(error).length === 1) c += 0.05;
+    if (!isCodeShaped(msg)) {
+      return {
+        ...base,
+        format: SKRILL_FORMATS.apiError,
+        confidence: 0.35,
+        supported: true,
+        reasons: [...reasons, "error_msg is not shaped like a Skrill error code"],
+        unsupportedReason:
+          "The error_msg value is not shaped like a Skrill error code, so this response cannot be attributed to Skrill reliably. Select the provider manually if it is one.",
+      };
+    }
+    if (decodeApiError(msg).family) {
+      c += 0.2;
+      reasons.push("error_msg is a documented Skrill API error string");
+    } else {
+      reasons.push("error_msg is not in the documented Skrill error strings");
+    }
+    return {
+      ...base,
+      format: SKRILL_FORMATS.apiError,
+      confidence: round(c),
+      supported: true,
+      reasons,
+    };
+  }
+
+  // <response><transaction><amount/><currency/><id/><status/><status_msg/></transaction></response>
+  const t = r.transaction;
+  if (isObj(t) && TRANSACTION_FIELDS.every((k) => typeof t[k] === "string")) {
+    let c = 0.55;
+    const reasons = ["XML <response><transaction> with amount, currency, id and status"];
+    const status = str(t.status)!.trim();
+    if (lookup(TRANSACTION_STATUSES, status)) {
+      c += 0.1;
+      reasons.push(`status "${status}" is a documented transfer status`);
+    }
+    if (typeof t.status_msg === "string") c += 0.05;
+    if (upperCurrency(t.currency)) c += 0.05;
+    return {
+      ...base,
+      format: SKRILL_FORMATS.apiTransaction,
+      confidence: round(c),
+      supported: true,
+      reasons,
+    };
+  }
+
+  // refund.pl execution: flat mb_* elements and status.
+  if (REFUND_RESPONSE_FIELDS.every((k) => typeof r[k] === "string")) {
+    let c = 0.55;
+    const reasons = ["XML <response> with mb_amount, mb_currency, mb_transaction_id and status"];
+    const status = str(r.status)!.trim();
+    if (lookup(REFUND_EXECUTION_STATUSES, status)) {
+      c += 0.1;
+      reasons.push(`status "${status}" is a documented refund execution status`);
+    }
+    if (has(r, "transaction_id")) c += 0.05;
+    if (upperCurrency(r.mb_currency)) c += 0.05;
+    return {
+      ...base,
+      format: SKRILL_FORMATS.apiRefund,
+      confidence: round(c),
+      supported: true,
+      reasons,
+    };
+  }
+
+  // Prepare answer: a session id, optionally with a Verification of Payee result.
+  if (
+    HEX32.test(str(r.sid) ?? "") &&
+    keys.every((k) => k === "sid" || k === "verificationOfPayee")
+  ) {
+    return {
+      ...base,
+      format: SKRILL_FORMATS.apiPrepare,
+      confidence: 0.6,
+      supported: false,
+      reasons: ["XML <response> with a 32-hex <sid>, like a Skrill API prepare response"],
+      unsupportedReason:
+        "This looks like the answer to a Skrill API prepare request (a session id). It does not say whether the refund, transfer or 1-Tap payment was executed. Paste the execution response or the status report instead.",
+    };
+  }
+  return null;
+}
+
+/** The MQI repost action documents "403 Transaction not found: TRN_ID". */
+const MQI_NOT_FOUND = /^(?:403\s+)?Transaction not found\b/i;
+
+/** MQI errors are documented only as HTTP status codes 401 to 405. */
+function detectMqiHttpError(input: Obj, meta?: RecordMeta): DetectionResult | null {
+  const http = meta?.http;
+  if (meta?.format !== "http" || http?.kind !== "response" || Object.keys(input).length !== 0)
+    return null;
+  const status = http.status;
+  if (status === undefined || !lookup(MQI_HTTP_ERRORS, String(status))) return null;
+  const text = http.bodyText?.trim();
+  if (!text) return null;
+  const notFound = status === 403 && MQI_NOT_FOUND.test(text);
+  return {
+    provider: "skrill",
+    format: SKRILL_FORMATS.mqiHttpError,
+    confidence: notFound ? 0.45 : 0.3,
+    supported: true,
+    reasons: [
+      `HTTP ${status} with a plain-text body; the Skrill MQI documents this status`,
+      ...(notFound ? ["the body reads like the documented MQI 'Transaction not found' error"] : []),
+    ],
+    unsupportedReason:
+      "A plain-text HTTP error cannot be attributed to the Skrill Merchant Query Interface by its structure. Select Skrill manually if the response came from query.pl.",
+  };
+}
+
 function detect(input: unknown, meta?: RecordMeta): DetectionResult {
   const none: DetectionResult = {
     provider: "skrill",
@@ -349,6 +515,12 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
     reasons: [],
   };
   if (!isObj(input)) return none;
+  if (meta?.xml) {
+    const r = xmlResponse(input, meta);
+    return (r && detectXml(r)) || none;
+  }
+  const mqi = detectMqiHttpError(input, meta);
+  if (mqi) return mqi;
   if (meta?.format !== "form") {
     const j = detectJson(input);
     if (j) return j;
@@ -422,22 +594,101 @@ const UbpNested = z.looseObject({
 
 type UbpError = { code: string; message?: string; description?: string; nested: boolean };
 
+const ApiError = z.looseObject({
+  error: z.looseObject({ error_msg: z.string().max(200) }),
+});
+
+const ApiRefund = z.looseObject({
+  mb_transaction_id: z.string().min(1).max(64),
+  status: z.string().min(1).max(8),
+  mb_amount: z.string().min(1).max(32),
+  mb_currency: z.string().min(1).max(8),
+  transaction_id: opt(128),
+});
+
+const ApiTransaction = z.looseObject({
+  transaction: z.looseObject({
+    amount: z.string().min(1).max(32),
+    currency: z.string().min(1).max(8),
+    id: z.string().min(1).max(64),
+    status: z.string().min(1).max(8),
+    status_msg: opt(64),
+  }),
+});
+
+type MqiHttpError = { status: number; transactionNotFound: boolean };
+
 export type SkrillParsed =
   | { kind: "status_report"; value: z.infer<typeof StatusReport> }
   | { kind: "refund_status"; value: z.infer<typeof RefundStatus> }
   | { kind: "recurring_status"; value: z.infer<typeof RecurringStatus> }
-  | { kind: "ubp_error"; value: UbpError };
+  | { kind: "ubp_error"; value: UbpError }
+  | { kind: "api_error"; value: { errorMsg: string } }
+  | { kind: "api_refund"; value: z.infer<typeof ApiRefund> }
+  | { kind: "api_transaction"; value: z.infer<typeof ApiTransaction>["transaction"] }
+  | { kind: "mqi_http_error"; value: MqiHttpError };
 
-function issuesOf(error: z.ZodError): string[] {
-  return error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`);
+const XML_FORMATS: ReadonlySet<string> = new Set([
+  SKRILL_FORMATS.apiError,
+  SKRILL_FORMATS.apiRefund,
+  SKRILL_FORMATS.apiTransaction,
+]);
+
+function parseXmlResponse(
+  input: Obj,
+  format: string,
+): { ok: true; value: SkrillParsed } | { ok: false; issues: string[] } {
+  if (Object.keys(input).length !== 1 || !isObj(input.response))
+    return { ok: false, issues: ["(root): expected an XML <response> element"] };
+  const r = input.response;
+  if (format === SKRILL_FORMATS.apiError) {
+    const p = ApiError.safeParse(r);
+    if (!p.success) return { ok: false, issues: issuesOf(p.error, "response") };
+    return { ok: true, value: { kind: "api_error", value: { errorMsg: p.data.error.error_msg } } };
+  }
+  if (format === SKRILL_FORMATS.apiRefund) {
+    const p = ApiRefund.safeParse(r);
+    if (!p.success) return { ok: false, issues: issuesOf(p.error, "response") };
+    return { ok: true, value: { kind: "api_refund", value: p.data } };
+  }
+  const p = ApiTransaction.safeParse(r);
+  if (!p.success) return { ok: false, issues: issuesOf(p.error, "response") };
+  return { ok: true, value: { kind: "api_transaction", value: p.data.transaction } };
+}
+
+function issuesOf(error: z.ZodError, prefix?: string): string[] {
+  return error.issues.map((i) => {
+    const path = [...(prefix ? [prefix] : []), ...i.path.map(String)].join(".");
+    return `${path || "(root)"}: ${i.message}`;
+  });
 }
 
 function parse(
   input: unknown,
   format: string,
+  meta?: RecordMeta,
 ): { ok: true; value: SkrillParsed } | { ok: false; issues: string[] } {
   if (!isObj(input))
     return { ok: false, issues: ["(root): expected an object or a set of form fields"] };
+  if (XML_FORMATS.has(format)) return parseXmlResponse(input, format);
+  if (format === SKRILL_FORMATS.mqiHttpError) {
+    const status = meta?.http?.kind === "response" ? meta.http.status : undefined;
+    if (status === undefined)
+      return { ok: false, issues: ["(root): expected an HTTP response with a status code"] };
+    if (Object.keys(input).length !== 0)
+      return { ok: false, issues: ["(root): expected a plain-text body, not structured data"] };
+    const text = meta?.http?.bodyText?.trim() ?? "";
+    return {
+      ok: true,
+      value: {
+        kind: "mqi_http_error",
+        value: {
+          status,
+          transactionNotFound: status === 403 && MQI_NOT_FOUND.test(text),
+        },
+      },
+    };
+  }
   if (format === SKRILL_FORMATS.statusReport) {
     const r = StatusReport.safeParse(input);
     if (!r.success) return { ok: false, issues: issuesOf(r.error) };
@@ -838,8 +1089,144 @@ function normalizeUbpError(e: UbpError, ctx: NormalizeContext): NormalizedEventD
   });
 }
 
+/**
+ * The error_msg value as a code. A value that is not shaped like a Skrill
+ * error string is never copied, because it could be free text.
+ */
+function apiErrorDecoding(raw: string): CodeDecoding {
+  if (isCodeShaped(raw)) return decodeApiError(raw);
+  return {
+    code: "unrecognized",
+    family: null,
+    entry: UNKNOWN_ENTRY,
+    confidence: "insufficient",
+    missing: ["The error_msg value is not shaped like a Skrill error code and is not shown."],
+    subCodes: {},
+    documentation: [...FAMILY_DOCS.api],
+  };
+}
+
+const httpStatusOf = (ctx: NormalizeContext) =>
+  ctx.meta?.http?.kind === "response" ? ctx.meta.http.status : undefined;
+
+function normalizeApiError(errorMsg: string, ctx: NormalizeContext): NormalizedEventDraft {
+  const d = apiErrorDecoding(errorMsg);
+  const code = safeText(d.code, 80) ?? "";
+  return clean({
+    ...base(ctx),
+    eventType: "api.error",
+    eventTypeKnown: true,
+    stage: "error",
+    providerStatus: `error_msg=${code}`,
+    outcome: "failure",
+    attributes: attrs({
+      code,
+      codeFamily: d.family ?? undefined,
+      codePattern: d.subCodes.pattern,
+      parameter: d.subCodes.parameter,
+      // The response does not name the endpoint (refund.pl, pay.pl or
+      // ondemand_request.pl) or the step (prepare or execute).
+      operation: "unknown",
+      httpStatus: httpStatusOf(ctx),
+    }),
+  });
+}
+
+function normalizeApiRefund(
+  r: z.infer<typeof ApiRefund>,
+  ctx: NormalizeContext,
+): NormalizedEventDraft {
+  const status = statusOf(r.status);
+  const info = lookup(REFUND_EXECUTION_STATUSES, status);
+  const mbId = safeId(r.mb_transaction_id, 64);
+  return clean({
+    ...base(ctx),
+    eventType: `refund_response.${info?.name ?? "unknown"}`,
+    eventTypeKnown: Boolean(info),
+    stage: "refund",
+    providerStatus: `status=${safeStatus(r.status)}`,
+    // The refund's own Skrill id; a refund status report for a pending refund
+    // carries the same id. The response has no field for the original payment.
+    paymentReference: mbId,
+    merchantReference: safeId(r.transaction_id, 128),
+    ...money(r.mb_amount, r.mb_currency),
+    outcome: info?.outcome ?? "unknown",
+    attributes: attrs({
+      status: safeStatus(r.status),
+      statusMeaning: info?.meaning,
+      operation: "refund",
+      mbTransactionId: mbId,
+      parentReferenceInPayload: false,
+      httpStatus: httpStatusOf(ctx),
+    }),
+  });
+}
+
+/** One operation when the status narrows it down; otherwise the stage stays open. */
+function transactionStage(ops: readonly TransactionOperation[]) {
+  if (ops.length === 1) return ops[0] === "one_tap_payment" ? "payment" : "payout";
+  if (ops.every((o) => o !== "one_tap_payment")) return "payout";
+  return "other";
+}
+
+function normalizeApiTransaction(
+  t: z.infer<typeof ApiTransaction>["transaction"],
+  ctx: NormalizeContext,
+): NormalizedEventDraft {
+  const status = statusOf(t.status);
+  const info = lookup(TRANSACTION_STATUSES, status);
+  const ops = info?.operations ?? [];
+  const id = safeId(t.id, 64);
+  const statusMsg = /^[A-Za-z _-]{1,32}$/.test(t.status_msg ?? "") ? t.status_msg : undefined;
+  return clean({
+    ...base(ctx),
+    eventType: `api_transaction.${info?.name ?? "unknown"}`,
+    eventTypeKnown: Boolean(info),
+    stage: info ? transactionStage(ops) : "other",
+    providerStatus: `status=${safeStatus(t.status)}${statusMsg ? `; status_msg=${statusMsg}` : ""}`,
+    paymentReference: id,
+    ...money(t.amount, t.currency),
+    outcome: info?.outcome ?? "unknown",
+    attributes: attrs({
+      status: safeStatus(t.status),
+      statusMeaning: info?.meaning,
+      statusMsg,
+      operation: ops.length === 1 ? ops[0] : "not_determinable",
+      possibleOperations: ops.length > 1 ? [...ops] : undefined,
+      // <id> is the Skrill transaction id, the same kind of id that status
+      // reports carry as mb_transaction_id.
+      mbTransactionId: id,
+      httpStatus: httpStatusOf(ctx),
+    }),
+  });
+}
+
+function normalizeMqiHttpError(e: MqiHttpError, ctx: NormalizeContext): NormalizedEventDraft {
+  return clean({
+    ...base(ctx),
+    eventType: "mqi.http_error",
+    eventTypeKnown: true,
+    stage: "error",
+    providerStatus: `http=${e.status}`,
+    outcome: "failure",
+    attributes: attrs({
+      httpStatus: e.status,
+      codeFamily: "mqi_http",
+      transactionNotFound: e.transactionNotFound ? true : undefined,
+    }),
+  });
+}
+
 function normalize(parsed: SkrillParsed, ctx: NormalizeContext): NormalizedEventDraft[] {
   switch (parsed.kind) {
+    case "api_error":
+      return [normalizeApiError(parsed.value.errorMsg, ctx)];
+    case "api_refund":
+      return [normalizeApiRefund(parsed.value, ctx)];
+    case "api_transaction":
+      return [normalizeApiTransaction(parsed.value, ctx)];
+    case "mqi_http_error":
+      return [normalizeMqiHttpError(parsed.value, ctx)];
     case "status_report":
       return [normalizeStatusReport(parsed.value, ctx)];
     case "refund_status":
@@ -949,6 +1336,34 @@ function decodeErrors(parsed: SkrillParsed, ctx: NormalizeContext): DecodedError
       }),
     ];
   }
+  if (parsed.kind === "api_error") {
+    const d = apiErrorDecoding(parsed.value.errorMsg);
+    const http = httpStatusOf(ctx);
+    const draft = draftFrom(d, ctx, {
+      subCodes: { field: "error_msg", ...(http ? { httpStatus: String(http) } : {}) },
+    });
+    draft.missingInformation.push(
+      "The response does not say which request (refund, send money, payout or 1-Tap; prepare or execute step) was rejected.",
+    );
+    return [draft];
+  }
+  if (parsed.kind === "mqi_http_error") {
+    const e = parsed.value;
+    const d = decodeMqiHttpError(e.status);
+    const draft = draftFrom(d, ctx, {
+      subCodes: {
+        field: "http_status",
+        ...(e.transactionNotFound ? { reason: "transaction_not_found" } : {}),
+      },
+      ...(e.transactionNotFound ? { message: "Transaction not found" } : {}),
+    });
+    // Attribution rests on the status code, which any HTTP API can return.
+    if (draft.confidence === "strong") draft.confidence = "possible";
+    draft.missingInformation.push(
+      "Skrill documents MQI errors only by HTTP status code. A plain-text error is attributed to the MQI only because Skrill was selected.",
+    );
+    return [draft];
+  }
   return [];
 }
 
@@ -974,6 +1389,26 @@ export const skrillAdapter: ProviderAdapter<SkrillParsed> = {
     {
       id: SKRILL_FORMATS.ubpError,
       description: "Unlinked Merchant Bank Payout JSON error response",
+    },
+    {
+      id: SKRILL_FORMATS.apiError,
+      description:
+        "XML <response><error><error_msg> of refund.pl, pay.pl and ondemand_request.pl, decoded with the API error strings",
+    },
+    {
+      id: SKRILL_FORMATS.apiRefund,
+      description:
+        "XML refund.pl execution response (mb_amount, mb_currency, mb_transaction_id, status, transaction_id)",
+    },
+    {
+      id: SKRILL_FORMATS.apiTransaction,
+      description:
+        "XML <response><transaction> execution response of pay.pl (send money, Quick Checkout payouts) and ondemand_request.pl (1-Tap)",
+    },
+    {
+      id: SKRILL_FORMATS.mqiHttpError,
+      description:
+        "MQI HTTP error (401 to 405) with a plain-text body, when Skrill is selected manually",
     },
   ],
   detect,

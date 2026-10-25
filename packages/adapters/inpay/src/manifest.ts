@@ -5,6 +5,7 @@ import {
   COLLECTION_REASON_CODES_URL,
   COLLECTION_WEBHOOKS_URL,
   INSTANT_BANK_TRANSFER_STATUS_URL,
+  ISO_INTRO_URL,
   ISO_STATUS_URL,
   JWT_ERRORS_URL,
   ORDER_LIFECYCLE_URL,
@@ -38,7 +39,7 @@ export const inpayManifest: ProviderManifest = {
     "Inpay is an authorized payment institution in the EU, licensed and regulated by the Danish FSA (No. 22008), a SWIFT member, and screens against OFAC, UN, EU and HMT sanctions lists. Payout availability is set per contracted product (currency, country and local instrument: LOCAL, SEPA, INSTANT SEPA, INTERNATIONAL); pay-in availability per payment method, debtor country and debtor currency.",
   documentationAccess: "partial",
   fixtureProvenance:
-    "Synthetic fixtures with PPLsynth identifiers. Payout and order shapes follow the payout status and webhook examples and the order webhook examples transcribed in the research; error bodies follow the documented error shapes. Values, references and reason combinations are invented, and none is an official Inpay example.",
+    "Synthetic fixtures with PPLsynth identifiers. Payout and order shapes follow the payout status and webhook examples and the order webhook examples transcribed in the research; error bodies follow the documented error shapes; ISO 20022 status reports follow the pain.002 / pacs.002 structure, group statuses and rejected example described in the research. The transaction level parts of the accepted report are not shown in Inpay's examples and were added only to test that undocumented content stays unknown and personal data is not copied. Values, references and reason combinations are invented, and none is an official Inpay example.",
   dependencies: [
     "Unnamed open-banking provider for Instant Bank Transfer pay-ins (it reports debtor_bank_status_code)",
     "EntirePay trading name for the Wallet transfer pay-in method",
@@ -67,8 +68,8 @@ export const inpayManifest: ProviderManifest = {
     {
       id: "inpay.iso20022",
       description:
-        "ISO 20022 payout channel (pain.002.001.11 / pacs.002.001.12 status reports, XML): not analyzed",
-      status: "unsupported",
+        "ISO 20022 payout channel status reports (XML Document with CstmrPmtStsRpt or FIToFIPmtStsRpt, documented versions pain.002.001.11 and pacs.002.001.12): group status RCVD, PDNG, ACCP or RJCT, status reasons and OrgnlMsgId. Detected below the automatic threshold unless GrpHdr/InitgPty/Nm is Inpay",
+      status: "limited",
     },
   ],
   capabilities: {
@@ -76,9 +77,9 @@ export const inpayManifest: ProviderManifest = {
     // codes, the JWT error field is not documented, and the generic error
     // envelopes are not recognized without a provider selection.
     errorDecoding: "limited",
-    // Proposed as supported. Limited: the ISO 20022 status reports are XML
-    // and not analyzed, and most payment attempt status spellings in JSON are
-    // not documented.
+    // Proposed as supported. Limited: ISO 20022 status reports are analyzed
+    // only at group level and usually need a manual provider selection, and
+    // most payment attempt status spellings in JSON are not documented.
     paymentResponses: "limited",
     webhookParsing: "limited",
     timeline: "limited",
@@ -109,9 +110,10 @@ export const inpayManifest: ProviderManifest = {
     { topic: "x-request-id", title: "X-Request-ID header", url: X_REQUEST_ID_URL },
     {
       topic: "iso20022-status",
-      title: "ISO 20022 status codes (not analyzed)",
+      title: "ISO 20022 status codes",
       url: ISO_STATUS_URL,
     },
+    { topic: "iso20022", title: "ISO 20022 introduction", url: ISO_INTRO_URL },
   ],
   verifiedAt: "2026-10-25",
   delivery: {
@@ -134,7 +136,10 @@ export const inpayManifest: ProviderManifest = {
     "The nested refund status list is not documented (examples show created, processing and completed); other values stay unknown. The meaning of the order status returned is not described, so its outcome stays unknown.",
     "Three different error body shapes are documented. The generic { errors: [{ title, detail }] } and { error: { details } } shapes are recognized with high confidence only when they carry a documented numeric code, a JWT error code or an Inpay field name; otherwise select Inpay manually. The response field that carries JWT error codes is not documented, so the code is accepted from any documented error field.",
     "Codes outside the reason table appear in Inpay examples (beneficiary-account-not-existing, validation_schema_failed, awaiting_extended_kyc). They are decoded with possible confidence and an unknown category. The reason table's kind column (refund_cancelled / refund_returned) is docs metadata; the payout state tells a cancelled row from a returned one.",
-    "The ISO 20022 channel (pain.001 / pacs.008 in, pain.002 / pacs.002 status reports out) is XML and is not analyzed. Reconciliation, FX, Account Funding, Authentication check and Sandbox APIs are not analyzed.",
+    "ISO 20022 status reports (pain.002 CstmrPmtStsRpt, pacs.002 FIToFIPmtStsRpt) are a generic standard: the format itself does not prove the sender is Inpay. A report is detected with confidence below 0.5, so it is analyzed only when Inpay is selected manually, unless GrpHdr/InitgPty/Nm is Inpay as in Inpay's examples. That name is plain text anyone can write, so check where the report came from.",
+    "Only the four documented ISO 20022 group statuses (RCVD, PDNG, ACCP, RJCT) are decoded; ACCP means the checks passed, not that the payouts were sent. Other group statuses, and payment information and transaction statuses (PmtInfSts, TxSts), are not documented by Inpay and stay unknown. Inpay publishes no ISO reason code list: NARR and the text SyntaxError are decoded from its rejected example with possible confidence, other reason codes stay unknown.",
+    "ISO 20022 reports are linked only by OrgnlMsgId, the id of the original message; GrpHdr/MsgId is kept as the report's own id. Inpay documents no per-transaction identifiers in its reports, so OrgnlEndToEndId is not used and reports are never linked to JSON payouts by end_to_end_id. CreDtTm is placed on the timeline only with a time zone; Inpay's pain.002 example uses a non-ISO date (28/06/2021 15:24).",
+    "The ISO 20022 requests (pain.001, pacs.008), Reconciliation, FX, Account Funding, Authentication check and Sandbox APIs are not analyzed.",
     "The payout currency example in the OpenAPI file is the literal text ISO 4217 and the descriptions of debtor_account.id and scheme_name are swapped there. Amounts are converted only with a valid three-letter currency. The virtual account number (debtor_account.id), payer and beneficiary names, account numbers, bank identifiers and redirect URLs are never copied.",
     "Order reference is unique only per business unit and is not used to link events. Payouts are linked by inpay_unique_reference and end_to_end_id, which Inpay documents as the merchant's unique payout reference; orders by uuid, primary_payment, payments[].inpay_unique_reference and refund uuid.",
     "Inpay documents no chargebacks (bank transfer rails), no subscriptions and no card payments; none is shown. Never read a pay-in or payout state as a card authorization or capture.",
