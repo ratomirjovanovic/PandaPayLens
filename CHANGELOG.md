@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Analyzer
+
+- Event and arrival times are used only when they are ISO 8601 with a time zone; anything else is removed from the event and reported once (`TIMESTAMP_IGNORED`), so ordering never depends on the time zone of the computer running the analysis.
+- Times that a provider documents without a time zone and that are read as UTC (CCBill, Trust Payments) are marked "UTC assumed" in the timeline and the Markdown report, and a `TIME_ZONE_ASSUMED` warning appears when they are analyzed together with another provider's times.
+
 ### Providers
 
 - Checkout.com no longer appears as a 0.4 alternative for records whose only Checkout.com trait is a `pay_` id, such as Razorpay payment entities. A bare `pay_` id now scores 0.3 (documented length) or 0.15 (other lengths), below a record with documented fields.

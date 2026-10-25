@@ -236,6 +236,7 @@ describe("ccbill webhook event type", () => {
       paymentReference: SUB,
       subscriptionReference: SUB,
       eventTimestamp: "2026-10-24T03:22:44.000Z",
+      eventTimeZoneAssumed: true,
     });
     expect(r.events[0]!.attributes).toMatchObject({
       timestampTimeZone: "not documented; read as UTC",
