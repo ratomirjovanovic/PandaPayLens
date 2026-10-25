@@ -22,7 +22,7 @@ import {
 import { ADAPTERS, ROADMAP } from "@pandapaylens/providers";
 import { defaultRules, RULE_CATALOG_VERSION } from "@pandapaylens/rules";
 
-export const CLI_VERSION = "0.10.0";
+export const CLI_VERSION = "0.11.0";
 
 export const EXIT = { OK: 0, FINDINGS: 1, INVALID_INPUT: 2, UNSUPPORTED: 3, INTERNAL: 4 } as const;
 
