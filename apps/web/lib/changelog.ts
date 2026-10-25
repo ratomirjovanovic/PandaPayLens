@@ -8,6 +8,17 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.6.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "New adapters with limited support: Worldpay (Access Worldpay JSON), Cybersource, Authorize.net and Nuvei.",
+      "30 of 42 roadmap providers can now be analyzed.",
+      "Events linked by a transaction or root id are no longer reported as missing a reference.",
+      "Redaction covers more card, track and credential field names.",
+    ],
+  },
+  {
     version: "0.5.0",
     date: "2026-10-25",
     status: "released",
