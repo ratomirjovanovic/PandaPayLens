@@ -209,3 +209,33 @@ test("high-risk context: grouped examples and the operation filter", async ({ pa
   await expect(panel.getByRole("button", { name: /rebill/ }).first()).toBeVisible();
   await expect(panel.getByRole("button", { name: /^.*initial/ })).toHaveCount(0);
 });
+
+test("groups the provider list by support level", async ({ page }) => {
+  await page.goto("/analyze");
+  const select = page.getByRole("combobox", { name: "Provider" });
+  await expect(
+    select.locator('optgroup[label="Full support"] option', { hasText: "Stripe" }),
+  ).toHaveCount(1);
+  await expect(
+    select.locator('optgroup[label="Limited support"] option', { hasText: "DECTA" }),
+  ).toHaveCount(1);
+  await expect(select.locator("option", { hasText: "(limited)" })).toHaveCount(0);
+});
+
+test("offers to analyze a record as the provider it resembles", async ({ page }) => {
+  await page.goto("/analyze");
+  await paste(page, fixture("decta/refund-text-error.txt"));
+  const button = page.getByRole("button", { name: "Analyze as DECTA" });
+  await expect(button).toBeVisible();
+  await button.click();
+  await expect(page.getByRole("combobox", { name: "Provider" })).toHaveValue("decta");
+  await expect(page.getByRole("list", { name: "Detected input" })).toContainText(
+    "decta.text_error",
+  );
+  await expect(page.getByRole("button", { name: "Analyze as DECTA" })).toHaveCount(0);
+  // Official documentation links are shown for every provider, not only Stripe and Adyen.
+  await expect(page.getByRole("link", { name: /DECTA documentation/ })).toHaveAttribute(
+    "href",
+    /^https:\/\/gate\.decta\.com\//,
+  );
+});
