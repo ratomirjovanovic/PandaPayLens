@@ -25,7 +25,7 @@ export function Header() {
         <Link href="/" className="flex items-center gap-2 font-semibold tracking-tight">
           <PandaMark size={28} />
           <span>
-            PandaPay<span className="text-accent">Lens</span>
+            Panda<span className="text-accent">PayLens</span>
           </span>
         </Link>
         <nav aria-label="Main" className="ml-2 hidden gap-1 text-sm md:flex">
