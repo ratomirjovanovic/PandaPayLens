@@ -204,10 +204,7 @@ describe("stripe normalization", () => {
     expect(dump).not.toMatch(/secret|synthetic\.customer@example\.com|Synthetic Customer|4242/);
     expect(r.sensitiveData.detected).toBe(true);
     expect(r.sensitiveData.fieldPaths).toEqual(
-      expect.arrayContaining([
-        "[1].data.object.billing_details.email",
-        "[2].data.object.client_secret",
-      ]),
+      expect.arrayContaining(["[1].data.object.billing_details", "[2].data.object.client_secret"]),
     );
   });
 

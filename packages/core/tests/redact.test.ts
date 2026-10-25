@@ -185,3 +185,68 @@ describe("Nuvei sensitive fields", () => {
     for (let i = 0; i < keys.length; i++) expect(out).not.toContain(`PPLnuvei${i}`);
   });
 });
+
+describe("wave 3 and wave 4 redaction gaps", () => {
+  const keys = [
+    "cardNum",
+    "cardCvv",
+    "ccnum",
+    "first6Digits",
+    "maskedPan",
+    "paymentHandleToken",
+    "integrationKey",
+    "accessKey",
+    "authKey",
+    "salt",
+    "hash",
+    "verif-hash",
+    "clabe",
+    "pixKey",
+    "vpa",
+    "bvn",
+    "document",
+    "birthDate",
+    "fullName",
+    "msisdn",
+    "consumerIp",
+    "deviceFingerprint",
+    "redirectUrl",
+    "invoiceURL",
+    "udf1",
+    "udf10",
+  ];
+
+  it("blocks documented sensitive keys and redacts planted values", () => {
+    for (const k of keys) expect(isBlockedKey(k), k).toBe(true);
+    const planted = Object.fromEntries(keys.map((k, i) => [k, `PPLgap${i}`]));
+    const out = JSON.stringify(redactDeep({ data: planted }));
+    for (let i = 0; i < keys.length; i++) expect(out).not.toContain(`PPLgap${i}`);
+  });
+
+  it("keeps generic, non-sensitive names visible", () => {
+    for (const k of ["status", "account_type", "branch_name", "city", "notes", "receipt", "event"])
+      expect(isBlockedKey(k), k).toBe(false);
+  });
+
+  it("redacts provider keys, JWT-style secrets and UPI ids in free text", () => {
+    const text =
+      "keys FLWSECK_TEST-PPLsynthSecret01-X and FLWPUBK-PPLsynthPublic01-X token flw-t1nf-PPLsynthCard01 " +
+      "secret eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJQUExzeW50aCJ9.PPLsynthSignature01 " +
+      "paid from pplsynth.payer@okpplbank via UPI";
+    const out = redactText(text).text;
+    for (const v of ["FLWSECK", "FLWPUBK", "flw-t1nf", "eyJhbGci", "pplsynth.payer@okpplbank"])
+      expect(out, v).not.toContain(v);
+  });
+
+  it("keeps emails redacted as emails and leaves ordinary text alone", () => {
+    expect(redactText("contact pplsynth@example.com").text).not.toContain("pplsynth@example.com");
+    expect(redactText("Insufficient funds at step 2").text).toBe("Insufficient funds at step 2");
+  });
+
+  it("stays linear on long inputs", () => {
+    const started = Date.now();
+    redactText(`${"a.".repeat(40000)}@`);
+    redactText(`eyJ${"a".repeat(80000)}`);
+    expect(Date.now() - started).toBeLessThan(1500);
+  });
+});
