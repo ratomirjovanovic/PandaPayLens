@@ -13,7 +13,7 @@ export const RELEASES: Release[] = [
     status: "released",
     changes: [
       "Worldpay WPG and cnpAPI XML responses and notifications are analyzed.",
-      "Event times are used only with a time zone; times read as UTC because the provider documents no zone are marked \"UTC assumed\".",
+      'Event times are used only with a time zone; times read as UTC because the provider documents no zone are marked "UTC assumed".',
       "Findings show documentation links for every provider, and the unsafe retry finding links more providers' idempotency pages.",
       "Checkout.com no longer appears as a strong alternative for Razorpay payment ids.",
     ],
