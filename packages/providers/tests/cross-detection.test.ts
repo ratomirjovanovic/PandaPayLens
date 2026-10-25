@@ -46,3 +46,33 @@ describe("cross-provider detection", () => {
     expect(() => toJsonReport(r.result)).not.toThrow();
   });
 });
+
+describe("shared fixtures with the full registry", () => {
+  it("mixed Stripe/Adyen input is not claimed by any other adapter", () => {
+    const r = analyzeText(
+      readFileSync(join(root, "mixed/unrelated-transactions.json"), "utf8"),
+      opts,
+    );
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.result.records.map((x) => x.provider)).toEqual([
+        "stripe",
+        "stripe",
+        "stripe",
+        "adyen",
+      ]);
+      expect(r.result.warnings.map((w) => w.code)).not.toContain("AMBIGUOUS_PROVIDER");
+    }
+  });
+
+  it.each(["unknown-provider-error.json", "xss.json", "prototype-pollution.json"])(
+    "malformed/%s is not misattributed",
+    (file) => {
+      const r = analyzeText(readFileSync(join(root, "malformed", file), "utf8"), opts);
+      expect(r.ok).toBe(true);
+      if (r.ok) {
+        for (const rec of r.result.records) expect([null, "stripe"]).toContain(rec.provider);
+      }
+    },
+  );
+});

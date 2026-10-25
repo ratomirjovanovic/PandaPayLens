@@ -1,0 +1,118 @@
+[
+  {
+    "merchant_id": "PPLsynthMERCHANT1",
+    "type": "payment.created",
+    "event_id": "PPLsynth-0000-4000-8000-000000000001",
+    "created_at": "2026-10-21T09:00:00.300Z",
+    "data": {
+      "type": "payment",
+      "id": "PPLsynthPAYLIFE0000000001",
+      "object": {
+        "payment": {
+          "id": "PPLsynthPAYLIFE0000000001",
+          "created_at": "2026-10-21T09:00:00.100Z",
+          "updated_at": "2026-10-21T09:00:00.200Z",
+          "amount_money": { "amount": 1500, "currency": "USD" },
+          "status": "APPROVED",
+          "delay_duration": "PT168H",
+          "source_type": "CARD",
+          "card_details": {
+            "status": "AUTHORIZED",
+            "card": {
+              "card_brand": "VISA",
+              "last_4": "6603",
+              "exp_month": 9,
+              "exp_year": 2032,
+              "fingerprint": "sq-1-PPLsynthLifecycleFingerprint00000000000000000000000000",
+              "card_type": "CREDIT",
+              "bin": "401288"
+            },
+            "entry_method": "KEYED",
+            "card_payment_timeline": { "authorized_at": "2026-10-21T09:00:00.200Z" }
+          },
+          "location_id": "PPLsynthLOC0001",
+          "order_id": "PPLsynthORDER00000000000003",
+          "delay_action": "CANCEL",
+          "delayed_until": "2026-10-28T09:00:00.100Z",
+          "version_token": "PPLsynthVERSIONTOKEN000000000000002"
+        }
+      }
+    }
+  },
+  {
+    "merchant_id": "PPLsynthMERCHANT1",
+    "type": "payment.updated",
+    "event_id": "PPLsynth-0000-4000-8000-000000000002",
+    "created_at": "2026-10-21T09:05:00.300Z",
+    "data": {
+      "type": "payment",
+      "id": "PPLsynthPAYLIFE0000000001",
+      "object": {
+        "payment": {
+          "id": "PPLsynthPAYLIFE0000000001",
+          "created_at": "2026-10-21T09:00:00.100Z",
+          "updated_at": "2026-10-21T09:05:00.200Z",
+          "amount_money": { "amount": 1500, "currency": "USD" },
+          "status": "COMPLETED",
+          "source_type": "CARD",
+          "card_details": {
+            "status": "CAPTURED",
+            "card_payment_timeline": {
+              "authorized_at": "2026-10-21T09:00:00.200Z",
+              "captured_at": "2026-10-21T09:05:00.200Z"
+            }
+          },
+          "location_id": "PPLsynthLOC0001",
+          "order_id": "PPLsynthORDER00000000000003",
+          "version_token": "PPLsynthVERSIONTOKEN000000000000003"
+        }
+      }
+    }
+  },
+  {
+    "merchant_id": "PPLsynthMERCHANT1",
+    "type": "refund.created",
+    "event_id": "PPLsynth-0000-4000-8000-000000000003",
+    "created_at": "2026-10-22T08:00:00.300Z",
+    "data": {
+      "type": "refund",
+      "id": "PPLsynthPAYLIFE0000000001_PPLsynthREFUND01",
+      "object": {
+        "refund": {
+          "id": "PPLsynthPAYLIFE0000000001_PPLsynthREFUND01",
+          "created_at": "2026-10-22T08:00:00.100Z",
+          "updated_at": "2026-10-22T08:00:00.200Z",
+          "amount_money": { "amount": 500, "currency": "USD" },
+          "status": "PENDING",
+          "location_id": "PPLsynthLOC0001",
+          "order_id": "PPLsynthORDER00000000000003",
+          "payment_id": "PPLsynthPAYLIFE0000000001",
+          "version": 7
+        }
+      }
+    }
+  },
+  {
+    "merchant_id": "PPLsynthMERCHANT1",
+    "type": "refund.updated",
+    "event_id": "PPLsynth-0000-4000-8000-000000000004",
+    "created_at": "2026-10-22T09:00:00.300Z",
+    "data": {
+      "type": "refund",
+      "id": "PPLsynthPAYLIFE0000000001_PPLsynthREFUND01",
+      "object": {
+        "refund": {
+          "id": "PPLsynthPAYLIFE0000000001_PPLsynthREFUND01",
+          "created_at": "2026-10-22T08:00:00.100Z",
+          "updated_at": "2026-10-22T09:00:00.200Z",
+          "amount_money": { "amount": 500, "currency": "USD" },
+          "status": "COMPLETED",
+          "location_id": "PPLsynthLOC0001",
+          "order_id": "PPLsynthORDER00000000000003",
+          "payment_id": "PPLsynthPAYLIFE0000000001",
+          "version": 10
+        }
+      }
+    }
+  }
+]

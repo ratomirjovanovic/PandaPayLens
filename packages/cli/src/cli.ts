@@ -207,7 +207,7 @@ function providers(io: Io, format: string, onlyAvailable: boolean): number {
     return EXIT.OK;
   }
   for (const p of data) {
-    if (!("version" in p)) {
+    if (p.status === "planned" || !("capabilities" in p) || !p.capabilities || !p.formats) {
       io.stdout(`${p.name} (${p.id}) - planned, not analyzed yet\n`);
       continue;
     }
@@ -249,7 +249,7 @@ function examples(io: Io, id: string | undefined, format: string): number {
     io.stderr(`Unknown example "${id}". Run "pandapaylens examples" for the list.\n`);
     return EXIT.INVALID_INPUT;
   }
-  io.stdout(readFileSync(join(samplesDir(), `${id}.json`), "utf8"));
+  io.stdout(readFileSync(join(samplesDir(), `${id}.txt`), "utf8"));
   return EXIT.OK;
 }
 

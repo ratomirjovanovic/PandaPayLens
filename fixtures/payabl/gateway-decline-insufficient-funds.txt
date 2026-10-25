@@ -1,0 +1,1 @@
+transactionid=PPLsynth104830001&transid=PPLsynth104830001&status=51&errormessage=Insufficient+funds&errmsg=Insufficient+funds&amount=25.00&price=25.00&currency=EUR&orderid=PPLsynth-order-0003&payment_method=1&card_type=VISA

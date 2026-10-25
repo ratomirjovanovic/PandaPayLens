@@ -1,0 +1,17 @@
+{
+  "resource": "payment",
+  "id": "tr_PPLsynthFail0001",
+  "mode": "live",
+  "amount": { "currency": "EUR", "value": "10.00" },
+  "description": "Order PPLsynth-ORDER-79",
+  "method": "creditcard",
+  "sequenceType": "oneoff",
+  "redirectUrl": "https://webshop.example.org/order/PPLsynth-ORDER-79/",
+  "webhookUrl": "https://webshop.example.org/payments/webhook/",
+  "metadata": "{\"order_id\":79}",
+  "profileId": "pfl_PPLsynth01",
+  "status": "failed",
+  "isCancelable": null,
+  "createdAt": "2026-10-20T09:13:37+00:00",
+  "failedAt": "2026-10-20T09:15:02+00:00"
+}

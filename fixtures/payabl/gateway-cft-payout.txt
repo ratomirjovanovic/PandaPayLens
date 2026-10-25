@@ -1,0 +1,1 @@
+transactionid=PPLsynth104837530&transid=PPLsynth104837530&status=0&errormessage=&errmsg=&amount=5.00&price=5.00&currency=EUR&orderid=PPLsynth-order-0007

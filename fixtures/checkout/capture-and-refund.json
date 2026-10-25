@@ -1,0 +1,57 @@
+[
+  {
+    "id": "evt_PPLsynthFLOW00000000000003",
+    "type": "payment_refunded",
+    "version": "1.0.29",
+    "created_on": "2026-10-21T08:00:01.0000000Z",
+    "data": {
+      "id": "pay_PPLsynthFLOW00000000000001",
+      "action_id": "act_PPLsynthFLOW00000000000003",
+      "reference": "ORD-PPLSYNTH-0003",
+      "amount": 1000,
+      "currency": "GBP",
+      "processed_on": "2026-10-21T08:00:00.0000000Z",
+      "response_code": "10000",
+      "response_summary": "Approved",
+      "balances": {
+        "total_authorized": 2500,
+        "total_captured": 2500,
+        "total_refunded": 1000,
+        "available_to_refund": 1500
+      }
+    }
+  },
+  {
+    "id": "evt_PPLsynthFLOW00000000000001",
+    "type": "payment_approved",
+    "version": "1.0.29",
+    "created_on": "2026-10-20T08:00:01.0000000Z",
+    "data": {
+      "id": "pay_PPLsynthFLOW00000000000001",
+      "action_id": "act_PPLsynthFLOW00000000000001",
+      "reference": "ORD-PPLSYNTH-0003",
+      "amount": 2500,
+      "currency": "GBP",
+      "processed_on": "2026-10-20T08:00:00.0000000Z",
+      "response_code": "10000",
+      "response_summary": "Approved"
+    }
+  },
+  {
+    "id": "evt_PPLsynthFLOW00000000000002",
+    "source": "gwc_notifier1",
+    "type": "payment_captured",
+    "timestamp": "2026-10-20T09:00:01.000+00:00",
+    "version": "1.0.29",
+    "data": {
+      "id": "pay_PPLsynthFLOW00000000000001",
+      "action_id": "act_PPLsynthFLOW00000000000002",
+      "reference": "ORD-PPLSYNTH-0003",
+      "amount": 2500,
+      "currency": "GBP",
+      "processed_on": "2026-10-20T09:00:00.0000000Z",
+      "response_code": "10000",
+      "response_summary": "Approved"
+    }
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "pay_PPLsynthUNRA00000000000001",
+    "action_id": "act_PPLsynthUNRA00000000000001",
+    "amount": 1200,
+    "currency": "EUR",
+    "approved": false,
+    "status": "Declined",
+    "response_code": "20005",
+    "response_summary": "Declined - Do not honour",
+    "processed_on": "2026-10-22T10:00:00Z",
+    "reference": "ORD-PPLSYNTH-SHARED"
+  },
+  {
+    "id": "pay_PPLsynthUNRB00000000000001",
+    "action_id": "act_PPLsynthUNRB00000000000001",
+    "amount": 1200,
+    "currency": "EUR",
+    "approved": true,
+    "status": "Authorized",
+    "response_code": "10000",
+    "response_summary": "Approved",
+    "processed_on": "2026-10-22T10:05:00Z",
+    "reference": "ORD-PPLSYNTH-SHARED"
+  }
+]

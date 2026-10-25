@@ -1,0 +1,23 @@
+{
+  "resource": "payment",
+  "id": "tr_PPLsynthEmbed001",
+  "mode": "test",
+  "status": "paid",
+  "amount": { "currency": "JPY", "value": "1000" },
+  "amountRefunded": { "currency": "JPY", "value": "300" },
+  "method": "creditcard",
+  "createdAt": "2026-10-22T10:00:00+00:00",
+  "paidAt": "2026-10-22T10:01:00+00:00",
+  "_embedded": {
+    "refunds": [
+      {
+        "resource": "refund",
+        "id": "re_PPLsynthEmbed001",
+        "status": "refunded",
+        "amount": { "currency": "JPY", "value": "300" },
+        "createdAt": "2026-10-22T12:00:00+00:00"
+      },
+      { "unexpected": "shape" }
+    ]
+  }
+}

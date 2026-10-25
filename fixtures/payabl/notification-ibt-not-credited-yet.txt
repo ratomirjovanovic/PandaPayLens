@@ -1,0 +1,1 @@
+payment_method=123&bank_number=&orderid=PPLsynth-order-0013&payment_state=not_credited_yet&type=capture&errorcode=0&timestamp=1761379800&errormessage=&security=5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d&transactionid=PPLsynth300000004

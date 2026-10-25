@@ -82,6 +82,32 @@ const BLOCKED_KEYS = new Set([
   "cardbin",
   "cardsummary",
   "issuerbin",
+  // payabl. form fields (signature, card, bank and session data)
+  "security",
+  "cardholder",
+  "ccnfour",
+  "ccn",
+  "cvccode",
+  "accountholder",
+  "banknumber",
+  "mpiavv",
+  "ephemeralkey",
+  "sessionid",
+  "starturl",
+  "redirectsecret",
+  "url3ds",
+  // PayPal webhook verification and account identifiers
+  "transmissionsig",
+  "certurl",
+  "webhookid",
+  "payerid",
+  "lastdigits",
+  "expiry",
+  "accountid",
+  "merchantid",
+  // merchant identifiers (Adyen and others)
+  "merchantaccountcode",
+  "merchantaccount",
 ]);
 
 const PATTERNS: { name: string; re: RegExp }[] = [

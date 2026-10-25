@@ -1,0 +1,54 @@
+{
+  "resource": "payment",
+  "id": "tr_PPLsynthPaid0001",
+  "mode": "test",
+  "status": "paid",
+  "isCancelable": null,
+  "amount": { "currency": "EUR", "value": "10.00" },
+  "amountRefunded": { "currency": "EUR", "value": "0.00" },
+  "amountRemaining": { "currency": "EUR", "value": "10.00" },
+  "description": "Order PPLsynth-ORDER-77 for Jan PPLsynth Jansen",
+  "method": "creditcard",
+  "sequenceType": "oneoff",
+  "metadata": "{\"order_id\":\"PPLsynth-ORDER-77\",\"customer_email\":\"jan.pplsynth@example.org\"}",
+  "redirectUrl": "https://webshop.example.org/order/PPLsynth-ORDER-77/",
+  "webhookUrl": "https://webshop.example.org/payments/webhook/",
+  "profileId": "pfl_PPLsynth01",
+  "customerId": "cst_PPLsynthCust01",
+  "createdAt": "2026-10-20T09:13:37+00:00",
+  "paidAt": "2026-10-20T09:15:02+00:00",
+  "details": {
+    "cardToken": "tkn_PPLsynthToken01",
+    "cardNumber": "6787",
+    "cardHolder": "J. PPLsynthHolder",
+    "cardFingerprint": "PPLsynthFingerprint01",
+    "cardAudience": "consumer",
+    "cardLabel": "Mastercard",
+    "cardCountryCode": "NL",
+    "cardSecurity": "3dsecure",
+    "feeRegion": "other"
+  },
+  "billingAddress": {
+    "givenName": "Jan",
+    "familyName": "PPLsynthFamily",
+    "email": "jan.pplsynth@example.org",
+    "streetAndNumber": "PPLsynthstraat 1",
+    "postalCode": "1234 AB",
+    "city": "Amsterdam",
+    "country": "NL"
+  },
+  "_links": {
+    "self": {
+      "href": "https://api.mollie.com/v2/payments/tr_PPLsynthPaid0001",
+      "type": "application/hal+json"
+    },
+    "dashboard": {
+      "href": "https://www.mollie.com/dashboard/org_PPLsynth01/payments/tr_PPLsynthPaid0001",
+      "type": "text/html"
+    },
+    "documentation": {
+      "href": "https://docs.mollie.com/reference/get-payment",
+      "type": "text/html"
+    }
+  }
+}

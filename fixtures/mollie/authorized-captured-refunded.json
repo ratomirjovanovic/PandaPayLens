@@ -1,0 +1,46 @@
+[
+  {
+    "resource": "payment",
+    "id": "tr_PPLsynthAuth0001",
+    "mode": "test",
+    "status": "paid",
+    "amount": { "currency": "EUR", "value": "100.00" },
+    "amountCaptured": { "currency": "EUR", "value": "100.00" },
+    "amountRefunded": { "currency": "EUR", "value": "25.00" },
+    "amountChargedBack": { "currency": "EUR", "value": "0.00" },
+    "method": "klarna",
+    "captureMode": "manual",
+    "sequenceType": "oneoff",
+    "createdAt": "2026-10-23T10:00:00+00:00",
+    "authorizedAt": "2026-10-23T10:02:00+00:00",
+    "paidAt": "2026-10-23T15:00:00+00:00",
+    "expiresAt": "2026-11-20T10:02:00+00:00"
+  },
+  {
+    "resource": "capture",
+    "id": "cpt_PPLsynthCap0001",
+    "mode": "test",
+    "status": "succeeded",
+    "amount": { "currency": "EUR", "value": "100.00" },
+    "paymentId": "tr_PPLsynthAuth0001",
+    "createdAt": "2026-10-23T14:59:00+00:00"
+  },
+  {
+    "resource": "refund",
+    "id": "re_PPLsynthRef00002",
+    "mode": "test",
+    "status": "pending",
+    "amount": { "currency": "EUR", "value": "25.00" },
+    "description": "Partial refund PPLsynth",
+    "paymentId": "tr_PPLsynthAuth0001",
+    "createdAt": "2026-10-24T09:00:00+00:00"
+  },
+  {
+    "resource": "chargeback",
+    "id": "chb_PPLsynthChb0001",
+    "amount": { "currency": "EUR", "value": "75.00" },
+    "paymentId": "tr_PPLsynthAuth0001",
+    "createdAt": "2026-10-25T08:00:00+00:00",
+    "reversedAt": null
+  }
+]

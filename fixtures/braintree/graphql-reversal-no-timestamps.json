@@ -1,0 +1,24 @@
+{
+  "data": {
+    "reverseTransaction": {
+      "reversal": {
+        "id": "PPLsynthGQLtxnREV0001",
+        "status": "VOIDED",
+        "statusHistory": [
+          {
+            "status": "VOIDED",
+            "terminal": "true"
+          },
+          {
+            "status": "SUBMITTED_FOR_SETTLEMENT",
+            "terminal": "false"
+          },
+          {
+            "status": "AUTHORIZED",
+            "terminal": "false"
+          }
+        ]
+      }
+    }
+  }
+}

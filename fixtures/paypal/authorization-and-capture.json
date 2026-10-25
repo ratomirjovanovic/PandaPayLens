@@ -1,0 +1,59 @@
+[
+  {
+    "id": "PPLSYNTHORDER0009",
+    "intent": "AUTHORIZE",
+    "status": "COMPLETED",
+    "purchase_units": [
+      {
+        "reference_id": "default",
+        "amount": { "currency_code": "JPY", "value": "5000" },
+        "payments": {
+          "authorizations": [
+            {
+              "id": "PPLSYNTHAUTH00009",
+              "status": "CREATED",
+              "amount": { "currency_code": "JPY", "value": "5000" },
+              "expiration_time": "2026-11-23T18:00:00Z",
+              "links": [
+                {
+                  "href": "https://api-m.sandbox.paypal.com/v2/payments/authorizations/PPLSYNTHAUTH00009",
+                  "rel": "self",
+                  "method": "GET"
+                },
+                {
+                  "href": "https://api-m.sandbox.paypal.com/v2/checkout/orders/PPLSYNTHORDER0009",
+                  "rel": "up",
+                  "method": "GET"
+                }
+              ],
+              "create_time": "2026-10-25T18:00:00Z",
+              "update_time": "2026-10-25T18:00:00Z"
+            }
+          ]
+        }
+      }
+    ],
+    "create_time": "2026-10-25T17:58:00Z",
+    "update_time": "2026-10-25T18:00:00Z"
+  },
+  {
+    "id": "PPLSYNTHCAPT00009",
+    "status": "COMPLETED",
+    "amount": { "currency_code": "JPY", "value": "5000" },
+    "final_capture": true,
+    "links": [
+      {
+        "href": "https://api-m.sandbox.paypal.com/v2/payments/captures/PPLSYNTHCAPT00009",
+        "rel": "self",
+        "method": "GET"
+      },
+      {
+        "href": "https://api-m.sandbox.paypal.com/v2/payments/authorizations/PPLSYNTHAUTH00009",
+        "rel": "up",
+        "method": "GET"
+      }
+    ],
+    "create_time": "2026-10-26T09:00:00Z",
+    "update_time": "2026-10-26T09:00:00Z"
+  }
+]

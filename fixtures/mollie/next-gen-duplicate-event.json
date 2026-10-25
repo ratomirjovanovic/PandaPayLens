@@ -1,0 +1,70 @@
+[
+  {
+    "receivedAt": "2026-10-21T08:00:03.000Z",
+    "payload": {
+      "resource": "event",
+      "id": "event_PPLsynthEvt0001",
+      "type": "payment.paid",
+      "entityId": "tr_PPLsynthEvt0001",
+      "createdAt": "2026-10-21T08:00:01.0Z",
+      "_embedded": {
+        "entity": {
+          "resource": "payment",
+          "id": "tr_PPLsynthEvt0001",
+          "mode": "test",
+          "status": "paid",
+          "amount": { "currency": "EUR", "value": "15.50" },
+          "description": "Order PPLsynth-ORDER-80",
+          "method": "ideal",
+          "createdAt": "2026-10-21T07:58:00.0Z",
+          "paidAt": "2026-10-21T08:00:00.0Z",
+          "details": {
+            "consumerName": "PPLsynth Consumer",
+            "consumerAccount": "NL00PPLS0000000001",
+            "consumerBic": "PPLSNL2A"
+          }
+        }
+      },
+      "_links": {
+        "self": {
+          "href": "https://api.mollie.com/v2/events/event_PPLsynthEvt0001",
+          "type": "application/hal+json"
+        }
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-10-21T08:01:10.000Z",
+    "payload": {
+      "resource": "event",
+      "id": "event_PPLsynthEvt0001",
+      "type": "payment.paid",
+      "entityId": "tr_PPLsynthEvt0001",
+      "createdAt": "2026-10-21T08:00:01.0Z",
+      "_embedded": {
+        "entity": {
+          "resource": "payment",
+          "id": "tr_PPLsynthEvt0001",
+          "mode": "test",
+          "status": "paid",
+          "amount": { "currency": "EUR", "value": "15.50" },
+          "description": "Order PPLsynth-ORDER-80",
+          "method": "ideal",
+          "createdAt": "2026-10-21T07:58:00.0Z",
+          "paidAt": "2026-10-21T08:00:00.0Z",
+          "details": {
+            "consumerName": "PPLsynth Consumer",
+            "consumerAccount": "NL00PPLS0000000001",
+            "consumerBic": "PPLSNL2A"
+          }
+        }
+      },
+      "_links": {
+        "self": {
+          "href": "https://api.mollie.com/v2/events/event_PPLsynthEvt0001",
+          "type": "application/hal+json"
+        }
+      }
+    }
+  }
+]

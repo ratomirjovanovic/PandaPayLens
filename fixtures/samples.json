@@ -96,5 +96,117 @@
     "provider": "stripe",
     "file": "stripe/state-inconsistency.json",
     "description": "A PaymentIntent reported as processing after it had succeeded."
+  },
+  {
+    "id": "payabl-authorized",
+    "title": "payabl.: authorized order notification",
+    "provider": "payabl",
+    "file": "payabl/notification-order-authorized.txt",
+    "description": "A form-encoded order notification for a successful authorization."
+  },
+  {
+    "id": "payabl-insufficient-funds",
+    "title": "payabl.: declined, insufficient funds",
+    "provider": "payabl",
+    "file": "payabl/gateway-decline-insufficient-funds.txt",
+    "description": "A form-encoded Gateway API response for an issuer decline."
+  },
+  {
+    "id": "payabl-timeout",
+    "title": "payabl.: timeout with unknown outcome",
+    "provider": "payabl",
+    "file": "payabl/gateway-timeout.txt",
+    "description": "A Gateway API response where the result of the request is not known."
+  },
+  {
+    "id": "checkout-declined",
+    "title": "Checkout.com: declined payment",
+    "provider": "checkout",
+    "file": "checkout/declined-payment.json",
+    "description": "A 201 response with approved=false, decoded from response_code."
+  },
+  {
+    "id": "checkout-capture-refund",
+    "title": "Checkout.com: capture and refund webhooks",
+    "provider": "checkout",
+    "file": "checkout/capture-and-refund.json",
+    "description": "Gateway webhooks linked through the pay_ payment id and act_ action ids."
+  },
+  {
+    "id": "paypal-completed-declined",
+    "title": "PayPal: order completed, capture declined",
+    "provider": "paypal",
+    "file": "paypal/order-completed-capture-declined.json",
+    "description": "An order with status COMPLETED whose capture was declined. The order status is not the payment outcome."
+  },
+  {
+    "id": "paypal-instrument-declined",
+    "title": "PayPal: INSTRUMENT_DECLINED",
+    "provider": "paypal",
+    "file": "paypal/error-instrument-declined.json",
+    "description": "An Orders v2 error with a details[].issue value."
+  },
+  {
+    "id": "paypal-webhook-lifecycle",
+    "title": "PayPal: order and capture webhooks",
+    "provider": "paypal",
+    "file": "paypal/webhook-lifecycle.json",
+    "description": "Webhook events for one order, correlated through related_ids."
+  },
+  {
+    "id": "mollie-failed",
+    "title": "Mollie: failed payment",
+    "provider": "mollie",
+    "file": "mollie/failed-payment-insufficient-funds.json",
+    "description": "A payment snapshot with status failed and a failureReason."
+  },
+  {
+    "id": "mollie-lifecycle",
+    "title": "Mollie: authorized, captured and refunded",
+    "provider": "mollie",
+    "file": "mollie/authorized-captured-refunded.json",
+    "description": "Payment, capture and refund objects linked by their ids."
+  },
+  {
+    "id": "mollie-classic-webhook",
+    "title": "Mollie: classic webhook (id only)",
+    "provider": "mollie",
+    "file": "mollie/classic-webhook.txt",
+    "description": "A classic webhook carries only the payment id. PandaPayLens explains what else is needed."
+  },
+  {
+    "id": "square-declined",
+    "title": "Square: declined card payment",
+    "provider": "square",
+    "file": "square/declined-with-failed-payment.json",
+    "description": "An error response that includes the FAILED payment."
+  },
+  {
+    "id": "square-webhook-lifecycle",
+    "title": "Square: payment and refund webhooks",
+    "provider": "square",
+    "file": "square/webhook-lifecycle.json",
+    "description": "payment.* and refund.* events grouped by payment id."
+  },
+  {
+    "id": "braintree-processor-declined",
+    "title": "Braintree: processor declined",
+    "provider": "braintree",
+    "file": "braintree/graphql-processor-declined.json",
+    "description": "A GraphQL response where the decline is a transaction in data, not an error."
+  },
+  {
+    "id": "braintree-sale-refund-dispute",
+    "title": "Braintree: sale, refund and dispute",
+    "provider": "braintree",
+    "file": "braintree/sale-refund-dispute.json",
+    "description": "Transaction snapshots linked by transaction and refund ids, built from status history."
+  },
+  {
+    "id": "braintree-signed-webhook",
+    "title": "Braintree: signed webhook (not decodable)",
+    "provider": "braintree",
+    "file": "braintree/webhook-signed.txt",
+    "description": "A raw bt_signature/bt_payload webhook. PandaPayLens explains what to paste instead."
   }
 ]

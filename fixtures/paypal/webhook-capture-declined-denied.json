@@ -1,0 +1,39 @@
+[
+  {
+    "id": "WH-PPLSYNTH0000005-EVT0000000000051",
+    "create_time": "2026-10-25T14:00:01Z",
+    "resource_type": "capture",
+    "resource_version": "2.0",
+    "event_type": "PAYMENT.CAPTURE.DECLINED",
+    "resource": {
+      "id": "PPLSYNTHCAPT00051",
+      "status": "DECLINED",
+      "amount": { "value": "75.00", "currency_code": "EUR" },
+      "processor_response": { "avs_code": "G", "cvv_code": "P", "response_code": "5120" },
+      "supplementary_data": { "related_ids": { "order_id": "PPLSYNTHORDER0051" } },
+      "create_time": "2026-10-25T14:00:00Z",
+      "update_time": "2026-10-25T14:00:00Z"
+    }
+  },
+  {
+    "id": "WH-PPLSYNTH0000005-EVT0000000000052",
+    "create_time": "2026-10-25T14:05:01Z",
+    "resource_type": "capture",
+    "resource_version": "2.0",
+    "event_type": "PAYMENT.CAPTURE.DENIED",
+    "resource": {
+      "id": "PPLSYNTHCAPT00052",
+      "status": "DECLINED",
+      "amount": { "value": "20.00", "currency_code": "EUR" },
+      "links": [
+        {
+          "rel": "up",
+          "method": "GET",
+          "href": "https://api.sandbox.paypal.com/v2/checkout/orders/PPLSYNTHORDER0052"
+        }
+      ],
+      "create_time": "2026-10-25T14:05:00Z",
+      "update_time": "2026-10-25T14:05:00Z"
+    }
+  }
+]

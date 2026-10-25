@@ -1,0 +1,14 @@
+{
+  "data": null,
+  "errors": [
+    {
+      "message": "Authentication credentials are invalid.",
+      "extensions": {
+        "errorClass": "AUTHENTICATION"
+      }
+    }
+  ],
+  "extensions": {
+    "requestId": "PPLsynth-request-0003"
+  }
+}

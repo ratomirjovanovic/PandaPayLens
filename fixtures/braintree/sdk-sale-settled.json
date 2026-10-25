@@ -1,0 +1,41 @@
+{
+  "id": "PPLsynthSALE1",
+  "graphql_id": "PPLsynthGQLtxnSALE1",
+  "type": "sale",
+  "status": "settled",
+  "amount": "49.99",
+  "currency_iso_code": "EUR",
+  "order_id": "PPL-ORDER-BT-0002",
+  "merchant_account_id": "PPLsynthMerchantEUR",
+  "created_at": "2026-10-24T10:00:00Z",
+  "updated_at": "2026-10-25T02:00:00Z",
+  "processor_response_code": "1000",
+  "processor_response_text": "Approved",
+  "processor_response_type": "approved",
+  "status_history": [
+    {
+      "amount": "49.99",
+      "status": "authorized",
+      "timestamp": "2026-10-24T10:00:00Z",
+      "transaction_source": "Api"
+    },
+    {
+      "amount": "49.99",
+      "status": "submitted_for_settlement",
+      "timestamp": "2026-10-24T10:00:05Z",
+      "transaction_source": "Api"
+    },
+    {
+      "amount": "49.99",
+      "status": "settling",
+      "timestamp": "2026-10-25T01:00:00Z",
+      "transaction_source": "Api"
+    },
+    {
+      "amount": "49.99",
+      "status": "settled",
+      "timestamp": "2026-10-25T02:00:00Z",
+      "transaction_source": "Api"
+    }
+  ]
+}

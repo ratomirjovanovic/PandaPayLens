@@ -1,0 +1,50 @@
+{
+  "id": "PPLSYNTHORDER0002",
+  "intent": "CAPTURE",
+  "status": "COMPLETED",
+  "payment_source": {
+    "card": {
+      "name": "Synthetic Cardholder",
+      "last_digits": "0004",
+      "expiry": "2030-01",
+      "brand": "VISA"
+    }
+  },
+  "purchase_units": [
+    {
+      "reference_id": "default",
+      "amount": { "currency_code": "USD", "value": "120.00" },
+      "payments": {
+        "captures": [
+          {
+            "id": "PPLSYNTHCAPT00002",
+            "status": "DECLINED",
+            "amount": { "currency_code": "USD", "value": "120.00" },
+            "final_capture": true,
+            "processor_response": {
+              "avs_code": "G",
+              "cvv_code": "P",
+              "response_code": "5400"
+            },
+            "links": [
+              {
+                "href": "https://api-m.sandbox.paypal.com/v2/payments/captures/PPLSYNTHCAPT00002",
+                "rel": "self",
+                "method": "GET"
+              },
+              {
+                "href": "https://api-m.sandbox.paypal.com/v2/checkout/orders/PPLSYNTHORDER0002",
+                "rel": "up",
+                "method": "GET"
+              }
+            ],
+            "create_time": "2026-10-25T10:00:03Z",
+            "update_time": "2026-10-25T10:00:03Z"
+          }
+        ]
+      }
+    }
+  ],
+  "create_time": "2026-10-25T10:00:00Z",
+  "update_time": "2026-10-25T10:00:03Z"
+}

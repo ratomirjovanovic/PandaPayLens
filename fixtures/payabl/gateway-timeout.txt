@@ -1,0 +1,1 @@
+transactionid=PPLsynth104830004&transid=PPLsynth104830004&status=-13000&errormessage=Timeout+while+sending+request&errmsg=Timeout+while+sending+request&amount=10.00&price=10.00&currency=EUR&orderid=PPLsynth-order-0006

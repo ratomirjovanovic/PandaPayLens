@@ -3,10 +3,25 @@
  * or error catalogs.
  */
 import type { ProviderManifest } from "@pandapaylens/core";
-import { adyenManifest } from "@pandapaylens/adyen/manifest";
 import { stripeManifest } from "@pandapaylens/stripe/manifest";
+import { adyenManifest } from "@pandapaylens/adyen/manifest";
+import { payablManifest } from "@pandapaylens/payabl/manifest";
+import { braintreeManifest } from "@pandapaylens/braintree/manifest";
+import { checkoutManifest } from "@pandapaylens/checkout/manifest";
+import { paypalManifest } from "@pandapaylens/paypal/manifest";
+import { mollieManifest } from "@pandapaylens/mollie/manifest";
+import { squareManifest } from "@pandapaylens/square/manifest";
 
-export const MANIFESTS: readonly ProviderManifest[] = [stripeManifest, adyenManifest];
+export const MANIFESTS: readonly ProviderManifest[] = [
+  stripeManifest,
+  adyenManifest,
+  payablManifest,
+  checkoutManifest,
+  braintreeManifest,
+  paypalManifest,
+  mollieManifest,
+  squareManifest,
+];
 
 export type RoadmapEntry = { id: string; displayName: string; wave: 0 | 1 | 2 | 3; note?: string };
 

@@ -1,0 +1,7 @@
+POST /webhooks/checkout HTTP/1.1
+Host: merchant.pplsynth.example
+Content-Type: application/json
+Authorization: PPLSYNTH-WEBHOOK-AUTH-KEY-0001
+Cko-Signature: 5d41402abc4b2a76b9719d911017c592PPLSYNTHSIGNATURE00000000000001
+
+{"id":"evt_PPLsynthSENS00000000000001","type":"payment_declined","version":"1.0.29","created_on":"2026-10-20T14:00:01.0000000Z","data":{"id":"pay_PPLsynthSENS00000000000001","action_id":"act_PPLsynthSENS00000000000001","reference":"ORD-PPLSYNTH-0006","amount":990,"currency":"EUR","processed_on":"2026-10-20T14:00:00.0000000Z","auth_code":"PPL555","response_code":"20005","response_summary":"Declined - Do Not Honour","payment_ip":"198.51.100.77","customer":{"id":"cus_PPLsynthSENS00000000000001","email":"planted.secret.person@example.com","name":"Planted Synthetic Name"},"source":{"type":"card","billing_address":{"address_line1":"77 Planted Synthetic Road","city":"Plantedville","zip":"PL4NT"},"phone":{"number":"555 777 7777"},"last4":"7777","bin":"411111","fingerprint":"PLANTEDSYNTHFINGERPRINT000001","expiry_month":12,"expiry_year":2031},"metadata":{"note":"PlantedMetadataValue"},"3ds":{"cryptogram":"PLANTEDSYNTHCRYPTOGRAM0001","xid":"PLANTEDSYNTHXID0001"},"processing":{"acquirer_transaction_id":"PLANTEDACQ0001","retrieval_reference_number":"PLANTEDRRN01"},"scheme_id":"PLANTEDSCHEMEID01"}}

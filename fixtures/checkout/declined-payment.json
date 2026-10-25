@@ -1,0 +1,47 @@
+[
+  {
+    "id": "pay_PPLsynthDECL00000000000001",
+    "action_id": "act_PPLsynthDECL00000000000001",
+    "amount": 4000,
+    "currency": "EUR",
+    "approved": false,
+    "status": "Declined",
+    "response_code": "20051",
+    "response_summary": "Insufficient funds",
+    "processed_on": "2026-10-20T09:31:17Z",
+    "reference": "ORD-PPLSYNTH-0002",
+    "processing": {
+      "scheme": "visa",
+      "partner_response_code": "51"
+    },
+    "source": { "type": "card", "last4": "0002", "bin": "400000" },
+    "_links": {
+      "self": {
+        "href": "https://pplsynth.api.sandbox.checkout.com/payments/pay_PPLsynthDECL00000000000001"
+      }
+    }
+  },
+  {
+    "id": "evt_PPLsynthDECL00000000000001",
+    "type": "payment_declined",
+    "version": "1.0.29",
+    "created_on": "2026-10-20T09:31:19.3352174Z",
+    "data": {
+      "id": "pay_PPLsynthDECL00000000000001",
+      "action_id": "act_PPLsynthDECL00000000000001",
+      "reference": "ORD-PPLSYNTH-0002",
+      "amount": 4000,
+      "currency": "EUR",
+      "processed_on": "2026-10-20T09:31:17.4752751Z",
+      "response_code": "20051",
+      "response_summary": "Insufficient Funds",
+      "processing": { "scheme": "visa", "partner_response_code": "51" },
+      "retry": {
+        "attempts_made": 1,
+        "max_attempts": 10,
+        "next_attempt_on": "2026-10-26T15:56:27.2965834Z"
+      },
+      "trigger": "manual"
+    }
+  }
+]

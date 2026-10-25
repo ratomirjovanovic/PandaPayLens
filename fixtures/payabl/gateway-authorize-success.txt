@@ -1,0 +1,1 @@
+transactionid=PPLsynth104822737&transid=PPLsynth104822737&status=0&errormessage=&errmsg=&amount=1.23&price=1.23&currency=EUR&orderid=PPLsynth-order-0001&bin=401288&payment_method=1&ccn_four=7319&card_type=VISA&cardholder=PPLsynth+Planted+Holder&user_id=PPLsynth584371

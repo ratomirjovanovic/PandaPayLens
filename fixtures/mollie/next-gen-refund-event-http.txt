@@ -1,0 +1,6 @@
+POST /webhooks/mollie HTTP/1.1
+Host: webshop.example.org
+Content-Type: application/json
+X-Mollie-Signature: sha256=PPLsynthSignatureValue0001
+
+{"resource":"event","id":"event_PPLsynthRef00001","type":"refund.refunded","entityId":"re_PPLsynthRef00001","createdAt":"2026-10-22T12:00:00.0Z","_embedded":{"entity":{"resource":"refund","id":"re_PPLsynthRef00001","paymentId":"tr_PPLsynthPaid0001","status":"refunded","amount":{"currency":"EUR","value":"5.00"},"description":"Refund for PPLsynth-ORDER-77","createdAt":"2026-10-22T11:00:00.0Z"}}}

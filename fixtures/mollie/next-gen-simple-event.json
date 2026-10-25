@@ -1,0 +1,13 @@
+{
+  "resource": "event",
+  "id": "event_PPLsynthSimple01",
+  "type": "payment.paid",
+  "entityId": "tr_PPLsynthSimple01",
+  "createdAt": "2026-10-21T09:00:00.0Z",
+  "_links": {
+    "self": {
+      "href": "https://api.mollie.com/v2/events/event_PPLsynthSimple01",
+      "type": "application/hal+json"
+    }
+  }
+}

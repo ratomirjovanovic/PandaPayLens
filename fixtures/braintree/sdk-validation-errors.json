@@ -1,0 +1,26 @@
+{
+  "success": false,
+  "message": "Amount is required.\nAmount must be greater than zero.",
+  "errors": {
+    "transaction": {
+      "errors": [
+        {
+          "attribute": "amount",
+          "code": "81502",
+          "message": "Amount is required."
+        },
+        {
+          "attribute": "amount",
+          "code": "81531",
+          "message": "Amount must be greater than zero."
+        }
+      ]
+    }
+  },
+  "params": {
+    "transaction": {
+      "type": "sale",
+      "amount": ""
+    }
+  }
+}

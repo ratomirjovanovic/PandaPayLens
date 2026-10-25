@@ -1,0 +1,14 @@
+{
+  "errors": [
+    {
+      "code": "INSUFFICIENT_FUNDS",
+      "detail": "Gift card does not have sufficient balance for requested amount.",
+      "category": "PAYMENT_METHOD_ERROR"
+    },
+    {
+      "code": "GIFT_CARD_AVAILABLE_AMOUNT",
+      "detail": "1250",
+      "category": "PAYMENT_METHOD_ERROR"
+    }
+  ]
+}

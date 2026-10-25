@@ -1,0 +1,1 @@
+transactionid=PPLsynth213592105&transid=PPLsynth213592105&status=2000&errormessage=pending&errmsg=pending&amount=1.23&price=1.23&currency=USD&orderid=PPLsynth-order-0002&payment_method=1&ccn_four=7319&card_type=VISA&expiry_month=12&expiry_year=2030&url_3ds=https%3A%2F%2Fsandbox.example.invalid%2F3dss%2Ftest%2Fv1%2FPPLsynthSESSIONPATH%2Fredirect&user_id=PPLsynth46929

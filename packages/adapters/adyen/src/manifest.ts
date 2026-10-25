@@ -70,7 +70,8 @@ export const adyenManifest: ProviderManifest = {
     duplicateKey: "eventCode and pspReference",
     duplicatesDocumented: true,
     ordering: "not_guaranteed",
-    dedupeAdvice: "Make sure your webhook handler deduplicates on eventCode + pspReference before acting.",
+    dedupeAdvice:
+      "Make sure your webhook handler deduplicates on eventCode + pspReference before acting.",
     docsUrl: "https://docs.adyen.com/development-resources/webhooks/handle-webhook-events",
   },
   limitations: [

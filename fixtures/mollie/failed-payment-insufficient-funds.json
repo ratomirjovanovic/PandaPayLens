@@ -1,0 +1,21 @@
+{
+  "resource": "payment",
+  "id": "tr_PPLsynthNSF00001",
+  "mode": "test",
+  "status": "failed",
+  "amount": { "currency": "EUR", "value": "24.95" },
+  "description": "Order PPLsynth-ORDER-78",
+  "method": "creditcard",
+  "sequenceType": "oneoff",
+  "profileId": "pfl_PPLsynth01",
+  "createdAt": "2026-10-20T10:00:00+00:00",
+  "failedAt": "2026-10-20T10:01:30+00:00",
+  "details": {
+    "cardNumber": "6787",
+    "cardHolder": "J. PPLsynthHolder",
+    "cardLabel": "Visa",
+    "cardCountryCode": "NL",
+    "failureReason": "insufficient_funds",
+    "failureMessage": "The payment was declined due to insufficient funds."
+  }
+}

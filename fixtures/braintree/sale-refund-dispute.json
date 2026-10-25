@@ -1,0 +1,90 @@
+[
+  {
+    "id": "PPLsynthSALE2",
+    "graphql_id": "PPLsynthGQLtxnSALE2",
+    "type": "sale",
+    "status": "settled",
+    "amount": "30.00",
+    "currency_iso_code": "EUR",
+    "order_id": "PPL-ORDER-BT-0004",
+    "merchant_account_id": "PPLsynthMerchantEUR",
+    "processor_response_code": "1000",
+    "processor_response_text": "Approved",
+    "refund_ids": ["PPLsynthREF2"],
+    "status_history": [
+      {
+        "amount": "30.00",
+        "status": "authorized",
+        "timestamp": "2026-10-20T10:00:00Z",
+        "transaction_source": "Api"
+      },
+      {
+        "amount": "30.00",
+        "status": "submitted_for_settlement",
+        "timestamp": "2026-10-20T10:00:02Z",
+        "transaction_source": "Api"
+      },
+      {
+        "amount": "30.00",
+        "status": "settled",
+        "timestamp": "2026-10-21T02:00:00Z",
+        "transaction_source": "Api"
+      }
+    ]
+  },
+  {
+    "id": "PPLsynthREF2",
+    "type": "credit",
+    "status": "settled",
+    "amount": "10.00",
+    "currencyIsoCode": "EUR",
+    "merchantAccountId": "PPLsynthMerchantEUR",
+    "refundedTransactionId": "PPLsynthSALE2",
+    "processorResponseCode": "1002",
+    "processorResponseText": "Processed",
+    "statusHistory": [
+      {
+        "amount": "10.00",
+        "status": "submitted_for_settlement",
+        "timestamp": "2026-10-22T09:00:00Z",
+        "transactionSource": "ControlPanel"
+      },
+      {
+        "amount": "10.00",
+        "status": "settled",
+        "timestamp": "2026-10-23T02:00:00Z",
+        "transactionSource": "ControlPanel"
+      }
+    ]
+  },
+  {
+    "kind": "dispute_opened",
+    "timestamp": "2026-10-24T08:00:00Z",
+    "subject": {
+      "dispute": {
+        "id": "PPLsynthDSP2",
+        "kind": "chargeback",
+        "status": "open",
+        "reason": "fraud",
+        "amount_disputed": "20.00",
+        "transaction": {
+          "id": "PPLsynthSALE2",
+          "amount": "30.00"
+        }
+      }
+    }
+  },
+  {
+    "data": {
+      "node": {
+        "id": "PPLsynthGQLtxnSALE2",
+        "status": "SETTLED",
+        "statusHistory": [
+          { "status": "SETTLED", "terminal": true },
+          { "status": "SUBMITTED_FOR_SETTLEMENT", "terminal": false },
+          { "status": "AUTHORIZED", "terminal": false }
+        ]
+      }
+    }
+  }
+]

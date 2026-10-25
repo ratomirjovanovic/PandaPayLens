@@ -11,6 +11,7 @@
  */
 
 import {
+  lookup,
   minorUnits,
   safeId,
   safeText,
@@ -402,7 +403,7 @@ function normalize(parsed: StripeParsed, ctx: NormalizeContext): NormalizedEvent
 
   const evt = parsed.value;
   const d = describeObject(evt.data.object);
-  const mapping = EVENT_TYPES[evt.type];
+  const mapping = lookup(EVENT_TYPES, evt.type);
   const outcome: Outcome = !mapping
     ? "unknown"
     : mapping.outcome === "from_status"
@@ -472,8 +473,8 @@ export function decodeStripeError(
   let confidence: Confidence;
   const missing: string[] = [];
 
-  const declineEntry = e.decline_code ? DECLINE_CODES[e.decline_code] : undefined;
-  const codeEntry = e.code ? ERROR_CODES[e.code] : undefined;
+  const declineEntry = lookup(DECLINE_CODES, e.decline_code);
+  const codeEntry = lookup(ERROR_CODES, e.code);
   if (declineEntry) {
     entry = declineEntry;
     confidence = "strong";
@@ -481,8 +482,8 @@ export function decodeStripeError(
   } else if (codeEntry) {
     entry = codeEntry;
     confidence = "strong";
-  } else if (e.type && ERROR_TYPES[e.type]) {
-    entry = ERROR_TYPES[e.type];
+  } else if (lookup(ERROR_TYPES, e.type)) {
+    entry = lookup(ERROR_TYPES, e.type);
     confidence = "possible";
   } else {
     confidence = "insufficient";
@@ -503,7 +504,7 @@ export function decodeStripeError(
   let retry = entry?.retry ?? "unknown";
   let retryExplanation =
     entry?.retryExplanation ?? "No retry guidance is available for this error.";
-  const advice = e.advice_code ? ADVICE_CODES[e.advice_code] : undefined;
+  const advice = lookup(ADVICE_CODES, e.advice_code);
   if (advice) {
     // Stripe's advice code is the most specific retry signal available.
     retry = advice.retry;
@@ -570,7 +571,7 @@ function decodeError(parsed: StripeParsed, ctx: NormalizeContext): DecodedErrorD
       type: "card_error",
       code: obj.failure_code,
       decline_code:
-        typeof outcome.reason === "string" && DECLINE_CODES[outcome.reason]
+        typeof outcome.reason === "string" && lookup(DECLINE_CODES, outcome.reason)
           ? outcome.reason
           : undefined,
       advice_code: typeof outcome.advice_code === "string" ? outcome.advice_code : undefined,

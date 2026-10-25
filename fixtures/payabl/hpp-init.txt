@@ -1,0 +1,1 @@
+errorcode=0&errorcodes=&errormessage=&sessionid=PPLsynthSESSION0000000000000000000000001&transactionid=PPLsynth105936790&user_id=PPLsynth1056479&start_url=https%3A%2F%2Fsandbox.example.invalid%2Fhpp%2Fen%2Fstart%3Fsession_id%3DPPLsynthSESSION0000000000000000000000001

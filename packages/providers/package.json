@@ -31,7 +31,13 @@
   },
   "dependencies": {
     "@pandapaylens/adyen": "workspace:*",
+    "@pandapaylens/braintree": "workspace:*",
+    "@pandapaylens/checkout": "workspace:*",
     "@pandapaylens/core": "workspace:*",
+    "@pandapaylens/mollie": "workspace:*",
+    "@pandapaylens/payabl": "workspace:*",
+    "@pandapaylens/paypal": "workspace:*",
+    "@pandapaylens/square": "workspace:*",
     "@pandapaylens/stripe": "workspace:*"
   }
 }

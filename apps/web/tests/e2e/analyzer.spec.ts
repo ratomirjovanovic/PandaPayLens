@@ -163,7 +163,10 @@ test("public API endpoints return sanitized metadata", async ({ request }) => {
   const health = await (await request.get("/api/health")).json();
   expect(Object.keys(health).sort()).toEqual(["status", "version"]);
   const providers = await (await request.get("/api/providers")).json();
-  expect(providers.providers.map((p: { id: string }) => p.id)).toEqual(["stripe", "adyen"]);
+  const ids = providers.providers.map((p: { id: string }) => p.id);
+  expect(ids).toEqual(
+    expect.arrayContaining(["stripe", "adyen", "payabl", "checkout", "paypal", "mollie", "square"]),
+  );
 });
 
 test("provider directory lists all roadmap providers honestly and filters them", async ({
@@ -180,4 +183,12 @@ test("provider directory lists all roadmap providers honestly and filters them",
   await page.getByRole("link", { name: "Details" }).click();
   await expect(page).toHaveURL(/\/providers\/stripe$/);
   await expect(page.getByRole("heading", { name: "Capabilities" })).toBeVisible();
+});
+
+test("analyzes a form-encoded payabl. example", async ({ page }) => {
+  await page.goto("/analyze?sample=payabl-insufficient-funds");
+  await expect(page.getByRole("list", { name: "Detected input" })).toContainText("payabl.");
+  await expect(page.getByRole("tabpanel")).toContainText("Insufficient funds", {
+    ignoreCase: true,
+  });
 });

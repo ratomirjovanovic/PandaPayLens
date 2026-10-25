@@ -1,0 +1,5 @@
+HTTP/1.1 504 Gateway Timeout
+Content-Type: application/json
+Square-Version: 2026-09-16
+
+{"errors":[{"category":"API_ERROR","code":"GATEWAY_TIMEOUT","detail":"PPLsynth gateway timeout."}]}

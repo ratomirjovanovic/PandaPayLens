@@ -57,7 +57,8 @@ export const stripeManifest: ProviderManifest = {
     duplicateKey: "event id",
     duplicatesDocumented: true,
     ordering: "not_guaranteed",
-    dedupeAdvice: "Make sure your webhook handler is idempotent, for example by recording processed event ids.",
+    dedupeAdvice:
+      "Make sure your webhook handler is idempotent, for example by recording processed event ids.",
     docsUrl: "https://docs.stripe.com/webhooks#handle-duplicate-events",
   },
   limitations: [

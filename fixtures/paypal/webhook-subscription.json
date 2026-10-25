@@ -1,0 +1,9 @@
+{
+  "id": "WH-PPLSYNTH0000006-EVT0000000000061",
+  "event_version": "1.0",
+  "create_time": "2026-10-25T15:00:00Z",
+  "resource_type": "subscription",
+  "event_type": "BILLING.SUBSCRIPTION.ACTIVATED",
+  "summary": "Subscription activated",
+  "resource": { "id": "I-PPLSYNTHSUB0001", "status": "ACTIVE" }
+}

@@ -50,6 +50,14 @@ function maskEvent(e: NormalizedEvent): NormalizedEvent {
     const v = out[f];
     if (v) out[f] = f === "deliveryKey" ? maskDeliveryKey(v) : maskIdentifier(v);
   }
+  // Adapters keep secondary ids (dispute ids, alternate id forms) in
+  // attributes; mask those too.
+  for (const [k, v] of Object.entries(out.attributes)) {
+    if (!/(?:Id|Ids|ID|Reference|References)$/.test(k)) continue;
+    if (typeof v === "string" && v) out.attributes[k] = maskIdentifier(v);
+    else if (Array.isArray(v))
+      out.attributes[k] = v.map((x) => (typeof x === "string" && x ? maskIdentifier(x) : x));
+  }
   return out;
 }
 
@@ -113,6 +121,7 @@ function assembleReport(result: AnalysisResult, options: ReportOptions): Diagnos
       ...e,
       ...(e.providerMessage ? { providerMessage: scrub(e.providerMessage) } : {}),
       ...(e.paymentReference ? { paymentReference: refMask(e.paymentReference) } : {}),
+      ...(e.attemptReference ? { attemptReference: refMask(e.attemptReference) } : {}),
     })),
     findings: result.findings.map((f) => ({
       ...f,

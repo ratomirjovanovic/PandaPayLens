@@ -6,6 +6,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
+- Wave 1 provider adapters: payabl., Checkout.com, PayPal, Braintree, Mollie and Square, each with capability manifest, catalogs, synthetic fixtures and tests.
+- Input formats: URL-encoded form data (also one notification per line) and raw HTTP requests/responses.
+- Provider registry, public provider directory with capability status, provider pages.
+- Admin control plane: magic link sign-in, passkey MFA, RBAC, invitations, audit log, rule drafts.
+
 - Analysis engine with bounded JSON/JSONL parsing, provider detection, correlation and deterministic rules.
 - Stripe adapter: API errors, PaymentIntent snapshots, snapshot webhook events.
 - Adyen adapter: Standard payment webhooks, payment responses, API errors.

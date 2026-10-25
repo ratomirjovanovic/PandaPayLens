@@ -87,3 +87,17 @@ export function decimalToMinor(value: unknown, currency: string | undefined): st
   const digits = (m[2]! + frac.padEnd(exp, "0")).replace(/^0+(?=\d)/, "");
   return digits === "0" ? "0" : `${m[1]}${digits}`;
 }
+
+/**
+ * Own-property lookup for catalog tables keyed by untrusted codes. Plain
+ * indexing would resolve codes like "constructor" or "toString" to
+ * Object.prototype members.
+ */
+export function lookup<T>(
+  table: Readonly<Record<string, T>>,
+  key: string | number | undefined | null,
+): T | undefined {
+  if (key === undefined || key === null) return undefined;
+  const k = String(key);
+  return Object.prototype.hasOwnProperty.call(table, k) ? table[k] : undefined;
+}

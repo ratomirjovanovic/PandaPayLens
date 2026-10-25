@@ -1,0 +1,7 @@
+{
+  "id": "WH-PPLSYNTH0000007-EVT0000000000071",
+  "event_version": "1.0",
+  "create_time": "2026-10-25T16:00:00Z",
+  "event_type": "PAYMENT.CAPTURE.COMPLETED",
+  "summary": "Payment completed"
+}

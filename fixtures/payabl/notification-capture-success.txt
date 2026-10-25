@@ -1,0 +1,1 @@
+3dstatus=VERIFIED&timestamp=1761379500&orderid=PPLsynth-order-0010&errorcode=0&type=capture&related_token_ids=&errormessage=&3dauthentication_flow=challenge_flow&3dProtocolVersion=2.2.0&transactionid=PPLsynth300000001&3dauthentication_status=Y&amount=50.00&currency=EUR&security=1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f809

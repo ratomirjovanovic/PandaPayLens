@@ -1,0 +1,10 @@
+{
+  "errors": [
+    {
+      "category": "INVALID_REQUEST_ERROR",
+      "code": "MISSING_REQUIRED_PARAMETER",
+      "detail": "Missing required parameter.",
+      "field": "amount_money.currency"
+    }
+  ]
+}

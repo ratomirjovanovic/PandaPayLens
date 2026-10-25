@@ -1,0 +1,51 @@
+[
+  {
+    "id": "PPLSYNTHORDER0010",
+    "intent": "CAPTURE",
+    "status": "COMPLETED",
+    "purchase_units": [
+      {
+        "reference_id": "default",
+        "invoice_id": "PPLsynth-shared-invoice",
+        "amount": { "currency_code": "EUR", "value": "10.00" },
+        "payments": {
+          "captures": [
+            {
+              "id": "PPLSYNTHCAPT00010",
+              "status": "DECLINED",
+              "invoice_id": "PPLsynth-shared-invoice",
+              "amount": { "currency_code": "EUR", "value": "10.00" },
+              "processor_response": { "response_code": "0500" },
+              "update_time": "2026-10-25T19:00:00Z"
+            }
+          ]
+        }
+      }
+    ],
+    "update_time": "2026-10-25T19:00:00Z"
+  },
+  {
+    "id": "PPLSYNTHORDER0011",
+    "intent": "CAPTURE",
+    "status": "COMPLETED",
+    "purchase_units": [
+      {
+        "reference_id": "default",
+        "invoice_id": "PPLsynth-shared-invoice",
+        "amount": { "currency_code": "EUR", "value": "10.00" },
+        "payments": {
+          "captures": [
+            {
+              "id": "PPLSYNTHCAPT00011",
+              "status": "COMPLETED",
+              "invoice_id": "PPLsynth-shared-invoice",
+              "amount": { "currency_code": "EUR", "value": "10.00" },
+              "update_time": "2026-10-25T19:05:00Z"
+            }
+          ]
+        }
+      }
+    ],
+    "update_time": "2026-10-25T19:05:00Z"
+  }
+]

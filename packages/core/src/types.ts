@@ -143,6 +143,12 @@ export type DecodedError = {
   missingInformation: string[];
   paymentReference?: string;
   /**
+   * True when the provider or network gave a definitive answer (for example
+   * an issuer decline), so the original operation's outcome is known even if
+   * the category is an availability problem. Used by retry-risk analysis.
+   */
+  outcomeKnown?: boolean;
+  /**
    * Identifies the individual attempt (Stripe charge, Adyen pspReference).
    * Two records of the same attempt (API response and webhook) share it.
    */

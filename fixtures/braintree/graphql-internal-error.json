@@ -1,0 +1,17 @@
+{
+  "data": {
+    "chargePaymentMethod": null
+  },
+  "errors": [
+    {
+      "message": "An internal error occurred.",
+      "path": ["chargePaymentMethod"],
+      "extensions": {
+        "errorClass": "INTERNAL"
+      }
+    }
+  ],
+  "extensions": {
+    "requestId": "PPLsynth-request-0004"
+  }
+}

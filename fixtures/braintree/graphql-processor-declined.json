@@ -1,0 +1,39 @@
+{
+  "data": {
+    "chargePaymentMethod": {
+      "transaction": {
+        "id": "PPLsynthGQLtxnDEC0001",
+        "legacyId": "PPLsynthDEC1",
+        "status": "PROCESSOR_DECLINED",
+        "orderId": "PPL-ORDER-BT-0001",
+        "amount": {
+          "value": "2000.00",
+          "currencyCode": "USD"
+        },
+        "processorAuthorizationResponse": {
+          "legacyCode": "2001",
+          "message": "Insufficient Funds"
+        },
+        "statusHistory": [
+          {
+            "status": "PROCESSOR_DECLINED",
+            "timestamp": "2026-10-25T09:00:01Z",
+            "terminal": true,
+            "amount": {
+              "value": "2000.00",
+              "currencyCode": "USD"
+            },
+            "declineType": "SOFT",
+            "processorResponse": {
+              "legacyCode": "2001",
+              "message": "Insufficient Funds"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "extensions": {
+    "requestId": "PPLsynth-request-0002"
+  }
+}

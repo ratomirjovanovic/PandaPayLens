@@ -1,0 +1,60 @@
+{
+  "success": false,
+  "transaction": {
+    "id": "PPLsynthSENS1",
+    "type": "sale",
+    "status": "processor_declined",
+    "amount": "99.00",
+    "currency_iso_code": "USD",
+    "merchant_account_id": "PPLsynthMerchantUSD",
+    "processor_response_code": "2014",
+    "processor_response_text": "Processor Declined - Fraud Suspected",
+    "processor_response_type": "hard_declined",
+    "additional_processor_response": "59 : PPLsynthBankFreeText",
+    "processor_authorization_code": "PPLsynthAuthCode",
+    "network_transaction_id": "PPLsynthNetworkTxnId",
+    "payment_method_nonce": "PPLsynthNonceValue",
+    "credit_card_details": {
+      "bin": "411111",
+      "last_4": "1111",
+      "cardholder_name": "PPLsynth Cardholder Name",
+      "expiration_month": "07",
+      "expiration_year": "2031",
+      "token": "PPLsynthVaultToken"
+    },
+    "customer_details": {
+      "first_name": "PPLsynthFirstName",
+      "email": "pplsynth.customer@example.com",
+      "phone": "+15550100999"
+    },
+    "billing_details": {
+      "street_address": "PPLsynth Street 1",
+      "postal_code": "PPL99999"
+    },
+    "risk_data": {
+      "id": "PPLsynthRiskId",
+      "decision": "Decline",
+      "device_data_captured": true,
+      "decision_reasons": ["PPLsynthRiskReason"]
+    },
+    "three_d_secure_info": {
+      "cavv": "PPLsynthCavvValue"
+    },
+    "status_history": [
+      {
+        "amount": "99.00",
+        "status": "processor_declined",
+        "timestamp": "2026-10-25T11:00:00Z",
+        "transaction_source": "Api",
+        "user": "PPLsynthApiUser"
+      }
+    ]
+  },
+  "params": {
+    "transaction": {
+      "credit_card": {
+        "number": "4111111111111111"
+      }
+    }
+  }
+}

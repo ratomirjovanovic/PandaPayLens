@@ -1,0 +1,40 @@
+[
+  {
+    "receivedAt": "2026-10-20T12:00:03.000Z",
+    "payload": {
+      "id": "evt_PPLsynthDUPL00000000000001",
+      "type": "payment_captured",
+      "version": "1.0.29",
+      "created_on": "2026-10-20T12:00:01.0000000Z",
+      "data": {
+        "id": "pay_PPLsynthDUPL00000000000001",
+        "action_id": "act_PPLsynthDUPL00000000000002",
+        "reference": "ORD-PPLSYNTH-0004",
+        "amount": 1500,
+        "currency": "EUR",
+        "processed_on": "2026-10-20T12:00:00.0000000Z",
+        "response_code": "10000",
+        "response_summary": "Approved"
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T12:05:03.000Z",
+    "payload": {
+      "id": "evt_PPLsynthDUPL00000000000001",
+      "type": "payment_captured",
+      "version": "1.0.29",
+      "created_on": "2026-10-20T12:00:01.0000000Z",
+      "data": {
+        "id": "pay_PPLsynthDUPL00000000000001",
+        "action_id": "act_PPLsynthDUPL00000000000002",
+        "reference": "ORD-PPLSYNTH-0004",
+        "amount": 1500,
+        "currency": "EUR",
+        "processed_on": "2026-10-20T12:00:00.0000000Z",
+        "response_code": "10000",
+        "response_summary": "Approved"
+      }
+    }
+  }
+]

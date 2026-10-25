@@ -9,7 +9,7 @@ const fixtures = join(here, "..", "..", "..", "fixtures");
 const out = join(here, "..", "dist", "samples");
 const samples = JSON.parse(readFileSync(join(fixtures, "samples.json"), "utf8"));
 mkdirSync(out, { recursive: true });
-for (const s of samples) copyFileSync(join(fixtures, s.file), join(out, `${s.id}.json`));
+for (const s of samples) copyFileSync(join(fixtures, s.file), join(out, `${s.id}.txt`));
 writeFileSync(
   join(out, "index.json"),
   JSON.stringify(

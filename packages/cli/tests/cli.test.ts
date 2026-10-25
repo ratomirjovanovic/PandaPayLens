@@ -105,7 +105,7 @@ describe("cli", () => {
     [["analyze"], EXIT.INVALID_INPUT, /Missing input/],
     [["analyze", "fx:malformed/unknown-provider-error.json"], EXIT.UNSUPPORTED, /^$/],
     [
-      ["analyze", "fx:stripe/insufficient-funds.json", "-p", "paypal"],
+      ["analyze", "fx:stripe/insufficient-funds.json", "-p", "worldpay"],
       EXIT.UNSUPPORTED,
       /Unknown provider/,
     ],

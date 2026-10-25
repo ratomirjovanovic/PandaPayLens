@@ -1,0 +1,1 @@
+transactionid=PPLsynth300000001&type=order&errorcode=0&errormessage=&orderid=PPLsynth-order-0010&amount=1000.10&currency=EUR&payment_method=1&timestamp=1761379200&security=0f1e2d3c4b5a69788796a5b4c3d2e1f00f1e2d3c4b5a69788796a5b4c3d2e1f0

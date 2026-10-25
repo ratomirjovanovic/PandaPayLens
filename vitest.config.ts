@@ -26,6 +26,54 @@ export default defineConfig({
         find: /^@pandapaylens\/adyen\/manifest$/,
         replacement: src("./packages/adapters/adyen/src/manifest.ts"),
       },
+      {
+        find: /^@pandapaylens\/payabl\/manifest$/,
+        replacement: src("./packages/adapters/payabl/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/payabl$/,
+        replacement: src("./packages/adapters/payabl/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/checkout\/manifest$/,
+        replacement: src("./packages/adapters/checkout/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/checkout$/,
+        replacement: src("./packages/adapters/checkout/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paypal\/manifest$/,
+        replacement: src("./packages/adapters/paypal/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paypal$/,
+        replacement: src("./packages/adapters/paypal/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/braintree\/manifest$/,
+        replacement: src("./packages/adapters/braintree/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/braintree$/,
+        replacement: src("./packages/adapters/braintree/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/mollie\/manifest$/,
+        replacement: src("./packages/adapters/mollie/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/mollie$/,
+        replacement: src("./packages/adapters/mollie/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/square\/manifest$/,
+        replacement: src("./packages/adapters/square/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/square$/,
+        replacement: src("./packages/adapters/square/src/index.ts"),
+      },
       { find: /^@\/(.*)$/, replacement: `${src("./apps/web/")}$1` },
     ],
   },

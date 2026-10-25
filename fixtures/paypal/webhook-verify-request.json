@@ -1,0 +1,25 @@
+{
+  "auth_algo": "SHA256withRSA",
+  "cert_url": "https://api.sandbox.paypal.com/v1/notifications/certs/CERT-PPLSYNTH-cert-0001",
+  "transmission_id": "PPLsynth-transmission-0001",
+  "transmission_sig": "PPLsynthSIGNATUREdoNotDisplay0001base64==",
+  "transmission_time": "2026-10-25T17:00:01Z",
+  "webhook_id": "PPLsynthWEBHOOKIDprivate0001",
+  "webhook_event": {
+    "id": "WH-PPLSYNTH0000008-EVT0000000000081",
+    "event_version": "1.0",
+    "create_time": "2026-10-25T17:00:00Z",
+    "resource_type": "capture",
+    "resource_version": "2.0",
+    "event_type": "PAYMENT.CAPTURE.PENDING",
+    "resource": {
+      "id": "PPLSYNTHCAPT00008",
+      "status": "PENDING",
+      "status_details": { "reason": "PENDING_REVIEW" },
+      "amount": { "value": "250.00", "currency_code": "USD" },
+      "supplementary_data": { "related_ids": { "order_id": "PPLSYNTHORDER0008" } },
+      "create_time": "2026-10-25T16:59:58Z",
+      "update_time": "2026-10-25T16:59:58Z"
+    }
+  }
+}

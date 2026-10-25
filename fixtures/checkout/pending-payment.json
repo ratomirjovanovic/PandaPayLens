@@ -1,0 +1,18 @@
+{
+  "id": "pay_PPLsynthPEND00000000000001",
+  "status": "Pending",
+  "reference": "ORD-PPLSYNTH-0005",
+  "customer": {
+    "id": "cus_PPLsynthPEND00000000000001",
+    "email": "synthetic.pending@example.com"
+  },
+  "3ds": { "downgraded": false, "enrolled": "Y" },
+  "_links": {
+    "self": {
+      "href": "https://pplsynth.api.sandbox.checkout.com/payments/pay_PPLsynthPEND00000000000001"
+    },
+    "redirect": {
+      "href": "https://pplsynth.example.com/3ds/sid_PPLsynthPEND00000000000001"
+    }
+  }
+}

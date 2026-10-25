@@ -1,0 +1,44 @@
+[
+  {
+    "merchant_id": "PPLsynthMERCHANT1",
+    "type": "payment.updated",
+    "event_id": "PPLsynth-0000-4000-8000-0000000000d1",
+    "created_at": "2026-10-23T12:00:00.300Z",
+    "data": {
+      "type": "payment",
+      "id": "PPLsynthPAYDUP00000000001",
+      "object": {
+        "payment": {
+          "id": "PPLsynthPAYDUP00000000001",
+          "created_at": "2026-10-23T11:59:00.100Z",
+          "updated_at": "2026-10-23T12:00:00.200Z",
+          "amount_money": { "amount": 990, "currency": "EUR" },
+          "status": "COMPLETED",
+          "source_type": "CARD",
+          "card_details": { "status": "CAPTURED" }
+        }
+      }
+    }
+  },
+  {
+    "merchant_id": "PPLsynthMERCHANT1",
+    "type": "payment.updated",
+    "event_id": "PPLsynth-0000-4000-8000-0000000000d1",
+    "created_at": "2026-10-23T12:00:00.300Z",
+    "data": {
+      "type": "payment",
+      "id": "PPLsynthPAYDUP00000000001",
+      "object": {
+        "payment": {
+          "id": "PPLsynthPAYDUP00000000001",
+          "created_at": "2026-10-23T11:59:00.100Z",
+          "updated_at": "2026-10-23T12:00:00.200Z",
+          "amount_money": { "amount": 990, "currency": "EUR" },
+          "status": "COMPLETED",
+          "source_type": "CARD",
+          "card_details": { "status": "CAPTURED" }
+        }
+      }
+    }
+  }
+]

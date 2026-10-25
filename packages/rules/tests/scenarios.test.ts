@@ -283,3 +283,22 @@ describe("reports", () => {
     expect(a).toBe(b);
   });
 });
+
+describe("report masking of attempt references", () => {
+  it("masks attemptReference by default", () => {
+    const r = analyze(
+      JSON.stringify({
+        error: {
+          type: "card_error",
+          code: "card_declined",
+          decline_code: "generic_decline",
+          charge: "ch_PPLsynthATTEMPT01",
+          payment_intent: { id: "pi_PPLsynthATTEMPT01" },
+        },
+      }),
+    );
+    const json = toJsonReport(r);
+    expect(json).not.toContain("ch_PPLsynthATTEMPT01");
+    expect(toJsonReport(r, { includeIdentifiers: true })).toContain("ch_PPLsynthATTEMPT01");
+  });
+});

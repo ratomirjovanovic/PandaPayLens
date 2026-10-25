@@ -1,0 +1,18 @@
+{
+  "kind": "transaction_settled",
+  "timestamp": "2026-10-25T06:00:00Z",
+  "transaction": {
+    "id": "PPLsynthACH1",
+    "status": "settled",
+    "type": "sale",
+    "currency_iso_code": "USD",
+    "amount": "100.00",
+    "merchant_account_id": "PPLsynthMerchantUSD",
+    "payment_instrument_type": "us_bank_account",
+    "us_bank_account": {
+      "routing_number": "PPLsynthRouting0",
+      "last_4": "0000",
+      "account_holder_name": "PPLsynth Account Holder"
+    }
+  }
+}

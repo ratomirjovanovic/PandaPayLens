@@ -1,0 +1,11 @@
+{
+  "name": "AUTHENTICATION_FAILURE",
+  "message": "Authentication failed due to missing authorization header, or invalid authentication credentials.",
+  "debug_id": "PPLsynthdbg0003",
+  "details": [
+    {
+      "issue": "INVALID_ACCOUNT_STATUS",
+      "description": "Account validations failed for the user."
+    }
+  ]
+}

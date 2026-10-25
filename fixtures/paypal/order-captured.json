@@ -1,0 +1,75 @@
+{
+  "id": "PPLSYNTHORDER0001",
+  "intent": "CAPTURE",
+  "status": "COMPLETED",
+  "payment_source": {
+    "paypal": {
+      "email_address": "synthetic.buyer@example.com",
+      "account_id": "PPLSYNTHPAYER0001",
+      "name": { "given_name": "Synthetic", "surname": "Buyer" }
+    }
+  },
+  "purchase_units": [
+    {
+      "reference_id": "default",
+      "amount": { "currency_code": "EUR", "value": "49.99" },
+      "shipping": {
+        "name": { "full_name": "Synthetic Buyer" },
+        "address": {
+          "address_line_1": "1 Synthetic Street",
+          "postal_code": "10115",
+          "country_code": "DE"
+        }
+      },
+      "payments": {
+        "captures": [
+          {
+            "id": "PPLSYNTHCAPT00001",
+            "status": "COMPLETED",
+            "amount": { "currency_code": "EUR", "value": "49.99" },
+            "final_capture": true,
+            "seller_protection": { "status": "ELIGIBLE" },
+            "seller_receivable_breakdown": {
+              "gross_amount": { "currency_code": "EUR", "value": "49.99" },
+              "paypal_fee": { "currency_code": "EUR", "value": "1.70" },
+              "net_amount": { "currency_code": "EUR", "value": "48.29" }
+            },
+            "links": [
+              {
+                "href": "https://api-m.sandbox.paypal.com/v2/payments/captures/PPLSYNTHCAPT00001",
+                "rel": "self",
+                "method": "GET"
+              },
+              {
+                "href": "https://api-m.sandbox.paypal.com/v2/payments/captures/PPLSYNTHCAPT00001/refund",
+                "rel": "refund",
+                "method": "POST"
+              },
+              {
+                "href": "https://api-m.sandbox.paypal.com/v2/checkout/orders/PPLSYNTHORDER0001",
+                "rel": "up",
+                "method": "GET"
+              }
+            ],
+            "create_time": "2026-10-25T09:00:05Z",
+            "update_time": "2026-10-25T09:00:05Z"
+          }
+        ]
+      }
+    }
+  ],
+  "payer": {
+    "name": { "given_name": "Synthetic", "surname": "Buyer" },
+    "email_address": "synthetic.buyer@example.com",
+    "payer_id": "PPLSYNTHPAYER0001"
+  },
+  "links": [
+    {
+      "href": "https://api-m.sandbox.paypal.com/v2/checkout/orders/PPLSYNTHORDER0001",
+      "rel": "self",
+      "method": "GET"
+    }
+  ],
+  "create_time": "2026-10-25T08:59:00Z",
+  "update_time": "2026-10-25T09:00:05Z"
+}

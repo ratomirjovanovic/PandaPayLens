@@ -1,0 +1,14 @@
+HTTP/1.1 504 Gateway Timeout
+Content-Type: application/hal+json
+
+{
+  "status": 504,
+  "title": "Gateway Timeout",
+  "detail": "Your request is causing an unusually long process time.",
+  "_links": {
+    "documentation": {
+      "href": "https://docs.mollie.com/errors",
+      "type": "text/html"
+    }
+  }
+}

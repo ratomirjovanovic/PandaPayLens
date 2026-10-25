@@ -1,0 +1,28 @@
+[
+  {
+    "payment": {
+      "id": "PPLsynthPAYUNRELA00000001",
+      "created_at": "2026-10-24T13:00:00.100Z",
+      "updated_at": "2026-10-24T13:00:00.900Z",
+      "amount_money": { "amount": 1000, "currency": "USD" },
+      "status": "FAILED",
+      "source_type": "CARD",
+      "card_details": { "status": "FAILED" },
+      "order_id": "PPLsynthORDERSHARED000000001",
+      "reference_id": "PPLsynth-shared-ref"
+    }
+  },
+  {
+    "payment": {
+      "id": "PPLsynthPAYUNRELB00000001",
+      "created_at": "2026-10-24T13:01:00.100Z",
+      "updated_at": "2026-10-24T13:01:00.900Z",
+      "amount_money": { "amount": 1000, "currency": "USD" },
+      "status": "COMPLETED",
+      "source_type": "CARD",
+      "card_details": { "status": "CAPTURED" },
+      "order_id": "PPLsynthORDERSHARED000000001",
+      "reference_id": "PPLsynth-shared-ref"
+    }
+  }
+]

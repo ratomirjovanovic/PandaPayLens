@@ -1,0 +1,74 @@
+[
+  {
+    "id": "WH-PPLSYNTH0000004-EVT0000000000041",
+    "event_version": "1.0",
+    "create_time": "2026-10-25T12:00:10Z",
+    "resource_type": "capture",
+    "resource_version": "2.0",
+    "event_type": "PAYMENT.CAPTURE.COMPLETED",
+    "summary": "Payment completed",
+    "resource": {
+      "id": "PPLSYNTHCAPT00004",
+      "status": "COMPLETED",
+      "amount": { "value": "30.00", "currency_code": "USD" },
+      "final_capture": true,
+      "supplementary_data": { "related_ids": { "order_id": "PPLSYNTHORDER0004" } },
+      "create_time": "2026-10-25T12:00:08Z",
+      "update_time": "2026-10-25T12:00:08Z"
+    }
+  },
+  {
+    "id": "WH-PPLSYNTH0000004-EVT0000000000040",
+    "event_version": "1.0",
+    "create_time": "2026-10-25T12:00:00Z",
+    "resource_version": "2.0",
+    "event_type": "CHECKOUT.ORDER.APPROVED",
+    "summary": "An order has been approved by buyer",
+    "resource": {
+      "id": "PPLSYNTHORDER0004",
+      "intent": "CAPTURE",
+      "status": "APPROVED",
+      "purchase_units": [
+        {
+          "reference_id": "default",
+          "amount": { "currency_code": "USD", "value": "30.00" }
+        }
+      ],
+      "payer": {
+        "email_address": "synthetic.buyer4@example.com",
+        "payer_id": "PPLSYNTHPAYER0004"
+      },
+      "create_time": "2026-10-25T11:59:00Z",
+      "update_time": "2026-10-25T11:59:58Z"
+    }
+  },
+  {
+    "id": "WH-PPLSYNTH0000004-EVT0000000000042",
+    "event_version": "1.0",
+    "create_time": "2026-10-25T13:00:00Z",
+    "resource_version": "2.0",
+    "event_type": "PAYMENT.CAPTURE.REFUNDED",
+    "summary": "A capture was refunded",
+    "resource": {
+      "id": "PPLSYNTHREFND0004",
+      "status": "COMPLETED",
+      "amount": { "value": "10.00", "currency_code": "USD" },
+      "note_to_payer": "PPLsynth private note to the buyer",
+      "supplementary_data": { "related_ids": { "capture_id": "PPLSYNTHCAPT00004" } },
+      "links": [
+        {
+          "rel": "self",
+          "method": "GET",
+          "href": "https://api.sandbox.paypal.com/v2/payments/refunds/PPLSYNTHREFND0004"
+        },
+        {
+          "rel": "up",
+          "method": "GET",
+          "href": "https://api.sandbox.paypal.com/v2/payments/captures/PPLSYNTHCAPT00004"
+        }
+      ],
+      "create_time": "2026-10-25T12:59:58Z",
+      "update_time": "2026-10-25T12:59:58Z"
+    }
+  }
+]

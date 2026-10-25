@@ -1,0 +1,14 @@
+HTTP/1.1 202 Accepted
+Content-Type: application/json; charset=utf-8
+Cko-Request-Id: PPLSYNTHREQ0002
+Cko-Version: 1.0.0
+
+{
+  "action_id": "act_PPLsynthFLOW00000000000003",
+  "reference": "REF-PPLSYNTH-0003",
+  "_links": {
+    "payment": {
+      "href": "https://pplsynth.api.sandbox.checkout.com/payments/pay_PPLsynthFLOW00000000000001"
+    }
+  }
+}

@@ -4,13 +4,13 @@
 
 <p align="center">Decode payment errors. Visualize transaction events. Understand what went wrong.</p>
 
-PandaPayLens is an open-source, local-first payment debugging tool. Paste a Stripe or Adyen error, webhook or event log and it explains the error, rebuilds the transaction timeline and points out duplicates, out-of-order deliveries, conflicting states and possible retry risks. Your data never leaves your browser.
+PandaPayLens is an open-source, local-first payment debugging tool. Paste a payment error, webhook or event log from a supported provider and it explains the error, rebuilds the transaction timeline and points out duplicates, out-of-order deliveries, conflicting states and possible retry risks. Your data never leaves your browser.
 
 **Live demo:** coming with the first release.
 
 ## Key features
 
-- **Error decoder:** Stripe `code` / `decline_code` / `advice_code` and Adyen refusal reasons and result codes, each with an explanation, the next step, retry guidance, a confidence level and a link to the provider's docs.
+- **Error decoder:** provider error, decline and refusal codes (for example Stripe `decline_code`, Adyen refusal reasons, Checkout.com response codes, payabl. gateway codes), each with an explanation, the next step, retry guidance, a confidence level and a link to the provider's docs.
 - **Event timeline:** events grouped into transactions by explicit identifiers only, ordered by event time or by receipt order. Missing events are never invented.
 - **Deterministic findings:** nine explainable rules, each with evidence, confidence and limitations. No AI in the diagnostic path.
 - **Privacy by design:** analysis runs in a Web Worker in your browser, a strict CSP blocks requests to other origins, nothing is stored, and sensitive fields are hidden.
@@ -32,12 +32,20 @@ No database, account or API key is needed to run the analyzer.
 
 ## Supported providers
 
-| Provider | Supported input                                                                                                       |
-| -------- | --------------------------------------------------------------------------------------------------------------------- |
-| Stripe   | API error responses, PaymentIntent snapshots, API v1 snapshot webhook events (PaymentIntent, Charge, Refund, Dispute) |
-| Adyen    | Standard payment webhooks (`notificationItems`), payment responses (`resultCode`), API error responses                |
+8 providers are available today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps (for example, the provider does not document duplicate or ordering behavior). The full roadmap of 22 providers, including planned ones, is on the `/providers` page.
 
-Stripe thin events and other Adyen webhook families are recognized and explained, but not analyzed yet. Details: [`/docs/providers`](apps/web/app/docs/providers/page.tsx).
+| Provider     | Overall   | Errors    | API responses | Webhooks  | Timeline  | Correlation |
+| ------------ | --------- | --------- | ------------- | --------- | --------- | ----------- |
+| Stripe       | supported | supported | supported     | supported | supported | supported   |
+| Adyen        | supported | supported | supported     | supported | supported | supported   |
+| payabl.      | limited   | supported | supported     | limited   | limited   | limited     |
+| Checkout.com | limited   | supported | supported     | limited   | limited   | supported   |
+| Braintree    | limited   | supported | supported     | limited   | limited   | limited     |
+| PayPal       | limited   | supported | supported     | limited   | limited   | limited     |
+| Mollie       | limited   | limited   | supported     | limited   | limited   | supported   |
+| Square       | limited   | supported | supported     | supported | limited   | limited     |
+
+Input can be JSON, JSON arrays, JSON Lines, URL-encoded form data (for example payabl. notifications) or a raw HTTP request or response copied from a log. Each provider page lists the exact formats and known limitations. Adapters are built from the providers' official documentation; research notes are in `docs/providers/research/`.
 
 ## CLI
 
@@ -66,8 +74,8 @@ See [SECURITY.md](SECURITY.md) for how to report a vulnerability.
 
 ```text
 packages/core              parsing, detection, normalization, correlation, rules engine, redaction, reports
-packages/adapters/stripe   Stripe schemas, error catalog, normalization
-packages/adapters/adyen    Adyen schemas, refusal reasons, normalization
+packages/adapters/*        one package per provider: schemas, catalogs, normalization
+packages/providers         adapter registry, manifests and roadmap
 packages/rules             versioned diagnostic rule catalog
 packages/cli               offline command-line interface
 apps/web                   Next.js analyzer and documentation site

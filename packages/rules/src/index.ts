@@ -26,6 +26,10 @@ const STRIPE_WEBHOOKS = "https://docs.stripe.com/webhooks#handle-duplicate-event
 const STRIPE_ORDER = "https://docs.stripe.com/webhooks#event-ordering";
 const ADYEN_HANDLE = "https://docs.adyen.com/development-resources/webhooks/handle-webhook-events";
 const STRIPE_IDEMPOTENCY = "https://docs.stripe.com/api/idempotent_requests";
+const IDEMPOTENCY_DOCS: Record<string, string> = {
+  stripe: STRIPE_IDEMPOTENCY,
+  adyen: "https://docs.adyen.com/development-resources/api-idempotency",
+};
 
 const time = (e: NormalizedEvent) => (e.eventTimestamp ? Date.parse(e.eventTimestamp) : undefined);
 
@@ -154,7 +158,7 @@ export const conflictingObservations: DiagnosticRule = {
 
 export const outOfOrderArrival: DiagnosticRule = {
   id: "OUT_OF_ORDER_ARRIVAL",
-  version: "1.1.0",
+  version: "1.2.0",
   providers: ["*"],
   description: "An event arrived after an event that was created later.",
   evaluate(ctx) {
@@ -172,7 +176,16 @@ export const outOfOrderArrival: DiagnosticRule = {
       const late: NormalizedEvent[] = [];
       let maxSeen: NormalizedEvent | undefined;
       for (const e of arrivals) {
-        if (maxSeen && time(e)! < time(maxSeen)!) late.push(e, maxSeen);
+        // Events from the same input record arrived together (one delivery, one
+        // snapshot or one batch), so their relative order says nothing about
+        // arrival. Only compare events that came in different records.
+        if (
+          maxSeen &&
+          time(e)! < time(maxSeen)! &&
+          e.source.recordIndex !== maxSeen.source.recordIndex
+        ) {
+          late.push(e, maxSeen);
+        }
         if (!maxSeen || time(e)! > time(maxSeen)!) maxSeen = e;
       }
       if (late.length === 0) continue;
@@ -266,7 +279,9 @@ export const missingReference: DiagnosticRule = {
         evidenceEventIds: orphanMods.map((e) => e.id),
         recommendedAction:
           "Check that the full notification was captured, including the reference to the original payment (for Adyen: originalReference).",
-        documentationUrl: ADYEN_HANDLE,
+        ...(orphanMods.every((e) => e.provider === "adyen")
+          ? { documentationUrl: ADYEN_HANDLE }
+          : {}),
         limitations: [],
       });
     }
@@ -434,8 +449,8 @@ export const potentialStateInconsistency: DiagnosticRule = {
 
 export const possibleRetryRisk: DiagnosticRule = {
   id: "POSSIBLE_RETRY_RISK",
-  version: "1.0.0",
-  providers: ["stripe", "adyen"],
+  version: "1.1.0",
+  providers: ["*"],
   description: "The supplied records suggest an unsafe retry pattern.",
   evaluate(ctx) {
     const out: Finding[] = [];
@@ -447,7 +462,8 @@ export const possibleRetryRisk: DiagnosticRule = {
     for (const e of uncertain) {
       if (e.retry !== "retry_conditionally" && e.retry !== "safe_to_retry_technical_request")
         continue;
-      if (e.subCodes.decline_code || e.subCodes.refusalReasonCode) continue; // issuer declines are known outcomes
+      // Issuer or network answers are known outcomes, not uncertain ones.
+      if (e.outcomeKnown || e.subCodes.decline_code || e.subCodes.refusalReasonCode) continue;
       out.push({
         severity: "low",
         confidence: "possible",
@@ -457,10 +473,7 @@ export const possibleRetryRisk: DiagnosticRule = {
         evidenceErrorIds: [e.id],
         recommendedAction:
           "Verify the original operation's status first. If you retry, reuse the same idempotency key.",
-        documentationUrl:
-          e.provider === "stripe"
-            ? STRIPE_IDEMPOTENCY
-            : "https://docs.adyen.com/development-resources/api-idempotency",
+        ...(IDEMPOTENCY_DOCS[e.provider] ? { documentationUrl: IDEMPOTENCY_DOCS[e.provider] } : {}),
         limitations: ["The supplied data cannot show whether a retry was already sent."],
       });
     }

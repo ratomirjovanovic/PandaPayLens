@@ -1,0 +1,54 @@
+{
+  "payment": {
+    "id": "PPLsynthPAYOK0000000000001",
+    "created_at": "2026-10-20T10:00:00.100Z",
+    "updated_at": "2026-10-20T10:00:01.200Z",
+    "amount_money": { "amount": 2599, "currency": "USD" },
+    "total_money": { "amount": 2599, "currency": "USD" },
+    "approved_money": { "amount": 2599, "currency": "USD" },
+    "status": "COMPLETED",
+    "delay_duration": "PT168H",
+    "source_type": "CARD",
+    "card_details": {
+      "status": "CAPTURED",
+      "card": {
+        "card_brand": "VISA",
+        "last_4": "4821",
+        "exp_month": 7,
+        "exp_year": 2031,
+        "fingerprint": "sq-1-PPLsynthFingerprintValue000000000000000000000000000000000",
+        "card_type": "DEBIT",
+        "prepaid_type": "NOT_PREPAID",
+        "bin": "400017",
+        "cardholder_name": "PPLsynth Cardholder Person"
+      },
+      "entry_method": "KEYED",
+      "cvv_status": "CVV_ACCEPTED",
+      "avs_status": "AVS_ACCEPTED",
+      "auth_result_code": "PPLs7Q",
+      "statement_description": "SQ *PPLSYNTH TEST SHOP",
+      "card_payment_timeline": {
+        "authorized_at": "2026-10-20T10:00:00.400Z",
+        "captured_at": "2026-10-20T10:00:01.200Z"
+      }
+    },
+    "location_id": "PPLsynthLOC0001",
+    "order_id": "PPLsynthORDER00000000000001",
+    "reference_id": "PPLsynth-ref-001",
+    "risk_evaluation": { "created_at": "2026-10-20T10:00:01.000Z", "risk_level": "NORMAL" },
+    "buyer_email_address": "pplsynth.buyer@example.com",
+    "billing_address": { "address_line_1": "1 PPLsynth Billing Street", "postal_code": "94000" },
+    "shipping_address": { "address_line_1": "2 PPLsynth Shipping Avenue", "postal_code": "94001" },
+    "note": "PPLsynth private note for the seller",
+    "customer_id": "PPLsynthCUSTOMER000000001",
+    "receipt_number": "PPLs",
+    "receipt_url": "https://squareup.com/receipt/preview/PPLsynthRECEIPT0001",
+    "delay_action": "CANCEL",
+    "delayed_until": "2026-10-27T10:00:00.100Z",
+    "application_details": {
+      "square_product": "ECOMMERCE_API",
+      "application_id": "sq0ids-PPLsynthAPPLICATION01"
+    },
+    "version_token": "PPLsynthVERSIONTOKEN000000000000001"
+  }
+}

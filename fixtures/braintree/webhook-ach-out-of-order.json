@@ -1,0 +1,31 @@
+[
+  {
+    "receivedAt": "2026-10-27T09:00:00Z",
+    "payload": {
+      "kind": "transaction_settlement_declined",
+      "timestamp": "2026-10-27T08:00:00Z",
+      "transaction": {
+        "id": "PPLsynthACH3",
+        "status": "settlement_declined",
+        "type": "sale",
+        "currency_iso_code": "USD",
+        "amount": "75.00",
+        "processor_settlement_response_code": "4001"
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-10-27T10:00:00Z",
+    "payload": {
+      "kind": "transaction_settled",
+      "timestamp": "2026-10-26T06:00:00Z",
+      "transaction": {
+        "id": "PPLsynthACH3",
+        "status": "settled",
+        "type": "sale",
+        "currency_iso_code": "USD",
+        "amount": "75.00"
+      }
+    }
+  }
+]

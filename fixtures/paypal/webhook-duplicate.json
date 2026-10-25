@@ -1,0 +1,38 @@
+[
+  {
+    "id": "WH-PPLSYNTH0000002-EVT0000000000002",
+    "event_version": "1.0",
+    "create_time": "2026-10-25T11:00:02Z",
+    "resource_type": "capture",
+    "resource_version": "2.0",
+    "event_type": "PAYMENT.CAPTURE.COMPLETED",
+    "summary": "Payment completed",
+    "resource": {
+      "id": "PPLSYNTHCAPT00003",
+      "status": "COMPLETED",
+      "amount": { "value": "15.00", "currency_code": "GBP" },
+      "final_capture": true,
+      "supplementary_data": { "related_ids": { "order_id": "PPLSYNTHORDER0003" } },
+      "create_time": "2026-10-25T11:00:00Z",
+      "update_time": "2026-10-25T11:00:00Z"
+    }
+  },
+  {
+    "id": "WH-PPLSYNTH0000002-EVT0000000000002",
+    "event_version": "1.0",
+    "create_time": "2026-10-25T11:00:02Z",
+    "resource_type": "capture",
+    "resource_version": "2.0",
+    "event_type": "PAYMENT.CAPTURE.COMPLETED",
+    "summary": "Payment completed",
+    "resource": {
+      "id": "PPLSYNTHCAPT00003",
+      "status": "COMPLETED",
+      "amount": { "value": "15.00", "currency_code": "GBP" },
+      "final_capture": true,
+      "supplementary_data": { "related_ids": { "order_id": "PPLSYNTHORDER0003" } },
+      "create_time": "2026-10-25T11:00:00Z",
+      "update_time": "2026-10-25T11:00:00Z"
+    }
+  }
+]

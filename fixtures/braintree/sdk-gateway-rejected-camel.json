@@ -1,0 +1,21 @@
+{
+  "success": false,
+  "transaction": {
+    "id": "PPLsynthGWR1",
+    "type": "sale",
+    "status": "gateway_rejected",
+    "gatewayRejectionReason": "cvv",
+    "amount": "15.00",
+    "currencyIsoCode": "USD",
+    "merchantAccountId": "PPLsynthMerchantUSD",
+    "orderId": "PPL-ORDER-BT-0003",
+    "statusHistory": [
+      {
+        "amount": "15.00",
+        "status": "gateway_rejected",
+        "timestamp": "2026-10-25T10:00:00Z",
+        "transactionSource": "Api"
+      }
+    ]
+  }
+}

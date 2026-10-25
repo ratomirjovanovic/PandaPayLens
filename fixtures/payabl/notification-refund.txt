@@ -1,0 +1,1 @@
+errormessage=&errorcode=0&amount=10.00&type=refund&security=2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e&orderid=PPLsynth-order-0010&transactionid=PPLsynth300000001&currency=EUR&timestamp=1761380000

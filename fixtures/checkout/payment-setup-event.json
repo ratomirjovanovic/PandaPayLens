@@ -1,0 +1,11 @@
+{
+  "id": "set_PPLsynthSETU00000000000001",
+  "event_type": "payment_method_ready",
+  "event_version": "1.0",
+  "event_timestamp": "2026-10-20T13:00:00Z",
+  "event_subject_id": "set_PPLsynthSETU00000000000001",
+  "event_data": "eyJzeW50aGV0aWMiOnRydWV9",
+  "correlation_id": "PPLSYNTHCORR0001",
+  "idempotency_key": "PPLSYNTHIDEM0001",
+  "event_links": {}
+}

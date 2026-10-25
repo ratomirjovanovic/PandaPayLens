@@ -1,0 +1,26 @@
+[
+  {
+    "id": "PPLsynthUNR1",
+    "type": "sale",
+    "status": "processor_declined",
+    "amount": "12.00",
+    "currency_iso_code": "GBP",
+    "order_id": "PPL-ORDER-BT-0005",
+    "merchant_account_id": "PPLsynthMerchantGBP",
+    "processor_response_code": "2046",
+    "processor_response_text": "Declined",
+    "processor_response_type": "soft_declined"
+  },
+  {
+    "id": "PPLsynthUNR2",
+    "type": "sale",
+    "status": "authorized",
+    "amount": "12.00",
+    "currency_iso_code": "GBP",
+    "order_id": "PPL-ORDER-BT-0005",
+    "merchant_account_id": "PPLsynthMerchantGBP",
+    "processor_response_code": "1000",
+    "processor_response_text": "Approved",
+    "processor_response_type": "approved"
+  }
+]

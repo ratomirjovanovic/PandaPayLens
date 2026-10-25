@@ -1,0 +1,1 @@
+errorcode=-10001&related_token_ids=&3dProtocolVersion=2.2.0&type=order&transactionid=PPLsynth300000002&errormessage=3DSecure+verification+failed+or+incomplete&3dauthentication_flow=challenge_flow&3dauthentication_status=N&3dtransactionStatusReason=01&orderid=PPLsynth-order-0011&timestamp=1761379600&security=3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b

@@ -1,0 +1,62 @@
+{
+  "id": "WH-PPLSYNTH0000001-EVT0000000000001",
+  "event_version": "1.0",
+  "create_time": "2026-10-25T09:00:07.120Z",
+  "resource_type": "capture",
+  "resource_version": "2.0",
+  "event_type": "PAYMENT.CAPTURE.COMPLETED",
+  "summary": "Payment completed for EUR 49.99",
+  "resource": {
+    "payee": {
+      "email_address": "synthetic.merchant@example.com",
+      "merchant_id": "PPLSYNTHMERCH0001"
+    },
+    "amount": { "value": "49.99", "currency_code": "EUR" },
+    "seller_protection": {
+      "dispute_categories": ["ITEM_NOT_RECEIVED", "UNAUTHORIZED_TRANSACTION"],
+      "status": "ELIGIBLE"
+    },
+    "supplementary_data": { "related_ids": { "order_id": "PPLSYNTHORDER0001" } },
+    "update_time": "2026-10-25T09:00:05Z",
+    "create_time": "2026-10-25T09:00:05Z",
+    "final_capture": true,
+    "invoice_id": "PPLsynth-invoice-private-0001",
+    "custom_id": "PPLsynth-custom-private-0001",
+    "seller_receivable_breakdown": {
+      "paypal_fee": { "value": "1.70", "currency_code": "EUR" },
+      "gross_amount": { "value": "49.99", "currency_code": "EUR" },
+      "net_amount": { "value": "48.29", "currency_code": "EUR" }
+    },
+    "links": [
+      {
+        "method": "GET",
+        "rel": "self",
+        "href": "https://api.sandbox.paypal.com/v2/payments/captures/PPLSYNTHCAPT00001"
+      },
+      {
+        "method": "POST",
+        "rel": "refund",
+        "href": "https://api.sandbox.paypal.com/v2/payments/captures/PPLSYNTHCAPT00001/refund"
+      },
+      {
+        "method": "GET",
+        "rel": "up",
+        "href": "https://api.sandbox.paypal.com/v2/checkout/orders/PPLSYNTHORDER0001"
+      }
+    ],
+    "id": "PPLSYNTHCAPT00001",
+    "status": "COMPLETED"
+  },
+  "links": [
+    {
+      "href": "https://api.sandbox.paypal.com/v1/notifications/webhooks-events/WH-PPLSYNTH0000001-EVT0000000000001",
+      "rel": "self",
+      "method": "GET"
+    },
+    {
+      "href": "https://api.sandbox.paypal.com/v1/notifications/webhooks-events/WH-PPLSYNTH0000001-EVT0000000000001/resend",
+      "rel": "resend",
+      "method": "POST"
+    }
+  ]
+}

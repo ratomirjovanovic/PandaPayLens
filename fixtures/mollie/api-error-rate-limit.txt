@@ -1,0 +1,15 @@
+HTTP/1.1 429 Too Many Requests
+Content-Type: application/hal+json
+Retry-After: 30
+
+{
+  "status": 429,
+  "title": "Too Many Requests",
+  "detail": "You have exceeded the rate limit. Please slow down your requests.",
+  "_links": {
+    "documentation": {
+      "href": "https://docs.mollie.com/overview/handling-errors",
+      "type": "text/html"
+    }
+  }
+}

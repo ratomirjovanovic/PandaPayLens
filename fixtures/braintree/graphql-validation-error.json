@@ -1,0 +1,26 @@
+{
+  "data": {
+    "chargePaymentMethod": null
+  },
+  "errors": [
+    {
+      "message": "Unknown or expired single-use payment method.",
+      "locations": [
+        {
+          "line": 2,
+          "column": 7
+        }
+      ],
+      "path": ["chargePaymentMethod"],
+      "extensions": {
+        "errorType": "user_error",
+        "errorClass": "VALIDATION",
+        "legacyCode": "91565",
+        "inputPath": ["input", "paymentMethodId"]
+      }
+    }
+  ],
+  "extensions": {
+    "requestId": "PPLsynth-request-0001"
+  }
+}

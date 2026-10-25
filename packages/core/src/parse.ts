@@ -106,6 +106,26 @@ export function parseInput(text: string, limits: Partial<InputLimits> = {}): Par
   }
   if (FORM_LIKE.test(start.trimEnd()))
     return parseFormText(start.trimEnd(), lim, { format: "form" });
+  // Several form-encoded notifications, one per line (e.g. a callback log).
+  const formLines = start
+    .trimEnd()
+    .split(/\r?\n/)
+    .filter((l) => l.trim() !== "");
+  if (formLines.length > 1 && formLines.every((l) => FORM_LIKE.test(l.trim()))) {
+    if (formLines.length > lim.maxRecords) {
+      return fail(
+        "TOO_MANY_RECORDS",
+        `Input contains ${formLines.length} lines; the limit is ${lim.maxRecords}.`,
+      );
+    }
+    const records: unknown[] = [];
+    for (const line of formLines) {
+      const one = parseFormText(line.trim(), lim, { format: "form" });
+      if (!one.ok) return one;
+      records.push(one.value.records[0]);
+    }
+    return finish("form", records, { format: "form" });
+  }
   return parseJsonText(body, lim, { format: "json" });
 }
 
@@ -197,7 +217,7 @@ function parseFormText(text: string, lim: InputLimits, meta: RecordMeta): Parsed
 }
 
 const SENSITIVE_HEADER =
-  /authorization|cookie|signature|token|secret|key|hmac|auth|password|session/i;
+  /authorization|cookie|signature|token|secret|key|hmac|auth|password|session|sig|cert/i;
 
 /**
  * Raw HTTP request or response, e.g. copied from a webhook log. Headers are

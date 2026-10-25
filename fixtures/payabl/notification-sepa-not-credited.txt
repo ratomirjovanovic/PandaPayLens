@@ -1,0 +1,1 @@
+transactionid=PPLsynth300000003&security=4d5e6f708192a3b4c5d6e7f8091a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c&payment_method=139&errormessage=Bank+rejected+payment&account_number=BEXXXXXXXXXX9770&account_holder=PPLsynth+Planted+Account+Holder&payment_state=not_credited&orderid=PPLsynth-order-0012&errorcode=-5016&timestamp=1761379700&type=capture

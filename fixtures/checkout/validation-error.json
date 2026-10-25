@@ -1,0 +1,9 @@
+{
+  "request_id": "PPLSYNTHREQ0001",
+  "error_type": "request_invalid",
+  "error_codes": [
+    "payment_source_required",
+    "usd_currency_not_configured",
+    "destination_account_holder_first_name_too_long"
+  ]
+}

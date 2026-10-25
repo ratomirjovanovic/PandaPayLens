@@ -11,6 +11,7 @@
  */
 
 import {
+  lookup,
   minorUnits,
   safeId,
   safeText,
@@ -136,7 +137,7 @@ function detect(input: unknown): DetectionResult {
     typeof input.resultCode === "string" &&
     (typeof input.pspReference === "string" || typeof input.merchantReference === "string")
   ) {
-    const known = input.resultCode in RESULT_CODES;
+    const known = lookup(RESULT_CODES, input.resultCode) !== undefined;
     return {
       ...base,
       format: "adyen.payment_response",
@@ -203,7 +204,7 @@ function parse(
 }
 
 function itemOutcome(item: Item): Outcome {
-  const info = EVENT_CODES[item.eventCode];
+  const info = lookup(EVENT_CODES, item.eventCode);
   if (!info) return "unknown";
   const ok = item.success === "true";
   switch (item.eventCode) {
@@ -231,7 +232,7 @@ function normalize(parsed: AdyenParsed, ctx: NormalizeContext): NormalizedEventD
 
   if (parsed.kind === "webhook") {
     return parsed.value.notificationItems.map(({ NotificationRequestItem: item }, i) => {
-      const info = EVENT_CODES[item.eventCode];
+      const info = lookup(EVENT_CODES, item.eventCode);
       const psp = safeId(item.pspReference);
       const original = safeId(item.originalReference);
       return clean({
@@ -274,7 +275,7 @@ function normalize(parsed: AdyenParsed, ctx: NormalizeContext): NormalizedEventD
 
   if (parsed.kind === "payment_response") {
     const r = parsed.value;
-    const info = RESULT_CODES[r.resultCode];
+    const info = lookup(RESULT_CODES, r.resultCode);
     const psp = safeId(r.pspReference);
     return [
       clean({
@@ -321,9 +322,9 @@ function normalize(parsed: AdyenParsed, ctx: NormalizeContext): NormalizedEventD
 }
 
 function refusalEntry(code: string | undefined, label: string | undefined) {
-  const byCode = code ? REFUSAL_REASONS[code] : undefined;
+  const byCode = lookup(REFUSAL_REASONS, code);
   if (byCode) return { key: code!, entry: byCode };
-  const fromLabel = label ? REFUSAL_REASON_BY_LABEL[label.trim().toLowerCase()] : undefined;
+  const fromLabel = lookup(REFUSAL_REASON_BY_LABEL, label?.trim().toLowerCase());
   if (fromLabel) return { key: fromLabel, entry: REFUSAL_REASONS[fromLabel]! };
   return null;
 }
@@ -428,8 +429,8 @@ function decodeErrors(parsed: AdyenParsed, ctx: NormalizeContext): DecodedErrorD
   }
 
   const e = parsed.value;
-  const byType = e.errorType ? API_ERROR_TYPES[e.errorType] : undefined;
-  const byStatus = HTTP_STATUS[e.status];
+  const byType = lookup(API_ERROR_TYPES, e.errorType);
+  const byStatus = lookup(HTTP_STATUS, e.status);
   const entry = byType ?? byStatus;
   const message = safeText(e.message, 300);
   const psp = safeId(e.pspReference);

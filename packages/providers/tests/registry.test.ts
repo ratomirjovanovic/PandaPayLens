@@ -32,3 +32,19 @@ describe("provider registry", () => {
     }
   });
 });
+
+describe("manifest samples", () => {
+  it("reference existing samples of the same provider", async () => {
+    const { readFileSync } = await import("node:fs");
+    const samples = JSON.parse(
+      readFileSync(new URL("../../../fixtures/samples.json", import.meta.url), "utf8"),
+    ) as { id: string; provider: string | null }[];
+    for (const m of MANIFESTS) {
+      for (const id of m.samples) {
+        const s = samples.find((x) => x.id === id);
+        expect(s, `${m.id} lists unknown sample ${id}`).toBeDefined();
+        expect(s!.provider).toBe(m.id);
+      }
+    }
+  });
+});

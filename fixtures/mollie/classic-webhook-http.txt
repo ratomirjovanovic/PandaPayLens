@@ -1,0 +1,7 @@
+POST /payments/webhook HTTP/1.1
+Host: webshop.example.org
+Content-Type: application/x-www-form-urlencoded
+Accept: */*
+Content-Length: 24
+
+id=tr_PPLsynthHook0001

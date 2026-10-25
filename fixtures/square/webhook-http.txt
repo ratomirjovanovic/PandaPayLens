@@ -1,0 +1,10 @@
+POST /webhooks/pplsynth HTTP/1.1
+Host: pplsynth.example.com
+Content-Type: application/json
+square-environment: Sandbox
+square-initial-delivery-timestamp: 2026-10-24T16:00:00.500Z
+square-retry-number: 2
+square-retry-reason: http_timeout
+x-square-hmacsha256-signature: PPLsynthSIGNATUREc2lnbmF0dXJlMDAwMDAwMDA=
+
+{"merchant_id":"PPLsynthMERCHANT1","type":"refund.updated","event_id":"PPLsynth-0000-4000-8000-0000000000h1","created_at":"2026-10-24T16:00:00.400Z","data":{"type":"refund","id":"PPLsynthPAYHTTP0000000001_PPLsynthREFUND02","object":{"refund":{"id":"PPLsynthPAYHTTP0000000001_PPLsynthREFUND02","created_at":"2026-10-24T15:50:00.100Z","updated_at":"2026-10-24T16:00:00.200Z","amount_money":{"amount":700,"currency":"USD"},"status":"FAILED","location_id":"PPLsynthLOC0001","payment_id":"PPLsynthPAYHTTP0000000001","version":3}}}}

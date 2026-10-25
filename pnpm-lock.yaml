@@ -120,6 +120,60 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/braintree:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/checkout:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/mollie:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/payabl:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/paypal:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/square:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/stripe:
     dependencies:
       '@pandapaylens/core':
@@ -158,9 +212,27 @@ importers:
       '@pandapaylens/adyen':
         specifier: workspace:*
         version: link:../adapters/adyen
+      '@pandapaylens/braintree':
+        specifier: workspace:*
+        version: link:../adapters/braintree
+      '@pandapaylens/checkout':
+        specifier: workspace:*
+        version: link:../adapters/checkout
       '@pandapaylens/core':
         specifier: workspace:*
         version: link:../core
+      '@pandapaylens/mollie':
+        specifier: workspace:*
+        version: link:../adapters/mollie
+      '@pandapaylens/payabl':
+        specifier: workspace:*
+        version: link:../adapters/payabl
+      '@pandapaylens/paypal':
+        specifier: workspace:*
+        version: link:../adapters/paypal
+      '@pandapaylens/square':
+        specifier: workspace:*
+        version: link:../adapters/square
       '@pandapaylens/stripe':
         specifier: workspace:*
         version: link:../adapters/stripe

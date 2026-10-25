@@ -211,3 +211,14 @@ describe("format detection", () => {
     expect(parseInput("{ broken")).toMatchObject({ ok: false, error: { code: "INVALID_JSON" } });
   });
 });
+
+describe("multi-line form input", () => {
+  it("parses one form record per line", () => {
+    const r = parseInput("transactionid=1&type=order\ntransactionid=1&type=capture\n");
+    expect(r.ok && r.value.format).toBe("form");
+    expect(r.ok && r.value.records).toEqual([
+      { transactionid: "1", type: "order" },
+      { transactionid: "1", type: "capture" },
+    ]);
+  });
+});

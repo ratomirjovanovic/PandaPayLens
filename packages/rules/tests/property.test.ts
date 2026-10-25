@@ -326,3 +326,33 @@ describe("parser limits under load", () => {
     expect(!r.ok && r.error.code).toBe("TOO_MANY_RECORDS");
   });
 });
+
+describe("prototype-named codes", () => {
+  it("are treated as unknown codes, not as catalog entries", () => {
+    for (const code of ["constructor", "toString", "__proto__", "hasOwnProperty"]) {
+      const r = analyzeRecords(
+        [
+          { error: { type: "card_error", code, decline_code: code, advice_code: code } },
+          { pspReference: "P", resultCode: code, refusalReasonCode: code, refusalReason: code },
+          { status: 500, errorCode: code, errorType: code, message: "x" },
+          {
+            notificationItems: [
+              {
+                NotificationRequestItem: { eventCode: code, success: "false", pspReference: "P2" },
+              },
+            ],
+          },
+        ],
+        options,
+      );
+      expect(r.ok).toBe(true);
+      if (r.ok) {
+        for (const e of r.result.errors) {
+          expect(typeof e.explanation).toBe("string");
+          expect(typeof e.category).toBe("string");
+        }
+        expect(() => toJsonReport(r.result)).not.toThrow();
+      }
+    }
+  });
+});
