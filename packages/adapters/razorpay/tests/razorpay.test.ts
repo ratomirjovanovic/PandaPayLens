@@ -866,7 +866,10 @@ describe("razorpay webhooks", () => {
     const r = analyze(json([body, body]));
     expect(r.events).toHaveLength(2);
     expect(r.events.every((e) => e.deliveryKey === undefined)).toBe(true);
-    expect(ruleIds(r)).not.toContain("DUPLICATE_DELIVERY");
+    // No delivery id: identical copies are reported only as a possible repeat.
+    expect(r.findings.find((f) => f.ruleId === "DUPLICATE_DELIVERY")).toMatchObject({
+      confidence: "possible",
+    });
   });
 
   it("reads delivery metadata only from a request", () => {

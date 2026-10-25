@@ -96,6 +96,18 @@ export type NormalizedEvent = {
    * Provider-specific: Stripe uses the event id, Adyen eventCode + pspReference.
    */
   deliveryKey?: string;
+  /**
+   * Set by the engine: a hash of the provider, format, path and record
+   * content that produced this event. Identical records share it, which lets
+   * rules recognize repeats when the provider sends no delivery id.
+   */
+  contentFingerprint?: string;
+  /**
+   * Set by an adapter when the provider documents that identical records can
+   * describe separate events (for example two equal partial refunds). Such
+   * events are never treated as repeats of each other by content.
+   */
+  contentMayRepeat?: boolean;
 
   /** When the provider says the event happened (ISO 8601, UTC). */
   eventTimestamp?: string;

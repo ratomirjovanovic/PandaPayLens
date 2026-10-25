@@ -238,7 +238,7 @@ describe("reports", () => {
     const report = buildReport(result);
     expect(report).toMatchObject({
       tool: "PandaPayLens",
-      catalogVersion: "2026.10.4",
+      catalogVersion: "2026.10.5",
       redaction: {
         identifiersMasked: true,
         sensitiveFieldsExcluded: true,

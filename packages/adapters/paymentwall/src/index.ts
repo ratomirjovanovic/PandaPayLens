@@ -820,6 +820,8 @@ function normalizePingback(
     paymentReference: ref,
     isRecurring: info?.isRecurring,
     deliveryKey,
+    // Partial refunds and reversals can repeat for one ref with equal fields.
+    ...(reason?.repeatable || (info && !info.uniquePerRef) ? { contentMayRepeat: true } : {}),
     outcome,
     attributes: attrs({
       type,

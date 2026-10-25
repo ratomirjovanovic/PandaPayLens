@@ -536,7 +536,10 @@ describe("payu_india payment response and webhook", () => {
     const r = analyze(`${one}\n${one}`);
     expect(r.events).toHaveLength(2);
     expect(r.events.every((e) => e.deliveryKey === undefined)).toBe(true);
-    expect(ruleIds(r)).not.toContain("DUPLICATE_DELIVERY");
+    // No delivery id: identical copies are reported only as a possible repeat.
+    expect(r.findings.find((f) => f.ruleId === "DUPLICATE_DELIVERY")).toMatchObject({
+      confidence: "possible",
+    });
     expect(r.groups).toHaveLength(1);
     expect(payuIndiaManifest.delivery.duplicateKey).toMatch(/no documented key/);
   });
