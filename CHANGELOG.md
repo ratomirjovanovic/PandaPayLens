@@ -7,6 +7,10 @@ All notable changes to this project are documented here. The format follows [Kee
 ### Security
 
 - The PayU India text scrubber runs in linear time on any input (code scanning alert 4).
+- Redaction covers the sensitive fields documented by the wave 3 and wave 4 providers: card data, tokens and integration keys, 3-D Secure references, bank, wallet and UPI ids, identity documents, names and contact data, device ids and links that carry access keys.
+- Request headers `verif-hash` (which carries a Flutterwave merchant secret), `x-login` and `x-client-id` are hidden.
+- Free text redaction catches Flutterwave secret and public keys, JWT-style secrets and UPI ids.
+- The email pattern in text redaction now runs in linear time on long input.
 
 ## [0.8.0] - 2026-10-25
 

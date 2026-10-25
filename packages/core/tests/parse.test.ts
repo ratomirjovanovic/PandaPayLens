@@ -412,3 +412,16 @@ describe("plain-text and HTML error bodies", () => {
     });
   });
 });
+
+describe("sensitive request headers", () => {
+  it("hides verif-hash, x-login and x-client-id values", () => {
+    const r = parseInput(
+      'POST /webhook HTTP/1.1\nverif-hash: PPLsynthSecretHash\nx-login: PPLsynthLogin\nx-client-id: PPLsynthClient\nContent-Type: application/json\n\n{"event":"charge.completed"}',
+    );
+    const headers = r.ok ? r.value.meta[0]!.http!.headers : {};
+    expect(headers["verif-hash"]).toBe("[redacted]");
+    expect(headers["x-login"]).toBe("[redacted]");
+    expect(headers["x-client-id"]).toBe("[redacted]");
+    expect(headers["content-type"]).toBe("application/json");
+  });
+});

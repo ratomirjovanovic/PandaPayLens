@@ -253,7 +253,7 @@ function parseFormText(text: string, lim: InputLimits, meta: RecordMeta): Parsed
 }
 
 const SENSITIVE_HEADER =
-  /authorization|cookie|signature|token|secret|key|hmac|auth|password|session|sig|cert/i;
+  /authorization|cookie|signature|token|secret|key|hmac|auth|password|session|sig|cert|hash|login|client-id/i;
 
 /**
  * Raw HTTP request or response, e.g. copied from a webhook log. Headers are
