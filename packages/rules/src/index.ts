@@ -19,7 +19,7 @@ import type {
 } from "@pandapaylens/core";
 import { LIFECYCLE_RULES } from "./lifecycle.js";
 
-export const RULE_CATALOG_VERSION = "2026.10.2";
+export const RULE_CATALOG_VERSION = "2026.10.3";
 
 type Finding = Omit<DiagnosticFinding, "ruleId" | "ruleVersion">;
 
@@ -460,7 +460,7 @@ export const potentialStateInconsistency: DiagnosticRule = {
 
 export const possibleRetryRisk: DiagnosticRule = {
   id: "POSSIBLE_RETRY_RISK",
-  version: "1.1.0",
+  version: "1.2.0",
   providers: ["*"],
   description: "The supplied records suggest an unsafe retry pattern.",
   evaluate(ctx) {
@@ -499,16 +499,40 @@ export const possibleRetryRisk: DiagnosticRule = {
     for (const all of byRef.values()) {
       const list = [...new Map(all.map((e) => [e.attemptReference, e])).values()];
       if (list.length < 2) continue;
+      // Advice depends on what was attempted: card networks only penalize
+      // card retries, and a payout has no customer payment method to change.
+      const records = new Set(list.map((e) => e.source.recordIndex));
+      const refs = new Set(list.map((e) => e.paymentReference));
+      const payout = ctx.events.some(
+        (ev) =>
+          ev.stage === "payout" &&
+          ev.provider === list[0]!.provider &&
+          (records.has(ev.source.recordIndex) ||
+            (ev.paymentReference !== undefined && refs.has(ev.paymentReference))),
+      );
+      const card = !payout && list.some((e) => e.category === "card_declined");
+      const codes = [...new Set(list.map((e) => e.code))].join(", ");
       out.push({
         severity: "medium",
         confidence: "possible",
-        title: `${list.length} attempts after a do-not-retry decline`,
-        explanation: `The same payment shows ${list.length} errors whose guidance is not to retry (${[...new Set(list.map((e) => e.code))].join(", ")}). Repeated attempts on such declines can be penalized by card networks.`,
+        title: `${list.length} attempts after a do-not-retry ${payout ? "error" : "decline"}`,
+        explanation: `The same ${payout ? "payout" : "payment"} shows ${list.length} errors whose guidance is not to retry (${codes}). ${
+          card
+            ? "Repeated attempts on such declines can be penalized by card networks."
+            : "Repeating the same request is unlikely to succeed until the cause is fixed."
+        }`,
         evidenceEventIds: [],
         evidenceErrorIds: list.map((e) => e.id),
-        recommendedAction:
-          "Stop automatic retries for these declines and ask the customer for another payment method.",
-        limitations: ["The errors may come from separate customer-initiated attempts."],
+        recommendedAction: payout
+          ? "Stop automatic retries. Correct the recipient details named in the error, and confirm the earlier payout failed before sending a new one."
+          : card
+            ? "Stop automatic retries for these declines and ask the customer for another payment method."
+            : "Stop automatic retries. Fix the cause named in the error, or ask the customer to choose another way to pay.",
+        limitations: [
+          payout
+            ? "The errors may come from separate payout requests."
+            : "The errors may come from separate customer-initiated attempts.",
+        ],
       });
     }
 
