@@ -8,6 +8,7 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - The provider list is grouped into "Full support" and "Limited support".
 - When a record resembles a provider but cannot be identified automatically, the result explains why and offers an "Analyze as <provider>" button.
+- In the event-time view, events without their own timestamp stay where they occurred in the input instead of moving to the end, so lifecycles such as initialize, authentication steps, webhook and verify read in order.
 - Decoded errors show their official documentation links for every provider; before, only Stripe and Adyen links were shown. Links are limited to https hosts cited in the provider manifests.
 
 ### Security
