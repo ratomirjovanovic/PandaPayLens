@@ -157,3 +157,31 @@ describe("Authorize.net sensitive fields", () => {
     expect(findSensitivePaths({ payment: planted }).length).toBe(keys.length);
   });
 });
+
+describe("Nuvei sensitive fields", () => {
+  const keys = [
+    "advanceResponseChecksum",
+    "responsechecksum",
+    "checksum",
+    "sessionToken",
+    "userTokenId",
+    "ccCardNumber",
+    "last4Digits",
+    "MaskedCardNumber",
+    "cavv",
+    "acsUrl",
+    "cReq",
+    "ARN",
+    "AuthCode",
+    "ClientName",
+    "externalEmail",
+    "apmPayerInfo",
+  ];
+
+  it("blocks every documented sensitive key and redacts planted values", () => {
+    for (const k of keys) expect(isBlockedKey(k), k).toBe(true);
+    const planted = Object.fromEntries(keys.map((k, i) => [k, `PPLnuvei${i}`]));
+    const out = JSON.stringify(redactDeep({ paymentOption: planted }));
+    for (let i = 0; i < keys.length; i++) expect(out).not.toContain(`PPLnuvei${i}`);
+  });
+});
