@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { MANIFESTS } from "@pandapaylens/providers/manifests";
 import { SITE_URL } from "@/lib/site";
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -10,6 +11,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/docs/providers",
     "/docs/security",
     "/changelog",
+    "/providers",
+    ...MANIFESTS.map((m) => `/providers/${m.id}`),
     "/about",
   ].map((p) => ({
     url: `${SITE_URL}${p}`,

@@ -32,9 +32,18 @@ describe("cli", () => {
 
   it("lists providers as text and JSON", () => {
     expect(exec(["providers"]).out).toMatch(/adyen\.webhook\.standard/);
-    expect(
-      JSON.parse(exec(["providers", "-f", "json"]).out).map((p: { id: string }) => p.id),
-    ).toEqual(["stripe", "adyen"]);
+    const all = JSON.parse(exec(["providers", "-f", "json"]).out) as {
+      id: string;
+      status: string;
+    }[];
+    expect(all).toHaveLength(22);
+    const available = JSON.parse(exec(["providers", "--supported", "-f", "json"]).out) as {
+      id: string;
+    }[];
+    expect(available.map((p) => p.id)).toEqual(expect.arrayContaining(["stripe", "adyen"]));
+    expect(available.every((p) => all.some((a) => a.id === p.id && a.status !== "planned"))).toBe(
+      true,
+    );
   });
 
   it("analyzes a file and masks identifiers by default", () => {

@@ -6,6 +6,7 @@ import { REPO_URL, MAINTAINER_URL } from "@/lib/site";
 const NAV = [
   { href: "/analyze", label: "Analyze" },
   { href: "/examples", label: "Examples" },
+  { href: "/providers", label: "Providers" },
   { href: "/docs", label: "Docs" },
   { href: "/changelog", label: "Changelog" },
   { href: "/about", label: "About" },

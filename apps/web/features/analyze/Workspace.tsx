@@ -9,7 +9,9 @@ import {
   type SourceText,
 } from "@pandapaylens/core";
 import type { AnalyzeResponse } from "@/lib/analyzer";
+import { MANIFESTS } from "@pandapaylens/providers/manifests";
 import { loadSample, SAMPLES } from "@/lib/samples";
+import { DetectionSummary } from "./DetectionSummary";
 import { analyzeInBrowser } from "./run";
 import { DecoderView } from "./DecoderView";
 import { TimelineView } from "./TimelineView";
@@ -26,7 +28,7 @@ export function Workspace() {
   const params = useSearchParams();
   const [text, setText] = useState("");
   const [files, setFiles] = useState<ImportedFile[]>([]);
-  const [provider, setProvider] = useState<"auto" | "stripe" | "adyen">("auto");
+  const [provider, setProvider] = useState<string>("auto");
   const [busy, setBusy] = useState(false);
   const [response, setResponse] = useState<AnalyzeResponse | null>(null);
   const [view, setView] = useState<View>("timeline");
@@ -181,12 +183,18 @@ export function Workspace() {
             Provider
             <select
               value={provider}
-              onChange={(e) => setProvider(e.target.value as typeof provider)}
+              onChange={(e) => setProvider(e.target.value)}
               className="rounded-md border border-border bg-bg px-2 py-1.5 text-sm"
             >
               <option value="auto">Auto-detect</option>
-              <option value="stripe">Stripe</option>
-              <option value="adyen">Adyen</option>
+              {[...MANIFESTS]
+                .sort((a, b) => a.displayName.localeCompare(b.displayName))
+                .map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.displayName}
+                    {m.status === "supported" ? "" : ` (${m.status})`}
+                  </option>
+                ))}
             </select>
           </label>
           <label className="flex flex-col gap-1 text-xs font-medium">
@@ -368,6 +376,8 @@ export function Workspace() {
             Show full identifiers
           </label>
         </div>
+
+        {result && <DetectionSummary records={result.records} />}
 
         <div
           role="tablist"

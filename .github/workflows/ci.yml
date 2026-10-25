@@ -32,6 +32,8 @@ jobs:
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: "1"
+      - name: Bundle size report
+        run: node scripts/bundle-report.mjs
       - name: CLI smoke test
         run: |
           node packages/cli/dist/bin.js version

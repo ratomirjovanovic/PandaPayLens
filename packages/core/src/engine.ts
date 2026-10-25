@@ -339,7 +339,14 @@ function runAnalysis(
   const sorted = sortEvents(events);
   const groups = correlate(sorted, options.adapters);
   const arrivalOrderInferred = !events.some((e) => e.observedTimestamp);
-  const context: AnalysisContext = { events: sorted, errors, groups, arrivalOrderInferred };
+  const manifests = Object.fromEntries(options.adapters.map((a) => [a.id, a.manifest]));
+  const context: AnalysisContext = {
+    manifests,
+    events: sorted,
+    errors,
+    groups,
+    arrivalOrderInferred,
+  };
 
   const findings: DiagnosticFinding[] = [];
   const providersPresent = new Set([

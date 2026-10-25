@@ -66,6 +66,13 @@ export const adyenManifest: ProviderManifest = {
     },
   ],
   verifiedAt: "2026-10-25",
+  delivery: {
+    duplicateKey: "eventCode and pspReference",
+    duplicatesDocumented: true,
+    ordering: "not_guaranteed",
+    dedupeAdvice: "Make sure your webhook handler deduplicates on eventCode + pspReference before acting.",
+    docsUrl: "https://docs.adyen.com/development-resources/webhooks/handle-webhook-events",
+  },
   limitations: [
     "API errors are categorized by errorType and HTTP status; individual errorCode values are not mapped yet.",
     "Only Standard payment webhooks are analyzed; other webhook families are recognized and explained.",

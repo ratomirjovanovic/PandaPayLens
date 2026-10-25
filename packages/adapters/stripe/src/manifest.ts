@@ -53,6 +53,13 @@ export const stripeManifest: ProviderManifest = {
     },
   ],
   verifiedAt: "2026-10-25",
+  delivery: {
+    duplicateKey: "event id",
+    duplicatesDocumented: true,
+    ordering: "not_guaranteed",
+    dedupeAdvice: "Make sure your webhook handler is idempotent, for example by recording processed event ids.",
+    docsUrl: "https://docs.stripe.com/webhooks#handle-duplicate-events",
+  },
   limitations: [
     "Thin events are recognized but not analyzed; paste the related object snapshot instead.",
     "Event types outside PaymentIntent, Charge, Refund and Dispute are shown without lifecycle semantics.",

@@ -165,3 +165,19 @@ test("public API endpoints return sanitized metadata", async ({ request }) => {
   const providers = await (await request.get("/api/providers")).json();
   expect(providers.providers.map((p: { id: string }) => p.id)).toEqual(["stripe", "adyen"]);
 });
+
+test("provider directory lists all roadmap providers honestly and filters them", async ({
+  page,
+}) => {
+  await page.goto("/providers");
+  await expect(page.getByText(/of 22 providers$/)).toBeVisible();
+  await page.getByLabel("Status").selectOption("planned");
+  const planned = page.getByRole("listitem").filter({ hasText: "Not implemented yet" });
+  expect(await planned.count()).toBeGreaterThan(0);
+  await page.getByLabel("Status").selectOption("");
+  await page.getByLabel("Provider").fill("stripe");
+  await expect(page.getByText("1 of 22 providers")).toBeVisible();
+  await page.getByRole("link", { name: "Details" }).click();
+  await expect(page).toHaveURL(/\/providers\/stripe$/);
+  await expect(page.getByRole("heading", { name: "Capabilities" })).toBeVisible();
+});

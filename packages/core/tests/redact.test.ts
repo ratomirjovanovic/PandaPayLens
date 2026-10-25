@@ -11,6 +11,7 @@ import {
   safeText,
   minorUnits,
   upperCurrency,
+  decimalToMinor,
 } from "@pandapaylens/core";
 
 describe("luhnValid", () => {
@@ -106,5 +107,23 @@ describe("adapter kit", () => {
   it("upperCurrency validates ISO-like codes", () => {
     expect(upperCurrency("eur")).toBe("EUR");
     expect(upperCurrency("euro")).toBeUndefined();
+  });
+});
+
+describe("decimalToMinor", () => {
+  it.each([
+    ["10.00", "EUR", "1000"],
+    ["10.5", "USD", "1050"],
+    ["0.01", "GBP", "1"],
+    ["1000", "JPY", "1000"],
+    ["1.234", "KWD", "1234"],
+    ["0", "EUR", "0"],
+    ["-5.25", "EUR", "-525"],
+    ["10.50", "JPY", undefined],
+    ["10.123", "EUR", undefined],
+    ["abc", "EUR", undefined],
+    ["10.00", undefined, undefined],
+  ])("%s %s -> %s", (v, c, expected) => {
+    expect(decimalToMinor(v, c)).toBe(expected);
   });
 });

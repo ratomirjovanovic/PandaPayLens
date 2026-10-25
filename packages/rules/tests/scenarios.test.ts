@@ -163,7 +163,7 @@ describe("reference scenarios", () => {
     );
     expect(r.findings.find((f) => f.ruleId === "MISSING_REFERENCE")).toMatchObject({
       severity: "medium",
-      title: "Adyen modification without originalReference",
+      title: "Modification without a link to its payment",
     });
   });
 

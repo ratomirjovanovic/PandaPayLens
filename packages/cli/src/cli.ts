@@ -19,7 +19,7 @@ import {
   type AnalysisResult,
   type Severity,
 } from "@pandapaylens/core";
-import { ADAPTERS } from "@pandapaylens/providers";
+import { ADAPTERS, ROADMAP } from "@pandapaylens/providers";
 import { defaultRules, RULE_CATALOG_VERSION } from "@pandapaylens/rules";
 
 export const CLI_VERSION = "0.1.0";
@@ -43,7 +43,8 @@ Usage:
   pandapaylens decode   <file|->   Decoded errors only
   pandapaylens timeline <file|->   Event timeline only
   pandapaylens examples [id]       List samples, or print one as JSON
-  pandapaylens providers           Supported providers and formats
+  pandapaylens providers           Providers, capabilities and formats
+                                   (--supported: only available ones)
   pandapaylens version             Version information
 
 Options:
@@ -75,6 +76,7 @@ export function run(argv: string[], io: Io): number {
         "fail-on": { type: "string", default: "none" },
         "include-identifiers": { type: "boolean", default: false },
         "no-color": { type: "boolean", default: false },
+        supported: { type: "boolean", default: false },
         help: { type: "boolean", short: "h", default: false },
       },
     });
@@ -115,7 +117,7 @@ export function run(argv: string[], io: Io): number {
       );
       return EXIT.OK;
     case "providers":
-      return providers(io, format);
+      return providers(io, format, values.supported);
     case "examples":
       return examples(io, target, format);
     case "analyze":
@@ -184,20 +186,38 @@ export function run(argv: string[], io: Io): number {
   return EXIT.OK;
 }
 
-function providers(io: Io, format: string): number {
-  const data = ADAPTERS.map((a) => ({
-    id: a.id,
-    name: a.displayName,
-    version: a.version,
-    formats: a.supportedFormats,
-  }));
+function providers(io: Io, format: string, onlyAvailable: boolean): number {
+  const available = new Map(ADAPTERS.map((a) => [a.id, a]));
+  const data = ROADMAP.filter((r) => !onlyAvailable || available.has(r.id)).map((r) => {
+    const a = available.get(r.id);
+    return a
+      ? {
+          id: a.id,
+          name: a.displayName,
+          status: a.manifest.status,
+          version: a.version,
+          capabilities: a.manifest.capabilities,
+          formats: a.manifest.apiFamilies,
+          limitations: a.manifest.limitations,
+        }
+      : { id: r.id, name: r.displayName, status: "planned" as const };
+  });
   if (format === "json") {
     io.stdout(`${JSON.stringify(data, null, 2)}\n`);
     return EXIT.OK;
   }
   for (const p of data) {
-    io.stdout(`${p.name} (${p.id}, adapter ${p.version})\n`);
-    for (const f of p.formats) io.stdout(`  ${f.id.padEnd(26)} ${f.description}\n`);
+    if (!("version" in p)) {
+      io.stdout(`${p.name} (${p.id}) - planned, not analyzed yet\n`);
+      continue;
+    }
+    io.stdout(`${p.name} (${p.id}, adapter ${p.version}) - ${p.status}\n`);
+    const c = p.capabilities;
+    io.stdout(
+      `  errors: ${c.errorDecoding}, responses: ${c.paymentResponses}, webhooks: ${c.webhookParsing}, timeline: ${c.timeline}, correlation: ${c.correlation}\n`,
+    );
+    for (const f of p.formats)
+      io.stdout(`  ${f.id.padEnd(30)} ${f.status.padEnd(12)} ${f.description}\n`);
   }
   return EXIT.OK;
 }
@@ -284,7 +304,16 @@ function renderText(
   out.push(
     c(
       "dim",
-      `${r.records.length} record(s), ${recognized.length} analyzed · ${[...new Set(recognized.map((x) => x.format))].join(", ") || "no supported format"}`,
+      `${r.records.length} record(s), ${recognized.length} analyzed · ${
+        [
+          ...new Set(
+            recognized.map(
+              (x) =>
+                `${x.format} (adapter ${r.meta.adapters.find((a) => a.id === x.provider)?.version ?? "?"})`,
+            ),
+          ),
+        ].join(", ") || "no supported format"
+      }`,
     ),
   );
   out.push("");

@@ -208,6 +208,20 @@ export type ProviderManifest = {
   limitations: readonly string[];
   /** Sample ids from the shared sample catalog. */
   samples: readonly string[];
+  /** Documented webhook delivery behavior, used by the generic rules. */
+  delivery: DeliveryProfile;
+};
+
+export type DeliveryProfile = {
+  /** What identifies a repeated delivery, e.g. "event id" or "eventCode and pspReference". */
+  duplicateKey: string;
+  /** Whether the provider documents that notifications can be delivered more than once. */
+  duplicatesDocumented: boolean;
+  /** Delivery order as documented by the provider. */
+  ordering: "not_guaranteed" | "not_documented";
+  /** Short instruction for idempotent handling. */
+  dedupeAdvice: string;
+  docsUrl?: string;
 };
 
 export type ProviderAdapter<Parsed = unknown> = {
@@ -249,6 +263,8 @@ export type NormalizedEventDraft = Omit<NormalizedEvent, "id" | "sourceIndex" | 
 export type DecodedErrorDraft = Omit<DecodedError, "id" | "provider">;
 
 export type AnalysisContext = {
+  /** Manifests of the adapters in this analysis, by provider id. */
+  manifests: Readonly<Record<string, ProviderManifest>>;
   events: readonly NormalizedEvent[];
   errors: readonly DecodedError[];
   groups: readonly TransactionGroup[];

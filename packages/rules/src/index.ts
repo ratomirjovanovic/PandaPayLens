@@ -12,6 +12,7 @@
 
 import type {
   AnalysisContext,
+  DeliveryProfile,
   DiagnosticFinding,
   DiagnosticRule,
   NormalizedEvent,
@@ -71,13 +72,25 @@ const deliveryGroups = (ctx: AnalysisContext) =>
     ).values(),
   ].filter((l) => l.length > 1);
 
+const FALLBACK_DELIVERY: DeliveryProfile = {
+  duplicateKey: "delivery key",
+  duplicatesDocumented: false,
+  ordering: "not_documented",
+  dedupeAdvice: "Make sure your notification handler is idempotent before acting on a delivery.",
+};
+
+const deliveryOf = (ctx: AnalysisContext, provider: string) =>
+  ctx.manifests[provider]?.delivery ?? FALLBACK_DELIVERY;
+const nameOf = (ctx: AnalysisContext, provider: string) =>
+  ctx.manifests[provider]?.displayName ?? provider;
+
 const describe = (e: NormalizedEvent) =>
   `${e.eventType}${e.providerStatus ? ` (${e.providerStatus})` : ""}`;
 
 export const duplicateDelivery: DiagnosticRule = {
   id: "DUPLICATE_DELIVERY",
-  version: "1.0.0",
-  providers: ["stripe", "adyen"],
+  version: "1.1.0",
+  providers: ["*"],
   description: "The same provider event appears more than once in the supplied data.",
   evaluate(ctx) {
     const out: Finding[] = [];
@@ -85,19 +98,20 @@ export const duplicateDelivery: DiagnosticRule = {
       // Copies that disagree are reported by CONFLICTING_OBSERVATIONS instead.
       if (new Set(list.map((e) => `${e.outcome}|${e.providerStatus ?? ""}`)).size > 1) continue;
       const first = list[0]!;
-      const isStripe = first.provider === "stripe";
+      const d = deliveryOf(ctx, first.provider);
+      const name = nameOf(ctx, first.provider);
       out.push({
         severity: list.length >= 3 ? "low" : "info",
         confidence: "confirmed",
         title: `${describe(first)} delivered ${list.length} times`,
-        explanation: isStripe
-          ? `The same Stripe event (same event id) appears ${list.length} times. Stripe can deliver the same event more than once, so this is expected delivery behavior, not necessarily an application bug.`
-          : `The same Adyen ${first.eventType} webhook (same eventCode and pspReference) appears ${list.length} times. Adyen can send the same webhook more than once.`,
+        explanation: `The same ${name} event (same ${d.duplicateKey}) appears ${list.length} times. ${
+          d.duplicatesDocumented
+            ? `${name} documents that it can deliver the same notification more than once, so this is expected delivery behavior, not necessarily an application bug.`
+            : "Repeated deliveries are common with webhooks and are not necessarily an application bug."
+        }`,
         evidenceEventIds: list.map((e) => e.id),
-        recommendedAction: isStripe
-          ? "Make sure your webhook handler is idempotent, for example by recording processed event ids."
-          : "Make sure your webhook handler deduplicates on eventCode + pspReference before acting.",
-        documentationUrl: isStripe ? STRIPE_WEBHOOKS : ADYEN_HANDLE,
+        recommendedAction: d.dedupeAdvice,
+        ...(d.docsUrl ? { documentationUrl: d.docsUrl } : {}),
         limitations: [
           "The supplied data cannot show whether your application processed the event more than once.",
         ],
@@ -109,8 +123,8 @@ export const duplicateDelivery: DiagnosticRule = {
 
 export const conflictingObservations: DiagnosticRule = {
   id: "CONFLICTING_OBSERVATIONS",
-  version: "1.0.0",
-  providers: ["stripe", "adyen"],
+  version: "1.1.0",
+  providers: ["*"],
   description: "Repeated deliveries of one event report incompatible states.",
   evaluate(ctx) {
     const out: Finding[] = [];
@@ -118,19 +132,17 @@ export const conflictingObservations: DiagnosticRule = {
       const variants = new Set(list.map((e) => `${e.outcome}|${e.providerStatus ?? ""}`));
       if (variants.size < 2) continue;
       const first = list[0]!;
+      const d = deliveryOf(ctx, first.provider);
       out.push({
         severity: "medium",
         confidence: "confirmed",
         title: `Copies of ${first.eventType} disagree`,
-        explanation: `${list.length} records share the same ${first.provider === "stripe" ? "event id" : "eventCode and pspReference"} but report different states: ${[
+        explanation: `${list.length} records share the same ${d.duplicateKey} but report different states: ${[
           ...new Set(list.map(describe)),
         ].join(" vs ")}.`,
         evidenceEventIds: list.map((e) => e.id),
-        recommendedAction:
-          first.provider === "adyen"
-            ? "Check the payment's current state in the Adyen Customer Area. If your handler keeps only the first copy, it may have acted on a superseded result."
-            : "Check whether the records were edited or mixed from different sources, and retrieve the object from the Stripe API to confirm its current state.",
-        documentationUrl: first.provider === "adyen" ? ADYEN_HANDLE : STRIPE_WEBHOOKS,
+        recommendedAction: `Check the payment's current state with ${nameOf(ctx, first.provider)}. If your handler keeps only the first copy, it may have acted on a superseded result.`,
+        ...(d.docsUrl ? { documentationUrl: d.docsUrl } : {}),
         limitations: [
           "The input may have been assembled from several sources; PandaPayLens cannot verify the records' authenticity.",
         ],
@@ -142,8 +154,8 @@ export const conflictingObservations: DiagnosticRule = {
 
 export const outOfOrderArrival: DiagnosticRule = {
   id: "OUT_OF_ORDER_ARRIVAL",
-  version: "1.0.0",
-  providers: ["stripe", "adyen"],
+  version: "1.1.0",
+  providers: ["*"],
   description: "An event arrived after an event that was created later.",
   evaluate(ctx) {
     const out: Finding[] = [];
@@ -166,19 +178,25 @@ export const outOfOrderArrival: DiagnosticRule = {
       if (late.length === 0) continue;
       const ids = [...new Set(late.map((e) => e.id))];
       const provider = g.events[0]!.provider;
+      const d = deliveryOf(ctx, provider);
+      const name = nameOf(ctx, provider);
       out.push({
         severity: "info",
         confidence: ctx.arrivalOrderInferred ? "possible" : "confirmed",
         title: "Events arrived out of order",
         explanation: `${ids.length} events in this transaction arrived in a different order than they were created. ${
-          provider === "stripe"
-            ? "Stripe does not guarantee event delivery order."
-            : "Adyen does not guarantee webhook delivery order."
+          d.ordering === "not_guaranteed"
+            ? `${name} does not guarantee delivery order.`
+            : `${name} does not document a delivery order guarantee.`
         } This is not a defect by itself.`,
         evidenceEventIds: ids,
         recommendedAction:
           "Base state transitions on the object's current state or event timestamps, not on arrival order.",
-        documentationUrl: provider === "stripe" ? STRIPE_ORDER : ADYEN_HANDLE,
+        ...(provider === "stripe"
+          ? { documentationUrl: STRIPE_ORDER }
+          : d.docsUrl
+            ? { documentationUrl: d.docsUrl }
+            : {}),
         limitations: ctx.arrivalOrderInferred
           ? [
               "No receipt timestamps were supplied; arrival order is assumed from the order of records in the input.",
@@ -215,8 +233,8 @@ export const unknownEventType: DiagnosticRule = {
 
 export const missingReference: DiagnosticRule = {
   id: "MISSING_REFERENCE",
-  version: "1.0.0",
-  providers: ["stripe", "adyen"],
+  version: "1.1.0",
+  providers: ["*"],
   description: "An event cannot be linked to a payment.",
   evaluate(ctx) {
     const out: Finding[] = [];
@@ -234,20 +252,20 @@ export const missingReference: DiagnosticRule = {
         limitations: [],
       });
     }
-    // Adyen modifications are only linkable via originalReference.
+    // Modifications (attribute set by the adapter) link to the payment only via a parent reference.
     const orphanMods = ctx.events.filter(
-      (e) => e.provider === "adyen" && e.attributes.isModification === true && !e.relatedReference,
+      (e) => e.attributes.isModification === true && !e.relatedReference,
     );
     if (orphanMods.length) {
       out.push({
         severity: "medium",
         confidence: "strong",
-        title: "Adyen modification without originalReference",
+        title: "Modification without a link to its payment",
         explanation:
-          "These modification events (capture, refund, cancellation…) have no originalReference, so the payment they modify cannot be identified. Their pspReference was used as the payment reference instead.",
+          "These modification events (capture, refund, cancellation, ...) carry no reference to the original payment, so the payment they modify cannot be identified. Their own reference was used as the payment reference instead.",
         evidenceEventIds: orphanMods.map((e) => e.id),
         recommendedAction:
-          "Check that the full NotificationRequestItem was captured, including originalReference.",
+          "Check that the full notification was captured, including the reference to the original payment (for Adyen: originalReference).",
         documentationUrl: ADYEN_HANDLE,
         limitations: [],
       });
@@ -258,8 +276,8 @@ export const missingReference: DiagnosticRule = {
 
 export const paymentFailure: DiagnosticRule = {
   id: "PAYMENT_FAILURE",
-  version: "1.0.0",
-  providers: ["stripe", "adyen"],
+  version: "1.1.0",
+  providers: ["*"],
   description: "The provider reports a failed payment, capture or refund.",
   evaluate(ctx) {
     const out: Finding[] = [];
@@ -300,8 +318,8 @@ export const paymentFailure: DiagnosticRule = {
 
 export const unresolvedOutcome: DiagnosticRule = {
   id: "UNRESOLVED_OUTCOME",
-  version: "1.0.0",
-  providers: ["stripe", "adyen"],
+  version: "1.1.0",
+  providers: ["*"],
   description: "The supplied events do not show a final payment state.",
   evaluate(ctx) {
     const out: Finding[] = [];
