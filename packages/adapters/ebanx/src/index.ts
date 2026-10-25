@@ -1613,6 +1613,7 @@ function paymentNotificationEvents(
       // A payment reaches CO or CA once, so a second update for the same hash
       // is a redelivery. Two refunds or chargebacks produce identical bodies.
       deliveryKey: hash && type === "update" ? `update:${hash}` : undefined,
+      ...(type === "update" ? {} : { contentMayRepeat: true }),
       // The notification only says "check this payment".
       outcome: "unknown",
       attributes: attrs([

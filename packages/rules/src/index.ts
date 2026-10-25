@@ -18,8 +18,11 @@ import type {
   NormalizedEvent,
 } from "@pandapaylens/core";
 import { LIFECYCLE_RULES } from "./lifecycle.js";
+import { repeatKey } from "./repeat.js";
 
-export const RULE_CATALOG_VERSION = "2026.10.4";
+export { repeatKey };
+
+export const RULE_CATALOG_VERSION = "2026.10.5";
 
 type Finding = Omit<DiagnosticFinding, "ruleId" | "ruleVersion">;
 
@@ -62,8 +65,8 @@ function eventsByGroup(ctx: AnalysisContext): { id: string; events: NormalizedEv
 function uniqueDeliveries(events: readonly NormalizedEvent[]): NormalizedEvent[] {
   const seen = new Set<string>();
   return events.filter((e) => {
-    if (!e.deliveryKey) return true;
-    const k = `${e.provider}:${e.deliveryKey}`;
+    const k = repeatKey(e);
+    if (!k) return true;
     if (seen.has(k)) return false;
     seen.add(k);
     return true;
@@ -71,11 +74,7 @@ function uniqueDeliveries(events: readonly NormalizedEvent[]): NormalizedEvent[]
 }
 
 const deliveryGroups = (ctx: AnalysisContext) =>
-  [
-    ...groupBy(ctx.events, (e) =>
-      e.deliveryKey ? `${e.provider}:${e.deliveryKey}` : undefined,
-    ).values(),
-  ].filter((l) => l.length > 1);
+  [...groupBy(ctx.events, repeatKey).values()].filter((l) => l.length > 1);
 
 const FALLBACK_DELIVERY: DeliveryProfile = {
   duplicateKey: "delivery key",
@@ -94,7 +93,7 @@ const describe = (e: NormalizedEvent) =>
 
 export const duplicateDelivery: DiagnosticRule = {
   id: "DUPLICATE_DELIVERY",
-  version: "1.1.0",
+  version: "1.2.0",
   providers: ["*"],
   description: "The same provider event appears more than once in the supplied data.",
   evaluate(ctx) {
@@ -105,21 +104,31 @@ export const duplicateDelivery: DiagnosticRule = {
       const first = list[0]!;
       const d = deliveryOf(ctx, first.provider);
       const name = nameOf(ctx, first.provider);
+      const byKey = Boolean(first.deliveryKey);
       out.push({
         severity: list.length >= 3 ? "low" : "info",
-        confidence: "confirmed",
-        title: `${describe(first)} delivered ${list.length} times`,
-        explanation: `The same ${name} event (same ${d.duplicateKey}) appears ${list.length} times. ${
-          d.duplicatesDocumented
-            ? `${name} documents that it can deliver the same notification more than once, so this is expected delivery behavior, not necessarily an application bug.`
-            : "Repeated deliveries are common with webhooks and are not necessarily an application bug."
-        }`,
+        confidence: byKey ? "confirmed" : "possible",
+        title: byKey
+          ? `${describe(first)} delivered ${list.length} times`
+          : `Identical ${describe(first)} record appears ${list.length} times`,
+        explanation: byKey
+          ? `The same ${name} event (same ${d.duplicateKey}) appears ${list.length} times. ${
+              d.duplicatesDocumented
+                ? `${name} documents that it can deliver the same notification more than once, so this is expected delivery behavior, not necessarily an application bug.`
+                : "Repeated deliveries are common with webhooks and are not necessarily an application bug."
+            }`
+          : `${list.length} records from ${name} have identical content. ${name} sends no delivery id for this kind of record, so this is most likely the same notification delivered again or the same object fetched again; it is counted once.`,
         evidenceEventIds: list.map((e) => e.id),
         recommendedAction: d.dedupeAdvice,
         ...(d.docsUrl ? { documentationUrl: d.docsUrl } : {}),
-        limitations: [
-          "The supplied data cannot show whether your application processed the event more than once.",
-        ],
+        limitations: byKey
+          ? [
+              "The supplied data cannot show whether your application processed the event more than once.",
+            ]
+          : [
+              "Identical content does not prove a repeated delivery: two separate events with exactly the same fields would look the same.",
+              "The supplied data cannot show whether your application processed the record more than once.",
+            ],
       });
     }
     return out;

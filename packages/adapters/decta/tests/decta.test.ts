@@ -382,7 +382,10 @@ describe("decta orders", () => {
       "2026-10-20T11:00:32.000Z",
     ]);
     expect(r.groups).toHaveLength(1);
-    expect(ruleIds(r)).not.toContain("DUPLICATE_DELIVERY");
+    // No delivery id: identical copies are reported only as a possible repeat.
+    expect(r.findings.find((f) => f.ruleId === "DUPLICATE_DELIVERY")).toMatchObject({
+      confidence: "possible",
+    });
     expect(dectaManifest.delivery.duplicateKey).toMatch(/none documented/);
   });
 

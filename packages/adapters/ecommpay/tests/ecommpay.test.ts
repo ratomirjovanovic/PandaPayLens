@@ -381,7 +381,10 @@ describe("ecommpay callbacks and status responses", () => {
       "2026-10-20T14:00:21.000Z",
     ]);
     expect(r.groups).toHaveLength(1);
-    expect(ruleIds(r)).not.toContain("DUPLICATE_DELIVERY");
+    // No delivery id: identical copies are reported only as a possible repeat.
+    expect(r.findings.find((f) => f.ruleId === "DUPLICATE_DELIVERY")).toMatchObject({
+      confidence: "possible",
+    });
     expect(ecommpayManifest.delivery.duplicateKey).toMatch(/none documented/);
     expect(ecommpayManifest.delivery.dedupeAdvice).toMatch(/newer data/);
   });

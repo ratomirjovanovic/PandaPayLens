@@ -312,8 +312,21 @@ function runAnalysis(
     const ctx = observedTimestamp
       ? { format, recordIndex, observedTimestamp, meta }
       : { format, recordIndex, meta };
+    const recordText = stableStringify(payload);
     for (const draft of adapter.normalize(parsed.value, ctx)) {
-      events.push({ ...draft, id: "", provider: adapter.id, sourceIndex: events.length });
+      events.push({
+        ...draft,
+        id: "",
+        provider: adapter.id,
+        sourceIndex: events.length,
+        ...(draft.contentMayRepeat
+          ? {}
+          : {
+              contentFingerprint: fingerprint(
+                `${adapter.id}|${format}|${draft.source.path}|${recordText}`,
+              ),
+            }),
+      });
     }
     for (const decoded of adapter.decodeErrors(parsed.value, ctx)) {
       errors.push({ ...decoded, id: `err-${errors.length + 1}`, provider: adapter.id });
@@ -551,4 +564,27 @@ function lenientWarning(repairs: readonly JsonRepair[], source?: string): Analys
     code: "LENIENT_JSON",
     message: `${source ? `${source}: ` : ""}The input is not strict JSON. Removed ${what} before parsing.`,
   };
+}
+
+/** JSON with object keys sorted at every level, so equal content gives equal text. */
+export function stableStringify(value: unknown): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value) ?? "null";
+  if (Array.isArray(value)) return `[${value.map((v) => stableStringify(v)).join(",")}]`;
+  const obj = value as Record<string, unknown>;
+  return `{${Object.keys(obj)
+    .sort()
+    .map((k) => `${JSON.stringify(k)}:${stableStringify(obj[k])}`)
+    .join(",")}}`;
+}
+
+/** Two 32-bit FNV-1a hashes with different offsets, as 16 hex characters. */
+function fingerprint(text: string): string {
+  let a = 0x811c9dc5;
+  let b = 0x01000193 ^ 0x5bd1e995;
+  for (let i = 0; i < text.length; i++) {
+    const c = text.charCodeAt(i);
+    a = Math.imul(a ^ c, 0x01000193) >>> 0;
+    b = Math.imul(b ^ c, 0x01000193) >>> 0;
+  }
+  return a.toString(16).padStart(8, "0") + b.toString(16).padStart(8, "0");
 }

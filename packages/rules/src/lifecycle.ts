@@ -14,6 +14,7 @@ import type {
   DiagnosticRule,
   NormalizedEvent,
 } from "@pandapaylens/core";
+import { repeatKey } from "./repeat.js";
 
 type Finding = Omit<DiagnosticFinding, "ruleId" | "ruleVersion">;
 
@@ -31,8 +32,8 @@ function groups(ctx: AnalysisContext): NormalizedEvent[][] {
 function unique(events: readonly NormalizedEvent[]): NormalizedEvent[] {
   const seen = new Set<string>();
   return events.filter((e) => {
-    if (!e.deliveryKey) return true;
-    const k = `${e.provider}:${e.deliveryKey}`;
+    const k = repeatKey(e);
+    if (!k) return true;
     if (seen.has(k)) return false;
     seen.add(k);
     return true;
