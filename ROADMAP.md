@@ -23,7 +23,8 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 
 ### Providers
 
-- **General providers with research in progress:** Paysafe, Airwallex, Rapyd, dLocal, EBANX, BlueSnap, PayU India, Razorpay, Paystack and Flutterwave. Each one needs a documentation review and the qualification gate before an adapter is written.
+- **General providers with verified documentation:** Paysafe (Payments API v1), Airwallex (Payments Client API), Rapyd (Merchant API), dLocal (Payins API) and EBANX (Pay-in Direct API). Research is in [docs/providers/research](docs/providers/research); adapters are the next step.
+- **General providers with research in progress:** BlueSnap, PayU India, Razorpay, Paystack and Flutterwave. Each one needs a documentation review and the qualification gate before an adapter is written.
 - **Blocked:** Pavilion Payments and Epoch publish no developer documentation without a merchant relationship. They stay listed as blocked until that changes.
 
 ### Analyzer
