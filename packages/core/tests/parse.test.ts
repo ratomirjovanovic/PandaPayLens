@@ -373,3 +373,42 @@ describe("documentation-style JSON", () => {
     );
   });
 });
+
+describe("plain-text and HTML error bodies", () => {
+  it("keeps a plain-text error body as scrubbed metadata on a status-only record", () => {
+    const r = parseInput(
+      "HTTP/1.1 400 Bad Request\nContent-Type: text/plain\n\nInvalid order   status\nor refund timeout",
+    );
+    expect(r.ok && r.value.records).toEqual([{}]);
+    expect(r.ok && r.value.meta[0]!.http).toMatchObject({
+      status: 400,
+      bodyText: "Invalid order status or refund timeout",
+    });
+  });
+
+  it("scrubs card numbers and caps the length", () => {
+    const r = parseInput(`HTTP/1.1 422 Unprocessable\n\nCard 4242424242424242 ${"x".repeat(900)}`);
+    const text = r.ok ? r.value.meta[0]!.http!.bodyText! : "";
+    expect(text).not.toContain("4242424242424242");
+    expect(text.length).toBeLessThanOrEqual(500);
+  });
+
+  it("ignores an HTML error page but keeps the status", () => {
+    const r = parseInput(
+      "HTTP/1.1 502 Bad Gateway\nContent-Type: text/html\n\n<html><body><h1>502</h1></body></html>",
+    );
+    expect(r.ok && r.value.records).toEqual([{}]);
+    expect(r.ok && r.value.meta[0]!.http).toMatchObject({ status: 502 });
+    expect(r.ok && r.value.meta[0]!.http!.bodyText).toBeUndefined();
+  });
+
+  it("does not change successful responses or JSON-looking error bodies", () => {
+    expect(parseInput("HTTP/1.1 200 OK\nContent-Type: text/plain\n\nall good")).toMatchObject({
+      ok: false,
+    });
+    expect(parseInput('HTTP/1.1 400 Bad Request\n\n{"broken": ')).toMatchObject({
+      ok: false,
+      error: { code: "INVALID_JSON" },
+    });
+  });
+});

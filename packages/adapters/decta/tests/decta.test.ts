@@ -899,3 +899,38 @@ describe("decta manifest and catalog", () => {
     expect(text).not.toMatch(dashes);
   });
 });
+
+describe("decta plain-text error responses", () => {
+  const text = fixture("decta/refund-text-error.txt");
+
+  it("decodes a documented text when DECTA is selected", () => {
+    const r = analyzeText(text, { ...options, provider: "decta" });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.result.records[0]).toMatchObject({ provider: "decta", format: "decta.text_error" });
+    expect(r.result.errors).toHaveLength(1);
+    expect(r.result.errors[0]).toMatchObject({
+      code: "HTTP 400",
+      category: "invalid_request",
+      retry: "do_not_retry",
+      confidence: "possible",
+      providerMessage: "Invalid order status or refund timeout",
+    });
+    expect(r.result.events[0]).toMatchObject({ stage: "error", outcome: "failure" });
+  });
+
+  it("stays below automatic detection and names DECTA as the likely provider", () => {
+    const r = analyzeText(text, options);
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.result.records[0]).toMatchObject({ status: "unsupported", provider: "decta" });
+    expect(r.result.errors).toHaveLength(0);
+  });
+
+  it("does not claim other text bodies", () => {
+    const other =
+      "HTTP/1.1 400 Bad Request\nContent-Type: text/plain\n\nSomething else went wrong\n";
+    const r = analyzeText(other, { ...options, provider: "decta" });
+    expect(r.ok && r.result.records[0]!.status).toBe("unsupported");
+  });
+});
