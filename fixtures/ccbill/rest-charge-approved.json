@@ -1,0 +1,10 @@
+{
+  "declineCode": null,
+  "declineText": null,
+  "denialId": null,
+  "approved": true,
+  "paymentUniqueId": "PPLsynthPUID0123456789abcdef01234",
+  "sessionId": null,
+  "subscriptionId": "PPLsynth0121000000000000777",
+  "newPaymentTokenId": "PPLsynthTOKENffeeddccbbaa998877"
+}

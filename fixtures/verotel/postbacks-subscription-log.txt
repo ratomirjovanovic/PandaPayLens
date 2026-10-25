@@ -1,0 +1,4 @@
+shopID=PPLsynth64233&type=subscription&event=initial&saleID=PPLsynth13029501&subscriptionType=recurring&priceAmount=14.95&priceCurrency=GBP&period=P1M&nextChargeOn=2026-08-01&paymentMethod=CC&signature=3e4f5a6b7c8d9e0f1a2b3c4d5e6f708192a3b4c5
+shopID=PPLsynth64233&type=subscription&event=rebill&saleID=PPLsynth13029501&subscriptionType=recurring&transactionID=PPLsynth80824002&amount=14.95&currency=GBP&nextChargeOn=2026-09-01&subscriptionPhase=normal&paymentMethod=CC&signature=3e4f5a6b7c8d9e0f1a2b3c4d5e6f708192a3b4c5
+shopID=PPLsynth64233&type=subscription&event=extend&saleID=PPLsynth13029501&subscriptionType=recurring&nextChargeOn=2026-10-06&subscriptionPhase=normal&signature=3e4f5a6b7c8d9e0f1a2b3c4d5e6f708192a3b4c5
+shopID=PPLsynth64233&type=subscription&event=expiry&saleID=PPLsynth13029501&subscriptionType=recurring&signature=3e4f5a6b7c8d9e0f1a2b3c4d5e6f708192a3b4c5

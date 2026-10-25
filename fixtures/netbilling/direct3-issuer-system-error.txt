@@ -1,0 +1,1 @@
+status_code=0&trans_id=PPLsynth0006&auth_date=2026-10-20+12%3A10%3A00&auth_msg=SYSTEM+ERROR+96&processor=FDR-NASH#2

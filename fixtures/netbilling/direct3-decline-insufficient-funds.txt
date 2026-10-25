@@ -1,0 +1,1 @@
+status_code=0&trans_id=PPLsynth0004&auth_date=2026-10-20+12%3A00%3A00&auth_msg=DECLINE+51&avs_code=Y&cvv2_code=M&reason_code2=PPL51&processor=PTECH

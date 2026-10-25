@@ -1,0 +1,1 @@
+x_response_code=1&x_response_reason_text=This+transaction+has+been+approved&x_auth_code=PPL111&x_avs_code=Y&x_trans_id=PPLsynth0201&x_Invoice_Num=PPLsynth-inv-1&x_Amount=10.00

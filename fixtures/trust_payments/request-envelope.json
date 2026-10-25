@@ -1,0 +1,17 @@
+{
+  "alias": "webservices@example.com",
+  "version": "1.00",
+  "request": [
+    {
+      "sitereference": "test_PPLsynth12345",
+      "requesttypedescriptions": ["AUTH"],
+      "accounttypedescription": "ECOM",
+      "currencyiso3a": "GBP",
+      "baseamount": "1050",
+      "orderreference": "PPLsynth-order-123",
+      "pan": "4111111111111111",
+      "expirydate": "12/2030",
+      "securitycode": "123"
+    }
+  ]
+}

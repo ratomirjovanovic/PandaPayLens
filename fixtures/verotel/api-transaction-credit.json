@@ -1,0 +1,14 @@
+{
+  "created_at": "2026-09-10T15:30:00Z",
+  "id": "PPLsynth80821090",
+  "reversal_extent": "NONE",
+  "is_testing": false,
+  "is_approved": true,
+  "original_debit_transaction_id": "PPLsynth80821002",
+  "payment_method": "CC",
+  "price": { "amount": "29.95", "currency": "EUR" },
+  "sale": { "id": "PPLsynth13029201", "type": "SUBSCRIPTION" },
+  "transaction_subtype": "CREDIT",
+  "transaction_type": "CREDIT",
+  "website_id": 65147
+}

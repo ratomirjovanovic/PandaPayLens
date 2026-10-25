@@ -1,0 +1,1 @@
+status_code=1&trans_id=PPLsynth0003&auth_code=PPL456&auth_date=2026-10-20+11%3A00%3A00&auth_msg=APPROVED&avs_code=Y&cvv2_code=M&member_id=PPLsynthM0001&recurring_id=PPLsynthR0001&settle_amount=29.95&settle_currency=USD&processor=INT%2FCX%235

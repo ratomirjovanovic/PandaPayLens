@@ -1,0 +1,21 @@
+{
+  "transactionId": "PPLsynth0912191101000000301",
+  "subscriptionId": "PPLsynth0913024401000012340",
+  "clientAccnum": "999999",
+  "clientSubacc": "9999",
+  "timestamp": "2026-08-23 04:00:12",
+  "billedAmount": "9.95",
+  "billedCurrency": "USD",
+  "billedCurrencyCode": "840",
+  "accountingAmount": "9.95",
+  "accountingCurrency": "USD",
+  "accountingCurrencyCode": "840",
+  "nextRenewalDate": "2026-09-22",
+  "renewalDate": "2026-08-23",
+  "cardType": "VISA",
+  "paymentAccount": "PPLsynthb1946ac92492d2347c6235b4d26",
+  "paymentType": "CREDIT",
+  "last4": "1111",
+  "expDate": "0130",
+  "cardSubType": "CREDIT"
+}

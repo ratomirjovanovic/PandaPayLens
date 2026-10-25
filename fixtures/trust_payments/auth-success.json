@@ -1,0 +1,37 @@
+{
+  "requestreference": "W23-PPLsynth01",
+  "version": "1.00",
+  "response": [
+    {
+      "transactionstartedtimestamp": "2026-10-20 15:08:47",
+      "livestatus": "0",
+      "issuer": "PPLsynth Test Issuer",
+      "splitfinalnumber": "1",
+      "dccenabled": "0",
+      "settleduedate": "2026-10-20",
+      "errorcode": "0",
+      "baseamount": "1050",
+      "tid": "PPLsynth27882788",
+      "merchantnumber": "PPLsynth00000000",
+      "merchantcountryiso2a": "GB",
+      "transactionreference": "PPLsynth-9-80006",
+      "merchantname": "PPLsynth Merchant",
+      "paymenttypedescription": "VISA",
+      "orderreference": "PPLsynth-order-123",
+      "accounttypedescription": "ECOM",
+      "acquirerresponsecode": "00",
+      "requesttypedescription": "AUTH",
+      "securityresponsesecuritycode": "2",
+      "currencyiso3a": "GBP",
+      "authcode": "PPLsynth96",
+      "errormessage": "Ok",
+      "operatorname": "webservices@example.com",
+      "securityresponsepostcode": "0",
+      "maskedpan": "411111######1111",
+      "securityresponseaddress": "0",
+      "issuercountryiso2a": "US",
+      "settlestatus": "0"
+    }
+  ],
+  "secrand": "zO9"
+}

@@ -1,0 +1,16 @@
+{
+  "requestreference": "W23-PPLsynth13",
+  "version": "1.00",
+  "response": [
+    {
+      "transactionstartedtimestamp": "2026-10-05 02:00:00",
+      "errorcode": "70000",
+      "errormessage": "Decline",
+      "requesttypedescription": "SCHEMEUPDATE",
+      "transactionreference": "PPLsynth-9-60010",
+      "parenttransactionreference": "PPLsynth-9-60001",
+      "settlestatus": "3"
+    }
+  ],
+  "secrand": "su3"
+}

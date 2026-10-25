@@ -1,0 +1,1 @@
+shopID=PPLsynth64233&type=purchase&saleID=PPLsynth13029101&referenceID=PPLsynth-ref-0001&custom1=PPLsynth-user-0001&custom2=&custom3=&transactionID=PPLsynth80820001&priceAmount=19.95&priceCurrency=EUR&paymentMethod=CC&truncatedPAN=XXXXXXXXXXXX2222&oneClickToken=PPLsynthONECLICKTOKEN0001&signature=7c1e4f2a9b3d5e6f80a1b2c3d4e5f60718293a4b5c6d7e8f9a0b1c2d3e4f5a6b

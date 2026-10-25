@@ -1,0 +1,13 @@
+HTTP/1.1 429 Too Many Requests
+Content-Type: application/json; charset=utf-8
+Retry-After: 1200
+X-RateLimit-Limit: 500
+X-RateLimit-Remaining: 0
+
+{
+    "error": {
+        "documentation": "https://controlcenter.verotel.com/api-doc/index.html",
+        "status": 429,
+        "title": "Rate limit exceeded"
+    }
+}

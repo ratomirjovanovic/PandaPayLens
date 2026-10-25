@@ -1,0 +1,51 @@
+[
+  {
+    "requestreference": "W23-PPLsynth18",
+    "version": "1.00",
+    "response": [
+      {
+        "transactionstartedtimestamp": "2026-10-20 11:00:00",
+        "errorcode": "71000",
+        "errormessage": "Soft decline",
+        "requesttypedescription": "AUTH",
+        "accounttypedescription": "ECOM",
+        "transactionreference": "PPLsynth-9-20001",
+        "baseamount": "8000",
+        "currencyiso3a": "EUR",
+        "settlestatus": "3"
+      }
+    ],
+    "secrand": "sd1"
+  },
+  {
+    "requestreference": "W23-PPLsynth19",
+    "version": "1.00",
+    "response": [
+      {
+        "transactionstartedtimestamp": "2026-10-20 11:01:00",
+        "errorcode": "0",
+        "errormessage": "Ok",
+        "requesttypedescription": "THREEDQUERY",
+        "accounttypedescription": "ECOM",
+        "transactionreference": "PPLsynth-9-20002",
+        "parenttransactionreference": "PPLsynth-9-20001",
+        "enrolled": "Y",
+        "status": "C"
+      },
+      {
+        "transactionstartedtimestamp": "2026-10-20 11:02:00",
+        "errorcode": "0",
+        "errormessage": "Ok",
+        "requesttypedescription": "AUTH",
+        "accounttypedescription": "ECOM",
+        "transactionreference": "PPLsynth-9-20003",
+        "parenttransactionreference": "PPLsynth-9-20002",
+        "baseamount": "8000",
+        "currencyiso3a": "EUR",
+        "settlestatus": "0",
+        "scaexemptionindicator": "14"
+      }
+    ],
+    "secrand": "sd2"
+  }
+]

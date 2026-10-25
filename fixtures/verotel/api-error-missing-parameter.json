@@ -1,0 +1,7 @@
+{
+  "error": {
+    "documentation": "https://controlcenter.verotel.com/api-doc/index.html",
+    "status": 412,
+    "title": "Paramter amount is required"
+  }
+}

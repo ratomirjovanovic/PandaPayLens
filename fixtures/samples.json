@@ -208,5 +208,110 @@
     "provider": "braintree",
     "file": "braintree/webhook-signed.txt",
     "description": "A raw bt_signature/bt_payload webhook. PandaPayLens explains what to paste instead."
+  },
+  {
+    "id": "netbilling-decline",
+    "title": "NETbilling: declined, insufficient funds",
+    "provider": "netbilling",
+    "file": "netbilling/direct3-decline-insufficient-funds.txt",
+    "description": "A form-encoded Direct Mode response; the decline is decoded from the whole authorization message."
+  },
+  {
+    "id": "netbilling-3ds-pending",
+    "title": "NETbilling: 3DS challenge pending",
+    "provider": "netbilling",
+    "file": "netbilling/direct3-3ds-challenge-pending.txt",
+    "description": "status_code=T with OFFLINE RECORD: nothing is authorized yet."
+  },
+  {
+    "id": "verotel-subscription-log",
+    "title": "Verotel: subscription postbacks",
+    "provider": "verotel",
+    "file": "verotel/postbacks-subscription-log.txt",
+    "description": "Initial, rebill and cancel postbacks for one subscription, one per line."
+  },
+  {
+    "id": "verotel-chargeback",
+    "title": "Verotel: subscription chargeback",
+    "provider": "verotel",
+    "file": "verotel/postback-subscription-chargeback.txt",
+    "description": "A FlexPay chargeback postback linked to its sale."
+  },
+  {
+    "id": "pxp-card-refused",
+    "title": "PXP: card refused",
+    "provider": "pxp",
+    "file": "pxp/card-refused-response.json",
+    "description": "A Transactions API response decoded from PXP's normalized CRD code."
+  },
+  {
+    "id": "pxp-payout-rejected",
+    "title": "PXP: SPEI payout rejected",
+    "provider": "pxp",
+    "file": "pxp/spei-payout-rejected.json",
+    "description": "A bank payout reported as rejected; payouts are kept separate from deposits."
+  },
+  {
+    "id": "trust-payments-declined",
+    "title": "Trust Payments: AUTH declined",
+    "provider": "trust_payments",
+    "file": "trust_payments/auth-declined.json",
+    "description": "A Webservices JSON response with errorcode 70000; the acquirer reason is not published, and the explanation says so."
+  },
+  {
+    "id": "trust-payments-recurring",
+    "title": "Trust Payments: recurring payments",
+    "provider": "trust_payments",
+    "file": "trust_payments/recurring-sequence.json",
+    "description": "An initial AUTH and RECUR rebills linked by parenttransactionreference."
+  },
+  {
+    "id": "trust-payments-gaming-payout",
+    "title": "Trust Payments: gaming payout",
+    "provider": "trust_payments",
+    "file": "trust_payments/payout-gaming.json",
+    "description": "A payout to a card, kept separate from deposits."
+  },
+  {
+    "id": "segpay-rebill-declined",
+    "title": "Segpay: rebill declined",
+    "provider": "segpay",
+    "file": "segpay/processing-rebill-declined.txt",
+    "description": "A form-encoded postback for a failed recurring charge."
+  },
+  {
+    "id": "segpay-stand-in",
+    "title": "Segpay: Stand-In decline",
+    "provider": "segpay",
+    "file": "segpay/processing-stand-in.txt",
+    "description": "A Stand-In approval followed by a decline that reuses the same ids; not treated as a duplicate."
+  },
+  {
+    "id": "segpay-paypal-dispute",
+    "title": "Segpay: PayPal dispute postback",
+    "provider": "segpay",
+    "file": "segpay/paypal-dispute.txt",
+    "description": "A dispute postback linked to the original purchase."
+  },
+  {
+    "id": "ccbill-renewal-failure",
+    "title": "CCBill: rebill declined",
+    "provider": "ccbill",
+    "file": "ccbill/webhook-renewal-failure.txt",
+    "description": "A RenewalFailure webhook: a recurring charge failed and CCBill reports the next retry date."
+  },
+  {
+    "id": "ccbill-expiration-http",
+    "title": "CCBill: webhook as a raw HTTP request",
+    "provider": "ccbill",
+    "file": "ccbill/webhook-expiration-http.txt",
+    "description": "The event type is read from the URL query string; the body alone does not carry it."
+  },
+  {
+    "id": "ccbill-denial",
+    "title": "CCBill: Background Post denial",
+    "provider": "ccbill",
+    "file": "ccbill/background-post-denial.txt",
+    "description": "A declined sale decoded from CCBill's numbered decline codes."
   }
 ]

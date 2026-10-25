@@ -1,0 +1,21 @@
+{
+  "subscriptionId": "PPLsynth0913024401000099001",
+  "transactionId": "PPLsynth0912191101000099001",
+  "clientAccnum": "999999",
+  "clientSubacc": "9999",
+  "timestamp": "2026-10-02 08:10:00",
+  "billedInitialPrice": "4.95",
+  "billedRecurringPrice": "4.95",
+  "billedCurrencyCode": "840",
+  "initialPeriod": "30",
+  "recurringPeriod": "30",
+  "rebills": "99",
+  "paymentType": "CREDIT",
+  "cardType": "VISA",
+  "originalSubscriptionId": "PPLsynth0913024401000012340",
+  "originalClientAccnum": "999999",
+  "originalClientSubacc": "9999",
+  "source": "API",
+  "scaResponseStatus": "Y",
+  "cardSubType": "DEBIT"
+}

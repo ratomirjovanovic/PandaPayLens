@@ -1,0 +1,22 @@
+[
+  {
+    "state": "Refused",
+    "stateData": { "code": "CRD116", "message": "Insufficient funds" },
+    "merchantTransactionId": "PPLSYNTH-MTX-1001",
+    "merchantTransactionDate": "2026-10-20T21:00:00Z",
+    "merchantOrderId": "PPLSYNTH-ORDER-SHARED",
+    "systemTransactionId": "PPLsynth-card-1001-auth",
+    "transactionMethod": { "intent": "Purchase", "fundingType": "Card", "entryType": "Ecom" },
+    "amounts": { "transaction": 20, "currencyCode": "EUR" }
+  },
+  {
+    "state": "Authorised",
+    "stateData": { "code": "CRD000", "message": "Approved" },
+    "merchantTransactionId": "PPLSYNTH-MTX-1002",
+    "merchantTransactionDate": "2026-10-20T21:05:00Z",
+    "merchantOrderId": "PPLSYNTH-ORDER-SHARED",
+    "systemTransactionId": "PPLsynth-card-1002-auth",
+    "transactionMethod": { "intent": "Purchase", "fundingType": "Card", "entryType": "Ecom" },
+    "amounts": { "transaction": 20, "currencyCode": "EUR" }
+  }
+]

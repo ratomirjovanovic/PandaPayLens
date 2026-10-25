@@ -1,0 +1,67 @@
+[
+  {
+    "requestreference": "W23-PPLsynth10",
+    "version": "1.00",
+    "response": [
+      {
+        "transactionstartedtimestamp": "2026-08-01 09:00:00",
+        "errorcode": "0",
+        "errormessage": "Ok",
+        "requesttypedescription": "AUTH",
+        "accounttypedescription": "ECOM",
+        "transactionreference": "PPLsynth-9-60001",
+        "baseamount": "1500",
+        "currencyiso3a": "GBP",
+        "settlestatus": "0",
+        "credentialsonfile": "1",
+        "subscriptiontype": "RECURRING",
+        "subscriptionnumber": "1"
+      }
+    ],
+    "secrand": "a1"
+  },
+  {
+    "requestreference": "W23-PPLsynth11",
+    "version": "1.00",
+    "response": [
+      {
+        "transactionstartedtimestamp": "2026-09-01 09:00:00",
+        "errorcode": "0",
+        "errormessage": "Ok",
+        "requesttypedescription": "AUTH",
+        "accounttypedescription": "RECUR",
+        "transactionreference": "PPLsynth-9-60002",
+        "parenttransactionreference": "PPLsynth-9-60001",
+        "baseamount": "1500",
+        "currencyiso3a": "GBP",
+        "settlestatus": "0",
+        "credentialsonfile": "2",
+        "subscriptionnumber": "2"
+      }
+    ],
+    "secrand": "a2"
+  },
+  {
+    "requestreference": "W23-PPLsynth12",
+    "version": "1.00",
+    "response": [
+      {
+        "transactionstartedtimestamp": "2026-10-01 09:00:00",
+        "errorcode": "70000",
+        "errormessage": "Decline",
+        "requesttypedescription": "AUTH",
+        "accounttypedescription": "RECUR",
+        "transactionreference": "PPLsynth-9-60003",
+        "parenttransactionreference": "PPLsynth-9-60001",
+        "baseamount": "1500",
+        "currencyiso3a": "GBP",
+        "settlestatus": "3",
+        "credentialsonfile": "2",
+        "subscriptionnumber": "3",
+        "acquireradvicecode": "25",
+        "paymenttypedescription": "MASTERCARD"
+      }
+    ],
+    "secrand": "a3"
+  }
+]

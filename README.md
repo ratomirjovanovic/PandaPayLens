@@ -31,18 +31,28 @@ Paste a payment error, webhook or event log from a supported provider. PandaPayL
 
 ## Provider coverage
 
-8 providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
+<!-- providers:start -->
 
-| Provider     | Overall   | Errors    | API responses | Webhooks  | Timeline  | Correlation |
-| ------------ | --------- | --------- | ------------- | --------- | --------- | ----------- |
-| Stripe       | supported | supported | supported     | supported | supported | supported   |
-| Adyen        | supported | supported | supported     | supported | supported | supported   |
-| payabl.      | limited   | supported | supported     | limited   | limited   | limited     |
-| Checkout.com | limited   | supported | supported     | limited   | limited   | supported   |
-| Braintree    | limited   | supported | supported     | limited   | limited   | limited     |
-| PayPal       | limited   | supported | supported     | limited   | limited   | limited     |
-| Mollie       | limited   | limited   | supported     | limited   | limited   | supported   |
-| Square       | limited   | supported | supported     | supported | limited   | limited     |
+14 of 42 roadmap providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Research candidates and planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
+
+| Provider       | Overall   | Errors    | API responses | Webhooks     | Timeline  | Correlation |
+| -------------- | --------- | --------- | ------------- | ------------ | --------- | ----------- |
+| Stripe         | supported | supported | supported     | supported    | supported | supported   |
+| Adyen          | supported | supported | supported     | supported    | supported | supported   |
+| payabl.        | limited   | supported | supported     | limited      | limited   | limited     |
+| Checkout.com   | limited   | supported | supported     | limited      | limited   | supported   |
+| Braintree      | limited   | supported | supported     | limited      | limited   | limited     |
+| PayPal         | limited   | supported | supported     | limited      | limited   | limited     |
+| Mollie         | limited   | limited   | supported     | limited      | limited   | supported   |
+| Square         | limited   | supported | supported     | supported    | limited   | limited     |
+| CCBill         | limited   | limited   | limited       | limited      | limited   | limited     |
+| Segpay         | limited   | limited   | unsupported   | limited      | limited   | supported   |
+| Trust Payments | limited   | supported | supported     | limited      | limited   | supported   |
+| PXP Financial  | limited   | supported | supported     | limited      | limited   | limited     |
+| Verotel        | limited   | limited   | limited       | limited      | limited   | supported   |
+| NETbilling     | limited   | limited   | supported     | experimental | limited   | limited     |
+
+<!-- providers:end -->
 
 Adapters are built from each provider's official documentation; research notes are in [`docs/providers/research`](docs/providers/research). PandaPayLens is not affiliated with any of these providers.
 
@@ -125,7 +135,8 @@ pnpm test:e2e         # Playwright against the full app (after pnpm build)
 2. Admin control plane with passkey MFA: done
 3. Wave 1 providers (payabl., Checkout.com, PayPal, Braintree, Mollie, Square): done, several with limited capabilities
 4. GitHub Pages demo and first tagged release: in progress
-5. Wave 2 and 3 providers and high-risk processors: planned, each released only when tested
+5. High-risk providers (HR-1: CCBill, Segpay, Verotel, NETbilling, PXP, Trust Payments): in progress, each released only when tested
+6. Remaining waves: research done for most candidates; adapters follow wave by wave
 
 ## License
 

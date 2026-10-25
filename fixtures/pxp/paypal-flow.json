@@ -1,0 +1,87 @@
+[
+  {
+    "eventCategory": "transaction",
+    "eventDate": "2026-10-20T18:00:00.000Z",
+    "eventData": {
+      "state": "Pending",
+      "merchantTransactionId": "PPLSYNTH-MTX-0801",
+      "systemTransactionId": "PPLsynth-ppal-0801-ordr",
+      "providerTransactionId": "PPLSYNTH-PAYPAL-ORDER-0801",
+      "transactionMethod": { "intent": "Create", "fundingType": "Paypal", "entryType": "Ecom" },
+      "amounts": { "transaction": 12.99, "currencyCode": "EUR" }
+    },
+    "eventOwner": {
+      "merchantGroup": "PPLSYNTH-GROUP",
+      "merchant": "PPLSYNTH-MERCHANT",
+      "site": "PPLSYNTH-SITE"
+    }
+  },
+  {
+    "eventCategory": "transaction",
+    "eventDate": "2026-10-20T18:01:00.000Z",
+    "eventData": {
+      "state": "Executed",
+      "merchantTransactionId": "PPLSYNTH-MTX-0801",
+      "systemTransactionId": "PPLsynth-ppal-0801-ordr",
+      "transactionMethod": { "intent": "Create", "fundingType": "Paypal", "entryType": "Ecom" },
+      "amounts": { "transaction": 12.99, "currencyCode": "EUR" }
+    },
+    "eventOwner": {
+      "merchantGroup": "PPLSYNTH-GROUP",
+      "merchant": "PPLSYNTH-MERCHANT",
+      "site": "PPLSYNTH-SITE"
+    }
+  },
+  {
+    "eventCategory": "transaction",
+    "eventDate": "2026-10-20T18:02:00.000Z",
+    "eventData": {
+      "state": "Authorised",
+      "merchantTransactionId": "PPLSYNTH-MTX-0801",
+      "systemTransactionId": "PPLsynth-ppal-0801-ordr",
+      "transactionMethod": {
+        "intent": "Authorisation",
+        "fundingType": "Paypal",
+        "entryType": "Ecom"
+      },
+      "amounts": { "transaction": 12.99, "currencyCode": "EUR" }
+    },
+    "eventOwner": {
+      "merchantGroup": "PPLSYNTH-GROUP",
+      "merchant": "PPLSYNTH-MERCHANT",
+      "site": "PPLSYNTH-SITE"
+    }
+  },
+  {
+    "eventCategory": "transaction",
+    "eventDate": "2026-10-20T18:03:00.000Z",
+    "eventData": {
+      "state": "Captured",
+      "merchantTransactionId": "PPLSYNTH-MTX-0801",
+      "systemTransactionId": "PPLsynth-ppal-0801-ordr",
+      "transactionMethod": { "intent": "Capture", "fundingType": "Paypal", "entryType": "Ecom" },
+      "amounts": { "transaction": 12.99, "currencyCode": "EUR" }
+    },
+    "eventOwner": {
+      "merchantGroup": "PPLSYNTH-GROUP",
+      "merchant": "PPLSYNTH-MERCHANT",
+      "site": "PPLSYNTH-SITE"
+    }
+  },
+  {
+    "eventCategory": "transaction",
+    "eventDate": "2026-10-20T19:00:00.000Z",
+    "eventData": {
+      "state": "Authorised",
+      "merchantTransactionId": "PPLSYNTH-MTX-0802",
+      "systemTransactionId": "PPLsynth-ppal-0802-payo",
+      "transactionMethod": "Payout",
+      "amount": { "transaction": 50, "currencyCode": "EUR" }
+    },
+    "eventOwner": {
+      "merchantGroup": "PPLSYNTH-GROUP",
+      "merchant": "PPLSYNTH-MERCHANT",
+      "site": "PPLSYNTH-SITE"
+    }
+  }
+]

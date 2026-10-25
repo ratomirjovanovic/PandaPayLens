@@ -1,0 +1,15 @@
+{
+  "eventCategory": "authentication",
+  "eventDate": "2026-10-20T20:00:00.000Z",
+  "eventData": {
+    "authenticationId": "PPLsynth-3ds-0901-auth",
+    "authenticationState": "AuthenticationFailed",
+    "transactionStatus": "N",
+    "transactionStatusReason": "01"
+  },
+  "eventOwner": {
+    "merchantGroup": "PPLSYNTH-GROUP",
+    "merchant": "PPLSYNTH-MERCHANT",
+    "site": "PPLSYNTH-SITE"
+  }
+}

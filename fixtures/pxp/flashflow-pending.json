@@ -1,0 +1,10 @@
+{
+  "state": "PendingOnProvider",
+  "stateData": {},
+  "merchantTransactionId": "PPLSYNTH-MTX-0601",
+  "merchantTransactionDate": "2026-10-20T15:00:00",
+  "systemTransactionId": "PPLsynth-flsh-0601-depo",
+  "transactionMethod": { "intent": "Purchase", "fundingType": "PayByBank", "entryType": "Ecom" },
+  "amounts": { "transaction": 500, "currencyCode": "THB" },
+  "iframeSrc": "https://pay.pplsynth.example/iframe/PLANTEDIFRAMEURL"
+}

@@ -1,0 +1,10 @@
+{
+  "eventCategory": "test-connection",
+  "eventDate": "2026-10-20T22:00:00.000Z",
+  "eventData": { "eventCode": "TS_TC" },
+  "eventOwner": {
+    "merchantGroup": "PPLSYNTH-GROUP",
+    "merchant": "PPLSYNTH-MERCHANT",
+    "site": "PPLSYNTH-SITE"
+  }
+}

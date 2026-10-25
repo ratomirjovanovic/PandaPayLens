@@ -11,6 +11,12 @@ import { checkoutAdapter } from "@pandapaylens/checkout";
 import { paypalAdapter } from "@pandapaylens/paypal";
 import { mollieAdapter } from "@pandapaylens/mollie";
 import { squareAdapter } from "@pandapaylens/square";
+import { ccbillAdapter } from "@pandapaylens/ccbill";
+import { segpayAdapter } from "@pandapaylens/segpay";
+import { trustPaymentsAdapter } from "@pandapaylens/trust-payments";
+import { pxpAdapter } from "@pandapaylens/pxp";
+import { verotelAdapter } from "@pandapaylens/verotel";
+import { netbillingAdapter } from "@pandapaylens/netbilling";
 
 export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   stripeAdapter,
@@ -21,6 +27,12 @@ export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   paypalAdapter,
   mollieAdapter,
   squareAdapter,
+  ccbillAdapter,
+  segpayAdapter,
+  trustPaymentsAdapter,
+  pxpAdapter,
+  verotelAdapter,
+  netbillingAdapter,
 ];
 
 export {

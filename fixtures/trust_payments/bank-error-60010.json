@@ -1,0 +1,19 @@
+{
+  "requestreference": "W23-PPLsynth04",
+  "version": "1.00",
+  "response": [
+    {
+      "transactionstartedtimestamp": "2026-10-20 17:00:00",
+      "errorcode": "60010",
+      "errormessage": "Bank System Error",
+      "requesttypedescription": "AUTH",
+      "accounttypedescription": "ECOM",
+      "transactionreference": "PPLsynth-9-80012",
+      "orderreference": "PPLsynth-order-125",
+      "baseamount": "60010",
+      "currencyiso3a": "GBP",
+      "livestatus": "0"
+    }
+  ],
+  "secrand": "mm2"
+}

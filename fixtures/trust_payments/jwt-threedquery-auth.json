@@ -1,0 +1,47 @@
+{
+  "iat": 1792911700,
+  "payload": {
+    "requestreference": "W56-PPLsynth06",
+    "version": "1.00",
+    "jwt": "eyJhbGciOiJIUzI1NiJ9.PPLsynthRequestJwtBody2.PPLsynthRequestJwtSignature2",
+    "response": [
+      {
+        "transactionstartedtimestamp": "2026-10-20 09:00:00",
+        "errorcode": "0",
+        "errormessage": "Ok",
+        "requesttypedescription": "THREEDQUERY",
+        "accounttypedescription": "ECOM",
+        "transactionreference": "PPLsynth-9-4021491",
+        "enrolled": "Y",
+        "status": "Y",
+        "threedversion": "2.2.0",
+        "cavv": "PPLsynthCavvValue0000000000=",
+        "eci": "05",
+        "livestatus": "0",
+        "settlestatus": "0"
+      },
+      {
+        "transactionstartedtimestamp": "2026-10-20 09:00:05",
+        "errorcode": "0",
+        "errormessage": "Ok",
+        "requesttypedescription": "AUTH",
+        "accounttypedescription": "ECOM",
+        "transactionreference": "PPLsynth-9-4021492",
+        "parenttransactionreference": "PPLsynth-9-4021491",
+        "baseamount": "2499",
+        "currencyiso3a": "EUR",
+        "settlestatus": "0",
+        "authcode": "PPLsynth01",
+        "acquirerresponsecode": "00",
+        "enrolled": "Y",
+        "status": "Y",
+        "maskedpan": "400000######1000",
+        "paymenttypedescription": "VISA",
+        "customeroutput": "RESULT",
+        "livestatus": "0"
+      }
+    ],
+    "secrand": "dgc6QJ8I6"
+  },
+  "aud": "jwt.user"
+}

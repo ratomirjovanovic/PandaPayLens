@@ -1,0 +1,40 @@
+[
+  {
+    "requestreference": "W23-PPLsynth16",
+    "version": "1.00",
+    "response": [
+      {
+        "transactionstartedtimestamp": "2026-10-20 10:00:00",
+        "errorcode": "0",
+        "errormessage": "Ok",
+        "requesttypedescription": "AUTH",
+        "accounttypedescription": "ECOM",
+        "transactionreference": "PPLsynth-9-30001",
+        "orderreference": "PPLsynth-order-same",
+        "baseamount": "500",
+        "currencyiso3a": "GBP",
+        "settlestatus": "0"
+      }
+    ],
+    "secrand": "u1"
+  },
+  {
+    "requestreference": "W23-PPLsynth17",
+    "version": "1.00",
+    "response": [
+      {
+        "transactionstartedtimestamp": "2026-10-20 10:05:00",
+        "errorcode": "0",
+        "errormessage": "Ok",
+        "requesttypedescription": "AUTH",
+        "accounttypedescription": "ECOM",
+        "transactionreference": "PPLsynth-9-30002",
+        "orderreference": "PPLsynth-order-same",
+        "baseamount": "500",
+        "currencyiso3a": "GBP",
+        "settlestatus": "0"
+      }
+    ],
+    "secrand": "u2"
+  }
+]

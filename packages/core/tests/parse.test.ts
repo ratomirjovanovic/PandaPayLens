@@ -173,6 +173,7 @@ describe("format detection", () => {
         method: "POST",
         path: "/webhooks/psp",
         contentType: "application/x-www-form-urlencoded",
+        query: { token: "[redacted]" },
         headers: {
           host: "example.com",
           "content-type": "application/x-www-form-urlencoded",
@@ -220,5 +221,60 @@ describe("multi-line form input", () => {
       { transactionid: "1", type: "order" },
       { transactionid: "1", type: "capture" },
     ]);
+  });
+});
+
+describe("HTTP status-only responses", () => {
+  it("keeps the reason phrase and accepts error responses without a body", () => {
+    const r = parseInput("HTTP/1.1 699 Declined: card 4242424242424242 bad\nContent-Length: 0\n\n");
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.value.records).toEqual([{}]);
+      expect(r.value.meta[0]!.http).toMatchObject({ kind: "response", status: 699 });
+      expect(r.value.meta[0]!.http!.reason).toBe("Declined: card [redacted] bad");
+    }
+  });
+
+  it("still rejects bodiless successful responses and requests", () => {
+    expect(parseInput("HTTP/1.1 200 OK\n\n")).toMatchObject({
+      ok: false,
+      error: { code: "INVALID_HTTP" },
+    });
+  });
+});
+
+describe("query-string callbacks", () => {
+  it("parses the query string of a GET request without a body", () => {
+    const r = parseInput("GET /postback?saleID=1&event=rebill HTTP/1.1\nHost: x\n\n");
+    expect(r.ok && r.value.records).toEqual([{ saleID: "1", event: "rebill" }]);
+    expect(r.ok && r.value.meta[0]!.http).toMatchObject({ method: "GET", path: "/postback" });
+  });
+
+  it("parses a pasted callback URL as form data", () => {
+    const r = parseInput("https://example.com/cb?shopID=7&saleID=9\n");
+    expect(r.ok && r.value.format).toBe("form");
+    expect(r.ok && r.value.records).toEqual([{ shopID: "7", saleID: "9" }]);
+  });
+});
+
+describe("request query metadata and spaced form values", () => {
+  it("keeps request query parameters as redacted metadata", () => {
+    const r = parseInput(
+      "POST /hook?clientAccnum=1&eventType=NewSaleSuccess&token=abc HTTP/1.1\nContent-Type: application/x-www-form-urlencoded\n\nsubscriptionId=9",
+    );
+    expect(r.ok && r.value.meta[0]!.http!.query).toEqual({
+      clientAccnum: "1",
+      eventType: "NewSaleSuccess",
+      token: "[redacted]",
+    });
+    expect(r.ok && r.value.records[0]).toEqual({ subscriptionId: "9" });
+  });
+
+  it("accepts unencoded spaces in form values", () => {
+    const r = parseInput("subscriptionId=9&timestamp=2013-01-25 03:22:44");
+    expect(r.ok && r.value.records[0]).toEqual({
+      subscriptionId: "9",
+      timestamp: "2013-01-25 03:22:44",
+    });
   });
 });

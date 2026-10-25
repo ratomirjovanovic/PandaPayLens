@@ -1,0 +1,12 @@
+{
+  "paymentTokenId": "PPLsynthTOKEN0123456789abcdef0",
+  "programParticipationId": null,
+  "originalPaymentTokenId": null,
+  "clientAccnum": 999999,
+  "clientSubacc": 0,
+  "createdDatetime": "2026-10-20T10:00:00",
+  "timeToLive": 30,
+  "validNumberOfUse": 3,
+  "subscriptionId": null,
+  "paymentInfoId": null
+}

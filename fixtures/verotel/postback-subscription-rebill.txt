@@ -1,0 +1,1 @@
+shopID=PPLsynth64233&type=subscription&event=rebill&saleID=PPLsynth13029201&referenceID=PPLsynth-ref-0100&custom1=PPLsynth-user-0100&subscriptionType=recurring&transactionID=PPLsynth80821002&amount=29.95&currency=EUR&nextChargeOn=2026-11-04&subscriptionPhase=normal&paymentMethod=CC&signature=7c1e4f2a9b3d5e6f80a1b2c3d4e5f60718293a4b5c6d7e8f9a0b1c2d3e4f5a6b

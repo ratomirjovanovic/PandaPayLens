@@ -37,6 +37,7 @@ export type DiagnosticReport = {
 };
 
 const ID_FIELDS = [
+  "subscriptionReference",
   "eventReference",
   "paymentReference",
   "relatedReference",

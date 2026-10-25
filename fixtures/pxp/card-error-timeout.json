@@ -1,0 +1,10 @@
+{
+  "state": "Error",
+  "stateData": { "code": "CRD183", "message": "Timeout or malfunction" },
+  "merchantTransactionId": "PPLSYNTH-MTX-0301",
+  "merchantTransactionDate": "2026-10-20T12:00:00Z",
+  "systemTransactionId": "PPLsynth-card-0301-purc",
+  "transactionMethod": { "intent": "Purchase", "fundingType": "Card", "entryType": "Ecom" },
+  "amounts": { "transaction": 10, "currencyCode": "EUR" },
+  "fundingData": { "card": { "cardScheme": "Mastercard" } }
+}

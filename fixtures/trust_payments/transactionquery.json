@@ -1,0 +1,45 @@
+{
+  "requestreference": "W23-PPLsynth14",
+  "version": "1.00",
+  "response": [
+    {
+      "errorcode": "0",
+      "errormessage": "Ok",
+      "requesttypedescription": "TRANSACTIONQUERY",
+      "found": "2",
+      "records": [
+        {
+          "requesttypedescription": "AUTH",
+          "accounttypedescription": "ECOM",
+          "transactionreference": "PPLsynth-9-50001",
+          "errorcode": "0",
+          "settlestatus": "100",
+          "baseamount": "4200",
+          "settlebaseamount": "4200",
+          "currencyiso3a": "EUR",
+          "transactionstartedtimestamp": "2026-10-10 11:00:00",
+          "settledtimestamp": "2026-10-11 03:15:00",
+          "sitereference": "test_PPLsynth12345",
+          "fraudrating": "0",
+          "interface": "PASS-JSON-JSON",
+          "customerip": "203.0.113.7"
+        },
+        {
+          "requesttypedescription": "REFUND",
+          "accounttypedescription": "ECOM",
+          "transactionreference": "PPLsynth-9-50002",
+          "parenttransactionreference": "PPLsynth-9-50001",
+          "errorcode": "0",
+          "settlestatus": "0",
+          "baseamount": "1200",
+          "currencyiso3a": "EUR",
+          "authcode": "TEST REFUND ACCEPTED",
+          "transactionstartedtimestamp": "2026-10-12 09:30:00",
+          "sitereference": "test_PPLsynth12345",
+          "interface": "PASS-JSON-JSON"
+        }
+      ]
+    }
+  ],
+  "secrand": "tq1"
+}

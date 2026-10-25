@@ -1,0 +1,19 @@
+{
+  "iat": 1792911600,
+  "payload": {
+    "requestreference": "W56-PPLsynth05",
+    "version": "1.00",
+    "jwt": "eyJhbGciOiJIUzI1NiJ9.PPLsynthRequestJwtBody.PPLsynthRequestJwtSignature",
+    "response": [
+      {
+        "errorcode": "50000",
+        "errormessage": "Timeout",
+        "requesttypedescription": "AUTH",
+        "transactionreference": "PPLsynth-2-345680",
+        "transactionstartedtimestamp": "2026-10-20 08:00:00"
+      }
+    ],
+    "secrand": "dgc6QJ8I5"
+  },
+  "aud": "jwt.user"
+}

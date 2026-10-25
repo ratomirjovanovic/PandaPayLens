@@ -1,0 +1,10 @@
+POST /webhooks.php?clientAccnum=999999&clientSubacc=9999&eventType=Expiration&eventGroupType=Subscription HTTP/1.1
+X-Allowed-Satellites: PHX,ASH,AMS
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 110
+Host: merchant.example
+User-Agent: Java/1.6.0_03
+Cache-Control: max-age=0
+Connection: keep-alive
+
+clientAccnum=999999&clientSubacc=9999&subscriptionId=PPLsynth0913024401000012340&timestamp=2026-10-24 03:22:44

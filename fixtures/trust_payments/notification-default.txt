@@ -1,0 +1,1 @@
+baseamount=2499&errorcode=0&notificationreference=PPLsynth-A60356&orderreference=PPLsynth-order-1&responsesitesecurity=1f3e6bcc1971f150c5a6d5487548b375b8971c9bdc1962b2cc1844d26ff8aaaa

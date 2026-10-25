@@ -1,0 +1,1 @@
+transactionId=PPLsynth0912191101000000200&clientAccnum=999999&clientSubacc=9999&timestamp=2026-10-20+09%3A00%3A00&formName=211cc&billedInitialPrice=9.95&billedRecurringPrice=9.95&billedCurrencyCode=840&initialPeriod=30&recurringPeriod=30&rebills=99&paymentType=CREDIT&cardType=MASTERCARD&threeDSecure=NOT_APPLICABLE&failureReason=Insufficient+funds&failureCode=31

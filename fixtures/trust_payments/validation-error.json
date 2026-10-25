@@ -1,0 +1,17 @@
+{
+  "requestreference": "A1PPLsynth",
+  "version": "1.00",
+  "responses": [
+    {
+      "transactionstartedtimestamp": "2026-10-20 16:20:00",
+      "errorcode": "30000",
+      "errormessage": "Invalid field",
+      "errordata": ["baseamount"],
+      "requesttypedescription": "AUTH",
+      "accounttypedescription": "ECOM",
+      "transactionreference": "PPLsynth-9-80011",
+      "livestatus": "0"
+    }
+  ],
+  "secrand": "k2P"
+}

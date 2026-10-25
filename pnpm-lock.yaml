@@ -175,6 +175,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/ccbill:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/checkout:
     dependencies:
       '@pandapaylens/core':
@@ -185,6 +194,15 @@ importers:
         version: 4.6.7
 
   packages/adapters/mollie:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/netbilling:
     dependencies:
       '@pandapaylens/core':
         specifier: workspace:*
@@ -211,6 +229,24 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/pxp:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/segpay:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/square:
     dependencies:
       '@pandapaylens/core':
@@ -221,6 +257,24 @@ importers:
         version: 4.6.7
 
   packages/adapters/stripe:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/trust-payments:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/verotel:
     dependencies:
       '@pandapaylens/core':
         specifier: workspace:*
@@ -261,6 +315,9 @@ importers:
       '@pandapaylens/braintree':
         specifier: workspace:*
         version: link:../adapters/braintree
+      '@pandapaylens/ccbill':
+        specifier: workspace:*
+        version: link:../adapters/ccbill
       '@pandapaylens/checkout':
         specifier: workspace:*
         version: link:../adapters/checkout
@@ -270,18 +327,33 @@ importers:
       '@pandapaylens/mollie':
         specifier: workspace:*
         version: link:../adapters/mollie
+      '@pandapaylens/netbilling':
+        specifier: workspace:*
+        version: link:../adapters/netbilling
       '@pandapaylens/payabl':
         specifier: workspace:*
         version: link:../adapters/payabl
       '@pandapaylens/paypal':
         specifier: workspace:*
         version: link:../adapters/paypal
+      '@pandapaylens/pxp':
+        specifier: workspace:*
+        version: link:../adapters/pxp
+      '@pandapaylens/segpay':
+        specifier: workspace:*
+        version: link:../adapters/segpay
       '@pandapaylens/square':
         specifier: workspace:*
         version: link:../adapters/square
       '@pandapaylens/stripe':
         specifier: workspace:*
         version: link:../adapters/stripe
+      '@pandapaylens/trust-payments':
+        specifier: workspace:*
+        version: link:../adapters/trust-payments
+      '@pandapaylens/verotel':
+        specifier: workspace:*
+        version: link:../adapters/verotel
 
   packages/rules:
     dependencies:

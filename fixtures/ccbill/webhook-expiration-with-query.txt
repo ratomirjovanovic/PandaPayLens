@@ -1,0 +1,1 @@
+eventType=Expiration&eventGroupType=Subscription&clientAccnum=999999&clientSubacc=9999&subscriptionId=PPLsynth0913024401000012340&timestamp=2026-10-24+03%3A22%3A44

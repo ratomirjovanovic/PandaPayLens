@@ -1,0 +1,11 @@
+{
+  "id": "PPLsynth-err-0002",
+  "url": "/payment-tokens/merchant-only",
+  "errors": [
+    { "field": "clientSubacc", "message": "Invalid client subaccount" },
+    { "field": "customerInfo.email", "message": "Invalid email" }
+  ],
+  "generalMessage": "Validation failed!",
+  "errorCode": 200000,
+  "timestamp": "2026-10-20T13:00:00.000Z"
+}

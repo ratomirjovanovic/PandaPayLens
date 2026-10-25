@@ -108,6 +108,16 @@ const BLOCKED_KEYS = new Set([
   // merchant identifiers (Adyen and others)
   "merchantaccountcode",
   "merchantaccount",
+  // subscription billing (Verotel and similar)
+  "passcode",
+  "usercode",
+  "oneclicktoken",
+  "truncatedpan",
+  "maskedidentifier",
+  "signaturekey",
+  "buyername",
+  "buyeremail",
+  "buyerip",
 ]);
 
 const PATTERNS: { name: string; re: RegExp }[] = [

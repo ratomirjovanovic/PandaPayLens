@@ -1,0 +1,22 @@
+{
+  "requestreference": "W23-PPLsynth08",
+  "version": "1.00",
+  "response": [
+    {
+      "transactionstartedtimestamp": "2026-10-21 12:00:00",
+      "errorcode": "0",
+      "errormessage": "Ok",
+      "requesttypedescription": "REFUND",
+      "accounttypedescription": "CFT",
+      "transactionreference": "PPLsynth-9-90001",
+      "baseamount": "25000",
+      "currencyiso3a": "EUR",
+      "settlestatus": "100",
+      "merchantcategorycode": "7995",
+      "paymenttypedescription": "MASTERCARD",
+      "maskedpan": "555555######4444",
+      "livestatus": "0"
+    }
+  ],
+  "secrand": "p0t"
+}

@@ -231,7 +231,7 @@ export const captureFailedAfterAuthorization: DiagnosticRule = {
 
 export const amountMismatch: DiagnosticRule = {
   id: "AMOUNT_MISMATCH",
-  version: "1.0.0",
+  version: "1.1.0",
   providers: ["*"],
   description:
     "Refunded or captured amounts exceed the paid or authorized amount, or currencies differ.",
@@ -258,15 +258,18 @@ export const amountMismatch: DiagnosticRule = {
       }
       const sum = (list: NormalizedEvent[]) =>
         list.reduce((n, e) => n + BigInt(e.amountMinor!), 0n);
-      // Base amount: the largest successful payment-side amount (one payment is reported by several events).
-      const base = events
-        .filter(
-          (e) => e.outcome === "success" && (e.stage === "payment" || e.stage === "authorization"),
-        )
-        .reduce<bigint | null>((m, e) => {
-          const v = BigInt(e.amountMinor!);
-          return m === null || v > m ? v : m;
-        }, null);
+      const paid = events.filter(
+        (e) => e.outcome === "success" && (e.stage === "payment" || e.stage === "authorization"),
+      );
+      // A subscription group holds several separate charges (one per cycle), so
+      // refunds are compared with their total. Otherwise one payment is often
+      // reported by several events, so the largest single amount is the base.
+      const recurring = paid.some((e) => e.isRecurring === true);
+      const base = !paid.length
+        ? null
+        : recurring
+          ? sum(paid)
+          : paid.reduce((m, e) => (BigInt(e.amountMinor!) > m ? BigInt(e.amountMinor!) : m), 0n);
       if (base === null) continue;
       const refunds = events.filter((e) => e.stage === "refund" && e.outcome === "success");
       const refunded = sum(refunds);

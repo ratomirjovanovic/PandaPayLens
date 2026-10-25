@@ -1,0 +1,46 @@
+[
+  {
+    "eventCategory": "transaction",
+    "eventDate": "2026-10-20T16:00:00.000Z",
+    "eventData": {
+      "eventCode": "TXNAP_AUTH",
+      "state": "Authorised",
+      "merchantTransactionId": "PPLSYNTH-MTX-0701",
+      "systemTransactionId": "PPLsynth-aero-0701-auth",
+      "transactionMethod": {
+        "intent": "Authorisation",
+        "fundingType": "PayByBank",
+        "entryType": "Ecom"
+      },
+      "amounts": { "transaction": 30, "currencyCode": "USD" },
+      "providerResponse": { "provider": "aeropay", "providerTransactionStatus": "pending" },
+      "fundingData": {
+        "payByBank": { "apmProvider": "aeropay", "achStatus": "Approved", "isRtp": false }
+      }
+    },
+    "eventOwner": {
+      "merchantGroup": "PPLSYNTH-GROUP",
+      "merchant": "PPLSYNTH-MERCHANT",
+      "site": "PPLSYNTH-SITE"
+    }
+  },
+  {
+    "eventCategory": "transaction",
+    "eventDate": "2026-10-20T17:00:00.000Z",
+    "eventData": {
+      "eventCode": "TXNAP_CPT",
+      "state": "Captured",
+      "merchantTransactionId": "PPLSYNTH-MTX-0702",
+      "systemTransactionId": "PPLsynth-aero-0702-capt",
+      "originalSystemTransactionId": "PPLsynth-aero-0701-auth",
+      "transactionMethod": { "intent": "Capture", "fundingType": "PayByBank", "entryType": "Ecom" },
+      "amounts": { "transaction": 30, "currencyCode": "USD" },
+      "providerResponse": { "provider": "aeropay", "providerTransactionStatus": "live" }
+    },
+    "eventOwner": {
+      "merchantGroup": "PPLSYNTH-GROUP",
+      "merchant": "PPLSYNTH-MERCHANT",
+      "site": "PPLSYNTH-SITE"
+    }
+  }
+]

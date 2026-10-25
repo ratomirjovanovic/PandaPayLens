@@ -1,0 +1,20 @@
+{
+  "transactionId": "PPLsynth0912191101000000159",
+  "subscriptionId": "PPLsynth0913024401000012340",
+  "clientAccnum": "999999",
+  "clientSubacc": "9999",
+  "timestamp": "2026-09-30 15:45:00",
+  "amount": "9.95",
+  "accountingCurrency": "USD",
+  "currency": "USD",
+  "currencyCode": "840",
+  "accountingAmount": "9.95",
+  "accountingCurrencyCode": "840",
+  "cardType": "VISA",
+  "paymentAccount": "PPLsynthb1946ac92492d2347c6235b4d26",
+  "paymentType": "CREDIT",
+  "bin": "411111",
+  "last4": "1111",
+  "expDate": "0130",
+  "reason": "Synthetic chargeback reason"
+}

@@ -307,3 +307,13 @@ describe("analyzeSources", () => {
     ).toMatchObject({ ok: false, error: { code: "TOO_MANY_RECORDS" } });
   });
 });
+
+describe("toIsoTimestamp zones", () => {
+  it("rejects date-times without a zone and keeps zoned ones", () => {
+    expect(toIsoTimestamp("2026-10-25T10:00:00")).toBeUndefined();
+    expect(toIsoTimestamp("2026-10-25 10:00:00")).toBeUndefined();
+    expect(toIsoTimestamp("2026-10-25T10:00:00Z")).toBe("2026-10-25T10:00:00.000Z");
+    expect(toIsoTimestamp("2026-10-25T10:00:00+0200")).toBe("2026-10-25T08:00:00.000Z");
+    expect(toIsoTimestamp("2026-10-25")).toBe("2026-10-25T00:00:00.000Z");
+  });
+});

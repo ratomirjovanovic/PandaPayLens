@@ -32,6 +32,11 @@ jobs:
       - run: pnpm build
         env:
           NEXT_TELEMETRY_DISABLED: "1"
+      - name: README provider table matches the registry
+        run: |
+          node scripts/update-readme-providers.mjs
+          npx prettier --write README.md
+          git diff --exit-code README.md
       - name: Bundle size report
         run: node scripts/bundle-report.mjs
       - name: CLI smoke test

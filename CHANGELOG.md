@@ -2,6 +2,28 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-10-25
+
+High-risk wave HR-1.
+
+### Providers
+
+- New adapters with limited support, built from official documentation and tested with synthetic fixtures: CCBill, Segpay, Verotel, NETbilling, PXP Financial, Trust Payments.
+- Research and qualification gate for all 20 high-risk candidates: 18 documentation verified, Pavilion Payments and Epoch blocked (no public developer documentation).
+- Registry records business category, research status, documented sectors with sources, documentation access and fixture provenance.
+
+### Analyzer
+
+- Lifecycle rules: recurring payment failed, capture failed after authorization, chargeback reported, payout status, amount mismatch, refund pending (rule catalog 2026.10.1).
+- Payout and subscription operations, subscription references and recurring flags.
+- Input: GET callbacks with data in the query string, pasted callback URLs, request query parameters kept as redacted metadata, form values with spaces, error responses without a body, HTTP reason phrases.
+- Date-times without a time zone are no longer read in the local time zone.
+
+### Site
+
+- New logo; the wordmark highlights PayLens as the product name.
+- Provider directory with high-risk, gaming, subscription, wallet, pay-by-bank and gateway filters and research status badges.
+
 ## [0.1.0] - 2026-10-25
 
 First public release.

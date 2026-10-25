@@ -1,0 +1,22 @@
+{
+  "requestreference": "W23-PPLsynth07",
+  "version": "1.00",
+  "response": [
+    {
+      "transactionstartedtimestamp": "2026-10-22 10:00:00",
+      "errorcode": "0",
+      "errormessage": "Ok",
+      "requesttypedescription": "REFUND",
+      "accounttypedescription": "ECOM",
+      "transactionreference": "PPLsynth-9-80007",
+      "parenttransactionreference": "PPLsynth-9-80006",
+      "baseamount": "1050",
+      "currencyiso3a": "GBP",
+      "settlestatus": "100",
+      "acquirerresponsecode": "00",
+      "paymenttypedescription": "VISA",
+      "livestatus": "0"
+    }
+  ],
+  "secrand": "r3f"
+}

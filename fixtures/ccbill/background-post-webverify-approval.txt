@@ -1,0 +1,1 @@
+clientAccnum=999999&clientSubacc=0000&subscription_id=PPLsynth0913024401000055777&formName=211cc&typeId=0000003761&initialPrice=19.95&initialPeriod=30&currencyCode=840&cardType=VISA&reasonForDeclineCodeBeforeOverride=45&reasonForDeclineBeforeOverride=Needs+additional+approval

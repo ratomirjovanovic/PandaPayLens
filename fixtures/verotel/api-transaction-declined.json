@@ -1,0 +1,31 @@
+{
+  "created_at": "2026-09-29T11:09:16Z",
+  "decline_reason": {
+    "category": "NO_FUNDS",
+    "description": "Insufficient funds"
+  },
+  "id": "PPLsynth80823323",
+  "reversal_extent": "NONE",
+  "is_testing": false,
+  "is_approved": false,
+  "original_debit_transaction_id": null,
+  "payment_instrument": {
+    "masked_identifier": "XXXXXXXXXXXX2222",
+    "type": "CREDIT_CARD"
+  },
+  "payment_method": "CC",
+  "price": {
+    "amount": "12.1",
+    "currency": "USD"
+  },
+  "sale": {
+    "custom1": "PPLsynth-custom-value1",
+    "custom2": "PPLsynth-custom-value2",
+    "custom3": "PPLsynth-custom-value3",
+    "id": "PPLsynth1760",
+    "type": "PURCHASE"
+  },
+  "transaction_subtype": "PURCHASE",
+  "transaction_type": "DEBIT",
+  "website_id": "PPLsynth65147"
+}

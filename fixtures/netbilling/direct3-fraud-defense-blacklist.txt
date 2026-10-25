@@ -1,0 +1,1 @@
+status_code=0&trans_id=PPLsynth0005&auth_date=2026-10-20+12%3A05%3A00&auth_msg=B%2FDECLINED

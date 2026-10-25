@@ -1,0 +1,23 @@
+{
+  "requestreference": "W23-PPLsynth15",
+  "version": "1.00",
+  "response": [
+    {
+      "transactionstartedtimestamp": "2026-10-20 13:00:00",
+      "errorcode": "0",
+      "errormessage": "Ok",
+      "requesttypedescription": "AUTH",
+      "accounttypedescription": "ECOM",
+      "transactionreference": "PPLsynth-9-40001",
+      "paymenttypedescription": "IDEAL",
+      "baseamount": "3000",
+      "currencyiso3a": "EUR",
+      "settlestatus": "10",
+      "acquirerresponsecode": "PENDING",
+      "redirecturl": "https://apm.example/PPLsynth/session/abc",
+      "acquirertransactionreference": "PPLsynthAPM0001",
+      "acquirersecret": "PPLsynthAcquirerSecret"
+    }
+  ],
+  "secrand": "ap1"
+}

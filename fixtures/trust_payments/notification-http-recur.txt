@@ -1,0 +1,5 @@
+POST /pplsynth/notify HTTP/1.1
+Host: merchant.example
+Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+
+accounttypedescription=RECUR&baseamount=999&currencyiso3a=GBP&errorcode=0&notificationreference=PPLsynth-A60600&parenttransactionreference=PPLsynth-9-70002&requesttypedescription=AUTH&settlestatus=0&transactionreference=PPLsynth-9-70010&responsesitesecurity=5d7e6bcc1971f150c5a6d5487548b375b8971c9bdc1962b2cc1844d26ff8eeee

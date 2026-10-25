@@ -1,0 +1,46 @@
+{
+  "requestreference": "A2PPLsynth",
+  "version": "1.00",
+  "responses": [
+    {
+      "transactionstartedtimestamp": "2026-10-01 10:00:00",
+      "errorcode": "0",
+      "errormessage": "Ok",
+      "requesttypedescription": "THREEDQUERY",
+      "accounttypedescription": "ECOM",
+      "transactionreference": "PPLsynth-9-70001",
+      "enrolled": "Y",
+      "status": "Y",
+      "settlestatus": "0"
+    },
+    {
+      "transactionstartedtimestamp": "2026-10-01 10:00:03",
+      "errorcode": "0",
+      "errormessage": "Ok",
+      "requesttypedescription": "AUTH",
+      "accounttypedescription": "ECOM",
+      "transactionreference": "PPLsynth-9-70002",
+      "parenttransactionreference": "PPLsynth-9-70001",
+      "baseamount": "999",
+      "currencyiso3a": "GBP",
+      "settlestatus": "0",
+      "credentialsonfile": "1"
+    },
+    {
+      "transactionstartedtimestamp": "2026-10-01 10:00:04",
+      "errorcode": "0",
+      "errormessage": "Ok",
+      "requesttypedescription": "SUBSCRIPTION",
+      "transactionreference": "PPLsynth-9-70003",
+      "parenttransactionreference": "PPLsynth-9-70002",
+      "subscriptiontype": "RECURRING",
+      "subscriptionunit": "MONTH",
+      "subscriptionfrequency": "1",
+      "subscriptionnumber": "1",
+      "subscriptionfinalnumber": "0",
+      "subscriptionbegindate": "2026-11-01",
+      "active": "2"
+    }
+  ],
+  "secrand": "s9b"
+}

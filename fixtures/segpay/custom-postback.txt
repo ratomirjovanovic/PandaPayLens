@@ -1,0 +1,1 @@
+transtype=Sale&transid=PPLsynth100000040&subscriptionid=PPLsynth900000040&status=Initial&ok=Yes&package=200001:30001&time=10%2F04%2F2026+8%3A00%3A00+AM+(GMT+STANDARD+TIME)

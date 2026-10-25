@@ -1,0 +1,83 @@
+[
+  {
+    "receivedAt": "2026-10-20T13:00:00.500Z",
+    "payload": {
+      "state": "Pending",
+      "stateData": {},
+      "merchantTransactionId": "PPLSYNTH-MTX-0401",
+      "merchantTransactionDate": "2026-10-20T13:00:00Z",
+      "systemTransactionId": "PPLsynth-spei-0401-depo",
+      "transactionMethod": {
+        "intent": "Purchase",
+        "fundingType": "PayByBank",
+        "entryType": "Ecom"
+      },
+      "amounts": { "transaction": 1500.5, "currencyCode": "MXN" },
+      "redirectUrl": "https://pay.pplsynth.example/redirect/PLANTEDSESSIONURL"
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T13:05:01.000Z",
+    "payload": {
+      "eventCategory": "transaction",
+      "eventDate": "2026-10-20T13:05:00.000Z",
+      "eventData": {
+        "eventCode": "spei-transaction-order-executed",
+        "state": "Authorised",
+        "stateData": { "code": "APM001", "message": "Payment executed" },
+        "merchantTransactionId": "PPLSYNTH-MTX-0401",
+        "systemTransactionId": "PPLsynth-spei-0401-depo",
+        "providerTransactionId": "PPLSYNTH-SPEI-REF-0401",
+        "transactionMethod": {
+          "intent": "Purchase",
+          "fundingType": "PayByBank",
+          "entryType": "Ecom"
+        },
+        "amounts": { "transaction": 1500.5, "currencyCode": "MXN" },
+        "providerResponse": {
+          "provider": "spei",
+          "providerTransactionStatus": "EXECUTED",
+          "providerResponseCode": "EXECUTED",
+          "providerResponseMessage": "Payment executed"
+        }
+      },
+      "eventOwner": {
+        "merchantGroup": "PPLSYNTH-GROUP",
+        "merchant": "PPLSYNTH-MERCHANT",
+        "site": "PPLSYNTH-SITE"
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T13:05:04.000Z",
+    "payload": {
+      "eventCategory": "transaction",
+      "eventDate": "2026-10-20T13:05:03.000Z",
+      "eventData": {
+        "eventCode": "spei-transaction-order-executed",
+        "state": "Authorised",
+        "stateData": { "code": "APM001", "message": "Payment executed" },
+        "merchantTransactionId": "PPLSYNTH-MTX-0401",
+        "systemTransactionId": "PPLsynth-spei-0401-depo",
+        "providerTransactionId": "PPLSYNTH-SPEI-REF-0401",
+        "transactionMethod": {
+          "intent": "Purchase",
+          "fundingType": "PayByBank",
+          "entryType": "Ecom"
+        },
+        "amounts": { "transaction": 1500.5, "currencyCode": "MXN" },
+        "providerResponse": {
+          "provider": "spei",
+          "providerTransactionStatus": "EXECUTED",
+          "providerResponseCode": "EXECUTED",
+          "providerResponseMessage": "Payment executed"
+        }
+      },
+      "eventOwner": {
+        "merchantGroup": "PPLSYNTH-GROUP",
+        "merchant": "PPLSYNTH-MERCHANT",
+        "site": "PPLSYNTH-SITE"
+      }
+    }
+  }
+]

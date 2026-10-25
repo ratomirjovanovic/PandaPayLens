@@ -1,0 +1,14 @@
+{
+  "requestreference": "W23-PPLsynth03",
+  "version": "1.00",
+  "response": [
+    {
+      "errorcode": "22000",
+      "errormessage": "Bypass",
+      "requesttypedescription": "ERROR",
+      "transactionreference": "PPLsynth-2-81001",
+      "transactionstartedtimestamp": "2026-10-20 06:43:42"
+    }
+  ],
+  "secrand": "zO9"
+}

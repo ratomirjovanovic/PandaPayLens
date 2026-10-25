@@ -1,0 +1,4 @@
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/vnd.com.cwie.error.v1+json
+
+{"id":"PPLsynth-err-0003","url":"/threeds/PPLsynth3DS0001/authenticate","errors":[],"generalMessage":"Transaction could not be authenticated","errorCode":200500,"timestamp":"2026-10-20T13:05:00.000Z"}

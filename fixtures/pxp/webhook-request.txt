@@ -1,0 +1,8 @@
+POST /webhooks/pxp HTTP/1.1
+Host: merchant.pplsynth.example
+Content-Type: application/json
+X-Request-Id: PLANTEDREQUESTID0001
+X-Signature-Timestamp: 1792500000PLANTED
+X-Signature: UExBTlRFRFNZTlRIU0lHTkFUVVJFMDAwMQ==PPLSYNTHSIG
+
+{"eventCategory":"Transaction","eventDate":"2026-10-20T23:00:00.000Z","eventData":{"eventCode":"TXN_RFU","state":"Refused","stateData":{"code":"CRD116","message":"Insufficient funds"},"systemTransactionId":"PPLsynth-card-1101-auth","merchantTransactionId":"PPLSYNTH-MTX-1101","merchantTransactionDate":"2026-10-20T22:59:59Z","transactionMethod":{"intent":"Purchase","fundingType":"Card","entryType":"Ecom"},"amounts":{"transactionValue":99.9,"currencyCode":"EUR"},"shopperReference":"PLANTEDSHOPPERREF01","shippingAddress":{"addressLine1":"77 Planted Synthetic Road","postalCode":"PL4NT"},"customerInformation":{"email":"planted.secret.person@example.com","name":"Planted Synthetic Name","ipAddress":"198.51.100.77"},"fundingData":{"cardScheme":"Visa","primaryAccountNumber":"4000005555551111","expiryMonth":"12","expiryYear":"2031","holderName":"Planted Holder Name","gatewayTokenId":"PLANTEDGATEWAYTOKEN0001","schemeTokenNumber":"4837261100009999","providerResponse":{"provider":"PXPFinancial","code":"51","message":"Insufficient funds","merchantId":"PLANTEDMID0001","terminalId":"PLANTEDTID01","retrievalReferenceNumber":"PLANTEDRRN01","schemeTransactionId":"PLANTEDSCHEMEID01","paymentAccountReference":"PLANTEDPAR0001","emvDataResponse":{"issuerAuthenticationData":"PLANTEDEMVDATA01"}}}},"eventOwner":{"partner":"PLANTEDPARTNER","merchantGroup":"PLANTEDGROUP","merchant":"PLANTEDMERCHANT","site":"PLANTEDSITE"}}

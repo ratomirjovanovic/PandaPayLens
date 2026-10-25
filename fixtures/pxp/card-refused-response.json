@@ -1,0 +1,18 @@
+{
+  "state": "Refused",
+  "stateData": { "code": "CRD100", "message": "Do not honour" },
+  "merchantTransactionId": "PPLSYNTH-MTX-0101",
+  "systemTransactionId": "PPLsynth-card-0101-auth",
+  "merchantTransactionDate": "2026-10-20T08:51:02.826Z",
+  "transactionMethod": { "intent": "Authorisation", "fundingType": "Card", "entryType": "Ecom" },
+  "amounts": { "transaction": 25, "currencyCode": "EUR" },
+  "fundingData": {
+    "cardScheme": "Visa",
+    "providerResponse": {
+      "provider": "PXPFinancial",
+      "code": "05",
+      "message": "Do not honour",
+      "merchantAdvice": { "code": "01", "message": "New account information available" }
+    }
+  }
+}

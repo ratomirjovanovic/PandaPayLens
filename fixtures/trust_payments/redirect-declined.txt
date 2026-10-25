@@ -1,0 +1,1 @@
+errorcode=70000&settlestatus=3&transactionreference=PPLsynth-9-80300&orderreference=PPLsynth-order-300&requestreference=W23-PPLsynth30&responsesitesecurity=4c6e6bcc1971f150c5a6d5487548b375b8971c9bdc1962b2cc1844d26ff8dddd

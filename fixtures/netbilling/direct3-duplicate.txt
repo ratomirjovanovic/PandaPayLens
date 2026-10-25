@@ -1,0 +1,1 @@
+status_code=D&trans_id=PPLsynth0003&auth_date=2026-10-20+11%3A02%3A00

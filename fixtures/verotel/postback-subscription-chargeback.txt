@@ -1,0 +1,1 @@
+shopID=PPLsynth64233&type=subscription&event=chargeback&saleID=PPLsynth13029301&referenceID=PPLsynth-ref-0300&subscriptionType=recurring&subscriptionPhase=terminated&priceAmount=29.95&priceCurrency=USD&transactionID=PPLsynth80822091&parentID=PPLsynth80822001&signature=7c1e4f2a9b3d5e6f80a1b2c3d4e5f60718293a4b5c6d7e8f9a0b1c2d3e4f5a6b

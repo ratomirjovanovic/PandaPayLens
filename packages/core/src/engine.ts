@@ -511,6 +511,10 @@ export function toIsoTimestamp(value: unknown): string | undefined {
     return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
   }
   if (typeof value === "string" && value.length <= 64) {
+    // A date-time without a zone would be read in the local time zone and give
+    // different results on different machines; treat it as unknown instead.
+    if (/\d[T ]\d{2}:\d{2}/.test(value) && !/(?:Z|[+-]\d{2}:?\d{2})$/i.test(value.trim()))
+      return undefined;
     const d = new Date(value);
     return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
   }

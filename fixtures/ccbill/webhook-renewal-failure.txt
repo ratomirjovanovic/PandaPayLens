@@ -1,0 +1,1 @@
+transactionId=PPLsynth0912191101000000302&subscriptionId=PPLsynth0913024401000012340&clientAccnum=999999&clientSubacc=9999&timestamp=2026-09-22+04%3A00%3A09&failureReason=Invalid+Input.&failureCode=BE-140&nextRetryDate=2026-09-25&renewalDate=2026-09-22&cardType=VISA&paymentType=CREDIT&cardSubType=CREDIT

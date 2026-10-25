@@ -1,0 +1,1 @@
+cardtype=Visa&paymenttype=CreditCard&stage=Initial&approved=Yes&trantype=Charge&action=Auth&price=29.95&currencycode=USD&eticketid=200001:30001&standin=0&xsellnum=0&transtime=12%2F20%2F2026+4%3A00%3A00+PM+(GMT+STANDARD+TIME)&tranid=PPLsynth100000005&relatedtranid=PPLsynth100000002&purchaseid=PPLsynth900000001&urlid=1000001

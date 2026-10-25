@@ -1,0 +1,2 @@
+cardtype=Visa&paymenttype=CreditCard&stage=Initial&trantype=Sale&action=Auth&price=14.95&currencycode=USD&eticketid=200003:30003&standin=1&xsellnum=0&tranid=PPLsynth100000020&purchaseid=PPLsynth900000020&urlid=1000001&approved=Yes&transtime=10%2F03%2F2026+1%3A00%3A00+PM+(GMT+STANDARD+TIME)
+cardtype=Visa&paymenttype=CreditCard&stage=Initial&trantype=Sale&action=Auth&price=14.95&currencycode=USD&eticketid=200003:30003&standin=1&xsellnum=0&tranid=PPLsynth100000020&purchaseid=PPLsynth900000020&urlid=1000001&approved=No&transtime=10%2F03%2F2026+3%3A00%3A00+PM+(GMT+STANDARD+TIME)

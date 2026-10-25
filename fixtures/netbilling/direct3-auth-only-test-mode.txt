@@ -1,0 +1,5 @@
+HTTP/1.0 200 OK Approved
+Connection: close
+Content-Type: application/x-www-form-urlencoded
+
+auth_msg=TEST+APPROVED&ticket_code=PPLsynthTICKET01&avs_code=X&auth_date=2026-10-20+09%3A15%3A00&status_code=T&trans_id=PPLsynth0001&auth_code=999999&cvv2_code=M

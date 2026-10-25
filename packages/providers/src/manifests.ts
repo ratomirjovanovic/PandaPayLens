@@ -11,6 +11,12 @@ import { checkoutManifest } from "@pandapaylens/checkout/manifest";
 import { paypalManifest } from "@pandapaylens/paypal/manifest";
 import { mollieManifest } from "@pandapaylens/mollie/manifest";
 import { squareManifest } from "@pandapaylens/square/manifest";
+import { ccbillManifest } from "@pandapaylens/ccbill/manifest";
+import { segpayManifest } from "@pandapaylens/segpay/manifest";
+import { trustPaymentsManifest } from "@pandapaylens/trust-payments/manifest";
+import { pxpManifest } from "@pandapaylens/pxp/manifest";
+import { verotelManifest } from "@pandapaylens/verotel/manifest";
+import { netbillingManifest } from "@pandapaylens/netbilling/manifest";
 
 export const MANIFESTS: readonly ProviderManifest[] = [
   stripeManifest,
@@ -21,6 +27,12 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   paypalManifest,
   mollieManifest,
   squareManifest,
+  ccbillManifest,
+  segpayManifest,
+  trustPaymentsManifest,
+  pxpManifest,
+  verotelManifest,
+  netbillingManifest,
 ];
 
 /** Roadmap focus areas, used for directory filters. Taken from the roadmap, not verified claims about the provider. */
@@ -194,42 +206,42 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     id: "ccbill",
     displayName: "CCBill",
     wave: "HR-1",
-    researchStatus: "implementation_in_progress",
+    researchStatus: "tested",
     focus: ["high_risk", "subscription"],
   },
   {
     id: "segpay",
     displayName: "Segpay",
     wave: "HR-1",
-    researchStatus: "implementation_in_progress",
+    researchStatus: "tested",
     focus: ["high_risk", "subscription"],
   },
   {
     id: "verotel",
     displayName: "Verotel",
     wave: "HR-1",
-    researchStatus: "implementation_in_progress",
+    researchStatus: "tested",
     focus: ["high_risk", "subscription"],
   },
   {
     id: "netbilling",
     displayName: "NETbilling",
     wave: "HR-1",
-    researchStatus: "implementation_in_progress",
+    researchStatus: "tested",
     focus: ["high_risk", "subscription", "gateway_acquiring"],
   },
   {
     id: "pxp",
     displayName: "PXP Financial",
     wave: "HR-1",
-    researchStatus: "implementation_in_progress",
+    researchStatus: "tested",
     focus: ["high_risk", "gaming", "gateway_acquiring"],
   },
   {
     id: "trust_payments",
     displayName: "Trust Payments",
     wave: "HR-1",
-    researchStatus: "implementation_in_progress",
+    researchStatus: "tested",
     focus: ["high_risk", "gaming", "gateway_acquiring"],
   },
   {

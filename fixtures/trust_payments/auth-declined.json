@@ -1,0 +1,28 @@
+{
+  "requestreference": "W23-PPLsynth02",
+  "version": "1.00",
+  "response": [
+    {
+      "transactionstartedtimestamp": "2026-10-20 16:01:12",
+      "livestatus": "0",
+      "errorcode": "70000",
+      "errormessage": "Decline",
+      "requesttypedescription": "AUTH",
+      "accounttypedescription": "ECOM",
+      "transactionreference": "PPLsynth-9-80010",
+      "orderreference": "PPLsynth-order-124",
+      "baseamount": "70000",
+      "currencyiso3a": "GBP",
+      "settlestatus": "3",
+      "acquirerresponsecode": "05",
+      "acquireradvicecode": "4",
+      "paymenttypedescription": "MASTERCARD",
+      "maskedpan": "555555######4444",
+      "securityresponseaddress": "1",
+      "securityresponsepostcode": "1",
+      "securityresponsesecuritycode": "2",
+      "issuercountryiso2a": "GB"
+    }
+  ],
+  "secrand": "Qx81"
+}

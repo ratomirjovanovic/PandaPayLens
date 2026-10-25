@@ -8,6 +8,18 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.2.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "High-risk wave HR-1 with limited support: CCBill, Segpay, Verotel, NETbilling, PXP Financial and Trust Payments.",
+      "Qualification gate for all 20 high-risk candidates: 18 documentation verified, 2 blocked.",
+      "Lifecycle rules for rebills, chargebacks, payouts, refunds and amount mismatches.",
+      "GET callbacks, pasted callback URLs and status-only error responses are analyzed.",
+      "New logo and provider directory filters for high-risk categories.",
+    ],
+  },
+  {
     version: "0.1.0",
     date: "2026-10-25",
     status: "released",

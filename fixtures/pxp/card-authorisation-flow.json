@@ -1,0 +1,73 @@
+[
+  {
+    "state": "Authorised",
+    "stateData": { "code": "CRD000", "message": "Approved" },
+    "approvalCode": "PPL001",
+    "merchantTransactionId": "PPLSYNTH-MTX-0001",
+    "merchantTransactionDate": "2026-10-20T10:00:00.000Z",
+    "systemTransactionId": "PPLsynth-card-0001-auth",
+    "merchantOrderId": "PPLSYNTH-ORDER-0001",
+    "transactionMethod": { "intent": "Authorisation", "fundingType": "Card", "entryType": "Ecom" },
+    "amounts": { "transaction": 65.4, "currencyCode": "GBP" },
+    "fundingData": {
+      "card": {
+        "cardScheme": "Visa",
+        "cardVerificationCodeResult": "CardSecurityCodeMatched",
+        "providerResponse": {
+          "provider": "PXPFinancial",
+          "code": "00",
+          "message": "Approved",
+          "authorisedAmount": 65.4,
+          "settlementDate": "2026-10-21T00:00:00.000Z"
+        }
+      }
+    }
+  },
+  {
+    "eventCategory": "transaction",
+    "eventDate": "2026-10-20T10:00:02.0000000Z",
+    "eventData": {
+      "state": "Authorised",
+      "stateData": { "code": "CRD000", "message": "Approved" },
+      "merchantTransactionId": "PPLSYNTH-MTX-0001",
+      "systemTransactionId": "PPLsynth-card-0001-auth",
+      "transactionMethod": {
+        "intent": "Authorisation",
+        "fundingType": "Card",
+        "entryType": "Ecom"
+      },
+      "amounts": { "transaction": 65.4, "currencyCode": "GBP" },
+      "fundingData": { "card": { "cardScheme": "Visa" } }
+    },
+    "eventOwner": {
+      "merchantGroup": "PPLSYNTH-GROUP",
+      "merchant": "PPLSYNTH-MERCHANT",
+      "site": "PPLSYNTH-SITE"
+    }
+  },
+  {
+    "eventCategory": "transaction",
+    "eventDate": "2026-10-20T11:00:02.0000000Z",
+    "eventData": {
+      "state": "Captured",
+      "stateData": {},
+      "merchantTransactionId": "PPLSYNTH-MTX-0001",
+      "systemTransactionId": "PPLsynth-card-0001-auth",
+      "transactionMethod": { "intent": "Capture", "fundingType": "Card", "entryType": "Ecom" },
+      "amounts": { "transaction": 65.4, "currencyCode": "GBP" }
+    },
+    "eventOwner": {
+      "merchantGroup": "PPLSYNTH-GROUP",
+      "merchant": "PPLSYNTH-MERCHANT",
+      "site": "PPLSYNTH-SITE"
+    }
+  },
+  {
+    "state": "Captured",
+    "stateData": {},
+    "merchantTransactionId": "PPLSYNTH-MTX-0002",
+    "merchantTransactionDate": "2026-10-20 11:00:00.000000+00:00",
+    "systemTransactionId": "PPLsynth-card-0002-capt",
+    "amounts": { "transaction": 65.4, "currencyCode": "GBP" }
+  }
+]

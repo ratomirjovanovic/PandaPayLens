@@ -11,6 +11,8 @@
  * stack overflow.
  */
 
+import { isBlockedKey, redactText } from "./redact.js";
+
 export type InputLimits = {
   /** Maximum size of one input text, in bytes (UTF-8). */
   maxBytes: number;
@@ -59,7 +61,15 @@ export type RecordMeta = {
     method?: string;
     /** Path without query string. */
     path?: string;
+    /**
+     * Query parameters of a request line (untrusted). Values of sensitive
+     * keys are replaced with "[redacted]". Some providers send the event type
+     * here and the data in the body.
+     */
+    query?: Record<string, string>;
     status?: number;
+    /** Reason phrase of a response status line, length-limited and scrubbed. */
+    reason?: string;
     contentType?: string;
     /** Lowercased names; sensitive values replaced with "[redacted]". */
     headers: Record<string, string>;
@@ -104,6 +114,9 @@ export function parseInput(text: string, limits: Partial<InputLimits> = {}): Par
   if (/^HTTP\/\d(?:\.\d)? \d{3}/.test(start) || /^[A-Z]{3,7} \S+ HTTP\/\d/.test(start)) {
     return parseHttp(start, lim);
   }
+  // A pasted callback URL: keep only the query string.
+  const url = /^https?:\/\/[^\s?#]+\?([^\s#]+)$/.exec(start.trim());
+  if (url && FORM_LIKE.test(url[1]!)) return parseFormText(url[1]!, lim, { format: "form" });
   if (FORM_LIKE.test(start.trimEnd()))
     return parseFormText(start.trimEnd(), lim, { format: "form" });
   // Several form-encoded notifications, one per line (e.g. a callback log).
@@ -130,7 +143,9 @@ export function parseInput(text: string, limits: Partial<InputLimits> = {}): Par
 }
 
 /** key=value pairs joined by &, no whitespace: application/x-www-form-urlencoded. */
-const FORM_LIKE = /^[^=&\s{}[\]"]+=[^&\s]*(?:&[^=&\s]+=[^&\s]*)*$/;
+// Values may contain literal spaces (some providers send unencoded
+// timestamps such as "2013-01-25 03:22:44"); keys may not.
+const FORM_LIKE = /^[^=&\s{}[\]"]+=[^&\r\n]*(?:&[^=&\s]+=[^&\r\n]*)*$/;
 
 function parseJsonText(body: string, lim: InputLimits, meta: RecordMeta): Parsed {
   const whole = parseDocument(body, lim, 0);
@@ -233,15 +248,33 @@ function parseHttp(text: string, lim: InputLimits): Parsed {
   if (lines.length > 200)
     return fail("INVALID_HTTP", "The HTTP message has too many header lines.");
   const http: NonNullable<RecordMeta["http"]> = { kind: "request", headers: {} };
-  const res = /^HTTP\/\d(?:\.\d)? (\d{3})/.exec(first);
+  let query = "";
+  const res = /^HTTP\/\d(?:\.\d)? (\d{3})(?: (.*))?$/.exec(first.trim());
   if (res) {
     http.kind = "response";
     http.status = Number(res[1]);
+    // Some providers put the only error text in the reason phrase.
+    const reason = res[2]?.trim();
+    if (reason) http.reason = redactText(reason.slice(0, 200)).text;
   } else {
     const req = /^([A-Z]{3,7}) (\S+) HTTP\/\d/.exec(first);
     if (!req) return fail("INVALID_HTTP", "Unrecognized HTTP start line.");
     http.method = req[1]!;
     http.path = req[2]!.split("?")[0]!.slice(0, 512);
+    query = req[2]!.includes("?") ? req[2]!.slice(req[2]!.indexOf("?") + 1) : "";
+    if (query) {
+      const params: Record<string, string> = {};
+      try {
+        for (const [k, v] of new URLSearchParams(query)) {
+          if (!k || k.length > 128 || k === "__proto__" || k === "constructor" || k === "prototype")
+            continue;
+          params[k] = isBlockedKey(k) || SENSITIVE_HEADER.test(k) ? "[redacted]" : v.slice(0, 256);
+        }
+      } catch {
+        // Undecodable query strings are ignored; the body is still analyzed.
+      }
+      if (Object.keys(params).length) http.query = params;
+    }
   }
   for (const line of lines) {
     const i = line.indexOf(":");
@@ -255,7 +288,13 @@ function parseHttp(text: string, lim: InputLimits): Parsed {
   if (ct) http.contentType = ct;
   const meta: RecordMeta = { format: "http", http };
   const trimmed = body.trim();
-  if (trimmed === "") return fail("INVALID_HTTP", "The HTTP message has no body to analyze.");
+  if (trimmed === "") {
+    // GET callbacks (e.g. postbacks) carry their data in the query string.
+    if (http.kind === "request" && query) return parseFormText(query, lim, meta);
+    // An error response can be meaningful without a body (status line only).
+    if (http.kind === "response" && (http.status ?? 0) >= 400) return finish("http", [{}], meta);
+    return fail("INVALID_HTTP", "The HTTP message has no body to analyze.");
+  }
   if (ct === "application/x-www-form-urlencoded" || (!ct && FORM_LIKE.test(trimmed))) {
     return parseFormText(trimmed, lim, meta);
   }

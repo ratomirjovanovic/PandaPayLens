@@ -1,0 +1,4 @@
+HTTP/1.1 400 Bad Request
+Content-Type: application/vnd.com.cwie.error.v1+json
+
+{"id":"PPLsynth-err-757bb1a4","url":"/transactions/payment-tokens/PPLsynthTOKEN00112233445566778","errors":[],"generalMessage":"Expired payment token","errorCode":100102,"timestamp":"2026-10-20T12:53:00.665Z"}

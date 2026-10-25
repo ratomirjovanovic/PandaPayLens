@@ -189,3 +189,17 @@ describe("AMOUNT_MISMATCH", () => {
     expect(f[0]).toMatchObject({ confidence: "possible", severity: "low" });
   });
 });
+
+describe("AMOUNT_MISMATCH with subscriptions", () => {
+  it("compares refunds with the total of all billing cycles", () => {
+    const f = amountMismatch.evaluate(
+      ctx([
+        ev({ outcome: "success", amountMinor: "1000", currency: "EUR", isRecurring: false }),
+        ev({ outcome: "success", amountMinor: "1000", currency: "EUR", isRecurring: true }),
+        ev({ stage: "refund", outcome: "success", amountMinor: "1000", currency: "EUR" }),
+        ev({ stage: "refund", outcome: "success", amountMinor: "1000", currency: "EUR" }),
+      ]),
+    );
+    expect(f).toEqual([]);
+  });
+});

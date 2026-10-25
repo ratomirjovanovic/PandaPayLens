@@ -1,0 +1,1 @@
+clientAccnum=999999&clientSubacc=0000&denialId=PPLsynth1000000000000000042&reasonForDeclineCode=31&reasonForDecline=Insufficient+funds&formName=211cc&typeId=0000003761&initialPrice=19.95&initialPeriod=30&currencyCode=978&cardType=MASTERCARD&customer_fname=PPLsynthFirst&customer_lname=PPLsynthLast&email=planted.bp%40example.invalid&ip_address=198.51.100.23

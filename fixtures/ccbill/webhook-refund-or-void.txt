@@ -1,0 +1,1 @@
+transactionId=PPLsynth0912191101000000159&subscriptionId=PPLsynth0913024401000012340&clientAccnum=999999&clientSubacc=9999&timestamp=2026-08-01+12%3A00%3A00&amount=9.95&accountingCurrency=USD&currency=USD&currencyCode=840&accountingAmount=9.95&accountingCurrencyCode=840&cardType=VISA&paymentType=CREDIT&reason=Customer+Refunded

@@ -1,0 +1,34 @@
+[
+  {
+    "state": "Pending",
+    "stateData": {},
+    "merchantTransactionId": "PPLSYNTH-MTX-0501",
+    "merchantTransactionDate": "2026-10-20T14:00:00Z",
+    "systemTransactionId": "PPLsynth-spei-0501-payo",
+    "transactionMethod": { "intent": "Payout", "fundingType": "PayByBank", "entryType": "Ecom" },
+    "amounts": { "transaction": 800, "currencyCode": "MXN" }
+  },
+  {
+    "eventCategory": "transaction",
+    "eventDate": "2026-10-20T14:10:00.000Z",
+    "eventData": {
+      "eventCode": "spei-transaction-order-rejected",
+      "state": "Rejected",
+      "stateData": { "code": "APM013", "message": "Payment rejected" },
+      "merchantTransactionId": "PPLSYNTH-MTX-0501",
+      "systemTransactionId": "PPLsynth-spei-0501-payo",
+      "transactionMethod": { "intent": "Payout", "fundingType": "PayByBank", "entryType": "Ecom" },
+      "amounts": { "transaction": 800, "currencyCode": "MXN" },
+      "providerResponse": {
+        "provider": "spei",
+        "providerResponseCode": "REJECTED",
+        "providerResponseMessage": "Payment rejected"
+      }
+    },
+    "eventOwner": {
+      "merchantGroup": "PPLSYNTH-GROUP",
+      "merchant": "PPLSYNTH-MERCHANT",
+      "site": "PPLSYNTH-SITE"
+    }
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "id": "PPLsynth13029201",
+  "website_id": "60678",
+  "sale_type": "SUBSCRIPTION",
+  "type": "SALE",
+  "price": { "amount": "29.95", "currency": "EUR" },
+  "description": "PPLsynth membership",
+  "reference_id": "PPLsynth-ref-0100",
+  "created_at": "2026-09-01T07:59:00Z",
+  "buyer_name": "PPLsynth Planted Buyer",
+  "buyer_email": "planted.buyer@example.com",
+  "buyer_ip": "192.0.2.44",
+  "country": "NL",
+  "custom1": "PPLsynth-user-0100",
+  "payment_method": "CC",
+  "is_approved": true,
+  "is_testing": false,
+  "subscription": {
+    "is_recurring": true,
+    "period": "P1M",
+    "is_expired": "false",
+    "next_charge_on": "2026-11-04",
+    "is_cancelled": false,
+    "expiration_date": null
+  }
+}
