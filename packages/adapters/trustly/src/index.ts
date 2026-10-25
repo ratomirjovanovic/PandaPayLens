@@ -1075,7 +1075,7 @@ function docLinks(urls: readonly string[]): DocumentationLink[] {
 
 function docTitle(url: string): string {
   const page = url.replace(/\.md$/, "").split("/").pop() ?? "";
-  if (url.includes("amer.developers.trustly.com"))
+  if (url.startsWith("https://amer.developers.trustly.com/"))
     return `Trustly North America: ${page.replace(/-/g, " ")}`;
   return `Trustly API: ${page.replace(/-/g, " ")}`;
 }
