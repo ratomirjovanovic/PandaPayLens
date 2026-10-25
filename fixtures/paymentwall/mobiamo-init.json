@@ -1,0 +1,7 @@
+{
+  "success": true,
+  "ref": "PPLsynthMOB0001",
+  "flow": "code",
+  "instructions": "PPLsynth instructions text",
+  "price": { "amount": 1, "currency": "EUR" }
+}

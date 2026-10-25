@@ -1,0 +1,2 @@
+transaction_id=PPLsynth-order-1010&terminal_token=PPLsynthTERMINALTOKEN0001&unique_id=PPLsynth-uid-sale-1010&transaction_type=sale3d&status=approved&amount=750&signature=1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d
+transaction_id=PPLsynth-order-1010&terminal_token=PPLsynthTERMINALTOKEN0001&unique_id=PPLsynth-uid-sale-1010&transaction_type=sale3d&status=approved&amount=750&signature=1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d

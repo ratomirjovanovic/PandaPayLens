@@ -1,0 +1,58 @@
+[
+  {
+    "project_id": 9100001,
+    "payment": {
+      "id": "PPLsynth-order-0071",
+      "type": "purchase",
+      "status": "decline",
+      "date": "2026-10-20T15:00:02+0000",
+      "method": "card",
+      "sum": {
+        "amount": 3000,
+        "currency": "EUR"
+      }
+    },
+    "operation": {
+      "id": 9100000000071,
+      "type": "sale",
+      "status": "decline",
+      "date": "2026-10-20T15:00:02+0000",
+      "request_id": "PPLsynth-req-0071",
+      "sum_initial": {
+        "amount": 3000,
+        "currency": "EUR"
+      },
+      "code": "10201",
+      "message": "Refer to card issuer"
+    },
+    "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDA3MQ=="
+  },
+  {
+    "project_id": 9100001,
+    "payment": {
+      "id": "PPLsynth-order-0072",
+      "type": "purchase",
+      "status": "success",
+      "date": "2026-10-20T15:05:02+0000",
+      "method": "card",
+      "sum": {
+        "amount": 3000,
+        "currency": "EUR"
+      }
+    },
+    "operation": {
+      "id": 9100000000072,
+      "type": "sale",
+      "status": "success",
+      "date": "2026-10-20T15:05:02+0000",
+      "request_id": "PPLsynth-req-0072",
+      "sum_initial": {
+        "amount": 3000,
+        "currency": "EUR"
+      },
+      "code": "0",
+      "message": "Success"
+    },
+    "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDA3Mg=="
+  }
+]

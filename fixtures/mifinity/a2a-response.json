@@ -1,0 +1,16 @@
+{
+  "payload": [
+    {
+      "transactionId": "PLANTEDENCRYPTEDTXID0003",
+      "transactionReference": "PPLsynth-txref-a2a-0001",
+      "traceId": "PPLsynth-trace-a2a-0001",
+      "datePosted": "2026-10-20T13:00:00.000Z",
+      "sourceMoney": { "amount": 15, "currency": "EUR", "displayable": "EUR15.00" },
+      "destinationMoney": { "amount": 15, "currency": "EUR", "displayable": "EUR15.00" },
+      "sourceAccount": "5001000000000404",
+      "destinationAccountNumber": "5001000000000505",
+      "sameOwner": false,
+      "status": "OK"
+    }
+  ]
+}

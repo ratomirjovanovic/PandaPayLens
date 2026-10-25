@@ -1,0 +1,6 @@
+{
+  "error": {
+    "code": 407,
+    "message": "Currency mismatch",
+  }
+}

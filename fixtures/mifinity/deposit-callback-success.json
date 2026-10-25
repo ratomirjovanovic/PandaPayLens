@@ -1,0 +1,16 @@
+{
+  "traceId": "PPLsynth-trace-dep-0001",
+  "validationKey": "PLANTEDVALIDATIONKEY~PPLsynth~0000000000000000000000000000000001",
+  "transactionReference": "PPLsynth-txref-dep-0001",
+  "money": { "amount": 50, "currency": "EUR", "presentationAmount": "EUR50.00" },
+  "sourceMoney": { "amount": 50, "currency": "EUR", "presentationAmount": "EUR50.00" },
+  "destinationMoney": { "amount": 50, "currency": "EUR", "presentationAmount": "EUR50.00" },
+  "totalFees": { "amount": 0, "currency": "EUR", "presentationAmount": "EUR0.00" },
+  "paymentType": "EWALLET",
+  "paymentMethod": "EWALLET",
+  "responseCode": "UExBTlRFRFJFU1BPTlNFQ09ERQ==",
+  "customerAccountNumber": "5001000000009999",
+  "customerFirstName": "Planted",
+  "customerLastName": "Synthetic",
+  "customerDob": [1990, 1, 1]
+}

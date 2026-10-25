@@ -1,0 +1,6 @@
+POST /skrill/status HTTP/1.1
+Host: merchant.example.com
+Content-Type: application/x-www-form-urlencoded
+X-PPL-Fixture: synthetic; built from the documented status_url field table, not an official Skrill example
+
+pay_to_email=merchant.PPLsynth%40example.com&pay_from_email=payer.PPLsynth%40example.com&merchant_id=PPLsynth290001&customer_id=PPLsynth-customer-7782&transaction_id=PPLsynth-order-1002&mb_transaction_id=PPLsynth300000102&mb_amount=40&mb_currency=EUR&status=0&md5sig=5F3A9C1E7B2D4F6081A3C5E7092B4D6F&amount=40.00&currency=EUR

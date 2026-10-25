@@ -1,0 +1,22 @@
+POST /pplsynth/qr-callback HTTP/1.1
+Host: merchant.pplsynth.example
+Content-Type: application/json
+Signature: PLANTEDHMACSIGNATURE0001
+
+{
+  "deposit_external_id": "PPLsynthQrDep0001",
+  "payment_code_external_id": "PPLsynthQrCode0001",
+  "amount": "25.00",
+  "currency": "USD",
+  "merchant_amount": "125.00",
+  "merchant_currency": "BRL",
+  "status": "APPROVED",
+  "end_status_date": "2026-10-20T12:00:00.123",
+  "user_data": {
+    "first_name": "Planted",
+    "last_name": "Synthetic Person",
+    "email": "planted.person@example.com",
+    "phone": "+5511900PLANTED",
+    "document": "PLANTEDCPF0001"
+  }
+}

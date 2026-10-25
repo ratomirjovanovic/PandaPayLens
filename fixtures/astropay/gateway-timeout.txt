@@ -1,0 +1,4 @@
+HTTP/1.1 408 Request Timeout
+Content-Type: application/json
+
+{"error": "merchant_gateway_payment_creation_timeout", "description": "Payment creation timeout", "internal_term": "PAYMENT_CREATION_TIMEOUT"}

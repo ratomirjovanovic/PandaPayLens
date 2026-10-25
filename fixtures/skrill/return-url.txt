@@ -1,0 +1,4 @@
+GET /skrill/return?transaction_id=PPLsynth-order-1001&msid=0D2C4E6A8B1F3D5C7E9A1B3D5F7092C4 HTTP/1.1
+Host: merchant.example.com
+X-PPL-Fixture: synthetic; built from the documented return_url parameters, not an official Skrill example
+

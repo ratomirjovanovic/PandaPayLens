@@ -1,0 +1,7 @@
+{
+  "type": "validationError",
+  "error_code": "E_INVALID_SUBMISSION",
+  "message": "The provided data is invalid.",
+  "ref_id": null,
+  "details": [{ "fieldName": "amount", "message": "This field is required." }]
+}

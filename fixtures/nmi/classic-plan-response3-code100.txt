@@ -1,0 +1,1 @@
+response=3&responsetext=Plan+not+created&authcode=&transactionid=&avsresponse=&cvvresponse=&orderid=PPLsynth-plan-0001&type=add_plan&response_code=100

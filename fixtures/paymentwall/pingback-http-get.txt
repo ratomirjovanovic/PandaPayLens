@@ -1,0 +1,4 @@
+GET /pingback_path?uid=PPLsynth-user-0009&goodsid=PPLsynth_gold_membership&slength=&speriod=&type=0&ref=bPPLsynth9001&sign_version=2&sig=7c1e4f2a9b3d5e6f80a1b2c3d4e5f607 HTTP/1.1
+Host: merchant.example.com
+User-Agent: PPLsynth-agent
+

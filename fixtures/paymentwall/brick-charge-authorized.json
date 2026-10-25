@@ -1,0 +1,13 @@
+{
+  "id": "PPLsynth104872700",
+  "object": "charge",
+  "amount": "120.00",
+  "amount_paid": "120.00",
+  "currency": "EUR",
+  "currency_paid": "EUR",
+  "captured": false,
+  "refunded": false,
+  "risk": "approved",
+  "support_link": "https://example.com/support/PPLsynth-support-token-0002",
+  "card": { "type": "MasterCard", "last4": "4444", "token": "PPLsynth-permanent-card-token-0002" }
+}

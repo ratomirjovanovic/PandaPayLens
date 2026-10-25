@@ -1,0 +1,6 @@
+POST /skrill/status HTTP/1.1
+Host: merchant.example.com
+Content-Type: application/x-www-form-urlencoded
+X-PPL-Fixture: synthetic; built from the documented bank payout status post fields, not an official Skrill example
+
+pay_to_email=payee.PPLsynth%40example.com&pay_from_email=merchant.PPLsynth%40example.com&merchant_id=PPLsynth290001&transaction_id=PPLsynth-payout-3002&mb_transaction_id=PPLsynth300000109&mb_amount=120&mb_currency=EUR&status=-4&md5sig=5F3A9C1E7B2D4F6081A3C5E7092B4D6F&amount=120.00&currency=EUR&payment_type=BWI

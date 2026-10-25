@@ -1,0 +1,37 @@
+{
+  "project_id": 9100001,
+  "payment": {
+    "id": "PPLsynth-order-0111",
+    "type": "purchase",
+    "status": "decline",
+    "date": "2026-10-20T17:00:02+0000",
+    "sum": {
+      "amount": 6000,
+      "currency": "EUR"
+    }
+  },
+  "operations": [
+    {
+      "id": 9100000000111,
+      "type": "sale",
+      "status": "decline",
+      "date": "2026-10-20T17:00:02+0000",
+      "request_id": "PPLsynth-req-0111",
+      "sum_initial": {
+        "amount": 6000,
+        "currency": "EUR"
+      },
+      "code": "1405",
+      "message": "IP blacklisted"
+    }
+  ],
+  "errors": [
+    {
+      "code": 3020,
+      "message": "Card expiry date is required",
+      "field": "card.year",
+      "description": "Expiry required"
+    }
+  ],
+  "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDExMQ=="
+}

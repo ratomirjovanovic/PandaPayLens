@@ -1,0 +1,11 @@
+{
+  "transaction_type": "sale",
+  "status": "error",
+  "mode": "live",
+  "transaction_id": "PPLsynth-order-5005",
+  "code": "110",
+  "technical_message": "API login failed.",
+  "message": "API login failed.",
+  "timestamp": "2026-10-20T10:05:00Z",
+  "sent_to_acquirer": "false"
+}

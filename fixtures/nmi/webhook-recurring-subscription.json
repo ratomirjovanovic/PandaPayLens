@@ -1,0 +1,18 @@
+[
+  {
+    "event_id": "PPLsynth-evt-0040",
+    "event_type": "recurring.subscription.add",
+    "event_body": {
+      "merchant": { "id": "PPLsynth-merchant-1" },
+      "subscription_id": "PPLsynth-sub-1"
+    }
+  },
+  {
+    "event_id": "PPLsynth-evt-0041",
+    "event_type": "recurring.subscription.delete",
+    "event_body": {
+      "merchant": { "id": "PPLsynth-merchant-1" },
+      "subscription_id": "PPLsynth-sub-1"
+    }
+  }
+]

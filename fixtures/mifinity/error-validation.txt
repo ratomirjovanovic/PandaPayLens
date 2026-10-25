@@ -1,0 +1,4 @@
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{"errors":[{"type":"VALIDATION_FIELD","errorCode":"00001","message":"size must be between 0 and 48","formObjectName":"initIframeRequest","field":"traceId"}]}

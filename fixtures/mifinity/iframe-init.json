@@ -1,0 +1,9 @@
+{
+  "payload": [
+    {
+      "traceId": "PPLsynth-trace-dep-0009",
+      "initializationToken": "PLANTEDINITTOKEN0001",
+      "iframeEntrypoint": "https://demo.mifinity.com/iframe2#initToken=PLANTEDINITTOKEN0001"
+    }
+  ]
+}

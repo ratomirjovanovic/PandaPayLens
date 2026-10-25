@@ -33,24 +33,32 @@ Paste a payment error, webhook or event log from a supported provider. PandaPayL
 
 <!-- providers:start -->
 
-14 of 42 roadmap providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Research candidates and planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
+22 of 42 roadmap providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Research candidates and planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
 
-| Provider       | Overall   | Errors    | API responses | Webhooks     | Timeline  | Correlation |
-| -------------- | --------- | --------- | ------------- | ------------ | --------- | ----------- |
-| Stripe         | supported | supported | supported     | supported    | supported | supported   |
-| Adyen          | supported | supported | supported     | supported    | supported | supported   |
-| payabl.        | limited   | supported | supported     | limited      | limited   | limited     |
-| Checkout.com   | limited   | supported | supported     | limited      | limited   | supported   |
-| Braintree      | limited   | supported | supported     | limited      | limited   | limited     |
-| PayPal         | limited   | supported | supported     | limited      | limited   | limited     |
-| Mollie         | limited   | limited   | supported     | limited      | limited   | supported   |
-| Square         | limited   | supported | supported     | supported    | limited   | limited     |
-| CCBill         | limited   | limited   | limited       | limited      | limited   | limited     |
-| Segpay         | limited   | limited   | unsupported   | limited      | limited   | supported   |
-| Trust Payments | limited   | supported | supported     | limited      | limited   | supported   |
-| PXP Financial  | limited   | supported | supported     | limited      | limited   | limited     |
-| Verotel        | limited   | limited   | limited       | limited      | limited   | supported   |
-| NETbilling     | limited   | limited   | supported     | experimental | limited   | limited     |
+| Provider       | Overall   | Errors    | API responses | Webhooks     | Timeline     | Correlation |
+| -------------- | --------- | --------- | ------------- | ------------ | ------------ | ----------- |
+| Stripe         | supported | supported | supported     | supported    | supported    | supported   |
+| Adyen          | supported | supported | supported     | supported    | supported    | supported   |
+| payabl.        | limited   | supported | supported     | limited      | limited      | limited     |
+| Checkout.com   | limited   | supported | supported     | limited      | limited      | supported   |
+| Braintree      | limited   | supported | supported     | limited      | limited      | limited     |
+| PayPal         | limited   | supported | supported     | limited      | limited      | limited     |
+| Mollie         | limited   | limited   | supported     | limited      | limited      | supported   |
+| Square         | limited   | supported | supported     | supported    | limited      | limited     |
+| AstroPay       | limited   | limited   | supported     | limited      | limited      | limited     |
+| eZeeWallet     | limited   | limited   | limited       | limited      | experimental | limited     |
+| Skrill         | limited   | limited   | experimental  | limited      | limited      | limited     |
+| MiFinity       | limited   | limited   | limited       | limited      | limited      | limited     |
+| NMI            | limited   | supported | supported     | limited      | limited      | limited     |
+| Paymentwall    | limited   | limited   | limited       | supported    | limited      | limited     |
+| Ecommpay       | limited   | supported | supported     | limited      | limited      | supported   |
+| emerchantpay   | limited   | supported | limited       | limited      | limited      | limited     |
+| CCBill         | limited   | limited   | limited       | limited      | limited      | limited     |
+| Segpay         | limited   | limited   | unsupported   | limited      | limited      | supported   |
+| Trust Payments | limited   | supported | supported     | limited      | limited      | supported   |
+| PXP Financial  | limited   | supported | supported     | limited      | limited      | limited     |
+| Verotel        | limited   | limited   | limited       | limited      | limited      | supported   |
+| NETbilling     | limited   | limited   | supported     | experimental | limited      | limited     |
 
 <!-- providers:end -->
 

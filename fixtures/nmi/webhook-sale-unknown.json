@@ -1,0 +1,18 @@
+{
+  "event_id": "PPLsynth-evt-0003",
+  "event_type": "transaction.sale.unknown",
+  "event_body": {
+    "transaction_id": "PPLsynth0000000022",
+    "transaction_type": "cc",
+    "condition": "unknown",
+    "requested_amount": "30.00",
+    "currency": "USD",
+    "action": {
+      "amount": "30.00",
+      "action_type": "sale",
+      "date": "20261020120000",
+      "success": "0",
+      "source": "api"
+    }
+  }
+}

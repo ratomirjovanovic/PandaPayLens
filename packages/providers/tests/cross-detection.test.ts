@@ -76,3 +76,13 @@ describe("shared fixtures with the full registry", () => {
     },
   );
 });
+
+describe("snapshot records", () => {
+  it("history inside a status response is not reported as a late arrival", () => {
+    const r = analyzeText(readFileSync(join(root, "ecommpay/two-step-flow.json"), "utf8"), opts);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.result.findings.map((f) => f.ruleId)).not.toContain("OUT_OF_ORDER_ARRIVAL");
+    }
+  });
+});

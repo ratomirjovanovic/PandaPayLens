@@ -19,7 +19,7 @@ import type {
 } from "@pandapaylens/core";
 import { LIFECYCLE_RULES } from "./lifecycle.js";
 
-export const RULE_CATALOG_VERSION = "2026.10.1";
+export const RULE_CATALOG_VERSION = "2026.10.2";
 
 type Finding = Omit<DiagnosticFinding, "ruleId" | "ruleVersion">;
 
@@ -159,7 +159,7 @@ export const conflictingObservations: DiagnosticRule = {
 
 export const outOfOrderArrival: DiagnosticRule = {
   id: "OUT_OF_ORDER_ARRIVAL",
-  version: "1.2.0",
+  version: "1.3.0",
   providers: ["*"],
   description: "An event arrived after an event that was created later.",
   evaluate(ctx) {
@@ -174,6 +174,15 @@ export const outOfOrderArrival: DiagnosticRule = {
           return a.sourceIndex - b.sourceIndex;
         }),
       ).filter((e) => time(e) !== undefined);
+      // A record with several events is one snapshot (for example a status
+      // response listing past operations). It arrives as of its newest event;
+      // the older entries are history, not late arrivals.
+      const newestInRecord = new Map<number, number>();
+      for (const e of arrivals) {
+        const prev = newestInRecord.get(e.source.recordIndex);
+        if (prev === undefined || time(e)! > prev)
+          newestInRecord.set(e.source.recordIndex, time(e)!);
+      }
       const late: NormalizedEvent[] = [];
       let maxSeen: NormalizedEvent | undefined;
       for (const e of arrivals) {
@@ -182,6 +191,7 @@ export const outOfOrderArrival: DiagnosticRule = {
         // arrival. Only compare events that came in different records.
         if (
           maxSeen &&
+          time(e)! === newestInRecord.get(e.source.recordIndex) &&
           time(e)! < time(maxSeen)! &&
           e.source.recordIndex !== maxSeen.source.recordIndex
         ) {

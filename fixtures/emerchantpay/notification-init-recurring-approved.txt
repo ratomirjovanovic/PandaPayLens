@@ -1,0 +1,1 @@
+transaction_id=PPLsynth-order-1004&terminal_token=PPLsynthTERMINALTOKEN0001&unique_id=PPLsynth-uid-init-1004&transaction_type=init_recurring_sale&status=approved&amount=990&signature=1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d

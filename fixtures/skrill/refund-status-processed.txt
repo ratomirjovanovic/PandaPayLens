@@ -1,0 +1,6 @@
+POST /skrill/status HTTP/1.1
+Host: merchant.example.com
+Content-Type: application/x-www-form-urlencoded
+X-PPL-Fixture: synthetic; built from the documented refund status report field table, not an official Skrill example
+
+transaction_id=PPLsynth-refund-2001&mb_transaction_id=PPLsynth300000107&status=2&mb_amount=10&mb_currency=EUR&md5sig=5F3A9C1E7B2D4F6081A3C5E7092B4D6F

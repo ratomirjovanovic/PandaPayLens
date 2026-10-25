@@ -1,0 +1,6 @@
+{
+  "success": 0,
+  "secure": {
+    "formHTML": "<form action=\"https://acs.example.com/PPLsynth\" method=\"post\"><input name=\"PaReq\" value=\"PPLsynthPAREQ0001\"><input name=\"MD\" value=\"PPLsynthMD0001\"></form>"
+  }
+}

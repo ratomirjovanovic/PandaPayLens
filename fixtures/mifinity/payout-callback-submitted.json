@@ -1,0 +1,20 @@
+{
+  "postedOn": null,
+  "money": { "amount": 10, "currency": "EUR", "presentationAmount": "EUR10.00" },
+  "source": "5001000000000101",
+  "destination": "PPLsynth bank",
+  "description": "PPLsynth payout",
+  "transactionStatus": 3,
+  "transactionStatusDescription": "Submitted",
+  "traceId": "PPLsynth-trace-pab-0001",
+  "transactionReference": "PPLsynth-txref-pab-0001",
+  "eventTypeDescription": "Pay Any Bank",
+  "createdOn": "2026-10-20T10:00:00.000Z",
+  "arn": null,
+  "paymentCategoryType": "GAMING_PAYOUT",
+  "externalReference": "PPLSYNTHEXT01",
+  "sourceEmail": null,
+  "merchantCompanyName": "PPLsynth Merchant",
+  "additionalInfo": null,
+  "errorMessage": null
+}

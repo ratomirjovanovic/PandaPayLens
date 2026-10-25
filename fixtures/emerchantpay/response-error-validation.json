@@ -1,0 +1,16 @@
+{
+  "transaction_type": "sale",
+  "status": "error",
+  "mode": "live",
+  "transaction_id": "PPLsynth-order-5001",
+  "unique_id": "PPLsynth-uid-sale-5001",
+  "response_code": "57",
+  "code": "340",
+  "technical_message": "billing_address[zip_code] is invalid!",
+  "message": "billing_address[zip_code] is invalid!",
+  "timestamp": "2026-10-19T11:55:33Z",
+  "descriptor": "PPLsynth descriptor",
+  "amount": "100",
+  "currency": "USD",
+  "sent_to_acquirer": "false"
+}

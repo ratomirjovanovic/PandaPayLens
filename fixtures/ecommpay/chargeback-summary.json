@@ -1,0 +1,7 @@
+{
+  "event": "new_chargebacks_summary",
+  "event_date": "2026-10-20T12:00:00+0000",
+  "project_id": 9100001,
+  "merchant_id": 9400001,
+  "chargeback_count": 3
+}

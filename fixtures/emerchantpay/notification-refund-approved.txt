@@ -1,0 +1,1 @@
+transaction_id=PPLsynth-order-1001-r1&terminal_token=PPLsynthTERMINALTOKEN0001&unique_id=PPLsynth-uid-refund-1001&transaction_type=refund&status=approved&amount=1000&signature=1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d&reference_transaction_unique_id=PPLsynth-uid-sale-1001

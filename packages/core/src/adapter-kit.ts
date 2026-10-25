@@ -78,13 +78,20 @@ export function currencyExponent(currency: string): number {
  */
 export function decimalToMinor(value: unknown, currency: string | undefined): string | undefined {
   if (typeof value === "number" && Number.isFinite(value)) value = String(value);
-  if (typeof value !== "string" || !currency) return undefined;
+  if (typeof value !== "string" || !currency || value.length > 64) return undefined;
   const m = /^(-?)(\d{1,30})(?:\.(\d{1,10}))?$/.exec(value.trim());
   if (!m) return undefined;
   const exp = currencyExponent(currency);
-  const frac = (m[3] ?? "").replace(/0+$/, "");
+  // Plain loops instead of /0+$/ and /^0+/ keep the cost linear on any input.
+  let frac = m[3] ?? "";
+  let end = frac.length;
+  while (end > 0 && frac[end - 1] === "0") end--;
+  frac = frac.slice(0, end);
   if (frac.length > exp) return undefined;
-  const digits = (m[2]! + frac.padEnd(exp, "0")).replace(/^0+(?=\d)/, "");
+  const all = m[2]! + frac.padEnd(exp, "0");
+  let start = 0;
+  while (start < all.length - 1 && all[start] === "0") start++;
+  const digits = all.slice(start);
   return digits === "0" ? "0" : `${m[1]}${digits}`;
 }
 

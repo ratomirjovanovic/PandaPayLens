@@ -119,6 +119,67 @@ export default defineConfig({
         find: /^@pandapaylens\/trust-payments$/,
         replacement: src("./packages/adapters/trust-payments/src/index.ts"),
       },
+      {
+        find: /^@pandapaylens\/emerchantpay\/manifest$/,
+        replacement: src("./packages/adapters/emerchantpay/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/emerchantpay$/,
+        replacement: src("./packages/adapters/emerchantpay/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/ecommpay\/manifest$/,
+        replacement: src("./packages/adapters/ecommpay/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/ecommpay$/,
+        replacement: src("./packages/adapters/ecommpay/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paymentwall\/manifest$/,
+        replacement: src("./packages/adapters/paymentwall/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paymentwall$/,
+        replacement: src("./packages/adapters/paymentwall/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/nmi\/manifest$/,
+        replacement: src("./packages/adapters/nmi/src/manifest.ts"),
+      },
+      { find: /^@pandapaylens\/nmi$/, replacement: src("./packages/adapters/nmi/src/index.ts") },
+      {
+        find: /^@pandapaylens\/mifinity\/manifest$/,
+        replacement: src("./packages/adapters/mifinity/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/mifinity$/,
+        replacement: src("./packages/adapters/mifinity/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/astropay\/manifest$/,
+        replacement: src("./packages/adapters/astropay/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/astropay$/,
+        replacement: src("./packages/adapters/astropay/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/skrill\/manifest$/,
+        replacement: src("./packages/adapters/skrill/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/skrill$/,
+        replacement: src("./packages/adapters/skrill/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/ezeewallet\/manifest$/,
+        replacement: src("./packages/adapters/ezeewallet/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/ezeewallet$/,
+        replacement: src("./packages/adapters/ezeewallet/src/index.ts"),
+      },
       { find: /^@\/(.*)$/, replacement: `${src("./apps/web/")}$1` },
     ],
   },

@@ -1,0 +1,6 @@
+POST /webhooks/gateway HTTP/1.1
+Host: merchant.pplsynth.example
+Content-Type: application/json
+Webhook-Signature: t=PPLsynthNonce01,s=0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef
+
+{"event_id":"PPLsynth-evt-0005","event_type":"transaction.capture.failure","event_body":{"transaction_id":"PPLsynth0000000040","transaction_type":"cc","condition":"pending","currency":"USD","card":{"cc_number":"411111******1111","cavv":"PPLsynthPlantedCavvValue"},"action":{"amount":"5.00","action_type":"capture","date":"20261023080000","success":"0","source":"api","response_text":"Invalid transaction information","response_code":"441"}}}

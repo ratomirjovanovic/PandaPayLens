@@ -1,0 +1,68 @@
+[
+  {
+    "project_id": 9100001,
+    "payment": {
+      "id": "PPLsynth-cof-0091",
+      "type": "recurring",
+      "status": "success",
+      "date": "2026-09-20T06:00:03+0000",
+      "method": "card",
+      "sum": {
+        "amount": 999,
+        "currency": "EUR"
+      }
+    },
+    "operation": {
+      "id": 9100000000091,
+      "type": "recurring",
+      "status": "success",
+      "date": "2026-09-20T06:00:03+0000",
+      "request_id": "PPLsynth-req-0091",
+      "sum_initial": {
+        "amount": 999,
+        "currency": "EUR"
+      },
+      "code": "0",
+      "message": "Success"
+    },
+    "recurring": {
+      "id": 9300000001,
+      "status": "active",
+      "register_payment_id": "PPLsynth-cof-register-0090"
+    },
+    "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDA5MQ=="
+  },
+  {
+    "project_id": 9100001,
+    "payment": {
+      "id": "PPLsynth-cof-0092",
+      "type": "recurring",
+      "status": "decline",
+      "date": "2026-10-20T06:00:03+0000",
+      "method": "card",
+      "sum": {
+        "amount": 999,
+        "currency": "EUR"
+      }
+    },
+    "operation": {
+      "id": 9100000000092,
+      "type": "recurring",
+      "status": "decline",
+      "date": "2026-10-20T06:00:03+0000",
+      "request_id": "PPLsynth-req-0092",
+      "sum_initial": {
+        "amount": 999,
+        "currency": "EUR"
+      },
+      "code": "10112",
+      "message": "Insufficient funds"
+    },
+    "recurring": {
+      "id": 9300000001,
+      "status": "active",
+      "register_payment_id": "PPLsynth-cof-register-0090"
+    },
+    "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDA5Mg=="
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "event_id": "PPLsynth-evt-0004",
+    "event_type": "transaction.void.success",
+    "event_body": {
+      "transaction_id": "PPLsynth0000000030",
+      "transaction_type": "cc",
+      "condition": "canceled",
+      "action": {
+        "action_type": "void",
+        "date": "20261021110000",
+        "success": "1",
+        "source": "api",
+        "response_code": "100"
+      }
+    }
+  },
+  {
+    "event_id": "PPLsynth-evt-0004",
+    "event_type": "transaction.void.success",
+    "event_body": {
+      "transaction_id": "PPLsynth0000000030",
+      "transaction_type": "cc",
+      "condition": "canceled",
+      "action": {
+        "action_type": "void",
+        "date": "20261021110000",
+        "success": "1",
+        "source": "api",
+        "response_code": "100"
+      }
+    }
+  }
+]

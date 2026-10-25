@@ -1,0 +1,9 @@
+{
+  "payload": [
+    {
+      "status": "FAILED",
+      "detailedStatus": "FAILED",
+      "errorMessage": "Type: TRANSACTION_FAILED. Args: [null]"
+    }
+  ]
+}

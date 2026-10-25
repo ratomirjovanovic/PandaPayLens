@@ -1,0 +1,6 @@
+POST /skrill/status HTTP/1.1
+Host: merchant.example.com
+Content-Type: application/x-www-form-urlencoded
+X-PPL-Fixture: synthetic values in the shape of the published payout status post, not an official Skrill example
+
+merchant_id=PPLsynth290001&transaction_id=PPLsynth-payout-3001&mb_transaction_id=PPLsynth300000108&mb_amount=74.218786&mb_currency=GBP&status=2&md5sig=5F3A9C1E7B2D4F6081A3C5E7092B4D6F&amount=80.0&pay_from_email=payer.PPLsynth%40example.com&pay_to_email=merchant.PPLsynth%40example.com&currency=EUR

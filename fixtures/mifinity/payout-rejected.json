@@ -1,0 +1,16 @@
+{
+  "postedOn": null,
+  "money": { "amount": 40, "currency": "EUR", "presentationAmount": "EUR40.00" },
+  "source": "5001000000000303",
+  "destination": "492982XXXXXX8286",
+  "description": "PPLsynth card payout",
+  "transactionStatus": 6,
+  "transactionStatusDescription": "Rejected",
+  "traceId": "PPLsynth-trace-pac-0003",
+  "transactionReference": "PPLsynth-txref-pac-0003",
+  "eventTypeDescription": "Pay Any Card",
+  "createdOn": "2026-10-20T12:00:00.000Z",
+  "arn": null,
+  "paymentCategoryType": "GAMING_PAYOUT",
+  "errorMessage": "No account found"
+}

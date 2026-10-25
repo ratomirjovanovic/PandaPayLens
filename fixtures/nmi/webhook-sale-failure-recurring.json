@@ -1,0 +1,25 @@
+{
+  "event_id": "PPLsynth-evt-0002",
+  "event_type": "transaction.sale.failure",
+  "event_body": {
+    "merchant": { "id": "PPLsynth-merchant-1" },
+    "features": { "is_test_mode": false },
+    "transaction_id": "PPLsynth0000000021",
+    "transaction_type": "cc",
+    "condition": "failed",
+    "requested_amount": "12.00",
+    "currency": "USD",
+    "card": { "avs_response": "N", "csc_response": "N", "cc_type": "mastercard" },
+    "action": {
+      "amount": "12.00",
+      "action_type": "sale",
+      "date": "20261020110000",
+      "success": "0",
+      "source": "recurring",
+      "response_text": "Insufficient funds",
+      "response_code": "202",
+      "processor_response_code": "51",
+      "processor_response_text": "NSF"
+    }
+  }
+}

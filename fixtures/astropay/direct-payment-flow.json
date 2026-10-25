@@ -1,0 +1,25 @@
+[
+  {
+    "merchant_deposit_id": "PPLSYNTH-DEP-0001",
+    "deposit_external_id": "PPLsynthDepExt0001",
+    "status": "PENDING",
+    "payment_detail": {
+      "qr": "00020126PLANTEDPIXKEY0001",
+      "qr_image": "data:image/png;base64,PLANTEDQRIMAGE0001"
+    }
+  },
+  {
+    "deposit_external_id": "PPLsynthDepExt0001",
+    "merchant_deposit_id": "PPLSYNTH-DEP-0001",
+    "merchant_user_id": "PPLSYNTH-USER-PLANTED01",
+    "status": "APPROVED",
+    "end_status_date": "2026-10-20T01:57:39"
+  },
+  {
+    "deposit_external_id": "PPLsynthDepExt0001",
+    "merchant_deposit_id": "PPLSYNTH-DEP-0001",
+    "merchant_user_id": "PPLSYNTH-USER-PLANTED01",
+    "status": "APPROVED",
+    "end_status_date": "2026-10-20T01:57:39"
+  }
+]

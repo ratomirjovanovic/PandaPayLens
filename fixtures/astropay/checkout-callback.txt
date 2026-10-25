@@ -1,0 +1,16 @@
+POST /pplsynth/astropay-callback HTTP/1.1
+Host: merchant.pplsynth.example
+Content-Type: application/json
+Partner-Signature: PLANTEDSIGNATUREVALUE0001==
+Partner-Request-ID: 0f1e2d3c-PPLsynth-0001
+Partner-Request-Time: 2026-10-20T10:00:00Z
+Partner-Certificate-Serial-Number: PLANTEDCERTSERIAL01
+
+{
+  "payment_external_id": "PPLsynthPay0001",
+  "merchant_payment_id": "PPLSYNTH-ORDER-0001",
+  "merchant_id": 7700123,
+  "payment_status": "COMPLETED",
+  "payment_info": { "payment_amount": { "currency": "BRL", "value": 150.5 } },
+  "merchant_notification_url": "https://merchant.pplsynth.example/PLANTEDNOTIFYURL"
+}

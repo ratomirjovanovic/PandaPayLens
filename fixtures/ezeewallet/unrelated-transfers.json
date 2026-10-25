@@ -1,0 +1,22 @@
+[
+  {
+    "transfer": {
+      "merchant_transaction_id": "PPLSYNTH-ORDER-SHARED",
+      "ezw_reference_id": "PPLsynthEZW0901",
+      "amount": 5000,
+      "currency": "EUR",
+      "source_wallet_id": "planted.consumer.four@example.com",
+      "status": "declined"
+    }
+  },
+  {
+    "transfer": {
+      "merchant_transaction_id": "PPLSYNTH-ORDER-SHARED",
+      "ezw_reference_id": "PPLsynthEZW0902",
+      "amount": 5000,
+      "currency": "EUR",
+      "source_wallet_id": "planted.consumer.four@example.com",
+      "status": "approved"
+    }
+  }
+]

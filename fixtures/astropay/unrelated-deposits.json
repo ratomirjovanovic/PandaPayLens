@@ -1,0 +1,14 @@
+[
+  {
+    "deposit_external_id": "PPLsynthDepExt0101",
+    "merchant_deposit_id": "PPLSYNTH-DEP-SHARED",
+    "status": "CANCELLED",
+    "end_status_date": "2026-10-20T08:00:00"
+  },
+  {
+    "deposit_external_id": "PPLsynthDepExt0102",
+    "merchant_deposit_id": "PPLSYNTH-DEP-SHARED",
+    "status": "APPROVED",
+    "end_status_date": "2026-10-20T09:00:00"
+  }
+]

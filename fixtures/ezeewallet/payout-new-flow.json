@@ -1,0 +1,14 @@
+[
+  {
+    "ezw_reference_id": "PPLsynthEZW0501",
+    "status": "pending",
+    "merchant_reference": "PPLSYNTH-PO-0501"
+  },
+  {
+    "ezw_reference_id": "PPLsynthEZW0501",
+    "merchant_reference": "PPLSYNTH-PO-0501",
+    "unique_id": "PPLsynthUID0501",
+    "status": "approved",
+    "signature": "3d4e5f60718293a4b5c6d7e8f9012345678ab1c2"
+  }
+]

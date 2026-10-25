@@ -1,0 +1,12 @@
+{
+  "transaction_type": "sale3d",
+  "status": "pending_async",
+  "mode": "test",
+  "transaction_id": "PPLsynth-order-5003",
+  "unique_id": "PPLsynth-uid-sale3d-5003",
+  "redirect_url": "https://example.invalid/redirect/to_acquirer/PPLsynth-redirect-planted-5003",
+  "timestamp": "2026-10-20T09:20:00Z",
+  "amount": "5000",
+  "currency": "GBP",
+  "sent_to_acquirer": "true"
+}

@@ -1,0 +1,10 @@
+{
+  "payload": [
+    {
+      "traceId": "PPLsynth-trace-pab-0005",
+      "transactionReference": "PPLsynth-txref-pab-0005",
+      "transactionStatus": 5,
+      "transactionLastUpdated": "2026-10-21T03:00:00.000Z"
+    }
+  ]
+}

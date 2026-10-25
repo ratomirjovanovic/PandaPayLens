@@ -1,0 +1,7 @@
+{
+  "success": 0,
+  "error": {
+    "message": "Please ensure the CVV/CVC number is correct before retrying the transaction",
+    "code": 3014
+  }
+}

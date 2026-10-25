@@ -1,0 +1,4 @@
+HTTP/1.1 412 Precondition Failed
+Content-Type: application/json
+
+{"error": "REFUND_AMOUNT_EXCEEDED", "description": "Refund amount exceeds the captured amount"}

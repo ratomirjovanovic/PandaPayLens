@@ -1,0 +1,45 @@
+{
+  "event_id": "PPLsynth-evt-0001",
+  "event_type": "transaction.sale.success",
+  "event_body": {
+    "merchant": { "id": "PPLsynth-merchant-1", "name": "PPLsynth Planted Merchant Name" },
+    "features": { "is_test_mode": true },
+    "transaction_id": "PPLsynth0000000020",
+    "transaction_type": "cc",
+    "condition": "pendingsettlement",
+    "processor_id": "PPLsynthproc1",
+    "order_id": "PPLsynth-order-0020",
+    "ponumber": "PPLsynth-po-1",
+    "requested_amount": "24.95",
+    "currency": "usd",
+    "authorization_code": "PPL123",
+    "billing_address": {
+      "first_name": "PPLsynthPlantedFirst",
+      "last_name": "PPLsynthPlantedLast",
+      "address_1": "1 PPLsynth Planted Street",
+      "email": "planted@pplsynth.example",
+      "phone": "5550001111"
+    },
+    "shipping_address": { "first_name": "PPLsynthPlantedShipName" },
+    "card": {
+      "cc_number": "411111******1111",
+      "cc_exp": "1230",
+      "avs_response": "Y",
+      "csc_response": "M",
+      "cavv": "PPLsynthPlantedCavvValue",
+      "cc_type": "visa"
+    },
+    "merchant_defined_fields": { "1": "PPLsynthPlantedMerchantField" },
+    "action": {
+      "amount": "24.95",
+      "action_type": "sale",
+      "date": "20261020100000",
+      "success": "1",
+      "source": "api",
+      "response_text": "SUCCESS",
+      "response_code": "100",
+      "processor_response_code": "00",
+      "processor_response_text": "APPROVED"
+    }
+  }
+}

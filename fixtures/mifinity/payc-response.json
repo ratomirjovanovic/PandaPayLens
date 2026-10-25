@@ -1,0 +1,12 @@
+{
+  "payload": [
+    {
+      "quoteReference": "PPLsynth-quote-0001",
+      "traceId": "PPLsynth-trace-payc-0001",
+      "statusCode": 7,
+      "statusMessage": "PENDING",
+      "sourceMoney": { "currency": "EUR", "amount": 100, "actual": 100 },
+      "cryptoAddress": "PLANTEDCRYPTOADDRESS0001"
+    }
+  ]
+}

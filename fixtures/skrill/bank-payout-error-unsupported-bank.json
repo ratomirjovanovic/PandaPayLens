@@ -1,0 +1,7 @@
+{
+  "error": {
+    "code": "UNSUPPORTED_BANK",
+    "message": "Unsupported bank",
+    "details": ["PPLsynth synthetic detail"]
+  }
+}

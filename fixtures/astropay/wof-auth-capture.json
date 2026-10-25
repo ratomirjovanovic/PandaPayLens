@@ -1,0 +1,28 @@
+[
+  {
+    "payment_id": "PPLsynthWof0001",
+    "merchant_payment_id": "PPLSYNTH-WOF-0001",
+    "status": "AUTHORIZED",
+    "is_authorization_completed": false,
+    "is_reversible": true,
+    "payment_transactions": [
+      { "payment_transaction_id": "PPLsynthWofTx01", "type": "AUTHORIZATION", "result": "APPROVED" }
+    ]
+  },
+  {
+    "payment_id": "PPLsynthWof0001",
+    "merchant_payment_id": "PPLSYNTH-WOF-0001",
+    "status": "PARTIALLY_CAPTURED",
+    "captured_amount": 20,
+    "is_authorization_completed": false,
+    "is_reversible": true,
+    "payment_transactions": [
+      {
+        "payment_transaction_id": "PPLsynthWofTx01",
+        "type": "AUTHORIZATION",
+        "result": "APPROVED"
+      },
+      { "payment_transaction_id": "PPLsynthWofTx02", "type": "CAPTURE", "result": "APPROVED" }
+    ]
+  }
+]

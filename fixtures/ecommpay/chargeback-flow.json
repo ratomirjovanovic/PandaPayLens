@@ -1,0 +1,64 @@
+[
+  {
+    "project_id": 9100001,
+    "payment": {
+      "id": "PPLsynth-order-0101",
+      "type": "purchase",
+      "status": "success",
+      "date": "2026-09-01T10:00:05+0000",
+      "method": "card",
+      "sum": {
+        "amount": 7500,
+        "currency": "EUR"
+      }
+    },
+    "operation": {
+      "id": 9100000000101,
+      "type": "sale",
+      "status": "success",
+      "date": "2026-09-01T10:00:05+0000",
+      "request_id": "PPLsynth-req-0101",
+      "sum_initial": {
+        "amount": 7500,
+        "currency": "EUR"
+      },
+      "code": "0",
+      "message": "Success"
+    },
+    "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDEwMQ=="
+  },
+  {
+    "event": "new_chargeback_details",
+    "event_date": "2026-10-01T12:00:00+0000",
+    "project_id": 9100001,
+    "merchant_id": 9400001,
+    "chargebacks": [
+      {
+        "chargeback_id": "PPLsynth-cb-0001",
+        "case_id": "PPLsynth-case-0001",
+        "operation_id": 9100000000101,
+        "arn": "74PLANTEDARN000000000000001",
+        "card_type": "visa",
+        "chargeback_status": "NEW",
+        "reason_code": "10.4"
+      }
+    ]
+  },
+  {
+    "event": "chargeback_won",
+    "event_date": "2026-10-20T12:00:00+0000",
+    "project_id": 9100001,
+    "merchant_id": 9400001,
+    "chargebacks": [
+      {
+        "chargeback_id": "PPLsynth-cb-0001",
+        "case_id": "PPLsynth-case-0001",
+        "operation_id": 9100000000101,
+        "arn": "74PLANTEDARN000000000000001",
+        "card_type": "visa",
+        "chargeback_status": "WON",
+        "reason_code": "10.4"
+      }
+    ]
+  }
+]

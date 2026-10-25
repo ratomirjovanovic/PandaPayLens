@@ -1,0 +1,17 @@
+{
+  "unique_ids": [
+    {
+      "email": "planted.payee.one@example.com",
+      "amount": 1500,
+      "currency": "EUR",
+      "merchant_reference": "PPLSYNTH-BPO-0701"
+    },
+    {
+      "email": "planted.payee.two@example.com",
+      "amount": 2500,
+      "currency": "EUR",
+      "merchant_reference": "PPLSYNTH-BPO-0702"
+    }
+  ],
+  "status": "pending"
+}

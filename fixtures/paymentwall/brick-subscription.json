@@ -1,0 +1,14 @@
+{
+  "id": "PPLsynthVCBZT392SW",
+  "object": "subscription",
+  "active": 1,
+  "started": 1,
+  "expired": 0,
+  "is_trial": 0,
+  "period": "month",
+  "period_duration": 1,
+  "payments_limit": 12,
+  "date_started": 1790000000,
+  "date_next": 1792592000,
+  "charges": ["PPLsynth104872652"]
+}

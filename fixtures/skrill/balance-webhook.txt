@@ -1,0 +1,7 @@
+POST /skrill/balance HTTP/1.1
+Host: merchant.example.com
+Content-Type: application/json
+X-Paysafe-Signature: UFBMc3ludGggbm90IGEgcmVhbCBzaWduYXR1cmU=
+X-PPL-Fixture: synthetic; built from the documented Balance Notification Webhook fields, not an official Skrill example
+
+{"notificationId":"PPLsynth-ntf-0001","timestamp":"2026-10-25T10:00:00Z","data":{"accountId":"PPLsynth-acc-0001","availableBalance":1250.75,"currency":"EUR"}}

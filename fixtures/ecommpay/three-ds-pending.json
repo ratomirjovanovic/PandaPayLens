@@ -1,0 +1,34 @@
+{
+  "project_id": 9100001,
+  "payment": {
+    "id": "PPLsynth-order-0121",
+    "type": "purchase",
+    "status": "awaiting 3ds result",
+    "date": "2026-10-20T18:00:01+0000",
+    "method": "card",
+    "sum": {
+      "amount": 4500,
+      "currency": "EUR"
+    }
+  },
+  "operation": {
+    "id": 9100000000121,
+    "type": "sale",
+    "status": "awaiting 3ds result",
+    "date": "2026-10-20T18:00:01+0000",
+    "request_id": "PPLsynth-req-0121",
+    "sum_initial": {
+      "amount": 4500,
+      "currency": "EUR"
+    },
+    "code": "0",
+    "message": "Awaiting 3ds result"
+  },
+  "acs": {
+    "pa_req": "PLANTEDPAREQ0001",
+    "md": "PLANTEDMD0001",
+    "acs_url": "https://acs.pplsynth.example/PLANTEDACSURL",
+    "term_url": "https://merchant.pplsynth.example/return"
+  },
+  "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDEyMQ=="
+}

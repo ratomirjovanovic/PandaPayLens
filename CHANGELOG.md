@@ -2,6 +2,26 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-10-25
+
+High-risk wave HR-2.
+
+### Providers
+
+- New adapters with limited support, built from official documentation and tested with synthetic fixtures: emerchantpay, Ecommpay, Paymentwall, NMI, MiFinity, AstroPay, Skrill, eZeeWallet.
+- 22 of 42 roadmap providers can now be analyzed.
+
+### Analyzer
+
+- Form examples split over continuation lines that start with `&` are joined into one record.
+- Form-encoded bodies labelled `text/plain` or `text/html` are parsed as forms.
+- XML input returns a clear `UNSUPPORTED_FORMAT` error instead of a JSON parse error.
+- `OUT_OF_ORDER_ARRIVAL` treats a record with several events (for example a status response listing past operations) as one snapshot (rule catalog 2026.10.2).
+
+### Security
+
+- The development dependency chain of `drizzle-kit` now uses a patched esbuild.
+
 ## [0.2.0] - 2026-10-25
 
 High-risk wave HR-1.

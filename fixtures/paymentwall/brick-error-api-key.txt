@@ -1,0 +1,4 @@
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+
+{"type":"Error","error":"Wrong API key","code":4007}

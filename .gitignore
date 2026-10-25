@@ -19,3 +19,6 @@ apps/pages/app/icon.svg
 apps/pages/out/
 apps/pages/app/apple-icon.png
 
+
+# Local notes, never published
+.local/

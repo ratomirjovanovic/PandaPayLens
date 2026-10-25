@@ -1,0 +1,39 @@
+{
+  "project_id": 9100001,
+  "payment": {
+    "id": "PPLsynth-order-0002",
+    "type": "purchase",
+    "status": "decline",
+    "date": "2026-10-20T11:00:06+0000",
+    "method": "card",
+    "sum": {
+      "amount": 4000,
+      "currency": "GBP"
+    },
+    "is_new_attempts_available": true
+  },
+  "operation": {
+    "id": 9100000000002,
+    "type": "sale",
+    "status": "decline",
+    "date": "2026-10-20T11:00:06+0000",
+    "request_id": "PPLsynth-req-0002",
+    "sum_initial": {
+      "amount": 4000,
+      "currency": "GBP"
+    },
+    "code": "10105",
+    "message": "Insufficient funds on customer account",
+    "provider": {
+      "id": 9101,
+      "payment_id": "PPLsynth-prov-0002",
+      "endpoint_id": 9201,
+      "result_code": "51",
+      "result_message": "Not sufficient funds"
+    }
+  },
+  "account": {
+    "number": "555555******4444"
+  },
+  "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDAwMg=="
+}

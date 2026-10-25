@@ -1,0 +1,1 @@
+transaction_id=PPLsynth-order-1001&terminal_token=PPLsynthTERMINALTOKEN0001&unique_id=PPLsynth-uid-sale-1001&transaction_type=sale&status=chargebacked&amount=2500&signature=1a2b3c4d5e6f708192a3b4c5d6e7f8091a2b3c4d&event=chargeback&chargeback_unique_id=PPLsynth-uid-cb-2001

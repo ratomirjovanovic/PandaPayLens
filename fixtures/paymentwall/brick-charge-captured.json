@@ -1,0 +1,23 @@
+{
+  "id": "PPLsynth104872652",
+  "object": "charge",
+  "amount": "9.99",
+  "amount_paid": "9.99",
+  "currency": "USD",
+  "currency_paid": "USD",
+  "created": 1790000000,
+  "captured": true,
+  "refunded": false,
+  "risk": "approved",
+  "secure": false,
+  "support_link": "https://example.com/support/PPLsynth-support-token-0001",
+  "card": {
+    "type": "Visa",
+    "last4": "4242",
+    "exp_month": "12",
+    "exp_year": "2030",
+    "name": "PPLsynth Planted Holder",
+    "country": "US",
+    "token": "PPLsynth-permanent-card-token-0001"
+  }
+}

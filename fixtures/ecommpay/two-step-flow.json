@@ -1,0 +1,113 @@
+[
+  {
+    "project_id": 9100001,
+    "payment": {
+      "id": "PPLsynth-order-0003",
+      "type": "purchase",
+      "status": "awaiting capture",
+      "date": "2026-10-20T12:00:03+0000",
+      "method": "card",
+      "sum": {
+        "amount": 9900,
+        "currency": "EUR"
+      }
+    },
+    "operation": {
+      "id": 9100000000031,
+      "type": "auth",
+      "status": "success",
+      "date": "2026-10-20T12:00:03+0000",
+      "request_id": "PPLsynth-req-0031",
+      "sum_initial": {
+        "amount": 9900,
+        "currency": "EUR"
+      },
+      "code": "0",
+      "message": "Success"
+    },
+    "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDAzMQ=="
+  },
+  {
+    "project_id": 9100001,
+    "payment": {
+      "id": "PPLSYNTH-ORDER-0003",
+      "type": "purchase",
+      "status": "success",
+      "date": "2026-10-21T09:00:02+0000",
+      "method": "card",
+      "sum": {
+        "amount": 9900,
+        "currency": "EUR"
+      }
+    },
+    "operation": {
+      "id": 9100000000032,
+      "type": "capture",
+      "status": "success",
+      "date": "2026-10-21T09:00:02+0000",
+      "request_id": "PPLsynth-req-0032",
+      "sum_initial": {
+        "amount": 9900,
+        "currency": "EUR"
+      },
+      "code": "0",
+      "message": "Success"
+    },
+    "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDAzMg=="
+  },
+  {
+    "project_id": 9100001,
+    "payment": {
+      "id": "PPLsynth-order-0003",
+      "type": "purchase",
+      "status": "partially refunded",
+      "date": "2026-10-22T08:00:04+0000",
+      "method": "card",
+      "sum": {
+        "amount": 7900,
+        "currency": "EUR"
+      }
+    },
+    "operations": [
+      {
+        "id": 9100000000031,
+        "type": "auth",
+        "status": "success",
+        "date": "2026-10-20T12:00:03+0000",
+        "request_id": "PPLsynth-req-0031",
+        "sum_initial": {
+          "amount": 9900,
+          "currency": "EUR"
+        },
+        "code": "0",
+        "message": "Success"
+      },
+      {
+        "id": 9100000000032,
+        "type": "capture",
+        "status": "success",
+        "date": "2026-10-21T09:00:02+0000",
+        "request_id": "PPLsynth-req-0032",
+        "sum_initial": {
+          "amount": 9900,
+          "currency": "EUR"
+        },
+        "code": "0",
+        "message": "Success"
+      },
+      {
+        "id": 9100000000033,
+        "type": "refund",
+        "status": "success",
+        "date": "2026-10-22T08:00:04+0000",
+        "request_id": "PPLsynth-req-0033",
+        "sum_initial": {
+          "amount": 2000,
+          "currency": "EUR"
+        },
+        "code": "0",
+        "message": "Success"
+      }
+    ]
+  }
+]

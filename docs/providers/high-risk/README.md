@@ -26,14 +26,14 @@ Research files for each candidate are in [research/](research/).
 | NETbilling        | HR-1 | documentation verified                                         | tested, limited |
 | PXP Financial     | HR-1 | documentation verified                                         | tested, limited |
 | Trust Payments    | HR-1 | documentation verified                                         | tested, limited |
-| emerchantpay      | HR-2 | documentation verified                                         | not yet         |
-| Ecommpay          | HR-2 | documentation verified                                         | not yet         |
-| Paymentwall       | HR-2 | documentation verified                                         | not yet         |
-| NMI               | HR-2 | documentation verified                                         | not yet         |
-| MiFinity          | HR-2 | documentation verified                                         | not yet         |
-| AstroPay          | HR-2 | documentation verified                                         | not yet         |
-| Skrill            | HR-2 | documentation verified                                         | not yet         |
-| eZeeWallet        | HR-2 | documentation verified                                         | not yet         |
+| emerchantpay      | HR-2 | documentation verified                                         | tested, limited |
+| Ecommpay          | HR-2 | documentation verified                                         | tested, limited |
+| Paymentwall       | HR-2 | documentation verified                                         | tested, limited |
+| NMI               | HR-2 | documentation verified                                         | tested, limited |
+| MiFinity          | HR-2 | documentation verified                                         | tested, limited |
+| AstroPay          | HR-2 | documentation verified                                         | tested, limited |
+| Skrill            | HR-2 | documentation verified                                         | tested, limited |
+| eZeeWallet        | HR-2 | documentation verified                                         | tested, limited |
 | Finrax            | HR-3 | documentation verified                                         | not yet         |
 | Inpay             | HR-3 | documentation verified                                         | not yet         |
 | DECTA             | HR-3 | documentation verified                                         | not yet         |

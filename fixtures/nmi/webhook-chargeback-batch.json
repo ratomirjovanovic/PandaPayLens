@@ -1,0 +1,16 @@
+{
+  "event_id": "PPLsynth-evt-0030",
+  "event_type": "chargeback.batch.complete",
+  "event_body": {
+    "merchant": { "id": "PPLsynth-merchant-1" },
+    "chargebacks": [
+      {
+        "id": "PPLsynth-cb-1",
+        "date": "20261024000000",
+        "amount": "24.95",
+        "reason": "101: Introductory chargeback",
+        "customer_name": "PPLsynthPlantedCustomerName"
+      }
+    ]
+  }
+}

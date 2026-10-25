@@ -1,0 +1,6 @@
+POST /skrill/status HTTP/1.1
+Host: merchant.example.com
+Content-Type: application/x-www-form-urlencoded
+X-PPL-Fixture: synthetic; built from the documented rec_status_url field table, not an official Skrill example
+
+merchant_id=PPLsynth290001&transaction_id=PPLsynth-order-1011&status=2&rec_payment_id=PPLsynth-rec-4001&rec_payment_type=recurring&md5sig=5F3A9C1E7B2D4F6081A3C5E7092B4D6F

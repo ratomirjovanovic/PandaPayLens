@@ -1,0 +1,23 @@
+{
+  "event_id": "PPLsynth-evt-0050",
+  "event_type": "transaction.check.status.return",
+  "event_body": {
+    "transaction_id": "PPLsynth0000000060",
+    "transaction_type": "ck",
+    "condition": "failed",
+    "requested_amount": "75.00",
+    "currency": "USD",
+    "check": {
+      "check_account": "PPLsynthPlantedAccount",
+      "check_aba": "PPLsynthPlantedAba",
+      "check_hash": "PPLsynthPlantedHash"
+    },
+    "action": {
+      "amount": "75.00",
+      "action_type": "check_return",
+      "date": "20261025090000",
+      "success": "1",
+      "source": "internal"
+    }
+  }
+}

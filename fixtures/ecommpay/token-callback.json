@@ -1,0 +1,16 @@
+{
+  "general": {
+    "project_id": 9100001,
+    "customer_id": "PPLsynth-customer-0001",
+    "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlVE9LRU4="
+  },
+  "request": {
+    "id": "PPLsynth-req-tok-0001",
+    "action": "tokenize",
+    "status": "success",
+    "errors": []
+  },
+  "token": "PLANTEDTOKENVALUE0001",
+  "token_created_at": "2026-10-20T10:00:00+0000",
+  "token_status": "active"
+}

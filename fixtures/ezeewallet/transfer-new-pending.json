@@ -1,0 +1,14 @@
+{
+  "transfer": {
+    "merchant_transaction_id": "PPLSYNTH-MTX-0201",
+    "first_name": "Planted Firstname",
+    "last_name": "Planted Lastname",
+    "amount": 10000,
+    "currency": "USD",
+    "source_wallet_id": "planted.consumer.three@example.com",
+    "return_success_url": "https://merchant.pplsynth.example/success",
+    "return_failure_url": "https://merchant.pplsynth.example/failure",
+    "status": "pending",
+    "redirect_url": "https://wallet.pplsynth.example/en/consumers/top_up/PLANTEDTOPUPTOKEN0201"
+  }
+}

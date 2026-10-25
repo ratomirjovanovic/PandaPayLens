@@ -11,6 +11,14 @@ import { checkoutManifest } from "@pandapaylens/checkout/manifest";
 import { paypalManifest } from "@pandapaylens/paypal/manifest";
 import { mollieManifest } from "@pandapaylens/mollie/manifest";
 import { squareManifest } from "@pandapaylens/square/manifest";
+import { astropayManifest } from "@pandapaylens/astropay/manifest";
+import { ezeewalletManifest } from "@pandapaylens/ezeewallet/manifest";
+import { skrillManifest } from "@pandapaylens/skrill/manifest";
+import { mifinityManifest } from "@pandapaylens/mifinity/manifest";
+import { nmiManifest } from "@pandapaylens/nmi/manifest";
+import { paymentwallManifest } from "@pandapaylens/paymentwall/manifest";
+import { ecommpayManifest } from "@pandapaylens/ecommpay/manifest";
+import { emerchantpayManifest } from "@pandapaylens/emerchantpay/manifest";
 import { ccbillManifest } from "@pandapaylens/ccbill/manifest";
 import { segpayManifest } from "@pandapaylens/segpay/manifest";
 import { trustPaymentsManifest } from "@pandapaylens/trust-payments/manifest";
@@ -27,6 +35,14 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   paypalManifest,
   mollieManifest,
   squareManifest,
+  astropayManifest,
+  ezeewalletManifest,
+  skrillManifest,
+  mifinityManifest,
+  nmiManifest,
+  paymentwallManifest,
+  ecommpayManifest,
+  emerchantpayManifest,
   ccbillManifest,
   segpayManifest,
   trustPaymentsManifest,
@@ -248,56 +264,56 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     id: "emerchantpay",
     displayName: "emerchantpay",
     wave: "HR-2",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "gateway_acquiring"],
   },
   {
     id: "ecommpay",
     displayName: "Ecommpay",
     wave: "HR-2",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "gateway_acquiring"],
   },
   {
     id: "paymentwall",
     displayName: "Paymentwall",
     wave: "HR-2",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "gaming", "subscription"],
   },
   {
     id: "nmi",
     displayName: "NMI",
     wave: "HR-2",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "gateway_acquiring"],
   },
   {
     id: "mifinity",
     displayName: "MiFinity",
     wave: "HR-2",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "wallet"],
   },
   {
     id: "astropay",
     displayName: "AstroPay",
     wave: "HR-2",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "wallet"],
   },
   {
     id: "skrill",
     displayName: "Skrill",
     wave: "HR-2",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "wallet"],
   },
   {
     id: "ezeewallet",
     displayName: "eZeeWallet",
     wave: "HR-2",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "wallet"],
   },
   {

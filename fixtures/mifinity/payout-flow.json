@@ -1,0 +1,60 @@
+[
+  {
+    "payload": [
+      {
+        "transactionId": "PLANTEDENCRYPTEDTXID0001",
+        "transactionReference": "PPLsynth-txref-pab-0002",
+        "traceId": "PPLsynth-trace-pab-0002",
+        "datePosted": "2026-10-20T11:00:00.000Z",
+        "sourceMoney": { "amount": 25.5, "currency": "EUR", "displayable": "EUR25.50" },
+        "destinationMoney": { "amount": 25.5, "currency": "EUR", "displayable": "EUR25.50" },
+        "exchangeRate": 1,
+        "totalFees": { "amount": 0, "currency": "EUR", "displayable": "EUR0.00" }
+      }
+    ]
+  },
+  {
+    "postedOn": null,
+    "money": { "amount": 25.5, "currency": "EUR", "presentationAmount": "EUR25.50" },
+    "source": "5001000000000202",
+    "destination": "PPLsynth bank",
+    "description": "PPLsynth payout",
+    "transactionStatus": 3,
+    "transactionStatusDescription": "Submitted",
+    "traceId": "PPLsynth-trace-pab-0002",
+    "transactionReference": "PPLsynth-txref-pab-0002",
+    "eventTypeDescription": "Pay Any Bank",
+    "createdOn": "2026-10-20T11:00:00.000Z",
+    "arn": null,
+    "paymentCategoryType": "GAMING_PAYOUT",
+    "errorMessage": null
+  },
+  {
+    "postedOn": "2026-10-21T02:00:00.000Z",
+    "money": { "amount": 25.5, "currency": "EUR", "presentationAmount": "EUR25.50" },
+    "source": "5001000000000202",
+    "destination": "PPLsynth bank",
+    "description": "PPLsynth payout",
+    "transactionStatus": 5,
+    "transactionStatusDescription": "Processed by acquirer",
+    "traceId": "PPLsynth-trace-pab-0002",
+    "transactionReference": "PPLsynth-txref-pab-0002",
+    "eventTypeDescription": "Pay Any Bank",
+    "createdOn": "2026-10-20T11:00:00.000Z",
+    "arn": null,
+    "paymentCategoryType": "GAMING_PAYOUT",
+    "errorMessage": null
+  },
+  {
+    "payload": [
+      {
+        "traceId": "PPLsynth-trace-pab-0002",
+        "transactionReference": "PPLsynth-txref-pab-0002",
+        "transactionStatus": 5,
+        "transactionStatusDescription": "Processed by acquirer",
+        "transactionLastUpdated": "2026-10-21T02:00:05.000Z",
+        "errorMessage": null
+      }
+    ]
+  }
+]

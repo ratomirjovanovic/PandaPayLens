@@ -1,0 +1,59 @@
+[
+  {
+    "event_id": "PPLsynth-evt-0010",
+    "event_type": "transaction.auth.success",
+    "event_body": {
+      "transaction_id": "PPLsynth0000000030",
+      "transaction_type": "cc",
+      "condition": "pending",
+      "requested_amount": "50.00",
+      "currency": "EUR",
+      "action": {
+        "amount": "50.00",
+        "action_type": "auth",
+        "date": "20261021090000",
+        "success": "1",
+        "source": "api",
+        "response_code": "100"
+      }
+    }
+  },
+  {
+    "event_id": "PPLsynth-evt-0011",
+    "event_type": "transaction.capture.success",
+    "event_body": {
+      "transaction_id": "PPLsynth0000000030",
+      "transaction_type": "cc",
+      "condition": "pendingsettlement",
+      "requested_amount": "50.00",
+      "currency": "EUR",
+      "action": {
+        "amount": "40.00",
+        "action_type": "capture",
+        "date": "20261021100000",
+        "success": "1",
+        "source": "api",
+        "response_code": "100"
+      }
+    }
+  },
+  {
+    "event_id": "PPLsynth-evt-0012",
+    "event_type": "transaction.refund.success",
+    "event_body": {
+      "transaction_id": "PPLsynth0000000031",
+      "transaction_type": "cc",
+      "condition": "pendingsettlement",
+      "requested_amount": "10.00",
+      "currency": "EUR",
+      "action": {
+        "amount": "10.00",
+        "action_type": "refund",
+        "date": "20261022090000",
+        "success": "1",
+        "source": "api",
+        "response_code": "100"
+      }
+    }
+  }
+]

@@ -1,0 +1,64 @@
+[
+  {
+    "receivedAt": "2026-10-20T14:00:06Z",
+    "payload": {
+      "project_id": 9100001,
+      "payment": {
+        "id": "PPLsynth-order-0006",
+        "type": "purchase",
+        "status": "success",
+        "date": "2026-10-20T14:00:05+0000",
+        "method": "card",
+        "sum": {
+          "amount": 1500,
+          "currency": "USD"
+        }
+      },
+      "operation": {
+        "id": 9100000000061,
+        "type": "sale",
+        "status": "success",
+        "date": "2026-10-20T14:00:05+0000",
+        "request_id": "PPLsynth-req-0061",
+        "sum_initial": {
+          "amount": 1500,
+          "currency": "USD"
+        },
+        "code": "0",
+        "message": "Success"
+      },
+      "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDA2MQ=="
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T14:00:21Z",
+    "payload": {
+      "project_id": 9100001,
+      "payment": {
+        "id": "PPLsynth-order-0006",
+        "type": "purchase",
+        "status": "success",
+        "date": "2026-10-20T14:00:05+0000",
+        "method": "card",
+        "sum": {
+          "amount": 1500,
+          "currency": "USD"
+        }
+      },
+      "operation": {
+        "id": 9100000000061,
+        "type": "sale",
+        "status": "success",
+        "date": "2026-10-20T14:00:05+0000",
+        "request_id": "PPLsynth-req-0061",
+        "sum_initial": {
+          "amount": 1500,
+          "currency": "USD"
+        },
+        "code": "0",
+        "message": "Success"
+      },
+      "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDA2MQ=="
+    }
+  }
+]

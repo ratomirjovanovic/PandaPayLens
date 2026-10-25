@@ -1,0 +1,8 @@
+POST /callbacks/mifinity/deposit-return HTTP/1.1
+Host: merchant.pplsynth.example
+Content-Type: application/json
+X-MiFinity-Signature: PLANTEDSIGNATUREVALUE0001
+X-MiFinity-Timestamp: 1792500000PLANTED
+Key: PLANTEDAPIKEY0001
+
+{"traceId":"PPLsynth-trace-dep-0003","validationKey":"PLANTEDVALIDATIONKEY~PPLsynth~03","transactionReference":"PPLsynth-txref-dep-0003","money":{"amount":12.34,"currency":"EUR","presentationAmount":"EUR12.34"},"paymentType":"EWALLET","paymentMethod":"EWALLET","responseCode":"PLANTEDRESPONSECODE0001","customerFirstName":"Plantedfirst","customerLastName":"Plantedlast","customerDob":"1990-01-01","senderEmailAddress":"planted.sender@example.com","customerAccountNumber":"5001000000007777","client":{"firstName":"Plantedclientfirst","lastName":"Plantedclientlast","phone":"+44 7700 900123","emailAddress":"planted.client@example.com","dob":"1991-02-03","nationality":"GB"},"address":{"addressLine1":"77 Planted Synthetic Road","postcode":"PL4NT"},"cardNumber":"4111111111111111","expiryDate":"12/31","cardName":"Planted Card Holder","description":"PLANTEDFREETEXT note"}

@@ -1,0 +1,1 @@
+uid=PPLsynth-user-0003&currency=500&type=0&ref=wPPLsynth3001&is_test=1&sign_version=2&sig=7c1e4f2a9b3d5e6f80a1b2c3d4e5f607

@@ -1,0 +1,49 @@
+{
+  "project_id": 9100001,
+  "payment": {
+    "id": "PPLsynth-order-0001",
+    "type": "purchase",
+    "status": "success",
+    "date": "2026-10-20T10:00:05+0000",
+    "method": "card",
+    "sum": {
+      "amount": 12550,
+      "currency": "EUR"
+    },
+    "is_new_attempts_available": false
+  },
+  "operation": {
+    "id": 9100000000001,
+    "type": "sale",
+    "status": "success",
+    "date": "2026-10-20T10:00:05+0000",
+    "request_id": "PPLsynth-req-0001",
+    "sum_initial": {
+      "amount": 12550,
+      "currency": "EUR"
+    },
+    "code": "0",
+    "message": "Success",
+    "created_date": "2026-10-20T10:00:00+0000",
+    "sum_converted": {
+      "amount": 12550,
+      "currency": "EUR"
+    },
+    "eci": "05",
+    "provider": {
+      "id": 9101,
+      "payment_id": "PPLsynth-prov-0001",
+      "date": "2026-10-20T10:00:04+0000",
+      "endpoint_id": 9201,
+      "result_code": "00",
+      "result_message": "Approved"
+    }
+  },
+  "account": {
+    "number": "400000******0002"
+  },
+  "customer": {
+    "id": "PPLsynth-customer-0001"
+  },
+  "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDAwMQ=="
+}

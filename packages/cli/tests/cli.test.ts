@@ -27,7 +27,7 @@ describe("cli", () => {
   });
 
   it("prints versions", () => {
-    expect(exec(["version"]).out).toMatch(/rule catalog 2026\.10\.1/);
+    expect(exec(["version"]).out).toMatch(/rule catalog 2026\.10\.2/);
   });
 
   it("lists providers as text and JSON", () => {

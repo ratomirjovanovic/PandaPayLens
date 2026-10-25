@@ -1,0 +1,10 @@
+{
+  "event_id": "PPLsynth-evt-0020",
+  "event_type": "settlement.batch.complete",
+  "event_body": {
+    "merchant": { "id": "PPLsynth-merchant-1" },
+    "batch_id": "PPLsynth-batch-1",
+    "processor_batch_id": "PPLsynth-pbatch-1",
+    "transaction_ids": ["PPLsynth0000000020", "PPLsynth0000000030"]
+  }
+}

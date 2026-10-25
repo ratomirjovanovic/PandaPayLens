@@ -1,0 +1,21 @@
+[
+  {
+    "money": { "amount": 10, "currency": "EUR", "presentationAmount": "EUR10.00" },
+    "transactionStatus": 3,
+    "transactionStatusDescription": "Submitted",
+    "traceId": "PPLsynth-trace-pab-0101",
+    "transactionReference": "PPLsynth-txref-pab-0101",
+    "eventTypeDescription": "Pay Any Bank",
+    "createdOn": "2026-10-20T14:00:00.000Z"
+  },
+  {
+    "money": { "amount": 10, "currency": "EUR", "presentationAmount": "EUR10.00" },
+    "transactionStatus": 6,
+    "transactionStatusDescription": "Rejected",
+    "traceId": "PPLsynth-trace-pab-0102",
+    "transactionReference": "PPLsynth-txref-pab-0102",
+    "eventTypeDescription": "Pay Any Bank",
+    "createdOn": "2026-10-20T14:00:01.000Z",
+    "errorMessage": "Type: BAD_ACCOUNT_NUMBER. Args: [null]"
+  }
+]

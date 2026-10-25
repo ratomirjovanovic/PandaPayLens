@@ -313,5 +313,117 @@
     "provider": "ccbill",
     "file": "ccbill/background-post-denial.txt",
     "description": "A declined sale decoded from CCBill's numbered decline codes."
+  },
+  {
+    "id": "emerchantpay-rebill-declined",
+    "title": "emerchantpay: recurring sale declined",
+    "provider": "emerchantpay",
+    "file": "emerchantpay/notification-recurring-sale-declined.txt",
+    "description": "A form-encoded Genesis notification for a failed rebill; recurring advice codes decide the retry guidance."
+  },
+  {
+    "id": "emerchantpay-chargeback",
+    "title": "emerchantpay: chargeback notification",
+    "provider": "emerchantpay",
+    "file": "emerchantpay/notification-chargeback.txt",
+    "description": "A chargeback event linked to the original transaction by its unique id."
+  },
+  {
+    "id": "ecommpay-two-step",
+    "title": "Ecommpay: authorization and capture",
+    "provider": "ecommpay",
+    "file": "ecommpay/two-step-flow.json",
+    "description": "Gate callbacks for an auth and a capture of one payment."
+  },
+  {
+    "id": "ecommpay-payout-declined",
+    "title": "Ecommpay: payout declined",
+    "provider": "ecommpay",
+    "file": "ecommpay/payout-declined.json",
+    "description": "A declined payout callback, kept separate from deposits."
+  },
+  {
+    "id": "paymentwall-renewal-failed",
+    "title": "Paymentwall: subscription renewal failed",
+    "provider": "paymentwall",
+    "file": "paymentwall/pingback-subscription-renewal-failed.txt",
+    "description": "A type 14 pingback: a recurring charge failed."
+  },
+  {
+    "id": "paymentwall-brick-declined",
+    "title": "Paymentwall: Brick payment declined",
+    "provider": "paymentwall",
+    "file": "paymentwall/brick-error-declined.json",
+    "description": "A Brick error decoded from the Brick code table."
+  },
+  {
+    "id": "nmi-insufficient-funds",
+    "title": "NMI: declined, insufficient funds",
+    "provider": "nmi",
+    "file": "nmi/classic-decline-insufficient-funds.txt",
+    "description": "A Classic Payment API response decoded from response and response_code."
+  },
+  {
+    "id": "nmi-auth-capture-refund",
+    "title": "NMI: webhooks for auth, capture and refund",
+    "provider": "nmi",
+    "file": "nmi/webhook-auth-capture-refund.json",
+    "description": "Transaction webhooks for one payment in one timeline."
+  },
+  {
+    "id": "mifinity-payout-flow",
+    "title": "MiFinity: payout flow",
+    "provider": "mifinity",
+    "file": "mifinity/payout-flow.json",
+    "description": "A wallet payout from submission to its final status."
+  },
+  {
+    "id": "mifinity-deposit-refused",
+    "title": "MiFinity: deposit refused by risk",
+    "provider": "mifinity",
+    "file": "mifinity/deposit-callback-refused-by-risk.json",
+    "description": "A wallet deposit callback refused by the risk check."
+  },
+  {
+    "id": "skrill-failed-insufficient-funds",
+    "title": "Skrill: payment failed",
+    "provider": "skrill",
+    "file": "skrill/status-url-failed-insufficient-funds.txt",
+    "description": "A status_url post with status -2 and a failed_reason_code."
+  },
+  {
+    "id": "skrill-chargeback",
+    "title": "Skrill: chargeback status",
+    "provider": "skrill",
+    "file": "skrill/status-url-chargeback.txt",
+    "description": "A status -3 post: a chargeback with no link to the original payment."
+  },
+  {
+    "id": "ezeewallet-transfer-declined",
+    "title": "eZeeWallet: transfer declined",
+    "provider": "ezeewallet",
+    "file": "ezeewallet/transfer-notification-declined.json",
+    "description": "A transfer notification with a declined status; the decline reason is shown as provider text."
+  },
+  {
+    "id": "ezeewallet-payout-flow",
+    "title": "eZeeWallet: payout flow",
+    "provider": "ezeewallet",
+    "file": "ezeewallet/payout-new-flow.json",
+    "description": "A payout request and its status notifications."
+  },
+  {
+    "id": "astropay-withdrawal-cancelled",
+    "title": "AstroPay: withdrawal cancelled",
+    "provider": "astropay",
+    "file": "astropay/direct-withdrawal-cancelled.json",
+    "description": "A payout cancelled with a documented cancel reason."
+  },
+  {
+    "id": "astropay-gateway-timeout",
+    "title": "AstroPay: payment creation timeout",
+    "provider": "astropay",
+    "file": "astropay/gateway-timeout.txt",
+    "description": "An HTTP 408 timeout: the outcome is unknown, so the payment must be checked before any retry."
   }
 ]

@@ -1,0 +1,1 @@
+response=1&responsetext=Approved&authcode=PPL777&transactionid=PPLsynth0000000010&avsresponse=X&cvvresponse=M&orderid=PPLsynth-order-0010&type=auth&response_code=100

@@ -1,0 +1,6 @@
+{
+  "traceId": "PPLsynth-trace-dep-0002",
+  "validationKey": "PLANTEDVALIDATIONKEY~PPLsynth~0000000000000000000000000000000002",
+  "errorMessage": "Deposit attempt abandoned",
+  "detailedStatus": "REFUSED_BY_RISK"
+}

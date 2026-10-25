@@ -1,0 +1,1 @@
+notification_type=apm_external_event&payment_transaction_unique_id=PPLsynth-uid-apm-4001&category=synthetic&priority=info&code=synthetic&info=PPLsynth+planted+info&message=PPLsynth+planted+message&payload=PPLsynth-planted-payload&signature=00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff

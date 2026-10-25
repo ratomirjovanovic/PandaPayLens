@@ -1,0 +1,15 @@
+HTTP/1.1 412 Precondition Failed
+Content-Type: application/json
+
+{
+  "error": "merchant_gateway_fields_validation_error",
+  "description": "User data validation error",
+  "reasons": [
+    {
+      "reason_code": "required_fields",
+      "description": "The fields are required.",
+      "fields": ["first_name"]
+    }
+  ],
+  "internal_term": "FIELDS_VALIDATION_ERROR"
+}

@@ -1,0 +1,58 @@
+[
+  {
+    "project_id": 9100001,
+    "payment": {
+      "id": "PPLsynth-payout-0081",
+      "type": "payout",
+      "status": "awaiting payout completion",
+      "date": "2026-10-20T16:00:02+0000",
+      "method": "card",
+      "sum": {
+        "amount": 50000,
+        "currency": "EUR"
+      }
+    },
+    "operation": {
+      "id": 9100000000081,
+      "type": "payout",
+      "status": "awaiting payout completion",
+      "date": "2026-10-20T16:00:02+0000",
+      "request_id": "PPLsynth-req-0081",
+      "sum_initial": {
+        "amount": 50000,
+        "currency": "EUR"
+      },
+      "code": "19999",
+      "message": "Awaiting external processing"
+    },
+    "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDA4MQ=="
+  },
+  {
+    "project_id": 9100001,
+    "payment": {
+      "id": "PPLsynth-payout-0081",
+      "type": "payout",
+      "status": "decline",
+      "date": "2026-10-20T16:05:02+0000",
+      "method": "card",
+      "sum": {
+        "amount": 50000,
+        "currency": "EUR"
+      }
+    },
+    "operation": {
+      "id": 9100000000081,
+      "type": "payout",
+      "status": "decline",
+      "date": "2026-10-20T16:05:02+0000",
+      "request_id": "PPLsynth-req-0081",
+      "sum_initial": {
+        "amount": 50000,
+        "currency": "EUR"
+      },
+      "code": "3104",
+      "message": "Maximum payout amount exceeded"
+    },
+    "signature": "UFBMc3ludGhTaWduYXR1cmVGaXh0dXJlMDA4Mg=="
+  }
+]

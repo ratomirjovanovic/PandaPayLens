@@ -1,0 +1,17 @@
+{
+  "payment_response": {
+    "transaction_type": "authorize",
+    "status": "declined",
+    "mode": "test",
+    "transaction_id": "PPLsynth-order-5004",
+    "unique_id": "PPLsynth-uid-auth-5004",
+    "code": "510",
+    "technical_message": "Invalid card number.",
+    "message": "Invalid card number.",
+    "scheme_response_code": "14",
+    "timestamp": "2026-10-20T10:00:00Z",
+    "amount": "1500",
+    "currency": "USD",
+    "sent_to_acquirer": "true"
+  }
+}

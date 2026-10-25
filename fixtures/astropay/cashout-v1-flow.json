@@ -1,0 +1,15 @@
+[
+  {
+    "cashout_id": "PPLsynthCO900001",
+    "merchant_cashout_id": "PPLSYNTH-CO-0001",
+    "user_id": "PPLSYNTH-APUSER-PLANTED",
+    "status": "PENDING"
+  },
+  {
+    "merchant_cashout_id": "PPLSYNTH-CO-0001",
+    "cashout_user_id": "PPLSYNTH-APUSER-PLANTED",
+    "cashout_id": "PPLsynthCO900001",
+    "status": "APPROVED",
+    "end_status_date": "2026-10-21 09:00:00"
+  }
+]

@@ -1,0 +1,13 @@
+POST /pplsynth/ezeewallet/notify HTTP/1.1
+Host: merchant.pplsynth.example
+Content-Type: application/json
+Authorization: Basic UExBTlRFREJBU0lDQ1JFRDAx
+X-Forwarded-For: 198.51.100.77
+
+{
+  "transaction_id": "PPLSYNTH-TX-0801",
+  "unique_id": "PPLsynthUID0801",
+  "status": "declined",
+  "signature": "feedface00112233445566778899aabbccddeeff",
+  "decline_reason": "Declined for planted.secret.person@example.com card 4111111111111111"
+}

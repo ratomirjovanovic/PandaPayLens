@@ -1,0 +1,13 @@
+{
+  "id": "PPLsynth104872652",
+  "object": "charge",
+  "amount": "9.99",
+  "amount_paid": "9.99",
+  "currency": "USD",
+  "currency_paid": "USD",
+  "captured": true,
+  "refunded": true,
+  "risk": "approved",
+  "support_link": "https://example.com/support/PPLsynth-support-token-0001",
+  "card": { "type": "Visa", "last4": "4242", "token": "PPLsynth-permanent-card-token-0001" }
+}

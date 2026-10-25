@@ -8,6 +8,17 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.3.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "High-risk wave HR-2 with limited support: emerchantpay, Ecommpay, Paymentwall, NMI, MiFinity, AstroPay, Skrill and eZeeWallet.",
+      "Form examples split over lines that start with & are joined; form bodies labelled text/plain or text/html are parsed.",
+      "XML input is reported as an unsupported format instead of a JSON error.",
+      "Status responses that list past operations are no longer reported as out-of-order arrivals (rule catalog 2026.10.2).",
+    ],
+  },
+  {
     version: "0.2.0",
     date: "2026-10-25",
     status: "released",

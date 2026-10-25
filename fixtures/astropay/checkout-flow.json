@@ -1,0 +1,34 @@
+[
+  {
+    "payment_external_id": "PPLsynthPay0002",
+    "merchant_payment_id": "PPLSYNTH-ORDER-0002",
+    "status": "PENDING",
+    "redirect_url": "https://checkout.pplsynth.example/?data=PLANTEDREDIRECTDATA",
+    "fallback_url": "https://checkout.pplsynth.example/?data=PLANTEDFALLBACKDATA"
+  },
+  {
+    "payment_external_id": "PPLsynthPay0002",
+    "merchant_payment_id": "PPLSYNTH-ORDER-0002",
+    "payment_status": "COMPLETED",
+    "payment_info": { "payment_amount": { "currency": "USD", "value": "40.00" } }
+  },
+  {
+    "payment_id": "PPLsynthPay0002",
+    "merchant_payment_id": "PPLSYNTH-ORDER-0002",
+    "status": "PARTIALLY_REFUNDED",
+    "captured_amount": 40,
+    "refunded_amount": 10,
+    "is_authorization_completed": true,
+    "is_reversable": false,
+    "is_refundable": true,
+    "payment_transactions": [
+      {
+        "payment_transaction_id": "PPLsynthTx0002a",
+        "type": "AUTHORIZATION",
+        "result": "APPROVED"
+      },
+      { "payment_transaction_id": "PPLsynthTx0002b", "type": "CAPTURE", "result": "APPROVED" },
+      { "payment_transaction_id": "PPLsynthTx0002c", "type": "REFUND", "result": "OK" }
+    ]
+  }
+]
