@@ -94,7 +94,7 @@ const PATTERNS: { name: string; re: RegExp }[] = [
   { name: "iban", re: /\b[A-Z]{2}\d{2}(?:\s?[A-Z0-9]{4}){2,7}(?:\s?[A-Z0-9]{1,4})?\b/g },
 ];
 
-/** 13–19 digits, optionally separated by spaces or dashes. Checked with Luhn. */
+/** 13-19 digits, optionally separated by spaces or dashes. Checked with Luhn. */
 const PAN_CANDIDATE = /\b(?:\d[ -]?){12,18}\d\b/g;
 
 export function normalizeKey(key: string): string {

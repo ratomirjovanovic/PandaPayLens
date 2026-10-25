@@ -6,15 +6,16 @@ const src = (p: string) => fileURLToPath(new URL(p, import.meta.url));
 export default defineConfig({
   resolve: {
     // Tests run against source, not built output.
-    alias: {
-      "@pandapaylens/core": src("./packages/core/src/index.ts"),
-      "@pandapaylens/stripe": src("./packages/adapters/stripe/src/index.ts"),
-      "@pandapaylens/adyen": src("./packages/adapters/adyen/src/index.ts"),
-      "@pandapaylens/rules": src("./packages/rules/src/index.ts"),
-    },
+    alias: [
+      { find: "@pandapaylens/core", replacement: src("./packages/core/src/index.ts") },
+      { find: "@pandapaylens/stripe", replacement: src("./packages/adapters/stripe/src/index.ts") },
+      { find: "@pandapaylens/adyen", replacement: src("./packages/adapters/adyen/src/index.ts") },
+      { find: "@pandapaylens/rules", replacement: src("./packages/rules/src/index.ts") },
+      { find: /^@\/(.*)$/, replacement: `${src("./apps/web/")}$1` },
+    ],
   },
   test: {
-    include: ["packages/**/tests/**/*.test.ts"],
+    include: ["packages/**/tests/**/*.test.ts", "apps/web/tests/unit/**/*.test.ts"],
     coverage: {
       provider: "v8",
       include: ["packages/*/src/**", "packages/adapters/*/src/**"],

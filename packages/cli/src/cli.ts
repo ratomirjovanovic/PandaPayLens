@@ -38,7 +38,7 @@ export type Io = {
   color: boolean;
 };
 
-const HELP = `PandaPayLens ${CLI_VERSION} — decode payment errors and visualize transaction events.
+const HELP = `PandaPayLens ${CLI_VERSION} - decode payment errors and visualize transaction events.
 
 Usage:
   pandapaylens analyze  <file|->   Full analysis (errors, timeline, findings)
@@ -265,7 +265,7 @@ function renderText(
     opts.color ? `${ANSI[code]}${s}${ANSI.reset}` : s;
   const t = (s: string | undefined) => stripControl(s ?? "");
   const id = (s: string | undefined) =>
-    s ? t(opts.includeIdentifiers ? s : maskIdentifier(s)) : "—";
+    s ? t(opts.includeIdentifiers ? s : maskIdentifier(s)) : "-";
   const out: string[] = [];
   const sevColor: Record<Severity, keyof typeof ANSI> = {
     critical: "red",
@@ -304,7 +304,7 @@ function renderText(
         out.push(`    Category:   ${e.category}`);
         out.push(`    Meaning:    ${t(e.explanation)}`);
         out.push(`    Next:       ${t(e.nextAction)}`);
-        out.push(`    Retry:      ${c("bold", e.retry)} — ${t(e.retryExplanation)}`);
+        out.push(`    Retry:      ${c("bold", e.retry)} - ${t(e.retryExplanation)}`);
         out.push(`    Confidence: ${e.confidence}`);
         if (e.providerMessage) out.push(`    Message:    ${t(e.providerMessage)}`);
         for (const m of e.missingInformation) out.push(c("yellow", `    Missing:    ${t(m)}`));

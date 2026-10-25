@@ -180,12 +180,12 @@ export function toMarkdownReport(result: AnalysisResult, options?: ReportOptions
       lines.push(`- **Category:** ${esc(e.category)}`);
       lines.push(`- **Explanation:** ${esc(e.explanation)}`);
       lines.push(`- **Next action:** ${esc(e.nextAction)}`);
-      lines.push(`- **Retry guidance:** \`${e.retry}\` — ${esc(e.retryExplanation)}`);
+      lines.push(`- **Retry guidance:** \`${e.retry}\` - ${esc(e.retryExplanation)}`);
       lines.push(`- **Confidence:** ${esc(e.confidence)}`);
       if (e.providerMessage) lines.push(`- **Provider message:** ${esc(e.providerMessage)}`);
       for (const m of e.missingInformation) lines.push(`- **Missing:** ${esc(m)}`);
       for (const d of e.documentation)
-        if (SAFE_URL.test(d.url)) lines.push(`- **Docs:** ${esc(d.title)} — <${d.url}>`);
+        if (SAFE_URL.test(d.url)) lines.push(`- **Docs:** ${esc(d.title)} - <${d.url}>`);
       lines.push("");
     }
   }
