@@ -8,6 +8,16 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.11.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "XML input is read safely: no DOCTYPE or entity declarations, bounded depth, element count and text length.",
+      "XML responses are analyzed for emerchantpay, Skrill, Authorize.net, BlueSnap and Inpay (ISO 20022 status reports).",
+      "The getting-started page lists every accepted input format, and the demo has two XML examples.",
+    ],
+  },
+  {
     version: "0.10.0",
     date: "2026-10-25",
     status: "released",
