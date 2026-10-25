@@ -201,7 +201,7 @@ const ev = (id: string, extra: Partial<NormalizedEvent>): NormalizedEvent => ({
 });
 
 describe("sortEvents", () => {
-  it("orders by event time, then observation time, then source order; untimed last", () => {
+  it("orders by event time, then observation time, then source order; untimed in place", () => {
     const sorted = sortEvents([
       ev("e0", {}),
       ev("e1", { eventTimestamp: "2026-01-01T00:00:02Z" }),
@@ -218,7 +218,33 @@ describe("sortEvents", () => {
         observedTimestamp: "2026-01-01T00:00:05Z",
       }),
     ]);
-    expect(sorted.map((e) => e.id)).toEqual(["e3", "e4", "e2", "e1", "e0"]);
+    expect(sorted.map((e) => e.id)).toEqual(["e0", "e3", "e4", "e2", "e1"]);
+  });
+
+  it("keeps untimed events after the timed event that precedes them in the input", () => {
+    const sorted = sortEvents([
+      ev("init", { sourceIndex: 0 }),
+      ev("step", { sourceIndex: 1 }),
+      ev("webhook", { sourceIndex: 2, eventTimestamp: "2026-01-01T00:00:05Z" }),
+      ev("verify", { sourceIndex: 3 }),
+      ev("early", { sourceIndex: 4, eventTimestamp: "2026-01-01T00:00:01Z" }),
+      ev("note", { sourceIndex: 5 }),
+    ]);
+    expect(sorted.map((e) => e.id)).toEqual(["init", "step", "early", "note", "webhook", "verify"]);
+  });
+
+  it("returns every event exactly once", () => {
+    const input = Array.from({ length: 50 }, (_, i) =>
+      ev(
+        `e${i}`,
+        i % 3 === 0
+          ? {}
+          : { eventTimestamp: new Date(Date.UTC(2026, 0, 1, 0, 0, (i * 7) % 59)).toISOString() },
+      ),
+    );
+    const sorted = sortEvents(input);
+    expect(new Set(sorted.map((e) => e.id)).size).toBe(50);
+    expect(sorted).toHaveLength(50);
   });
 });
 

@@ -957,8 +957,8 @@ describe("nuvei payment DMNs", () => {
     );
     if (!r.ok) throw new Error("analysis failed");
     expect(r.result.events.map((e) => e.sourceFormat)).toEqual([
-      "nuvei.payment_dmn",
       "nuvei.rest_response",
+      "nuvei.payment_dmn",
     ]);
     expect(r.result.groups).toHaveLength(1);
     expect(r.result.groups[0]!.references).toContain("trx:PPLsynth-trx-d9001");

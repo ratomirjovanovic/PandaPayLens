@@ -754,12 +754,13 @@ describe("ebanx notifications", () => {
     ]);
     expect(r.events.map((e) => [e.eventType, e.outcome, e.providerStatus ?? null])).toEqual([
       ["payment", "pending", "PE"],
+      ["notification.update", "unknown", null],
+      ["notification.update", "unknown", null],
       ["payment", "success", "CO"],
-      ["notification.update", "unknown", null],
-      ["notification.update", "unknown", null],
     ]);
     expect(r.groups).toHaveLength(1);
-    expect(r.events[2]!.deliveryKey).toBe(r.events[3]!.deliveryKey);
+    const [first, second] = r.events.filter((e) => e.eventType === "notification.update");
+    expect(first!.deliveryKey).toBe(second!.deliveryKey);
     const dup = r.findings.find((f) => f.ruleId === "DUPLICATE_DELIVERY")!;
     expect(dup.explanation).toMatch(/EBANX documents that it can deliver the same notification/);
     expect(dup.recommendedAction).toMatch(/\/ws\/query/);

@@ -430,15 +430,29 @@ function safeDetect(
  * relative to each other and sort after timestamped events.
  */
 export function sortEvents(events: readonly NormalizedEvent[]): NormalizedEvent[] {
-  return [...events].sort((a, b) => {
-    const ta = a.eventTimestamp ? Date.parse(a.eventTimestamp) : Number.POSITIVE_INFINITY;
-    const tb = b.eventTimestamp ? Date.parse(b.eventTimestamp) : Number.POSITIVE_INFINITY;
+  const timeOf = (e: NormalizedEvent) => (e.eventTimestamp ? Date.parse(e.eventTimestamp) : NaN);
+  const inInput = [...events].sort((a, b) => a.sourceIndex - b.sourceIndex);
+  const timed = inInput.filter((e) => !Number.isNaN(timeOf(e)));
+  timed.sort((a, b) => {
+    const ta = timeOf(a);
+    const tb = timeOf(b);
     if (ta !== tb) return ta < tb ? -1 : 1;
     const oa = a.observedTimestamp ? Date.parse(a.observedTimestamp) : Number.POSITIVE_INFINITY;
     const ob = b.observedTimestamp ? Date.parse(b.observedTimestamp) : Number.POSITIVE_INFINITY;
     if (oa !== ob) return oa < ob ? -1 : 1;
     return a.sourceIndex - b.sourceIndex;
   });
+  // An event without its own time stays right after the timed event that
+  // precedes it in the input; untimed events before any timed one lead.
+  const leading: NormalizedEvent[] = [];
+  const after = new Map<NormalizedEvent, NormalizedEvent[]>();
+  let anchor: NormalizedEvent | undefined;
+  for (const e of inInput) {
+    if (!Number.isNaN(timeOf(e))) anchor = e;
+    else if (anchor) after.set(anchor, [...(after.get(anchor) ?? []), e]);
+    else leading.push(e);
+  }
+  return [...leading, ...timed.flatMap((e) => [e, ...(after.get(e) ?? [])])];
 }
 
 /**

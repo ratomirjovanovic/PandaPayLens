@@ -390,7 +390,9 @@ describe("trustly EU deposits", () => {
       "trustly.eu.notification",
       "trustly.eu.notification",
     ]);
-    const [pending, credit, deposit] = r.events;
+    const pending = r.events.find((e) => e.eventType === "pending");
+    const credit = r.events.find((e) => e.eventType === "credit");
+    const deposit = r.events.find((e) => e.eventType === "Deposit");
     expect(pending).toMatchObject({
       eventType: "pending",
       stage: "payment",
@@ -788,9 +790,9 @@ describe("trustly EU payouts", () => {
   it("treats a downgrade as informational and a confirmation as the final payout state", () => {
     const r = analyzeFixture("trustly/eu-payout-confirmed.json");
     expect(r.events.map((e) => [e.eventType, e.outcome])).toEqual([
+      ["AccountPayout", "pending"],
       ["payoutdowngraded", "pending"],
       ["payoutconfirmation", "success"],
-      ["AccountPayout", "pending"],
     ]);
     expect(r.errors).toEqual([]);
     expect(ruleIds(r)).toEqual([]);

@@ -250,8 +250,8 @@ describe("square error decoding", () => {
       "https://developer.squareup.com/reference/square/payments-api/create-payment",
     );
     expect(r.events.map((e) => [e.eventType, e.stage, e.outcome, e.providerStatus])).toEqual([
-      ["payment.snapshot", "payment", "failure", "FAILED"],
       ["api_error.GENERIC_DECLINE", "error", "failure", "PAYMENT_METHOD_ERROR"],
+      ["payment.snapshot", "payment", "failure", "FAILED"],
     ]);
     expect(r.groups).toHaveLength(1);
     expect(ruleIds(r)).toEqual(["PAYMENT_FAILURE"]);
@@ -367,8 +367,8 @@ describe("square error decoding", () => {
       attemptReference: "PPLsynthPAY1_PPLsynthREF1",
     });
     expect(r.events.map((e) => [e.eventType, e.outcome])).toEqual([
-      ["refund.snapshot", "failure"],
       ["api_error.REFUND_DECLINED", "failure"],
+      ["refund.snapshot", "failure"],
     ]);
     expect(r.groups).toHaveLength(1);
   });

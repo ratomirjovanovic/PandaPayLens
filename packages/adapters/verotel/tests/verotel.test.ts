@@ -483,8 +483,10 @@ describe("verotel duplicates and correlation", () => {
         "txn:PPLsynth80821090",
       ]),
     );
-    // Timestamped API records sort before postbacks, which carry no time.
-    expect(r.events[0]!.eventTimestamp).toBe("2026-09-01T07:59:00.000Z");
+    // The API sale record carries a time; postbacks carry none.
+    expect(r.events.find((e) => e.eventType === "sale.SUBSCRIPTION")!.eventTimestamp).toBe(
+      "2026-09-01T07:59:00.000Z",
+    );
   });
 
   it("links a refund action response to the reversal it created", () => {

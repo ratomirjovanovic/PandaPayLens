@@ -564,11 +564,11 @@ describe("mollie correlation and timeline", () => {
       ["payment.milestone.created", "payment", "pending"],
       ["payment.milestone.authorized", "authorization", "success"],
       ["capture.milestone.created", "capture", "pending"],
+      ["capture.snapshot", "capture", "success"],
       ["payment.snapshot", "payment", "success"],
       ["refund.milestone.created", "refund", "pending"],
-      ["chargeback.milestone.received", "dispute", "unknown"],
-      ["capture.snapshot", "capture", "success"],
       ["refund.snapshot", "refund", "pending"],
+      ["chargeback.milestone.received", "dispute", "unknown"],
     ]);
     expect(r.groups).toHaveLength(1);
     expect(r.groups[0]!.references).toEqual(

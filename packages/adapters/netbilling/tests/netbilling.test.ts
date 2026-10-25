@@ -612,7 +612,8 @@ describe("netbilling correlation and timeline", () => {
     );
     expect(r.groups).toHaveLength(1);
     expect(r.groups[0]!.references).toEqual(["PPLsynth0003"]);
-    expect(r.events.map((e) => e.eventType).slice(0, 2)).toEqual([
+    expect(r.events.map((e) => e.eventType)).toEqual([
+      "member_update.member",
       "direct3.approved",
       "direct3.duplicate",
     ]);
