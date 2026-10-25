@@ -355,8 +355,10 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
       reasons.push("has a 5-character response_code and response_summary");
     }
     if (linksOf(input)) score += 0.05;
-    // A bare pay_ id says nothing about the record.
-    const confidence = score === 0 ? 0.4 : round((pay === "strict" ? 0.5 : 0.3) + score);
+    // A bare pay_ id says little about the record (other providers use the
+    // same prefix), so it scores below a record with documented fields.
+    const confidence =
+      score === 0 ? (pay === "strict" ? 0.3 : 0.15) : round((pay === "strict" ? 0.5 : 0.3) + score);
     return { ...base, format: "checkout.payment_response", confidence, supported: true, reasons };
   }
 

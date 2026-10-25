@@ -11,6 +11,7 @@ import {
   type AnalyzeOptions,
   type RecordMeta,
 } from "@pandapaylens/core";
+import { ADAPTERS } from "@pandapaylens/providers";
 import { defaultRules } from "@pandapaylens/rules";
 import {
   ERROR_CODES,
@@ -1136,5 +1137,28 @@ describe("razorpay catalog and manifest", () => {
     expect(manifestOnly).toBe(razorpayManifest);
     expect(razorpayAdapter.manifest).toBe(razorpayManifest);
     expect(razorpayAdapter.version).toBe("0.1.0");
+  });
+});
+
+describe("razorpay payment ids and other pay_ prefixes", () => {
+  it("does not show Checkout.com as a strong alternative for a payment entity", () => {
+    const r = analyzeText(
+      JSON.stringify({
+        id: "pay_PPLsynth000001",
+        entity: "payment",
+        amount: 50000,
+        currency: "INR",
+        status: "captured",
+        order_id: "order_PPLsynth00001",
+        method: "card",
+        captured: true,
+      }),
+      { adapters: ADAPTERS, rules: defaultRules, catalogVersion: "test" },
+    );
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const rec = r.result.records[0]!;
+    expect(rec.provider).toBe("razorpay");
+    for (const alt of rec.alternatives) expect(alt.confidence).toBeLessThanOrEqual(0.15);
   });
 });
