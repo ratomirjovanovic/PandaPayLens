@@ -16,11 +16,7 @@
         "eventCode": "AUTHORISATION",
         "eventDate": "2026-10-25T09:00:00+02:00",
         "merchantReference": "PPL-ORDER-0001",
-        "operations": [
-          "CANCEL",
-          "CAPTURE",
-          "REFUND"
-        ],
+        "operations": ["CANCEL", "CAPTURE", "REFUND"],
         "paymentMethod": "visa",
         "pspReference": "PPLSYNTH0000AUT1",
         "reason": "011873:1111:03/2030",

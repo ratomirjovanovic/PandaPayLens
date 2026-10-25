@@ -23,10 +23,13 @@ const ERROR_CODES_URL = "https://docs.stripe.com/error-codes";
 const DECLINE_CODES_URL = "https://docs.stripe.com/declines/codes";
 
 export const docsForCode = (code: string) =>
-  /^[a-z0-9_]{1,64}$/.test(code) ? `${ERROR_CODES_URL}#${code.replace(/_/g, "-")}` : ERROR_CODES_URL;
+  /^[a-z0-9_]{1,64}$/.test(code)
+    ? `${ERROR_CODES_URL}#${code.replace(/_/g, "-")}`
+    : ERROR_CODES_URL;
 export const docsForDecline = () => DECLINE_CODES_URL;
 
-const customerNewMethod = "Ask the customer to use a different payment method or contact their card issuer.";
+const customerNewMethod =
+  "Ask the customer to use a different payment method or contact their card issuer.";
 
 export const DECLINE_CODES: Record<string, CatalogEntry> = {
   insufficient_funds: {
@@ -34,14 +37,16 @@ export const DECLINE_CODES: Record<string, CatalogEntry> = {
     explanation: "The card has insufficient funds to complete the purchase.",
     nextAction: "Ask the customer to use an alternative payment method or try again later.",
     retry: "customer_action_required",
-    retryExplanation: "Retrying the same card immediately is unlikely to succeed. A later attempt may succeed if funds become available.",
+    retryExplanation:
+      "Retrying the same card immediately is unlikely to succeed. A later attempt may succeed if funds become available.",
   },
   generic_decline: {
     category: "card_declined",
     explanation: "The issuer declined the card without giving a specific reason.",
     nextAction: "Ask the customer to contact their card issuer or use a different payment method.",
     retry: "customer_action_required",
-    retryExplanation: "Do not retry automatically. The customer needs to resolve this with their issuer or choose another method.",
+    retryExplanation:
+      "Do not retry automatically. The customer needs to resolve this with their issuer or choose another method.",
   },
   do_not_honor: {
     category: "card_declined",
@@ -111,12 +116,14 @@ export const DECLINE_CODES: Record<string, CatalogEntry> = {
     explanation: "The payment cannot be authorized.",
     nextAction: "Retry once; if it fails again, ask the customer to contact their issuer.",
     retry: "retry_conditionally",
-    retryExplanation: "Stripe documents that this decline can be retried, but repeated failures need customer action.",
+    retryExplanation:
+      "Stripe documents that this decline can be retried, but repeated failures need customer action.",
   },
   try_again_later: {
     category: "card_declined",
     explanation: "The card was declined for an unknown, possibly temporary reason.",
-    nextAction: "Ask the customer to try again later. If it keeps failing, they should contact their issuer.",
+    nextAction:
+      "Ask the customer to try again later. If it keeps failing, they should contact their issuer.",
     retry: "retry_conditionally",
     retryExplanation: "A later retry may succeed. Do not retry in a tight loop.",
   },
@@ -125,7 +132,8 @@ export const DECLINE_CODES: Record<string, CatalogEntry> = {
     explanation: "The card issuer could not be reached, so the payment could not be authorized.",
     nextAction: "Retry the payment later.",
     retry: "retry_conditionally",
-    retryExplanation: "The decline is reported as an issuer-side availability problem; a later retry may succeed.",
+    retryExplanation:
+      "The decline is reported as an issuer-side availability problem; a later retry may succeed.",
   },
   processing_error: {
     category: "provider_unavailable",
@@ -143,7 +151,8 @@ export const DECLINE_CODES: Record<string, CatalogEntry> = {
   },
   card_velocity_exceeded: {
     category: "card_declined",
-    explanation: "The customer has exceeded the balance, credit limit, or transaction amount limit on their card.",
+    explanation:
+      "The customer has exceeded the balance, credit limit, or transaction amount limit on their card.",
     nextAction: "Ask the customer to contact their issuer or use another payment method.",
     retry: "customer_action_required",
     retryExplanation: "Do not retry automatically.",
@@ -171,14 +180,16 @@ export const DECLINE_CODES: Record<string, CatalogEntry> = {
   },
   pickup_card: {
     category: "fraud_or_risk",
-    explanation: "The card cannot be used to make this payment (it may have been reported lost or stolen).",
+    explanation:
+      "The card cannot be used to make this payment (it may have been reported lost or stolen).",
     nextAction: "Present a generic decline and ask the customer to contact their issuer.",
     retry: "do_not_retry",
     retryExplanation: "This card must not be retried.",
   },
   restricted_card: {
     category: "fraud_or_risk",
-    explanation: "The card cannot be used for this payment (it may have been reported lost or stolen).",
+    explanation:
+      "The card cannot be used for this payment (it may have been reported lost or stolen).",
     nextAction: "Ask the customer to contact their issuer.",
     retry: "do_not_retry",
     retryExplanation: "This card must not be retried.",
@@ -186,7 +197,8 @@ export const DECLINE_CODES: Record<string, CatalogEntry> = {
   fraudulent: {
     category: "fraud_or_risk",
     explanation: "The payment was declined because it was identified as potentially fraudulent.",
-    nextAction: "Present a generic decline. Do not reveal that the payment was flagged as fraudulent.",
+    nextAction:
+      "Present a generic decline. Do not reveal that the payment was flagged as fraudulent.",
     retry: "do_not_retry",
     retryExplanation: "Do not retry. Review the payment in your risk tooling if needed.",
   },
@@ -237,7 +249,8 @@ export const DECLINE_CODES: Record<string, CatalogEntry> = {
 export const ERROR_CODES: Record<string, CatalogEntry> = {
   card_declined: {
     category: "card_declined",
-    explanation: "The card was declined. The decline code, when present, gives the issuer's reason.",
+    explanation:
+      "The card was declined. The decline code, when present, gives the issuer's reason.",
     nextAction: customerNewMethod,
     retry: "customer_action_required",
     retryExplanation: "Do not retry automatically without a decline or advice code that allows it.",
@@ -272,7 +285,8 @@ export const ERROR_CODES: Record<string, CatalogEntry> = {
   authentication_required: DECLINE_CODES.authentication_required!,
   payment_intent_authentication_failure: {
     category: "authentication_failed",
-    explanation: "The payment method failed authentication (for example a failed or abandoned 3D Secure challenge).",
+    explanation:
+      "The payment method failed authentication (for example a failed or abandoned 3D Secure challenge).",
     nextAction: "Ask the customer to authenticate again or provide a different payment method.",
     retry: "customer_action_required",
     retryExplanation: "A new attempt requires the customer to complete authentication.",
@@ -287,7 +301,8 @@ export const ERROR_CODES: Record<string, CatalogEntry> = {
   payment_intent_payment_attempt_failed: {
     category: "card_declined",
     explanation: "The latest payment attempt for the PaymentIntent failed.",
-    nextAction: "Check last_payment_error for the decline reason and collect a new payment method if needed.",
+    nextAction:
+      "Check last_payment_error for the decline reason and collect a new payment method if needed.",
     retry: "customer_action_required",
     retryExplanation: "Retry only after resolving the reason for the failed attempt.",
   },
@@ -328,8 +343,10 @@ export const ERROR_CODES: Record<string, CatalogEntry> = {
   },
   resource_missing: {
     category: "invalid_request",
-    explanation: "The ID provided is not valid, or the object exists in a different account or mode.",
-    nextAction: "Check the ID and whether you are using the right API key, account, and live/test mode.",
+    explanation:
+      "The ID provided is not valid, or the object exists in a different account or mode.",
+    nextAction:
+      "Check the ID and whether you are using the right API key, account, and live/test mode.",
     retry: "do_not_retry",
     retryExplanation: "The same request will fail again.",
   },
@@ -338,14 +355,16 @@ export const ERROR_CODES: Record<string, CatalogEntry> = {
     explanation: "Another request with the same idempotency key is still being processed.",
     nextAction: "Wait for the first request to finish, then retry with the same idempotency key.",
     retry: "retry_conditionally",
-    retryExplanation: "Retry with the same key after a short delay. Do not use a new key: the first request may still succeed.",
+    retryExplanation:
+      "Retry with the same key after a short delay. Do not use a new key: the first request may still succeed.",
   },
   lock_timeout: {
     category: "network_or_timeout",
     explanation: "The object is being accessed by another concurrent request.",
     nextAction: "Retry the request after a short delay, using the same idempotency key.",
     retry: "safe_to_retry_technical_request",
-    retryExplanation: "Safe to retry with the same idempotency key; without one, verify state first.",
+    retryExplanation:
+      "Safe to retry with the same idempotency key; without one, verify state first.",
   },
   rate_limit: {
     category: "rate_limiting",
@@ -420,11 +439,13 @@ export const ADVICE_CODES: Record<string, { retry: RetryGuidance; retryExplanati
   },
   do_not_try_again: {
     retry: "do_not_retry",
-    retryExplanation: "Stripe advises not to retry this card. Repeated attempts can be penalized by card networks.",
+    retryExplanation:
+      "Stripe advises not to retry this card. Repeated attempts can be penalized by card networks.",
   },
   confirm_card_data: {
     retry: "customer_action_required",
-    retryExplanation: "Stripe advises asking the customer to confirm or update their card details before retrying.",
+    retryExplanation:
+      "Stripe advises asking the customer to confirm or update their card details before retrying.",
   },
 };
 
@@ -447,13 +468,15 @@ export const ERROR_TYPES: Record<string, CatalogEntry> = {
   idempotency_error: {
     category: "duplicate_request",
     explanation: "An idempotency key was reused with different request parameters.",
-    nextAction: "Use the original parameters with this key, or a new key for a genuinely new operation.",
+    nextAction:
+      "Use the original parameters with this key, or a new key for a genuinely new operation.",
     retry: "do_not_retry",
     retryExplanation: "Retrying with mismatched parameters will fail again.",
   },
   api_error: {
     category: "provider_unavailable",
-    explanation: "Stripe reported an internal problem. The outcome of the original request is not known from this error.",
+    explanation:
+      "Stripe reported an internal problem. The outcome of the original request is not known from this error.",
     nextAction: "Check the object's current state (or the related webhook) before trying again.",
     retry: "retry_conditionally",
     retryExplanation:

@@ -17,9 +17,7 @@
         "created": 1761379200,
         "livemode": false,
         "capture_method": "automatic",
-        "payment_method_types": [
-          "card"
-        ]
+        "payment_method_types": ["card"]
       }
     },
     "request": {
@@ -86,9 +84,7 @@
         "capture_method": "automatic",
         "client_secret": "pi_3PPLsynthOK000001_secret_PPLsyntheticSecret",
         "latest_charge": "ch_3PPLsynthOK000001",
-        "payment_method_types": [
-          "card"
-        ]
+        "payment_method_types": ["card"]
       }
     },
     "request": {

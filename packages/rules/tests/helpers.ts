@@ -24,6 +24,7 @@ export function analyze(text: string, extra: Partial<AnalyzeOptions> = {}): Anal
   return r.result;
 }
 
-export const analyzeFixture = (path: string, extra?: Partial<AnalyzeOptions>) => analyze(fixture(path), extra);
+export const analyzeFixture = (path: string, extra?: Partial<AnalyzeOptions>) =>
+  analyze(fixture(path), extra);
 
 export const ruleIds = (r: AnalysisResult) => r.findings.map((f) => f.ruleId).sort();

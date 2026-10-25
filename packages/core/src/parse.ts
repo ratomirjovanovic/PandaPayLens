@@ -64,7 +64,10 @@ export function parseInput(
   const lim: InputLimits = { ...DEFAULT_LIMITS, ...limits };
 
   // Cheap upper bound first, exact count only when it could matter.
-  if (text.length > lim.maxBytes || (text.length * 3 > lim.maxBytes && byteLength(text) > lim.maxBytes)) {
+  if (
+    text.length > lim.maxBytes ||
+    (text.length * 3 > lim.maxBytes && byteLength(text) > lim.maxBytes)
+  ) {
     return fail("INPUT_TOO_LARGE", `Input exceeds the ${formatBytes(lim.maxBytes)} limit.`);
   }
 
@@ -77,7 +80,10 @@ export function parseInput(
   if (whole.ok) {
     const records = Array.isArray(whole.value) ? whole.value : [whole.value];
     if (records.length > lim.maxRecords) {
-      return fail("TOO_MANY_RECORDS", `Input contains ${records.length} records; the limit is ${lim.maxRecords}.`);
+      return fail(
+        "TOO_MANY_RECORDS",
+        `Input contains ${records.length} records; the limit is ${lim.maxRecords}.`,
+      );
     }
     return finish("json", records);
   }
@@ -90,7 +96,10 @@ export function parseInput(
     return { ok: false, error: whole.error };
   }
   if (nonEmpty.length > lim.maxRecords) {
-    return fail("TOO_MANY_RECORDS", `Input contains ${nonEmpty.length} lines; the limit is ${lim.maxRecords}.`);
+    return fail(
+      "TOO_MANY_RECORDS",
+      `Input contains ${nonEmpty.length} lines; the limit is ${lim.maxRecords}.`,
+    );
   }
   const records: unknown[] = [];
   for (let i = 0; i < lines.length; i++) {
@@ -101,7 +110,10 @@ export function parseInput(
       // A JSONL failure is only plausible if the first line parsed; otherwise
       // report the original single-document error.
       if (records.length === 0) return { ok: false, error: whole.error };
-      return { ok: false, error: { ...parsed.error, message: `Line ${i + 1}: ${parsed.error.message}` } };
+      return {
+        ok: false,
+        error: { ...parsed.error, message: `Line ${i + 1}: ${parsed.error.message}` },
+      };
     }
     records.push(parsed.value);
   }
@@ -122,7 +134,15 @@ function parseDocument(
   const scan = scanStructure(text, lim);
   if (scan) {
     const pos = positionToLineColumn(text, scan.offset);
-    return { ok: false, error: { code: scan.code, message: scan.message, line: pos.line + lineOffset, column: pos.column } };
+    return {
+      ok: false,
+      error: {
+        code: scan.code,
+        message: scan.message,
+        line: pos.line + lineOffset,
+        column: pos.column,
+      },
+    };
   }
   try {
     return { ok: true, value: JSON.parse(text) as unknown };
@@ -157,7 +177,11 @@ function scanStructure(
         inString = false;
       }
       if (i - stringStart > lim.maxStringLength) {
-        return { code: "STRING_TOO_LONG", message: `A string exceeds ${lim.maxStringLength} characters.`, offset: stringStart };
+        return {
+          code: "STRING_TOO_LONG",
+          message: `A string exceeds ${lim.maxStringLength} characters.`,
+          offset: stringStart,
+        };
       }
       continue;
     }
@@ -167,7 +191,11 @@ function scanStructure(
     } else if (c === 0x7b /* { */ || c === 0x5b /* [ */) {
       depth++;
       if (depth > lim.maxDepth) {
-        return { code: "NESTING_TOO_DEEP", message: `Nesting exceeds the depth limit of ${lim.maxDepth}.`, offset: i };
+        return {
+          code: "NESTING_TOO_DEEP",
+          message: `Nesting exceeds the depth limit of ${lim.maxDepth}.`,
+          offset: i,
+        };
       }
     } else if (c === 0x7d || c === 0x5d) {
       depth--;
@@ -181,7 +209,12 @@ function scanStructure(
  * `__proto__` as an own property rather than the prototype, but downstream
  * code (or a consumer's spread/merge) should never see it at all.
  */
-function sanitize(value: unknown, recordIndex: number, path: string, removed: ParsedInput["removedKeys"]): unknown {
+function sanitize(
+  value: unknown,
+  recordIndex: number,
+  path: string,
+  removed: ParsedInput["removedKeys"],
+): unknown {
   if (Array.isArray(value)) {
     return value.map((v, i) => sanitize(v, recordIndex, `${path}[${i}]`, removed));
   }
@@ -217,7 +250,9 @@ function extractPosition(text: string, message: string): { line: number; column:
 export function locateSyntaxError(text: string): number | null {
   const stack: ("{" | "[")[] = [];
   // What may come next: a value, an object key (or "}"), ":" , "," or a closer.
-  let expect: "value" | "value_or_close" | "key" | "key_or_close" | "colon" | "comma_or_close" | "end" = "value";
+  let expect:
+    "value" | "value_or_close" | "key" | "key_or_close" | "colon" | "comma_or_close" | "end" =
+    "value";
   let i = 0;
   const ws = (c: string) => c === " " || c === "\t" || c === "\n" || c === "\r";
   while (i < text.length) {
@@ -278,7 +313,9 @@ export function locateSyntaxError(text: string): number | null {
     let end = -1;
     if (c === '"') end = scanString(text, i);
     else {
-      const m = /^(?:-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?|true|false|null)/.exec(text.slice(i, i + 400));
+      const m = /^(?:-?(?:0|[1-9]\d*)(?:\.\d+)?(?:[eE][+-]?\d+)?|true|false|null)/.exec(
+        text.slice(i, i + 400),
+      );
       if (m) end = i + m[0].length;
     }
     if (end < 0) return c === '"' ? text.length : i;
@@ -299,7 +336,10 @@ function scanString(text: string, start: number): number {
   return -1;
 }
 
-export function positionToLineColumn(text: string, offset: number): { line: number; column: number } {
+export function positionToLineColumn(
+  text: string,
+  offset: number,
+): { line: number; column: number } {
   let line = 1;
   let lastNewline = -1;
   const end = Math.min(offset, text.length);

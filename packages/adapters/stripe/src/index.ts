@@ -28,11 +28,24 @@ import {
   type SafePrimitive,
 } from "@pandapaylens/core";
 import { z } from "zod";
-import { ADVICE_CODES, DECLINE_CODES, ERROR_CODES, ERROR_TYPES, docsForCode, docsForDecline, type CatalogEntry } from "./catalog.js";
+import {
+  ADVICE_CODES,
+  DECLINE_CODES,
+  ERROR_CODES,
+  ERROR_TYPES,
+  docsForCode,
+  docsForDecline,
+  type CatalogEntry,
+} from "./catalog.js";
 
 export const STRIPE_ADAPTER_VERSION = "0.1.0";
 
-const ERROR_TYPE_SET = new Set(["api_error", "card_error", "idempotency_error", "invalid_request_error"]);
+const ERROR_TYPE_SET = new Set([
+  "api_error",
+  "card_error",
+  "idempotency_error",
+  "invalid_request_error",
+]);
 
 const ErrorBody = z
   .object({
@@ -60,7 +73,10 @@ const PaymentIntent = z.looseObject({
   amount_received: z.number().int().optional(),
   currency: z.string().optional(),
   created: z.number().optional(),
-  latest_charge: z.union([z.string(), z.looseObject({ id: z.string() })]).nullable().optional(),
+  latest_charge: z
+    .union([z.string(), z.looseObject({ id: z.string() })])
+    .nullable()
+    .optional(),
   last_payment_error: ErrorBody.nullable().optional(),
   capture_method: z.string().optional(),
   cancellation_reason: z.string().nullable().optional(),
@@ -75,7 +91,13 @@ const SnapshotEvent = z.looseObject({
   api_version: z.string().nullable().optional(),
   livemode: z.boolean().optional(),
   pending_webhooks: z.number().optional(),
-  request: z.looseObject({ id: z.string().nullable().optional(), idempotency_key: z.string().nullable().optional() }).nullable().optional(),
+  request: z
+    .looseObject({
+      id: z.string().nullable().optional(),
+      idempotency_key: z.string().nullable().optional(),
+    })
+    .nullable()
+    .optional(),
   data: z.looseObject({ object: z.looseObject({ object: z.string().optional() }) }),
 });
 
@@ -116,7 +138,11 @@ const EVENT_TYPES: Record<string, EventMapping> = {
 
 export const PAYMENT_INTENT_TERMINAL_STATUSES = new Set(["succeeded", "canceled"]);
 
-function outcomeFromStatus(objectType: string | undefined, status: string | undefined, hasError: boolean): Outcome {
+function outcomeFromStatus(
+  objectType: string | undefined,
+  status: string | undefined,
+  hasError: boolean,
+): Outcome {
   if (!status) return "unknown";
   if (objectType === "refund") {
     if (status === "succeeded") return "success";
@@ -158,12 +184,27 @@ function detect(input: unknown): DetectionResult {
 
   if (isObj(input.error) && typeof input.error.type === "string") {
     if (ERROR_TYPE_SET.has(input.error.type)) {
-      return { ...base, format: "stripe.api_error", confidence: 0.95, supported: true, reasons: [`error.type is the Stripe error type "${input.error.type}"`] };
+      return {
+        ...base,
+        format: "stripe.api_error",
+        confidence: 0.95,
+        supported: true,
+        reasons: [`error.type is the Stripe error type "${input.error.type}"`],
+      };
     }
-    return { ...base, format: "stripe.api_error", confidence: 0.3, supported: true, reasons: ["Has an error object, but error.type is not a known Stripe type"] };
+    return {
+      ...base,
+      format: "stripe.api_error",
+      confidence: 0.3,
+      supported: true,
+      reasons: ["Has an error object, but error.type is not a known Stripe type"],
+    };
   }
 
-  if (input.object === "v2.core.event" || (input.object === "event" && "related_object" in input && !("data" in input))) {
+  if (
+    input.object === "v2.core.event" ||
+    (input.object === "event" && "related_object" in input && !("data" in input))
+  ) {
     return {
       ...base,
       format: "stripe.event.thin",
@@ -179,7 +220,13 @@ function detect(input: unknown): DetectionResult {
     const evtId = typeof input.id === "string" && input.id.startsWith("evt_");
     const reasons = ['object is "event"', "has data.object"];
     if (evtId) reasons.push("id has the evt_ prefix");
-    return { ...base, format: "stripe.event.snapshot", confidence: evtId ? 0.98 : 0.8, supported: true, reasons };
+    return {
+      ...base,
+      format: "stripe.event.snapshot",
+      confidence: evtId ? 0.98 : 0.8,
+      supported: true,
+      reasons,
+    };
   }
 
   if (input.object === "payment_intent" && typeof input.status === "string") {
@@ -196,14 +243,32 @@ function detect(input: unknown): DetectionResult {
   return { ...base, format: null, confidence: 0, supported: false, reasons: [] };
 }
 
-function parse(input: unknown, format: string): { ok: true; value: StripeParsed } | { ok: false; issues: string[] } {
-  const schema = format === "stripe.api_error" ? ApiError : format === "stripe.payment_intent" ? PaymentIntent : format === "stripe.event.snapshot" ? SnapshotEvent : null;
+function parse(
+  input: unknown,
+  format: string,
+): { ok: true; value: StripeParsed } | { ok: false; issues: string[] } {
+  const schema =
+    format === "stripe.api_error"
+      ? ApiError
+      : format === "stripe.payment_intent"
+        ? PaymentIntent
+        : format === "stripe.event.snapshot"
+          ? SnapshotEvent
+          : null;
   if (!schema) return { ok: false, issues: [`Unsupported Stripe format "${format}".`] };
   const r = schema.safeParse(input);
   if (!r.success) {
-    return { ok: false, issues: r.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`) };
+    return {
+      ok: false,
+      issues: r.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`),
+    };
   }
-  const kind = format === "stripe.api_error" ? "api_error" : format === "stripe.payment_intent" ? "payment_intent" : "event";
+  const kind =
+    format === "stripe.api_error"
+      ? "api_error"
+      : format === "stripe.payment_intent"
+        ? "payment_intent"
+        : "event";
   return { ok: true, value: { kind, value: r.data } as StripeParsed };
 }
 
@@ -219,7 +284,8 @@ function attrs(entries: [string, unknown][]): Record<string, SafePrimitive | Saf
     if (v === undefined) continue;
     if (typeof v === "string") out[k] = safeText(v, 200) ?? "";
     else if (typeof v === "number" || typeof v === "boolean" || v === null) out[k] = v;
-    else if (Array.isArray(v) && v.every((x) => typeof x === "string")) out[k] = v.map((x) => safeText(x, 64) ?? "");
+    else if (Array.isArray(v) && v.every((x) => typeof x === "string"))
+      out[k] = v.map((x) => safeText(x, 64) ?? "");
   }
   return out;
 }
@@ -250,8 +316,14 @@ function describeObject(obj: Record<string, unknown>) {
     ["captured", obj.captured],
     ["paid", obj.paid],
     ["refunded", obj.refunded],
-    ["amountRefunded", typeof obj.amount_refunded === "number" ? String(obj.amount_refunded) : undefined],
-    ["amountReceived", typeof obj.amount_received === "number" ? String(obj.amount_received) : undefined],
+    [
+      "amountRefunded",
+      typeof obj.amount_refunded === "number" ? String(obj.amount_refunded) : undefined,
+    ],
+    [
+      "amountReceived",
+      typeof obj.amount_received === "number" ? String(obj.amount_received) : undefined,
+    ],
     ["cancellationReason", obj.cancellation_reason],
     ["failureCode", obj.failure_code],
     ["refundReason", type === "refund" ? obj.reason : undefined],
@@ -290,7 +362,13 @@ function normalize(parsed: StripeParsed, ctx: NormalizeContext): NormalizedEvent
         paymentReference: pi?.paymentReference,
         relatedReference: safeId(e.charge) ?? pi?.relatedReference,
         outcome: e.type === "card_error" ? "failure" : "unknown",
-        attributes: attrs([["errorType", e.type], ["code", e.code], ["declineCode", e.decline_code], ["adviceCode", e.advice_code], ["param", e.param]]),
+        attributes: attrs([
+          ["errorType", e.type],
+          ["code", e.code],
+          ["declineCode", e.decline_code],
+          ["adviceCode", e.advice_code],
+          ["param", e.param],
+        ]),
         source,
         ...observed,
       }),
@@ -346,7 +424,11 @@ function normalize(parsed: StripeParsed, ctx: NormalizeContext): NormalizedEvent
       outcome,
       attributes: {
         ...d.attributes,
-        ...attrs([["apiVersion", evt.api_version ?? undefined], ["requestId", safeId(evt.request?.id ?? undefined)], ["livemode", evt.livemode]]),
+        ...attrs([
+          ["apiVersion", evt.api_version ?? undefined],
+          ["requestId", safeId(evt.request?.id ?? undefined)],
+          ["livemode", evt.livemode],
+        ]),
         hasIdempotencyKey: Boolean(evt.request?.idempotency_key),
       },
       source,
@@ -357,13 +439,25 @@ function normalize(parsed: StripeParsed, ctx: NormalizeContext): NormalizedEvent
 
 /** Drop undefined optional fields so output is stable and compact. */
 function clean(d: NormalizedEventDraft): NormalizedEventDraft {
-  return Object.fromEntries(Object.entries(d).filter(([, v]) => v !== undefined)) as NormalizedEventDraft;
+  return Object.fromEntries(
+    Object.entries(d).filter(([, v]) => v !== undefined),
+  ) as NormalizedEventDraft;
 }
 
-type ErrorFields = { type?: string | undefined; code?: string | undefined; decline_code?: string | undefined; advice_code?: string | undefined; network_decline_code?: string | undefined; message?: string | undefined; param?: string | undefined };
+type ErrorFields = {
+  type?: string | undefined;
+  code?: string | undefined;
+  decline_code?: string | undefined;
+  advice_code?: string | undefined;
+  network_decline_code?: string | undefined;
+  message?: string | undefined;
+  param?: string | undefined;
+};
 
 /** Shared by API errors, PaymentIntent.last_payment_error and failed charges. */
-export function decodeStripeError(e: ErrorFields): Omit<DecodedErrorDraft, "sourceFormat" | "source" | "paymentReference"> {
+export function decodeStripeError(
+  e: ErrorFields,
+): Omit<DecodedErrorDraft, "sourceFormat" | "source" | "paymentReference"> {
   const code = e.code ?? e.type ?? "unknown";
   const subCodes: Record<string, string> = {};
   if (e.type) subCodes.type = e.type;
@@ -394,14 +488,19 @@ export function decodeStripeError(e: ErrorFields): Omit<DecodedErrorDraft, "sour
   if (e.code) docs.push({ title: `Stripe error code: ${e.code}`, url: docsForCode(e.code) });
   else docs.push({ title: "Stripe error codes", url: "https://docs.stripe.com/error-codes" });
 
-  if (e.decline_code && !declineEntry) missing.push(`Decline code "${e.decline_code}" is not in the PandaPayLens catalog yet; check Stripe's decline code reference.`);
-  if (e.code && !codeEntry && !declineEntry) missing.push(`Error code "${e.code}" is not in the PandaPayLens catalog yet.`);
+  if (e.decline_code && !declineEntry)
+    missing.push(
+      `Decline code "${e.decline_code}" is not in the PandaPayLens catalog yet; check Stripe's decline code reference.`,
+    );
+  if (e.code && !codeEntry && !declineEntry)
+    missing.push(`Error code "${e.code}" is not in the PandaPayLens catalog yet.`);
   if ((e.code === "card_declined" || e.type === "card_error") && !e.decline_code) {
     missing.push("No decline_code was supplied, so the issuer's specific reason is unknown.");
   }
 
   let retry = entry?.retry ?? "unknown";
-  let retryExplanation = entry?.retryExplanation ?? "No retry guidance is available for this error.";
+  let retryExplanation =
+    entry?.retryExplanation ?? "No retry guidance is available for this error.";
   const advice = e.advice_code ? ADVICE_CODES[e.advice_code] : undefined;
   if (advice) {
     // Stripe's advice code is the most specific retry signal available.
@@ -416,7 +515,8 @@ export function decodeStripeError(e: ErrorFields): Omit<DecodedErrorDraft, "sour
     category: entry?.category ?? "unknown",
     ...(message ? { providerMessage: message } : {}),
     explanation: entry?.explanation ?? "PandaPayLens does not recognize this Stripe error.",
-    nextAction: entry?.nextAction ?? "Check the Stripe documentation and the request log for this error.",
+    nextAction:
+      entry?.nextAction ?? "Check the Stripe documentation and the request log for this error.",
     retry,
     retryExplanation,
     confidence,
@@ -430,9 +530,13 @@ function decodeError(parsed: StripeParsed, ctx: NormalizeContext): DecodedErrorD
   if (parsed.kind === "api_error") {
     const e = parsed.value.error;
     const ref = e.payment_intent ? safeId(e.payment_intent.id) : undefined;
-    const attempt = safeId(e.charge) ?? (e.payment_intent ? idOf(e.payment_intent.latest_charge) : undefined);
+    const attempt =
+      safeId(e.charge) ?? (e.payment_intent ? idOf(e.payment_intent.latest_charge) : undefined);
     const decoded = decodeStripeError(e);
-    if (!ref && e.type === "card_error") decoded.missingInformation.push("No PaymentIntent reference; the later state of this payment cannot be checked from this record.");
+    if (!ref && e.type === "card_error")
+      decoded.missingInformation.push(
+        "No PaymentIntent reference; the later state of this payment cannot be checked from this record.",
+      );
     return {
       ...decoded,
       sourceFormat: ctx.format,
@@ -451,7 +555,10 @@ function decodeError(parsed: StripeParsed, ctx: NormalizeContext): DecodedErrorD
       ...decodeStripeError(le),
       ...(attempt ? { attemptReference: attempt } : {}),
       sourceFormat: ctx.format,
-      source: { ...source, path: parsed.kind === "event" ? "data.object.last_payment_error" : "last_payment_error" },
+      source: {
+        ...source,
+        path: parsed.kind === "event" ? "data.object.last_payment_error" : "last_payment_error",
+      },
       ...(ref ? { paymentReference: ref } : {}),
     };
   }
@@ -460,9 +567,13 @@ function decodeError(parsed: StripeParsed, ctx: NormalizeContext): DecodedErrorD
     const fields: ErrorFields = {
       type: "card_error",
       code: obj.failure_code,
-      decline_code: typeof outcome.reason === "string" && DECLINE_CODES[outcome.reason] ? outcome.reason : undefined,
+      decline_code:
+        typeof outcome.reason === "string" && DECLINE_CODES[outcome.reason]
+          ? outcome.reason
+          : undefined,
       advice_code: typeof outcome.advice_code === "string" ? outcome.advice_code : undefined,
-      network_decline_code: typeof outcome.network_decline_code === "string" ? outcome.network_decline_code : undefined,
+      network_decline_code:
+        typeof outcome.network_decline_code === "string" ? outcome.network_decline_code : undefined,
       message: typeof obj.failure_message === "string" ? obj.failure_message : undefined,
     };
     const ref = idOf(obj.payment_intent);
@@ -483,9 +594,17 @@ export const stripeAdapter: ProviderAdapter<StripeParsed> = {
   displayName: "Stripe",
   version: STRIPE_ADAPTER_VERSION,
   supportedFormats: [
-    { id: "stripe.api_error", description: "Stripe API error response ({ error: { type, code, decline_code, advice_code } })" },
+    {
+      id: "stripe.api_error",
+      description:
+        "Stripe API error response ({ error: { type, code, decline_code, advice_code } })",
+    },
     { id: "stripe.payment_intent", description: "PaymentIntent object snapshot" },
-    { id: "stripe.event.snapshot", description: "API v1 snapshot event (webhook payload) for PaymentIntent, Charge, Refund and Dispute objects" },
+    {
+      id: "stripe.event.snapshot",
+      description:
+        "API v1 snapshot event (webhook payload) for PaymentIntent, Charge, Refund and Dispute objects",
+    },
   ],
   detect,
   parse,

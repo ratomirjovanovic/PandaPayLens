@@ -5,5 +5,7 @@
   "description": "Synthetic Stripe and Adyen fixtures used by tests, examples and the CLI. No real data.",
   "license": "Apache-2.0",
   "type": "module",
-  "exports": { "./*": "./*" }
+  "exports": {
+    "./*": "./*"
+  }
 }

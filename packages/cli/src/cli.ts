@@ -104,13 +104,17 @@ export function run(argv: string[], io: Io): number {
     return EXIT.INVALID_INPUT;
   }
   if (values.provider && !ADAPTERS.some((a) => a.id === values.provider)) {
-    io.stderr(`Unknown provider "${values.provider}". Supported: ${ADAPTERS.map((a) => a.id).join(", ")}.\n`);
+    io.stderr(
+      `Unknown provider "${values.provider}". Supported: ${ADAPTERS.map((a) => a.id).join(", ")}.\n`,
+    );
     return EXIT.UNSUPPORTED;
   }
 
   switch (command) {
     case "version":
-      io.stdout(`pandapaylens ${CLI_VERSION}\ncore ${CORE_VERSION}\nrule catalog ${RULE_CATALOG_VERSION}\n${ADAPTERS.map((a) => `${a.id} adapter ${a.version}`).join("\n")}\n`);
+      io.stdout(
+        `pandapaylens ${CLI_VERSION}\ncore ${CORE_VERSION}\nrule catalog ${RULE_CATALOG_VERSION}\n${ADAPTERS.map((a) => `${a.id} adapter ${a.version}`).join("\n")}\n`,
+      );
       return EXIT.OK;
     case "providers":
       return providers(io, format);
@@ -135,7 +139,11 @@ export function run(argv: string[], io: Io): number {
     text = target === "-" ? io.readStdin() : io.readFile(target);
   } catch (e) {
     const code = (e as { code?: string }).code;
-    io.stderr(code === "ENOENT" ? `File not found: ${target}\n` : `Could not read ${target === "-" ? "stdin" : target}.\n`);
+    io.stderr(
+      code === "ENOENT"
+        ? `File not found: ${target}\n`
+        : `Could not read ${target === "-" ? "stdin" : target}.\n`,
+    );
     return EXIT.INVALID_INPUT;
   }
 
@@ -147,12 +155,16 @@ export function run(argv: string[], io: Io): number {
   });
   if (!r.ok) {
     if (r.error.code === "INTERNAL_ERROR") {
-      io.stderr(`${r.error.message}\nPlease report this at https://github.com/ratomirjovanovic/PandaPayLens/issues (without your payment data).\n`);
+      io.stderr(
+        `${r.error.message}\nPlease report this at https://github.com/ratomirjovanovic/PandaPayLens/issues (without your payment data).\n`,
+      );
       return EXIT.INTERNAL;
     }
-    const where = "line" in r.error && r.error.line ? ` (line ${r.error.line}, column ${r.error.column})` : "";
+    const where =
+      "line" in r.error && r.error.line ? ` (line ${r.error.line}, column ${r.error.column})` : "";
     io.stderr(`${r.error.message}${where}\n`);
-    if (r.error.code === "INPUT_TOO_LARGE") io.stderr(`Limit: ${formatBytes(DEFAULT_LIMITS.maxBytes)} per input.\n`);
+    if (r.error.code === "INPUT_TOO_LARGE")
+      io.stderr(`Limit: ${formatBytes(DEFAULT_LIMITS.maxBytes)} per input.\n`);
     return r.error.code === "UNKNOWN_PROVIDER" ? EXIT.UNSUPPORTED : EXIT.INVALID_INPUT;
   }
 
@@ -160,18 +172,27 @@ export function run(argv: string[], io: Io): number {
   const reportOpts = { includeIdentifiers: values["include-identifiers"] };
   if (format === "json") io.stdout(toJsonReport(result, reportOpts));
   else if (format === "markdown") io.stdout(toMarkdownReport(result, reportOpts));
-  else io.stdout(renderText(result, command, { color, includeIdentifiers: values["include-identifiers"] }));
+  else
+    io.stdout(
+      renderText(result, command, { color, includeIdentifiers: values["include-identifiers"] }),
+    );
 
   if (!result.records.some((rec) => rec.status === "analyzed")) return EXIT.UNSUPPORTED;
   if (failOn !== "none") {
     const threshold = SEVERITIES.indexOf(failOn as Severity);
-    if (result.findings.some((f) => SEVERITIES.indexOf(f.severity) <= threshold)) return EXIT.FINDINGS;
+    if (result.findings.some((f) => SEVERITIES.indexOf(f.severity) <= threshold))
+      return EXIT.FINDINGS;
   }
   return EXIT.OK;
 }
 
 function providers(io: Io, format: string): number {
-  const data = ADAPTERS.map((a) => ({ id: a.id, name: a.displayName, version: a.version, formats: a.supportedFormats }));
+  const data = ADAPTERS.map((a) => ({
+    id: a.id,
+    name: a.displayName,
+    version: a.version,
+    formats: a.supportedFormats,
+  }));
   if (format === "json") {
     io.stdout(`${JSON.stringify(data, null, 2)}\n`);
     return EXIT.OK;
@@ -200,7 +221,9 @@ function examples(io: Io, id: string | undefined, format: string): number {
     if (format === "json") io.stdout(`${JSON.stringify(index, null, 2)}\n`);
     else {
       for (const s of index) io.stdout(`${s.id.padEnd(32)} ${s.title}\n`);
-      io.stdout(`\nPrint one with: pandapaylens examples <id>\nAnalyze one with: pandapaylens examples <id> | pandapaylens analyze -\n`);
+      io.stdout(
+        `\nPrint one with: pandapaylens examples <id>\nAnalyze one with: pandapaylens examples <id> | pandapaylens analyze -\n`,
+      );
     }
     return EXIT.OK;
   }
@@ -215,7 +238,17 @@ function examples(io: Io, id: string | undefined, format: string): number {
 // ---------------------------------------------------------------------------
 // Text rendering
 
-const ANSI = { reset: "\x1b[0m", bold: "\x1b[1m", dim: "\x1b[2m", red: "\x1b[31m", green: "\x1b[32m", yellow: "\x1b[33m", blue: "\x1b[34m", magenta: "\x1b[35m", cyan: "\x1b[36m" };
+const ANSI = {
+  reset: "\x1b[0m",
+  bold: "\x1b[1m",
+  dim: "\x1b[2m",
+  red: "\x1b[31m",
+  green: "\x1b[32m",
+  yellow: "\x1b[33m",
+  blue: "\x1b[34m",
+  magenta: "\x1b[35m",
+  cyan: "\x1b[36m",
+};
 
 /** Remove terminal control sequences from untrusted text. */
 export function stripControl(s: string): string {
@@ -223,24 +256,51 @@ export function stripControl(s: string): string {
   return s.replace(/[\u0000-\u0008\u000b-\u001f\u007f-\u009f‪-‮⁦-⁩]/g, "");
 }
 
-function renderText(r: AnalysisResult, command: string, opts: { color: boolean; includeIdentifiers: boolean }): string {
-  const c = (code: keyof typeof ANSI, s: string) => (opts.color ? `${ANSI[code]}${s}${ANSI.reset}` : s);
+function renderText(
+  r: AnalysisResult,
+  command: string,
+  opts: { color: boolean; includeIdentifiers: boolean },
+): string {
+  const c = (code: keyof typeof ANSI, s: string) =>
+    opts.color ? `${ANSI[code]}${s}${ANSI.reset}` : s;
   const t = (s: string | undefined) => stripControl(s ?? "");
-  const id = (s: string | undefined) => (s ? t(opts.includeIdentifiers ? s : maskIdentifier(s)) : "—");
+  const id = (s: string | undefined) =>
+    s ? t(opts.includeIdentifiers ? s : maskIdentifier(s)) : "—";
   const out: string[] = [];
-  const sevColor: Record<Severity, keyof typeof ANSI> = { critical: "red", high: "red", medium: "yellow", low: "cyan", info: "dim" };
-  const outcomeColor = { success: "green", failure: "red", pending: "yellow", unknown: "dim" } as const;
+  const sevColor: Record<Severity, keyof typeof ANSI> = {
+    critical: "red",
+    high: "red",
+    medium: "yellow",
+    low: "cyan",
+    info: "dim",
+  };
+  const outcomeColor = {
+    success: "green",
+    failure: "red",
+    pending: "yellow",
+    unknown: "dim",
+  } as const;
 
   const recognized = r.records.filter((x) => x.status === "analyzed");
   out.push(c("bold", "PandaPayLens analysis"));
-  out.push(c("dim", `${r.records.length} record(s), ${recognized.length} analyzed · ${[...new Set(recognized.map((x) => x.format))].join(", ") || "no supported format"}`));
+  out.push(
+    c(
+      "dim",
+      `${r.records.length} record(s), ${recognized.length} analyzed · ${[...new Set(recognized.map((x) => x.format))].join(", ") || "no supported format"}`,
+    ),
+  );
   out.push("");
 
   if (command !== "timeline") {
     if (r.errors.length) {
       out.push(c("bold", "Decoded errors"));
       for (const e of r.errors) {
-        out.push(`  ${c("magenta", `${e.provider}`)} ${c("bold", t(e.code))}${Object.entries(e.subCodes).filter(([k]) => k !== "type").map(([k, v]) => c("dim", ` ${k}=${t(v)}`)).join("")}`);
+        out.push(
+          `  ${c("magenta", `${e.provider}`)} ${c("bold", t(e.code))}${Object.entries(e.subCodes)
+            .filter(([k]) => k !== "type")
+            .map(([k, v]) => c("dim", ` ${k}=${t(v)}`))
+            .join("")}`,
+        );
         out.push(`    Category:   ${e.category}`);
         out.push(`    Meaning:    ${t(e.explanation)}`);
         out.push(`    Next:       ${t(e.nextAction)}`);
@@ -258,17 +318,33 @@ function renderText(r: AnalysisResult, command: string, opts: { color: boolean; 
 
   if (command !== "decode") {
     out.push(c("bold", "Timeline"));
-    if (!r.events.length) out.push("  No events. The transaction history is not available from this input.");
+    if (!r.events.length)
+      out.push("  No events. The transaction history is not available from this input.");
     for (const g of r.groups) {
-      out.push(c("dim", `  ── ${g.provider} · ${g.references.map(id).join(", ") || "no reference"} · latest: ${g.latestOutcome}`));
+      out.push(
+        c(
+          "dim",
+          `  ── ${g.provider} · ${g.references.map(id).join(", ") || "no reference"} · latest: ${g.latestOutcome}`,
+        ),
+      );
       for (const evId of g.eventIds) {
         const e = r.events.find((x) => x.id === evId)!;
-        const when = e.eventTimestamp ? e.eventTimestamp.replace(".000Z", "Z") : "time unknown       ";
+        const when = e.eventTimestamp
+          ? e.eventTimestamp.replace(".000Z", "Z")
+          : "time unknown       ";
         const amount = e.amountMinor ? ` ${t(e.amountMinor)} ${t(e.currency)} (minor units)` : "";
-        out.push(`  ${c("dim", when)}  ${c(outcomeColor[e.outcome], e.outcome.padEnd(7))} ${t(e.eventType)}${e.providerStatus ? c("dim", ` [${t(e.providerStatus)}]`) : ""}${amount}  ${c("dim", e.id)}`);
+        out.push(
+          `  ${c("dim", when)}  ${c(outcomeColor[e.outcome], e.outcome.padEnd(7))} ${t(e.eventType)}${e.providerStatus ? c("dim", ` [${t(e.providerStatus)}]`) : ""}${amount}  ${c("dim", e.id)}`,
+        );
       }
     }
-    if (r.events.length === 1) out.push(c("dim", "  Only one event was supplied; the complete transaction history is not available."));
+    if (r.events.length === 1)
+      out.push(
+        c(
+          "dim",
+          "  Only one event was supplied; the complete transaction history is not available.",
+        ),
+      );
     out.push("");
   }
 
@@ -276,7 +352,9 @@ function renderText(r: AnalysisResult, command: string, opts: { color: boolean; 
     out.push(c("bold", `Findings (${r.findings.length})`));
     if (!r.findings.length) out.push("  None.");
     for (const f of r.findings) {
-      out.push(`  ${c(sevColor[f.severity], `[${f.severity.toUpperCase()}]`)} ${t(f.title)} ${c("dim", `(${f.ruleId}, ${f.confidence})`)}`);
+      out.push(
+        `  ${c(sevColor[f.severity], `[${f.severity.toUpperCase()}]`)} ${t(f.title)} ${c("dim", `(${f.ruleId}, ${f.confidence})`)}`,
+      );
       out.push(`    ${t(f.explanation)}`);
       if (f.recommendedAction) out.push(`    → ${t(f.recommendedAction)}`);
       for (const l of f.limitations) out.push(c("dim", `    Limitation: ${t(l)}`));
@@ -287,6 +365,11 @@ function renderText(r: AnalysisResult, command: string, opts: { color: boolean; 
   }
 
   for (const w of r.warnings) out.push(c("yellow", `! ${w.code}: ${t(w.message)}`));
-  out.push(c("dim", "This analysis covers only the supplied records. It does not confirm settlement or fund movement."));
+  out.push(
+    c(
+      "dim",
+      "This analysis covers only the supplied records. It does not confirm settlement or fund movement.",
+    ),
+  );
   return `${out.join("\n")}\n`;
 }

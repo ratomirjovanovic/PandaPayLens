@@ -160,13 +160,18 @@ export type RedactionReport = { paths: string[] };
  * Deep copy with blocked keys hidden and sensitive patterns removed from
  * strings. Used for the raw-data inspector and for anything exported.
  */
-export function redactDeep(value: unknown, report: RedactionReport = { paths: [] }, path = ""): unknown {
+export function redactDeep(
+  value: unknown,
+  report: RedactionReport = { paths: [] },
+  path = "",
+): unknown {
   if (Array.isArray(value)) {
     return value.map((v, i) => redactDeep(v, report, `${path}[${i}]`));
   }
   if (value !== null && typeof value === "object") {
     const out: Record<string, unknown> = {};
     for (const [key, child] of Object.entries(value as Record<string, unknown>)) {
+      if (key === "__proto__") continue; // never assign through the prototype setter
       const childPath = path === "" ? key : `${path}.${key}`;
       if (isBlockedKey(key) && child !== null && child !== undefined && child !== "") {
         // Hide the whole subtree: `billing_address: {...}` is as sensitive as a string.

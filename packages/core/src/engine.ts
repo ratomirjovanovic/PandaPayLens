@@ -1,4 +1,12 @@
-import { parseInput, type InputLimits, type ParseError } from "./parse.js";
+import {
+  byteLength,
+  DEFAULT_LIMITS,
+  DEFAULT_SESSION_MAX_BYTES,
+  formatBytes,
+  parseInput,
+  type InputLimits,
+  type ParseError,
+} from "./parse.js";
 import { findSensitivePaths } from "./redact.js";
 import type {
   AnalysisContext,
@@ -26,7 +34,10 @@ export type AnalyzeOptions = {
   now?: () => Date;
 };
 
-export type AnalyzeFailure = { ok: false; error: ParseError | { code: "INTERNAL_ERROR" | "UNKNOWN_PROVIDER"; message: string } };
+export type AnalyzeFailure = {
+  ok: false;
+  error: ParseError | { code: "INTERNAL_ERROR" | "UNKNOWN_PROVIDER"; message: string };
+};
 
 /** Minimum confidence for an adapter's detection to be accepted. */
 const DETECTION_THRESHOLD = 0.5;
@@ -50,7 +61,10 @@ function unwrapEnvelope(record: unknown): { payload: unknown; observedTimestamp?
 }
 
 /** Parse text and analyze it. Never throws for malformed input. */
-export function analyzeText(text: string, options: AnalyzeOptions): { ok: true; result: AnalysisResult } | AnalyzeFailure {
+export function analyzeText(
+  text: string,
+  options: AnalyzeOptions,
+): { ok: true; result: AnalysisResult } | AnalyzeFailure {
   const parsed = parseInput(text, options.limits);
   if (!parsed.ok) return parsed;
   const result = analyzeRecords(parsed.value.records, options);
@@ -66,13 +80,92 @@ export function analyzeText(text: string, options: AnalyzeOptions): { ok: true; 
   return result;
 }
 
+export type SourceText = { name: string; text: string };
+
+export type SourceSummary = {
+  name: string;
+  recordStart: number;
+  recordCount: number;
+  format: "json" | "jsonl";
+};
+
+/**
+ * Analyze several inputs (pasted text and imported files) as one session.
+ * Each source is parsed separately so errors point at the right file; the
+ * records are then analyzed together so cross-file events correlate.
+ */
+export function analyzeSources(
+  sources: readonly SourceText[],
+  options: AnalyzeOptions & { sessionMaxBytes?: number },
+):
+  | { ok: true; result: AnalysisResult; sources: SourceSummary[]; records: unknown[] }
+  | {
+      ok: false;
+      error: (
+        | ParseError
+        | { code: "INTERNAL_ERROR" | "UNKNOWN_PROVIDER" | "SESSION_TOO_LARGE"; message: string }
+      ) & { source?: string };
+    } {
+  const sessionMax = options.sessionMaxBytes ?? DEFAULT_SESSION_MAX_BYTES;
+  let total = 0;
+  for (const s of sources) total += s.text.length > sessionMax ? s.text.length : byteLength(s.text);
+  if (total > sessionMax) {
+    return {
+      ok: false,
+      error: {
+        code: "SESSION_TOO_LARGE",
+        message: `The imported data exceeds the ${formatBytes(sessionMax)} session limit.`,
+      },
+    };
+  }
+  const records: unknown[] = [];
+  const summaries: SourceSummary[] = [];
+  const removed: { recordIndex: number; path: string }[] = [];
+  for (const s of sources) {
+    const parsed = parseInput(s.text, options.limits);
+    if (!parsed.ok) return { ok: false, error: { ...parsed.error, source: s.name } };
+    summaries.push({
+      name: s.name,
+      recordStart: records.length,
+      recordCount: parsed.value.records.length,
+      format: parsed.value.format,
+    });
+    for (const r of parsed.value.removedKeys)
+      removed.push({ ...r, recordIndex: r.recordIndex + records.length });
+    records.push(...parsed.value.records);
+  }
+  const maxRecords = options.limits?.maxRecords ?? DEFAULT_LIMITS.maxRecords;
+  if (records.length > maxRecords) {
+    return {
+      ok: false,
+      error: {
+        code: "TOO_MANY_RECORDS",
+        message: `The session contains ${records.length} records; the limit is ${maxRecords}.`,
+      },
+    };
+  }
+  const r = analyzeRecords(records, options);
+  if (!r.ok) return r;
+  for (const k of removed.reverse()) {
+    r.result.warnings.unshift({
+      code: "DANGEROUS_KEY_REMOVED",
+      message: `Removed key "${k.path}" because it could be used for prototype pollution.`,
+      recordIndex: k.recordIndex,
+    });
+  }
+  return { ok: true, result: r.result, sources: summaries, records };
+}
+
 /** Analyze already-parsed records (array elements or JSONL lines). */
 export function analyzeRecords(
   records: readonly unknown[],
   options: AnalyzeOptions,
 ): { ok: true; result: AnalysisResult } | AnalyzeFailure {
   if (options.provider && !options.adapters.some((a) => a.id === options.provider)) {
-    return { ok: false, error: { code: "UNKNOWN_PROVIDER", message: `Unknown provider "${options.provider}".` } };
+    return {
+      ok: false,
+      error: { code: "UNKNOWN_PROVIDER", message: `Unknown provider "${options.provider}".` },
+    };
   }
   try {
     return { ok: true, result: runAnalysis(records, options) };
@@ -81,7 +174,10 @@ export function analyzeRecords(
     // internal defect and must be distinguishable from bad input.
     return {
       ok: false,
-      error: { code: "INTERNAL_ERROR", message: `Internal analysis error: ${e instanceof Error ? e.message : String(e)}` },
+      error: {
+        code: "INTERNAL_ERROR",
+        message: `Internal analysis error: ${e instanceof Error ? e.message : String(e)}`,
+      },
     };
   }
 }
@@ -100,7 +196,8 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
   records.forEach((record, recordIndex) => {
     const { payload, observedTimestamp } = unwrapEnvelope(record);
 
-    for (const p of findSensitivePaths(payload)) sensitivePaths.push(`[${recordIndex}]${p ? `.${p}` : ""}`);
+    for (const p of findSensitivePaths(payload))
+      sensitivePaths.push(`[${recordIndex}]${p ? `.${p}` : ""}`);
 
     const candidates = options.adapters
       .filter((a) => !override || a.id === override)
@@ -128,15 +225,21 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
       });
       warnings.push({
         code: "UNSUPPORTED_RECORD",
-        message: best?.detection.unsupportedReason ?? "This record does not match any supported Stripe or Adyen format.",
+        message:
+          best?.detection.unsupportedReason ??
+          "This record does not match any supported Stripe or Adyen format.",
         recordIndex,
       });
       return;
     }
 
     const second = candidates[1];
-    if (!override && second && second.detection.confidence >= DETECTION_THRESHOLD &&
-        best.detection.confidence - second.detection.confidence < AMBIGUITY_MARGIN) {
+    if (
+      !override &&
+      second &&
+      second.detection.confidence >= DETECTION_THRESHOLD &&
+      best.detection.confidence - second.detection.confidence < AMBIGUITY_MARGIN
+    ) {
       warnings.push({
         code: "AMBIGUOUS_PROVIDER",
         message: `Record matched both ${best.adapter.displayName} and ${second.adapter.displayName}. Using ${best.adapter.displayName}; select a provider manually if this is wrong.`,
@@ -156,7 +259,9 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
       });
       warnings.push({
         code: "UNSUPPORTED_RECORD",
-        message: best.detection.unsupportedReason ?? `${best.adapter.displayName} format "${best.detection.format}" is recognized but not supported yet.`,
+        message:
+          best.detection.unsupportedReason ??
+          `${best.adapter.displayName} format "${best.detection.format}" is recognized but not supported yet.`,
         recordIndex,
       });
       return;
@@ -183,7 +288,9 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
       return;
     }
 
-    const ctx = observedTimestamp ? { format, recordIndex, observedTimestamp } : { format, recordIndex };
+    const ctx = observedTimestamp
+      ? { format, recordIndex, observedTimestamp }
+      : { format, recordIndex };
     for (const draft of adapter.normalize(parsed.value, ctx)) {
       events.push({ ...draft, id: "", provider: adapter.id, sourceIndex: events.length });
     }
@@ -207,7 +314,11 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
 
   for (const e of events) {
     if (e.amountMinor !== undefined && !/^-?\d+$/.test(e.amountMinor)) {
-      warnings.push({ code: "UNSAFE_INTEGER", message: `Amount on ${e.id} is not an exact integer and is shown as supplied.`, recordIndex: e.source.recordIndex });
+      warnings.push({
+        code: "UNSAFE_INTEGER",
+        message: `Amount on ${e.id} is not an exact integer and is shown as supplied.`,
+        recordIndex: e.source.recordIndex,
+      });
     }
   }
 
@@ -217,19 +328,30 @@ function runAnalysis(records: readonly unknown[], options: AnalyzeOptions): Anal
   const context: AnalysisContext = { events: sorted, errors, groups, arrivalOrderInferred };
 
   const findings: DiagnosticFinding[] = [];
-  const providersPresent = new Set([...events.map((e) => e.provider), ...errors.map((e) => e.provider)]);
+  const providersPresent = new Set([
+    ...events.map((e) => e.provider),
+    ...errors.map((e) => e.provider),
+  ]);
   for (const rule of options.rules) {
-    if (!rule.providers.includes("*") && !rule.providers.some((p) => providersPresent.has(p))) continue;
+    if (!rule.providers.includes("*") && !rule.providers.some((p) => providersPresent.has(p)))
+      continue;
     try {
-      for (const f of rule.evaluate(context)) findings.push({ ...f, ruleId: rule.id, ruleVersion: rule.version });
+      for (const f of rule.evaluate(context))
+        findings.push({ ...f, ruleId: rule.id, ruleVersion: rule.version });
     } catch (e) {
-      warnings.push({ code: "RULE_FAILED", message: `Rule ${rule.id} failed and was skipped: ${e instanceof Error ? e.message : String(e)}` });
+      warnings.push({
+        code: "RULE_FAILED",
+        message: `Rule ${rule.id} failed and was skipped: ${e instanceof Error ? e.message : String(e)}`,
+      });
     }
   }
   findings.sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
 
   if (summaries.length > 0 && !summaries.some((s) => s.status === "analyzed")) {
-    warnings.push({ code: "NO_ANALYZABLE_RECORDS", message: "None of the supplied records could be analyzed." });
+    warnings.push({
+      code: "NO_ANALYZABLE_RECORDS",
+      message: "None of the supplied records could be analyzed.",
+    });
   }
   if (sensitivePaths.length > 0) {
     warnings.push({
@@ -291,7 +413,10 @@ export function sortEvents(events: readonly NormalizedEvent[]): NormalizedEvent[
  * Union-find over provider-specific correlation keys. Events only join a group
  * when they share an explicit identifier; unrelated transactions stay apart.
  */
-export function correlate(events: readonly NormalizedEvent[], adapters: readonly ProviderAdapter<any>[]): TransactionGroup[] {
+export function correlate(
+  events: readonly NormalizedEvent[],
+  adapters: readonly ProviderAdapter<any>[],
+): TransactionGroup[] {
   const parent = new Map<string, string>();
   const find = (x: string): string => {
     let root = x;
@@ -334,7 +459,8 @@ export function correlate(events: readonly NormalizedEvent[], adapters: readonly
   let n = 0;
   return [...groups.values()].map((list) => {
     const refs = new Set<string>();
-    for (const e of list) for (const k of keysOf.get(e.id) ?? []) refs.add(k.slice(e.provider.length + 1));
+    for (const e of list)
+      for (const k of keysOf.get(e.id) ?? []) refs.add(k.slice(e.provider.length + 1));
     const timed = list.filter((e) => e.eventTimestamp);
     const latest = (timed.length > 0 ? timed : list).at(-1)!;
     return {

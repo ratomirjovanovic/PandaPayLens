@@ -10,7 +10,12 @@
  * arrival) is reported as information, not as a defect.
  */
 
-import type { AnalysisContext, DiagnosticFinding, DiagnosticRule, NormalizedEvent } from "@pandapaylens/core";
+import type {
+  AnalysisContext,
+  DiagnosticFinding,
+  DiagnosticRule,
+  NormalizedEvent,
+} from "@pandapaylens/core";
 
 export const RULE_CATALOG_VERSION = "2026.10.0";
 
@@ -41,7 +46,9 @@ function eventsByGroup(ctx: AnalysisContext): { id: string; events: NormalizedEv
   const order = new Map(ctx.events.map((e, i) => [e.id, i]));
   return ctx.groups.map((g) => ({
     id: g.id,
-    events: g.eventIds.map((id) => byId.get(id)!).sort((a, b) => order.get(a.id)! - order.get(b.id)!),
+    events: g.eventIds
+      .map((id) => byId.get(id)!)
+      .sort((a, b) => order.get(a.id)! - order.get(b.id)!),
   }));
 }
 
@@ -58,9 +65,14 @@ function uniqueDeliveries(events: readonly NormalizedEvent[]): NormalizedEvent[]
 }
 
 const deliveryGroups = (ctx: AnalysisContext) =>
-  [...groupBy(ctx.events, (e) => (e.deliveryKey ? `${e.provider}:${e.deliveryKey}` : undefined)).values()].filter((l) => l.length > 1);
+  [
+    ...groupBy(ctx.events, (e) =>
+      e.deliveryKey ? `${e.provider}:${e.deliveryKey}` : undefined,
+    ).values(),
+  ].filter((l) => l.length > 1);
 
-const describe = (e: NormalizedEvent) => `${e.eventType}${e.providerStatus ? ` (${e.providerStatus})` : ""}`;
+const describe = (e: NormalizedEvent) =>
+  `${e.eventType}${e.providerStatus ? ` (${e.providerStatus})` : ""}`;
 
 export const duplicateDelivery: DiagnosticRule = {
   id: "DUPLICATE_DELIVERY",
@@ -86,7 +98,9 @@ export const duplicateDelivery: DiagnosticRule = {
           ? "Make sure your webhook handler is idempotent, for example by recording processed event ids."
           : "Make sure your webhook handler deduplicates on eventCode + pspReference before acting.",
         documentationUrl: isStripe ? STRIPE_WEBHOOKS : ADYEN_HANDLE,
-        limitations: ["The supplied data cannot show whether your application processed the event more than once."],
+        limitations: [
+          "The supplied data cannot show whether your application processed the event more than once.",
+        ],
       });
     }
     return out;
@@ -117,7 +131,9 @@ export const conflictingObservations: DiagnosticRule = {
             ? "Check the payment's current state in the Adyen Customer Area. If your handler keeps only the first copy, it may have acted on a superseded result."
             : "Check whether the records were edited or mixed from different sources, and retrieve the object from the Stripe API to confirm its current state.",
         documentationUrl: first.provider === "adyen" ? ADYEN_HANDLE : STRIPE_WEBHOOKS,
-        limitations: ["The input may have been assembled from several sources; PandaPayLens cannot verify the records' authenticity."],
+        limitations: [
+          "The input may have been assembled from several sources; PandaPayLens cannot verify the records' authenticity.",
+        ],
       });
     }
     return out;
@@ -155,13 +171,18 @@ export const outOfOrderArrival: DiagnosticRule = {
         confidence: ctx.arrivalOrderInferred ? "possible" : "confirmed",
         title: "Events arrived out of order",
         explanation: `${ids.length} events in this transaction arrived in a different order than they were created. ${
-          provider === "stripe" ? "Stripe does not guarantee event delivery order." : "Adyen does not guarantee webhook delivery order."
+          provider === "stripe"
+            ? "Stripe does not guarantee event delivery order."
+            : "Adyen does not guarantee webhook delivery order."
         } This is not a defect by itself.`,
         evidenceEventIds: ids,
-        recommendedAction: "Base state transitions on the object's current state or event timestamps, not on arrival order.",
+        recommendedAction:
+          "Base state transitions on the object's current state or event timestamps, not on arrival order.",
         documentationUrl: provider === "stripe" ? STRIPE_ORDER : ADYEN_HANDLE,
         limitations: ctx.arrivalOrderInferred
-          ? ["No receipt timestamps were supplied; arrival order is assumed from the order of records in the input."]
+          ? [
+              "No receipt timestamps were supplied; arrival order is assumed from the order of records in the input.",
+            ]
           : [],
       });
     }
@@ -175,14 +196,18 @@ export const unknownEventType: DiagnosticRule = {
   providers: ["*"],
   description: "An event type PandaPayLens has no semantics for.",
   evaluate(ctx) {
-    const byType = groupBy(ctx.events.filter((e) => !e.eventTypeKnown), (e) => `${e.provider}:${e.eventType}`);
+    const byType = groupBy(
+      ctx.events.filter((e) => !e.eventTypeKnown),
+      (e) => `${e.provider}:${e.eventType}`,
+    );
     return [...byType.values()].map((list) => ({
       severity: "info" as const,
       confidence: "confirmed" as const,
       title: `Unsupported event type: ${list[0]!.eventType}`,
       explanation: `PandaPayLens does not have semantics for ${list[0]!.provider} event type "${list[0]!.eventType}". It is shown on the timeline but not used to judge the payment outcome.`,
       evidenceEventIds: list.map((e) => e.id),
-      recommendedAction: "Check the provider's documentation for this event type. Contributions with fixtures are welcome.",
+      recommendedAction:
+        "Check the provider's documentation for this event type. Contributions with fixtures are welcome.",
       limitations: [],
     }));
   },
@@ -201,14 +226,18 @@ export const missingReference: DiagnosticRule = {
         severity: "low",
         confidence: "confirmed",
         title: `${noRef.length} event(s) without a payment reference`,
-        explanation: "These events carry no payment identifier, so they cannot be linked to other events of the same transaction.",
+        explanation:
+          "These events carry no payment identifier, so they cannot be linked to other events of the same transaction.",
         evidenceEventIds: noRef.map((e) => e.id),
-        recommendedAction: "Include the full event payload, or the related object, when collecting data for analysis.",
+        recommendedAction:
+          "Include the full event payload, or the related object, when collecting data for analysis.",
         limitations: [],
       });
     }
     // Adyen modifications are only linkable via originalReference.
-    const orphanMods = ctx.events.filter((e) => e.provider === "adyen" && e.attributes.isModification === true && !e.relatedReference);
+    const orphanMods = ctx.events.filter(
+      (e) => e.provider === "adyen" && e.attributes.isModification === true && !e.relatedReference,
+    );
     if (orphanMods.length) {
       out.push({
         severity: "medium",
@@ -217,7 +246,8 @@ export const missingReference: DiagnosticRule = {
         explanation:
           "These modification events (capture, refund, cancellation…) have no originalReference, so the payment they modify cannot be identified. Their pspReference was used as the payment reference instead.",
         evidenceEventIds: orphanMods.map((e) => e.id),
-        recommendedAction: "Check that the full NotificationRequestItem was captured, including originalReference.",
+        recommendedAction:
+          "Check that the full NotificationRequestItem was captured, including originalReference.",
         documentationUrl: ADYEN_HANDLE,
         limitations: [],
       });
@@ -235,16 +265,22 @@ export const paymentFailure: DiagnosticRule = {
     const out: Finding[] = [];
     for (const g of eventsByGroup(ctx)) {
       const failed = uniqueDeliveries(g.events).filter(
-        (e) => e.outcome === "failure" && ["payment", "authorization", "capture", "refund"].includes(e.stage),
+        (e) =>
+          e.outcome === "failure" &&
+          ["payment", "authorization", "capture", "refund"].includes(e.stage),
       );
       if (!failed.length) continue;
       const postAuth = failed.filter((e) => e.stage === "capture" || e.stage === "refund");
       const last = failed.at(-1)!;
-      const errors = ctx.errors.filter((er) => er.paymentReference && er.paymentReference === last.paymentReference);
+      const errors = ctx.errors.filter(
+        (er) => er.paymentReference && er.paymentReference === last.paymentReference,
+      );
       out.push({
         severity: postAuth.length ? "medium" : "low",
         confidence: "confirmed",
-        title: postAuth.length ? `${postAuth.at(-1)!.stage === "capture" ? "Capture" : "Refund"} failed` : "Payment attempt failed",
+        title: postAuth.length
+          ? `${postAuth.at(-1)!.stage === "capture" ? "Capture" : "Refund"} failed`
+          : "Payment attempt failed",
         explanation: `The provider reported ${failed.length === 1 ? "a failure" : `${failed.length} failures`}: ${[...new Set(failed.map(describe))].join(", ")}.${
           errors.length ? " See the decoded error for the reason." : ""
         }`,
@@ -253,7 +289,9 @@ export const paymentFailure: DiagnosticRule = {
         recommendedAction: postAuth.length
           ? "Review the failed modification. Funds may not have moved as intended."
           : "Use the decoded error's guidance to decide whether the customer needs to act.",
-        limitations: ["A failed attempt does not mean the order failed: a later attempt may have succeeded outside the supplied data."],
+        limitations: [
+          "A failed attempt does not mean the order failed: a later attempt may have succeeded outside the supplied data.",
+        ],
       });
     }
     return out;
@@ -270,7 +308,9 @@ export const unresolvedOutcome: DiagnosticRule = {
     for (const g of eventsByGroup(ctx)) {
       // Errors are handled by the decoder (and POSSIBLE_RETRY_RISK when their
       // outcome is unknown); here only lifecycle events count.
-      const relevant = g.events.filter((e) => e.eventTypeKnown && e.stage !== "dispute" && e.stage !== "error");
+      const relevant = g.events.filter(
+        (e) => e.eventTypeKnown && e.stage !== "dispute" && e.stage !== "error",
+      );
       if (!relevant.length) continue;
       if (relevant.some((e) => e.outcome === "success" || e.outcome === "failure")) continue;
       out.push({
@@ -279,7 +319,8 @@ export const unresolvedOutcome: DiagnosticRule = {
         title: "Final outcome not visible",
         explanation: `The latest supplied state is ${describe(relevant.at(-1)!)}. None of the ${relevant.length} event(s) in this transaction report a final success or failure.`,
         evidenceEventIds: relevant.map((e) => e.id),
-        recommendedAction: "Retrieve the payment from the provider, or collect later webhooks, before acting on this transaction.",
+        recommendedAction:
+          "Retrieve the payment from the provider, or collect later webhooks, before acting on this transaction.",
         limitations: ["Later events may exist that were not supplied."],
       });
     }
@@ -300,10 +341,17 @@ export const potentialStateInconsistency: DiagnosticRule = {
       const events = uniqueDeliveries(g.events);
       if (events[0]?.provider === "stripe") {
         // PaymentIntent `succeeded` and `canceled` are terminal statuses.
-        const pi = events.filter((e) => e.attributes.objectType === "payment_intent" && e.providerStatus && time(e) !== undefined);
+        const pi = events.filter(
+          (e) =>
+            e.attributes.objectType === "payment_intent" &&
+            e.providerStatus &&
+            time(e) !== undefined,
+        );
         const terminal = pi.find((e) => STRIPE_PI_TERMINAL.has(e.providerStatus!));
         if (terminal) {
-          const after = pi.filter((e) => time(e)! > time(terminal)! && e.providerStatus !== terminal.providerStatus);
+          const after = pi.filter(
+            (e) => time(e)! > time(terminal)! && e.providerStatus !== terminal.providerStatus,
+          );
           if (after.length) {
             out.push({
               severity: "medium",
@@ -311,11 +359,16 @@ export const potentialStateInconsistency: DiagnosticRule = {
               title: `PaymentIntent changed state after "${terminal.providerStatus}"`,
               explanation: `A PaymentIntent reported the terminal status "${terminal.providerStatus}" and later events report ${[
                 ...new Set(after.map((e) => `"${e.providerStatus}"`)),
-              ].join(", ")}. Stripe documents ${[...STRIPE_PI_TERMINAL].join(" and ")} as terminal statuses.`,
+              ].join(
+                ", ",
+              )}. Stripe documents ${[...STRIPE_PI_TERMINAL].join(" and ")} as terminal statuses.`,
               evidenceEventIds: [terminal.id, ...after.map((e) => e.id)],
-              recommendedAction: "Check whether events from different PaymentIntents or accounts were mixed, and retrieve the PaymentIntent to confirm its state.",
+              recommendedAction:
+                "Check whether events from different PaymentIntents or accounts were mixed, and retrieve the PaymentIntent to confirm its state.",
               documentationUrl: "https://docs.stripe.com/payments/paymentintents/lifecycle",
-              limitations: ["Event timestamps have one-second resolution; events created in the same second cannot be ordered."],
+              limitations: [
+                "Event timestamps have one-second resolution; events created in the same second cannot be ordered.",
+              ],
             });
           }
         }
@@ -328,24 +381,31 @@ export const potentialStateInconsistency: DiagnosticRule = {
             severity: "medium",
             confidence: "strong",
             title: "Capture succeeded for a refused authorization",
-            explanation: "The supplied data shows AUTHORISATION success=false and a successful CAPTURE for the same payment. A refused payment cannot normally be captured.",
+            explanation:
+              "The supplied data shows AUTHORISATION success=false and a successful CAPTURE for the same payment. A refused payment cannot normally be captured.",
             evidenceEventIds: [...auth, ...captures].map((e) => e.id),
-            recommendedAction: "Check the payment in the Adyen Customer Area; the records may come from different payments or environments.",
+            recommendedAction:
+              "Check the payment in the Adyen Customer Area; the records may come from different payments or environments.",
             documentationUrl: ADYEN_HANDLE,
             limitations: [],
           });
         }
-        const cancelled = events.filter((e) => e.eventType === "CANCELLATION" && e.outcome === "success");
+        const cancelled = events.filter(
+          (e) => e.eventType === "CANCELLATION" && e.outcome === "success",
+        );
         if (cancelled.length && captures.length) {
           out.push({
             severity: "medium",
             confidence: "possible",
             title: "Both cancellation and capture succeeded",
-            explanation: "The supplied data shows a successful CANCELLATION and a successful CAPTURE for the same payment. Normally only one of them can take effect.",
+            explanation:
+              "The supplied data shows a successful CANCELLATION and a successful CAPTURE for the same payment. Normally only one of them can take effect.",
             evidenceEventIds: [...cancelled, ...captures].map((e) => e.id),
             recommendedAction: "Check the payment's final state in the Adyen Customer Area.",
             documentationUrl: ADYEN_HANDLE,
-            limitations: ["Partial captures followed by cancelling the remaining amount are legitimate; check the amounts."],
+            limitations: [
+              "Partial captures followed by cancelling the remaining amount are legitimate; check the amounts.",
+            ],
           });
         }
       }
@@ -363,9 +423,12 @@ export const possibleRetryRisk: DiagnosticRule = {
     const out: Finding[] = [];
 
     // 1. Errors whose original outcome is unknown: a blind retry could duplicate a charge.
-    const uncertain = ctx.errors.filter((e) => e.category === "provider_unavailable" || e.category === "network_or_timeout");
+    const uncertain = ctx.errors.filter(
+      (e) => e.category === "provider_unavailable" || e.category === "network_or_timeout",
+    );
     for (const e of uncertain) {
-      if (e.retry !== "retry_conditionally" && e.retry !== "safe_to_retry_technical_request") continue;
+      if (e.retry !== "retry_conditionally" && e.retry !== "safe_to_retry_technical_request")
+        continue;
       if (e.subCodes.decline_code || e.subCodes.refusalReasonCode) continue; // issuer declines are known outcomes
       out.push({
         severity: "low",
@@ -374,8 +437,12 @@ export const possibleRetryRisk: DiagnosticRule = {
         explanation: `The ${e.provider} error "${e.code}" does not say whether the original operation took effect. Sending a new request without checking could create a second payment.`,
         evidenceEventIds: [],
         evidenceErrorIds: [e.id],
-        recommendedAction: "Verify the original operation's status first. If you retry, reuse the same idempotency key.",
-        documentationUrl: e.provider === "stripe" ? STRIPE_IDEMPOTENCY : "https://docs.adyen.com/development-resources/api-idempotency",
+        recommendedAction:
+          "Verify the original operation's status first. If you retry, reuse the same idempotency key.",
+        documentationUrl:
+          e.provider === "stripe"
+            ? STRIPE_IDEMPOTENCY
+            : "https://docs.adyen.com/development-resources/api-idempotency",
         limitations: ["The supplied data cannot show whether a retry was already sent."],
       });
     }
@@ -383,7 +450,10 @@ export const possibleRetryRisk: DiagnosticRule = {
     // 2. Repeated attempts on one payment after do-not-retry guidance. Only
     // distinct attempts count: an API response and the webhook for the same
     // attempt share an attemptReference.
-    const byRef = groupBy(ctx.errors.filter((e) => e.retry === "do_not_retry" && e.attemptReference), (e) => (e.paymentReference ? `${e.provider}:${e.paymentReference}` : undefined));
+    const byRef = groupBy(
+      ctx.errors.filter((e) => e.retry === "do_not_retry" && e.attemptReference),
+      (e) => (e.paymentReference ? `${e.provider}:${e.paymentReference}` : undefined),
+    );
     for (const all of byRef.values()) {
       const list = [...new Map(all.map((e) => [e.attemptReference, e])).values()];
       if (list.length < 2) continue;
@@ -394,14 +464,19 @@ export const possibleRetryRisk: DiagnosticRule = {
         explanation: `The same payment shows ${list.length} errors whose guidance is not to retry (${[...new Set(list.map((e) => e.code))].join(", ")}). Repeated attempts on such declines can be penalized by card networks.`,
         evidenceEventIds: [],
         evidenceErrorIds: list.map((e) => e.id),
-        recommendedAction: "Stop automatic retries for these declines and ask the customer for another payment method.",
+        recommendedAction:
+          "Stop automatic retries for these declines and ask the customer for another payment method.",
         limitations: ["The errors may come from separate customer-initiated attempts."],
       });
     }
 
     // 3. Adyen: several authorised payments for one merchantReference.
     const auths = uniqueDeliveries(ctx.events).filter(
-      (e) => e.provider === "adyen" && e.merchantReference && e.outcome === "success" && (e.eventType === "AUTHORISATION" || e.eventType === "payment_response.Authorised"),
+      (e) =>
+        e.provider === "adyen" &&
+        e.merchantReference &&
+        e.outcome === "success" &&
+        (e.eventType === "AUTHORISATION" || e.eventType === "payment_response.Authorised"),
     );
     for (const list of groupBy(auths, (e) => e.merchantReference).values()) {
       const payments = new Set(list.map((e) => e.paymentReference));
@@ -412,9 +487,12 @@ export const possibleRetryRisk: DiagnosticRule = {
         title: "Several successful authorizations for one order reference",
         explanation: `${payments.size} different payments were authorized with the same merchantReference. If these are retries of one order, the shopper may have been charged more than once.`,
         evidenceEventIds: list.map((e) => e.id),
-        recommendedAction: "Check whether the order really needed several payments; cancel or refund duplicates if not. Use idempotency keys on payment requests.",
+        recommendedAction:
+          "Check whether the order really needed several payments; cancel or refund duplicates if not. Use idempotency keys on payment requests.",
         documentationUrl: "https://docs.adyen.com/development-resources/api-idempotency",
-        limitations: ["merchantReference values can legitimately be reused (for example for split orders or subscriptions)."],
+        limitations: [
+          "merchantReference values can legitimately be reused (for example for split orders or subscriptions).",
+        ],
       });
     }
     return out;

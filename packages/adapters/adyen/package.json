@@ -5,18 +5,33 @@
   "license": "Apache-2.0",
   "author": "Ratomir Jovanovic (https://github.com/ratomirjovanovic)",
   "homepage": "https://github.com/ratomirjovanovic/PandaPayLens#readme",
-  "repository": { "type": "git", "url": "https://github.com/ratomirjovanovic/PandaPayLens.git", "directory": "packages/adapters/adyen" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ratomirjovanovic/PandaPayLens.git",
+    "directory": "packages/adapters/adyen"
+  },
   "bugs": "https://github.com/ratomirjovanovic/PandaPayLens/issues",
   "type": "module",
   "sideEffects": false,
-  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "lint": "tsc -p tsconfig.json --noEmit"
   },
-  "dependencies": {"@pandapaylens/core": "workspace:*", "zod": "4.6.7"}
+  "dependencies": {
+    "@pandapaylens/core": "workspace:*",
+    "zod": "4.6.7"
+  }
 }

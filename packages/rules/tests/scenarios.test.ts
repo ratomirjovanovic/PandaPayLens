@@ -33,14 +33,21 @@ describe("reference scenarios", () => {
   it("Stripe authentication required: unresolved, decoded", () => {
     const r = analyzeFixture("stripe/authentication-required.json");
     expect(ruleIds(r)).toEqual(["UNRESOLVED_OUTCOME"]);
-    expect(r.errors[0]).toMatchObject({ category: "authentication_required", retry: "customer_action_required" });
+    expect(r.errors[0]).toMatchObject({
+      category: "authentication_required",
+      retry: "customer_action_required",
+    });
   });
 
   it("Stripe duplicate delivery is informational, not a bug", () => {
     const r = analyzeFixture("stripe/duplicate-webhook.json");
     expect(r.findings).toHaveLength(1);
     const f = r.findings[0]!;
-    expect(f).toMatchObject({ ruleId: "DUPLICATE_DELIVERY", severity: "info", confidence: "confirmed" });
+    expect(f).toMatchObject({
+      ruleId: "DUPLICATE_DELIVERY",
+      severity: "info",
+      confidence: "confirmed",
+    });
     expect(f.explanation).toMatch(/not necessarily an application bug/);
     expect(f.limitations.join(" ")).toMatch(/cannot show whether your application processed/);
   });
@@ -48,9 +55,17 @@ describe("reference scenarios", () => {
   it("Stripe out-of-order arrival with receipt timestamps is confirmed", () => {
     const r = analyzeFixture("stripe/out-of-order.json");
     expect(r.findings).toHaveLength(1);
-    expect(r.findings[0]).toMatchObject({ ruleId: "OUT_OF_ORDER_ARRIVAL", severity: "info", confidence: "confirmed" });
+    expect(r.findings[0]).toMatchObject({
+      ruleId: "OUT_OF_ORDER_ARRIVAL",
+      severity: "info",
+      confidence: "confirmed",
+    });
     // Timeline is chronological by event time regardless of arrival.
-    expect(r.events.map((e) => e.eventType)).toEqual(["payment_intent.created", "charge.succeeded", "payment_intent.succeeded"]);
+    expect(r.events.map((e) => e.eventType)).toEqual([
+      "payment_intent.created",
+      "charge.succeeded",
+      "payment_intent.succeeded",
+    ]);
   });
 
   it("out-of-order from file order alone is only 'possible'", () => {
@@ -62,7 +77,11 @@ describe("reference scenarios", () => {
 
   it("Stripe terminal-state violation", () => {
     const r = analyzeFixture("stripe/state-inconsistency.json");
-    expect(r.findings[0]).toMatchObject({ ruleId: "POTENTIAL_STATE_INCONSISTENCY", severity: "medium", confidence: "strong" });
+    expect(r.findings[0]).toMatchObject({
+      ruleId: "POTENTIAL_STATE_INCONSISTENCY",
+      severity: "medium",
+      confidence: "strong",
+    });
   });
 
   it("Stripe api_error: verify before retry", () => {
@@ -74,7 +93,11 @@ describe("reference scenarios", () => {
 
   it("Adyen duplicate + conflicting capture", () => {
     const r = analyzeFixture("adyen/duplicate-and-conflict.json");
-    expect(ruleIds(r)).toEqual(["CONFLICTING_OBSERVATIONS", "DUPLICATE_DELIVERY", "PAYMENT_FAILURE"]);
+    expect(ruleIds(r)).toEqual([
+      "CONFLICTING_OBSERVATIONS",
+      "DUPLICATE_DELIVERY",
+      "PAYMENT_FAILURE",
+    ]);
     const conflict = r.findings.find((f) => f.ruleId === "CONFLICTING_OBSERVATIONS")!;
     expect(conflict.evidenceEventIds).toHaveLength(2);
   });
@@ -82,7 +105,10 @@ describe("reference scenarios", () => {
   it("Adyen retry risk: two authorisations for one order and an uncertain error", () => {
     const r = analyzeFixture("adyen/retry-risk.json");
     const risks = r.findings.filter((f) => f.ruleId === "POSSIBLE_RETRY_RISK");
-    expect(risks.map((f) => f.title)).toEqual(["Several successful authorizations for one order reference", "Outcome of the original request is unknown"]);
+    expect(risks.map((f) => f.title)).toEqual([
+      "Several successful authorizations for one order reference",
+      "Outcome of the original request is unknown",
+    ]);
     expect(risks.every((f) => f.severity !== "critical" && f.severity !== "high")).toBe(true);
   });
 
@@ -101,32 +127,91 @@ describe("reference scenarios", () => {
   });
 
   it("a single failure event does not invent other lifecycle events", () => {
-    const r = analyze(JSON.stringify({ id: "evt_x", object: "event", created: 1, type: "payment_intent.payment_failed", data: { object: { id: "pi_x", object: "payment_intent", status: "requires_payment_method", last_payment_error: { type: "card_error", code: "card_declined", decline_code: "generic_decline" } } } }));
+    const r = analyze(
+      JSON.stringify({
+        id: "evt_x",
+        object: "event",
+        created: 1,
+        type: "payment_intent.payment_failed",
+        data: {
+          object: {
+            id: "pi_x",
+            object: "payment_intent",
+            status: "requires_payment_method",
+            last_payment_error: {
+              type: "card_error",
+              code: "card_declined",
+              decline_code: "generic_decline",
+            },
+          },
+        },
+      }),
+    );
     expect(r.events).toHaveLength(1);
     expect(ruleIds(r)).toEqual(["PAYMENT_FAILURE"]);
   });
 
   it("Adyen modification without originalReference", () => {
-    const r = analyze(JSON.stringify({ notificationItems: [{ NotificationRequestItem: { eventCode: "CAPTURE", success: "true", pspReference: "CAP" } }] }));
-    expect(r.findings.find((f) => f.ruleId === "MISSING_REFERENCE")).toMatchObject({ severity: "medium", title: "Adyen modification without originalReference" });
+    const r = analyze(
+      JSON.stringify({
+        notificationItems: [
+          {
+            NotificationRequestItem: { eventCode: "CAPTURE", success: "true", pspReference: "CAP" },
+          },
+        ],
+      }),
+    );
+    expect(r.findings.find((f) => f.ruleId === "MISSING_REFERENCE")).toMatchObject({
+      severity: "medium",
+      title: "Adyen modification without originalReference",
+    });
   });
 
   it("Adyen capture after refused authorisation, and cancel + capture", () => {
     const items = [
-      { eventCode: "AUTHORISATION", success: "false", pspReference: "P", eventDate: "2026-01-01T00:00:00Z", reason: "Refused" },
-      { eventCode: "CAPTURE", success: "true", pspReference: "C", originalReference: "P", eventDate: "2026-01-01T00:01:00Z" },
-      { eventCode: "CANCELLATION", success: "true", pspReference: "X", originalReference: "P", eventDate: "2026-01-01T00:02:00Z" },
+      {
+        eventCode: "AUTHORISATION",
+        success: "false",
+        pspReference: "P",
+        eventDate: "2026-01-01T00:00:00Z",
+        reason: "Refused",
+      },
+      {
+        eventCode: "CAPTURE",
+        success: "true",
+        pspReference: "C",
+        originalReference: "P",
+        eventDate: "2026-01-01T00:01:00Z",
+      },
+      {
+        eventCode: "CANCELLATION",
+        success: "true",
+        pspReference: "X",
+        originalReference: "P",
+        eventDate: "2026-01-01T00:02:00Z",
+      },
     ];
-    const r = analyze(JSON.stringify({ notificationItems: items.map((i) => ({ NotificationRequestItem: i })) }));
-    expect(r.findings.filter((f) => f.ruleId === "POTENTIAL_STATE_INCONSISTENCY").map((f) => f.title)).toEqual([
+    const r = analyze(
+      JSON.stringify({ notificationItems: items.map((i) => ({ NotificationRequestItem: i })) }),
+    );
+    expect(
+      r.findings.filter((f) => f.ruleId === "POTENTIAL_STATE_INCONSISTENCY").map((f) => f.title),
+    ).toEqual([
       "Capture succeeded for a refused authorization",
       "Both cancellation and capture succeeded",
     ]);
   });
 
   it("never emits critical or high severity from the default catalog fixtures", () => {
-    for (const f of ["stripe/successful-payment.json", "stripe/duplicate-webhook.json", "adyen/duplicate-and-conflict.json", "adyen/retry-risk.json", "mixed/unrelated-transactions.json"]) {
-      for (const finding of analyzeFixture(f).findings) expect(["critical", "high"]).not.toContain(finding.severity);
+    for (const f of [
+      "stripe/successful-payment.json",
+      "stripe/duplicate-webhook.json",
+      "adyen/duplicate-and-conflict.json",
+      "adyen/retry-risk.json",
+      "mixed/unrelated-transactions.json",
+    ]) {
+      for (const finding of analyzeFixture(f).findings)
+        expect(["critical", "high"]).not.toContain(finding.severity);
     }
   });
 
@@ -147,7 +232,11 @@ describe("reports", () => {
     expect(report).toMatchObject({
       tool: "PandaPayLens",
       catalogVersion: "2026.10.0",
-      redaction: { identifiersMasked: true, sensitiveFieldsExcluded: true, sensitiveDataDetected: true },
+      redaction: {
+        identifiersMasked: true,
+        sensitiveFieldsExcluded: true,
+        sensitiveDataDetected: true,
+      },
       disclaimer: REPORT_DISCLAIMER,
     });
     const json = toJsonReport(result);
@@ -177,12 +266,20 @@ describe("reports", () => {
   });
 
   it("states when no events were supplied", () => {
-    expect(toMarkdownReport(analyzeFixture("malformed/unknown-provider-error.json"))).toMatch(/transaction history is not available/);
+    expect(toMarkdownReport(analyzeFixture("malformed/unknown-provider-error.json"))).toMatch(
+      /transaction history is not available/,
+    );
   });
 
   it("is deterministic for the same input and clock", () => {
-    const a = toJsonReport(analyze(fixture("adyen/retry-risk.json"))).replace(/"durationMs": [\d.]+/, "");
-    const b = toJsonReport(analyze(fixture("adyen/retry-risk.json"))).replace(/"durationMs": [\d.]+/, "");
+    const a = toJsonReport(analyze(fixture("adyen/retry-risk.json"))).replace(
+      /"durationMs": [\d.]+/,
+      "",
+    );
+    const b = toJsonReport(analyze(fixture("adyen/retry-risk.json"))).replace(
+      /"durationMs": [\d.]+/,
+      "",
+    );
     expect(a).toBe(b);
   });
 });

@@ -42,7 +42,10 @@ import {
 
 export const ADYEN_ADAPTER_VERSION = "0.1.0";
 
-const Amount = z.looseObject({ value: z.number().int().optional(), currency: z.string().optional() });
+const Amount = z.looseObject({
+  value: z.number().int().optional(),
+  currency: z.string().optional(),
+});
 
 const NotificationRequestItem = z.looseObject({
   eventCode: z.string().max(64),
@@ -93,40 +96,77 @@ function isObj(v: unknown): v is Record<string, unknown> {
 
 function detect(input: unknown): DetectionResult {
   const base = { provider: "adyen" };
-  const none: DetectionResult = { ...base, format: null, confidence: 0, supported: false, reasons: [] };
+  const none: DetectionResult = {
+    ...base,
+    format: null,
+    confidence: 0,
+    supported: false,
+    reasons: [],
+  };
   if (!isObj(input)) return none;
 
   if (Array.isArray(input.notificationItems)) {
     const first = input.notificationItems[0];
-    const item = isObj(first) && isObj(first.NotificationRequestItem) ? first.NotificationRequestItem : null;
+    const item =
+      isObj(first) && isObj(first.NotificationRequestItem) ? first.NotificationRequestItem : null;
     if (item && typeof item.eventCode === "string" && typeof item.pspReference === "string") {
       return {
         ...base,
         format: "adyen.webhook.standard",
         confidence: 0.98,
         supported: true,
-        reasons: ["has notificationItems[].NotificationRequestItem", "items carry eventCode and pspReference"],
+        reasons: [
+          "has notificationItems[].NotificationRequestItem",
+          "items carry eventCode and pspReference",
+        ],
       };
     }
-    return { ...base, format: "adyen.webhook.standard", confidence: 0.6, supported: true, reasons: ["has notificationItems, but items are not standard NotificationRequestItems"] };
+    return {
+      ...base,
+      format: "adyen.webhook.standard",
+      confidence: 0.6,
+      supported: true,
+      reasons: ["has notificationItems, but items are not standard NotificationRequestItems"],
+    };
   }
 
-  if (typeof input.resultCode === "string" && (typeof input.pspReference === "string" || typeof input.merchantReference === "string")) {
+  if (
+    typeof input.resultCode === "string" &&
+    (typeof input.pspReference === "string" || typeof input.merchantReference === "string")
+  ) {
     const known = input.resultCode in RESULT_CODES;
     return {
       ...base,
       format: "adyen.payment_response",
       confidence: known ? 0.9 : 0.55,
       supported: true,
-      reasons: [known ? `resultCode "${input.resultCode}" is a documented Adyen result code` : "has resultCode and a reference"],
+      reasons: [
+        known
+          ? `resultCode "${input.resultCode}" is a documented Adyen result code`
+          : "has resultCode and a reference",
+      ],
     };
   }
 
-  if (typeof input.status === "number" && typeof input.errorCode === "string" && (typeof input.errorType === "string" || typeof input.message === "string")) {
-    return { ...base, format: "adyen.api_error", confidence: 0.85, supported: true, reasons: ["has numeric status, errorCode and errorType/message"] };
+  if (
+    typeof input.status === "number" &&
+    typeof input.errorCode === "string" &&
+    (typeof input.errorType === "string" || typeof input.message === "string")
+  ) {
+    return {
+      ...base,
+      format: "adyen.api_error",
+      confidence: 0.85,
+      supported: true,
+      reasons: ["has numeric status, errorCode and errorType/message"],
+    };
   }
 
-  if (typeof input.type === "string" && isObj(input.data) && (input.environment === "test" || input.environment === "live")) {
+  if (
+    typeof input.type === "string" &&
+    isObj(input.data) &&
+    (input.environment === "test" || input.environment === "live")
+  ) {
     return {
       ...base,
       format: "adyen.webhook.other",
@@ -140,7 +180,10 @@ function detect(input: unknown): DetectionResult {
   return none;
 }
 
-function parse(input: unknown, format: string): { ok: true; value: AdyenParsed } | { ok: false; issues: string[] } {
+function parse(
+  input: unknown,
+  format: string,
+): { ok: true; value: AdyenParsed } | { ok: false; issues: string[] } {
   const table = {
     "adyen.webhook.standard": ["webhook", StandardWebhook],
     "adyen.payment_response": ["payment_response", PaymentResponse],
@@ -149,7 +192,11 @@ function parse(input: unknown, format: string): { ok: true; value: AdyenParsed }
   const entry = table[format as keyof typeof table];
   if (!entry) return { ok: false, issues: [`Unsupported Adyen format "${format}".`] };
   const r = entry[1].safeParse(input);
-  if (!r.success) return { ok: false, issues: r.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`) };
+  if (!r.success)
+    return {
+      ok: false,
+      issues: r.error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`),
+    };
   return { ok: true, value: { kind: entry[0], value: r.data } as AdyenParsed };
 }
 
@@ -172,7 +219,9 @@ function itemOutcome(item: Item): Outcome {
 }
 
 function clean(d: NormalizedEventDraft): NormalizedEventDraft {
-  return Object.fromEntries(Object.entries(d).filter(([, v]) => v !== undefined)) as NormalizedEventDraft;
+  return Object.fromEntries(
+    Object.entries(d).filter(([, v]) => v !== undefined),
+  ) as NormalizedEventDraft;
 }
 
 function normalize(parsed: AdyenParsed, ctx: NormalizeContext): NormalizedEventDraft[] {
@@ -208,9 +257,14 @@ function normalize(parsed: AdyenParsed, ctx: NormalizeContext): NormalizedEventD
           isModification: info?.modification ?? null,
           // `reason` on successful authorisations contains auth code, card
           // summary and expiry, so it is only kept for failures.
-          ...(item.success === "false" && item.reason ? { reason: safeText(item.reason, 200) ?? "" } : {}),
+          ...(item.success === "false" && item.reason
+            ? { reason: safeText(item.reason, 200) ?? "" }
+            : {}),
         },
-        source: { recordIndex: ctx.recordIndex, path: `notificationItems[${i}].NotificationRequestItem` },
+        source: {
+          recordIndex: ctx.recordIndex,
+          path: `notificationItems[${i}].NotificationRequestItem`,
+        },
         ...observed,
       });
     });
@@ -236,7 +290,9 @@ function normalize(parsed: AdyenParsed, ctx: NormalizeContext): NormalizedEventD
         attributes: {
           resultCode: r.resultCode,
           ...(r.refusalReason ? { refusalReason: safeText(r.refusalReason, 200) ?? "" } : {}),
-          ...(r.refusalReasonCode !== undefined ? { refusalReasonCode: String(r.refusalReasonCode) } : {}),
+          ...(r.refusalReasonCode !== undefined
+            ? { refusalReasonCode: String(r.refusalReasonCode) }
+            : {}),
         },
         source: { recordIndex: ctx.recordIndex, path: "" },
         ...observed,
@@ -274,7 +330,10 @@ function decodeRefusal(
   resultCode: string,
   reasonCode: string | undefined,
   reasonText: string | undefined,
-  base: Pick<DecodedErrorDraft, "sourceFormat" | "source"> & { paymentReference?: string; attemptReference?: string },
+  base: Pick<DecodedErrorDraft, "sourceFormat" | "source"> & {
+    paymentReference?: string;
+    attemptReference?: string;
+  },
 ): DecodedErrorDraft {
   const found = refusalEntry(reasonCode, reasonText);
   const missing: string[] = [];
@@ -289,7 +348,8 @@ function decodeRefusal(
   } else {
     entry = {
       category: "card_declined",
-      explanation: "The payment was refused, but the refusal reason is not in the PandaPayLens catalog.",
+      explanation:
+        "The payment was refused, but the refusal reason is not in the PandaPayLens catalog.",
       nextAction: "Check the refusal reason in the Adyen Customer Area.",
       retry: "unknown",
       retryExplanation: "Without a known refusal reason, retry safety cannot be assessed.",
@@ -297,8 +357,12 @@ function decodeRefusal(
     confidence = "insufficient";
   }
   if (!reasonCode && !reasonText) missing.push("No refusal reason was supplied.");
-  else if (!found) missing.push(`Refusal reason "${safeText(reasonText ?? reasonCode, 80)}" is not in the PandaPayLens catalog yet.`);
-  if (!base.paymentReference) missing.push("No pspReference; the payment cannot be looked up from this record.");
+  else if (!found)
+    missing.push(
+      `Refusal reason "${safeText(reasonText ?? reasonCode, 80)}" is not in the PandaPayLens catalog yet.`,
+    );
+  if (!base.paymentReference)
+    missing.push("No pspReference; the payment cannot be looked up from this record.");
 
   const subCodes: Record<string, string> = { resultCode };
   if (found) subCodes.refusalReasonCode = found.key;
@@ -332,7 +396,10 @@ function decodeErrors(parsed: AdyenParsed, ctx: NormalizeContext): DecodedErrorD
       out.push(
         decodeRefusal("Refused", undefined, item.reason, {
           sourceFormat: ctx.format,
-          source: { recordIndex: ctx.recordIndex, path: `notificationItems[${i}].NotificationRequestItem` },
+          source: {
+            recordIndex: ctx.recordIndex,
+            path: `notificationItems[${i}].NotificationRequestItem`,
+          },
           ...(psp ? { paymentReference: psp, attemptReference: psp } : {}),
         }),
       );
@@ -345,11 +412,16 @@ function decodeErrors(parsed: AdyenParsed, ctx: NormalizeContext): DecodedErrorD
     if (!["Refused", "Error", "Cancelled"].includes(r.resultCode)) return [];
     const psp = safeId(r.pspReference);
     return [
-      decodeRefusal(r.resultCode, r.refusalReasonCode !== undefined ? String(r.refusalReasonCode) : undefined, r.refusalReason, {
-        sourceFormat: ctx.format,
-        source: { recordIndex: ctx.recordIndex, path: "" },
-        ...(psp ? { paymentReference: psp, attemptReference: psp } : {}),
-      }),
+      decodeRefusal(
+        r.resultCode,
+        r.refusalReasonCode !== undefined ? String(r.refusalReasonCode) : undefined,
+        r.refusalReason,
+        {
+          sourceFormat: ctx.format,
+          source: { recordIndex: ctx.recordIndex, path: "" },
+          ...(psp ? { paymentReference: psp, attemptReference: psp } : {}),
+        },
+      ),
     ];
   }
 
@@ -368,14 +440,18 @@ function decodeErrors(parsed: AdyenParsed, ctx: NormalizeContext): DecodedErrorD
       category: entry?.category ?? "unknown",
       ...(message ? { providerMessage: message } : {}),
       explanation: entry?.explanation ?? "PandaPayLens does not recognize this Adyen error.",
-      nextAction: entry?.nextAction ?? "Check the Adyen error code reference and the message field.",
+      nextAction:
+        entry?.nextAction ?? "Check the Adyen error code reference and the message field.",
       retry: entry?.retry ?? "unknown",
-      retryExplanation: entry?.retryExplanation ?? "Retry safety cannot be assessed for this error.",
+      retryExplanation:
+        entry?.retryExplanation ?? "Retry safety cannot be assessed for this error.",
       // Categorized by errorType/HTTP status only; individual error codes
       // are not mapped yet.
       confidence: entry ? "possible" : "insufficient",
       documentation: [{ title: "Adyen API error codes", url: ERROR_CODES_URL }],
-      missingInformation: entry ? [] : ["Neither errorType nor HTTP status maps to a known category."],
+      missingInformation: entry
+        ? []
+        : ["Neither errorType nor HTTP status maps to a known category."],
       ...(psp ? { paymentReference: psp } : {}),
     },
   ];
@@ -386,9 +462,18 @@ export const adyenAdapter: ProviderAdapter<AdyenParsed> = {
   displayName: "Adyen",
   version: ADYEN_ADAPTER_VERSION,
   supportedFormats: [
-    { id: "adyen.webhook.standard", description: "Standard payment webhook (notificationItems / NotificationRequestItem)" },
-    { id: "adyen.payment_response", description: "Payment API response with resultCode and pspReference" },
-    { id: "adyen.api_error", description: "API error response (status, errorCode, errorType, message)" },
+    {
+      id: "adyen.webhook.standard",
+      description: "Standard payment webhook (notificationItems / NotificationRequestItem)",
+    },
+    {
+      id: "adyen.payment_response",
+      description: "Payment API response with resultCode and pspReference",
+    },
+    {
+      id: "adyen.api_error",
+      description: "API error response (status, errorCode, errorType, message)",
+    },
   ],
   detect,
   parse,

@@ -1,5 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { findSensitivePaths, isBlockedKey, luhnValid, maskIdentifier, redactDeep, redactText, REDACTED, safeId, safeText, minorUnits, upperCurrency } from "@pandapaylens/core";
+import {
+  findSensitivePaths,
+  isBlockedKey,
+  luhnValid,
+  maskIdentifier,
+  redactDeep,
+  redactText,
+  REDACTED,
+  safeId,
+  safeText,
+  minorUnits,
+  upperCurrency,
+} from "@pandapaylens/core";
 
 describe("luhnValid", () => {
   it("accepts valid test PANs and rejects others", () => {
@@ -34,11 +46,24 @@ describe("redactDeep", () => {
   it("hides blocked keys at any depth, including whole subtrees", () => {
     const report = { paths: [] as string[] };
     const out = redactDeep(
-      { a: { card: { number: "4242424242424242", cvc: "123", brand: "visa" } }, billing_address: { line1: "Main st" }, list: [{ email: "x@y.zz" }] },
+      {
+        a: { card: { number: "4242424242424242", cvc: "123", brand: "visa" } },
+        billing_address: { line1: "Main st" },
+        list: [{ email: "x@y.zz" }],
+      },
       report,
     );
-    expect(out).toEqual({ a: { card: { number: REDACTED, cvc: REDACTED, brand: "visa" } }, billing_address: REDACTED, list: [{ email: REDACTED }] });
-    expect(report.paths).toEqual(["a.card.number", "a.card.cvc", "billing_address", "list[0].email"]);
+    expect(out).toEqual({
+      a: { card: { number: REDACTED, cvc: REDACTED, brand: "visa" } },
+      billing_address: REDACTED,
+      list: [{ email: REDACTED }],
+    });
+    expect(report.paths).toEqual([
+      "a.card.number",
+      "a.card.cvc",
+      "billing_address",
+      "list[0].email",
+    ]);
   });
 
   it("does not flag empty or null blocked values", () => {

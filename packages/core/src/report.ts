@@ -21,7 +21,11 @@ export type DiagnosticReport = {
   coreVersion: string;
   catalogVersion: string;
   providerOverride: string | null;
-  redaction: { identifiersMasked: boolean; sensitiveFieldsExcluded: true; sensitiveDataDetected: boolean };
+  redaction: {
+    identifiersMasked: boolean;
+    sensitiveFieldsExcluded: true;
+    sensitiveDataDetected: boolean;
+  };
   disclaimer: string;
   records: AnalysisResult["records"];
   events: NormalizedEvent[];
@@ -32,7 +36,13 @@ export type DiagnosticReport = {
   limitations: string[];
 };
 
-const ID_FIELDS = ["eventReference", "paymentReference", "relatedReference", "merchantReference", "deliveryKey"] as const;
+const ID_FIELDS = [
+  "eventReference",
+  "paymentReference",
+  "relatedReference",
+  "merchantReference",
+  "deliveryKey",
+] as const;
 
 function maskEvent(e: NormalizedEvent): NormalizedEvent {
   const out: NormalizedEvent = { ...e, attributes: { ...e.attributes } };
@@ -53,7 +63,11 @@ function maskDeliveryKey(key: string): string {
 function scrubAttributes(e: NormalizedEvent): NormalizedEvent {
   const attributes: NormalizedEvent["attributes"] = {};
   for (const [k, v] of Object.entries(e.attributes)) {
-    attributes[k] = Array.isArray(v) ? v.map((x) => (typeof x === "string" ? scrub(x) : x)) : typeof v === "string" ? scrub(v) : v;
+    attributes[k] = Array.isArray(v)
+      ? v.map((x) => (typeof x === "string" ? scrub(x) : x))
+      : typeof v === "string"
+        ? scrub(v)
+        : v;
   }
   return { ...e, attributes };
 }
@@ -75,7 +89,9 @@ function assembleReport(result: AnalysisResult, options: ReportOptions): Diagnos
     "Only events present in the supplied data are shown; missing lifecycle events are not inferred.",
   ];
   if (result.arrivalOrderInferred) {
-    limitations.push("No receipt timestamps were supplied; arrival order is assumed from the order of records in the input.");
+    limitations.push(
+      "No receipt timestamps were supplied; arrival order is assumed from the order of records in the input.",
+    );
   }
   return {
     tool: "PandaPayLens",
@@ -84,7 +100,11 @@ function assembleReport(result: AnalysisResult, options: ReportOptions): Diagnos
     coreVersion: result.meta.coreVersion,
     catalogVersion: result.meta.catalogVersion,
     providerOverride: result.meta.providerOverride,
-    redaction: { identifiersMasked: mask, sensitiveFieldsExcluded: true, sensitiveDataDetected: result.sensitiveData.detected },
+    redaction: {
+      identifiersMasked: mask,
+      sensitiveFieldsExcluded: true,
+      sensitiveDataDetected: result.sensitiveData.detected,
+    },
     disclaimer: REPORT_DISCLAIMER,
     records: result.records,
     events: result.events.map((e) => scrubAttributes(mask ? maskEvent(e) : e)),
@@ -94,7 +114,10 @@ function assembleReport(result: AnalysisResult, options: ReportOptions): Diagnos
       ...(e.providerMessage ? { providerMessage: scrub(e.providerMessage) } : {}),
       ...(e.paymentReference ? { paymentReference: refMask(e.paymentReference) } : {}),
     })),
-    findings: result.findings.map((f) => ({ ...f, explanation: mask ? maskInlineIds(f.explanation) : f.explanation })),
+    findings: result.findings.map((f) => ({
+      ...f,
+      explanation: mask ? maskInlineIds(f.explanation) : f.explanation,
+    })),
     warnings: result.warnings,
     limitations,
   };
@@ -102,10 +125,9 @@ function assembleReport(result: AnalysisResult, options: ReportOptions): Diagnos
 
 /** Masks identifiers that rules quoted inside finding text. */
 function maskInlineIds(text: string): string {
-  return text.replace(/\b(?:pi|ch|evt|re|py|in|cus|pm|src)_[A-Za-z0-9]{6,}\b/g, (m) => maskIdentifier(m)).replace(
-    /\b[A-Z0-9]{16}\b/g,
-    (m) => (/\d/.test(m) ? maskIdentifier(m) : m),
-  );
+  return text
+    .replace(/\b(?:pi|ch|evt|re|py|in|cus|pm|src)_[A-Za-z0-9]{6,}\b/g, (m) => maskIdentifier(m))
+    .replace(/\b[A-Z0-9]{16}\b/g, (m) => (/\d/.test(m) ? maskIdentifier(m) : m));
 }
 
 export function toJsonReport(result: AnalysisResult, options?: ReportOptions): string {
@@ -133,10 +155,19 @@ export function toMarkdownReport(result: AnalysisResult, options?: ReportOptions
   lines.push(`- **Analyzed at:** ${esc(r.analyzedAt)}`);
   lines.push(`- **PandaPayLens core:** ${esc(r.coreVersion)}`);
   lines.push(`- **Rule catalog:** ${esc(r.catalogVersion)}`);
-  const formats = [...new Set(r.records.filter((x) => x.status === "analyzed").map((x) => `${x.provider} / ${x.format}`))];
+  const formats = [
+    ...new Set(
+      r.records.filter((x) => x.status === "analyzed").map((x) => `${x.provider} / ${x.format}`),
+    ),
+  ];
   lines.push(`- **Recognized formats:** ${formats.length ? formats.map(esc).join(", ") : "none"}`);
-  lines.push(`- **Identifiers:** ${r.redaction.identifiersMasked ? "masked" : "included"}; sensitive fields excluded`);
-  if (r.redaction.sensitiveDataDetected) lines.push("- **Sensitive data:** possible sensitive fields were detected in the input and excluded");
+  lines.push(
+    `- **Identifiers:** ${r.redaction.identifiersMasked ? "masked" : "included"}; sensitive fields excluded`,
+  );
+  if (r.redaction.sensitiveDataDetected)
+    lines.push(
+      "- **Sensitive data:** possible sensitive fields were detected in the input and excluded",
+    );
   lines.push("", `> ${esc(r.disclaimer)}`, "");
 
   if (r.errors.length) {
@@ -144,7 +175,8 @@ export function toMarkdownReport(result: AnalysisResult, options?: ReportOptions
     for (const e of r.errors) {
       lines.push(`### ${esc(e.provider)}: ${esc(e.code)}`, "");
       const subs = Object.entries(e.subCodes);
-      if (subs.length) lines.push(`- **Codes:** ${subs.map(([k, v]) => `${esc(k)}=${esc(v)}`).join(", ")}`);
+      if (subs.length)
+        lines.push(`- **Codes:** ${subs.map(([k, v]) => `${esc(k)}=${esc(v)}`).join(", ")}`);
       lines.push(`- **Category:** ${esc(e.category)}`);
       lines.push(`- **Explanation:** ${esc(e.explanation)}`);
       lines.push(`- **Next action:** ${esc(e.nextAction)}`);
@@ -152,7 +184,8 @@ export function toMarkdownReport(result: AnalysisResult, options?: ReportOptions
       lines.push(`- **Confidence:** ${esc(e.confidence)}`);
       if (e.providerMessage) lines.push(`- **Provider message:** ${esc(e.providerMessage)}`);
       for (const m of e.missingInformation) lines.push(`- **Missing:** ${esc(m)}`);
-      for (const d of e.documentation) if (SAFE_URL.test(d.url)) lines.push(`- **Docs:** ${esc(d.title)} — <${d.url}>`);
+      for (const d of e.documentation)
+        if (SAFE_URL.test(d.url)) lines.push(`- **Docs:** ${esc(d.title)} — <${d.url}>`);
       lines.push("");
     }
   }
@@ -164,7 +197,8 @@ export function toMarkdownReport(result: AnalysisResult, options?: ReportOptions
     lines.push(`- **Rule:** \`${f.ruleId}\` v${esc(f.ruleVersion)}`);
     lines.push(`- **Confidence:** ${esc(f.confidence)}`);
     lines.push(`- **Explanation:** ${esc(f.explanation)}`);
-    if (f.evidenceEventIds.length) lines.push(`- **Evidence:** ${f.evidenceEventIds.map(esc).join(", ")}`);
+    if (f.evidenceEventIds.length)
+      lines.push(`- **Evidence:** ${f.evidenceEventIds.map(esc).join(", ")}`);
     if (f.recommendedAction) lines.push(`- **Recommended:** ${esc(f.recommendedAction)}`);
     for (const l of f.limitations) lines.push(`- **Limitation:** ${esc(l)}`);
     lines.push("");

@@ -32,7 +32,9 @@ describe("cli", () => {
 
   it("lists providers as text and JSON", () => {
     expect(exec(["providers"]).out).toMatch(/adyen\.webhook\.standard/);
-    expect(JSON.parse(exec(["providers", "-f", "json"]).out).map((p: { id: string }) => p.id)).toEqual(["stripe", "adyen"]);
+    expect(
+      JSON.parse(exec(["providers", "-f", "json"]).out).map((p: { id: string }) => p.id),
+    ).toEqual(["stripe", "adyen"]);
   });
 
   it("analyzes a file and masks identifiers by default", () => {
@@ -44,11 +46,16 @@ describe("cli", () => {
   });
 
   it("includes identifiers on request", () => {
-    expect(exec(["analyze", "fx:stripe/successful-payment.json", "--include-identifiers"]).out).toContain("pi_3PPLsynthOK000001");
+    expect(
+      exec(["analyze", "fx:stripe/successful-payment.json", "--include-identifiers"]).out,
+    ).toContain("pi_3PPLsynthOK000001");
   });
 
   it("reads stdin", () => {
-    const r = exec(["decode", "-"], readFileSync(`${fixtures}stripe/insufficient-funds.json`, "utf8"));
+    const r = exec(
+      ["decode", "-"],
+      readFileSync(`${fixtures}stripe/insufficient-funds.json`, "utf8"),
+    );
     expect(r.code).toBe(EXIT.OK);
     expect(r.out).toMatch(/insufficient_funds/);
     expect(r.out).not.toMatch(/Timeline/);
@@ -62,21 +69,37 @@ describe("cli", () => {
 
   it("does not fail on a payment failure unless asked", () => {
     expect(exec(["analyze", "fx:adyen/declined-authorisation.json"]).code).toBe(EXIT.OK);
-    expect(exec(["analyze", "fx:adyen/declined-authorisation.json", "--fail-on", "low"]).code).toBe(EXIT.FINDINGS);
-    expect(exec(["analyze", "fx:adyen/declined-authorisation.json", "--fail-on", "medium"]).code).toBe(EXIT.OK);
+    expect(exec(["analyze", "fx:adyen/declined-authorisation.json", "--fail-on", "low"]).code).toBe(
+      EXIT.FINDINGS,
+    );
+    expect(
+      exec(["analyze", "fx:adyen/declined-authorisation.json", "--fail-on", "medium"]).code,
+    ).toBe(EXIT.OK);
   });
 
   it("emits JSON and Markdown reports", () => {
-    expect(JSON.parse(exec(["analyze", "fx:adyen/retry-risk.json", "-f", "json"]).out).tool).toBe("PandaPayLens");
-    expect(exec(["analyze", "fx:adyen/retry-risk.json", "-f", "markdown"]).out).toMatch(/^# PandaPayLens diagnostic report/);
+    expect(JSON.parse(exec(["analyze", "fx:adyen/retry-risk.json", "-f", "json"]).out).tool).toBe(
+      "PandaPayLens",
+    );
+    expect(exec(["analyze", "fx:adyen/retry-risk.json", "-f", "markdown"]).out).toMatch(
+      /^# PandaPayLens diagnostic report/,
+    );
   });
 
   it.each([
-    [["analyze", "fx:malformed/invalid-json.txt"], EXIT.INVALID_INPUT, /Invalid JSON.*line 1, column/],
+    [
+      ["analyze", "fx:malformed/invalid-json.txt"],
+      EXIT.INVALID_INPUT,
+      /Invalid JSON.*line 1, column/,
+    ],
     [["analyze", "missing-file.json"], EXIT.INVALID_INPUT, /File not found/],
     [["analyze"], EXIT.INVALID_INPUT, /Missing input/],
     [["analyze", "fx:malformed/unknown-provider-error.json"], EXIT.UNSUPPORTED, /^$/],
-    [["analyze", "fx:stripe/insufficient-funds.json", "-p", "paypal"], EXIT.UNSUPPORTED, /Unknown provider/],
+    [
+      ["analyze", "fx:stripe/insufficient-funds.json", "-p", "paypal"],
+      EXIT.UNSUPPORTED,
+      /Unknown provider/,
+    ],
     [["analyze", "x", "--format", "pdf"], EXIT.INVALID_INPUT, /Unknown --format/],
     [["analyze", "x", "--fail-on", "severe"], EXIT.INVALID_INPUT, /Unknown --fail-on/],
     [["analyze", "x", "--bogus"], EXIT.INVALID_INPUT, /Unknown option/],
@@ -88,13 +111,21 @@ describe("cli", () => {
   });
 
   it("forces a provider with --provider", () => {
-    const r = exec(["analyze", "-", "-p", "adyen"], JSON.stringify({ error: { type: "card_error" } }));
+    const r = exec(
+      ["analyze", "-", "-p", "adyen"],
+      JSON.stringify({ error: { type: "card_error" } }),
+    );
     expect(r.code).toBe(EXIT.UNSUPPORTED);
   });
 
   it("strips terminal control sequences from untrusted text", () => {
     expect(stripControl("ok\u001b[31mred\u0007‮")).toBe("ok[31mred");
-    const r = exec(["decode", "-"], JSON.stringify({ error: { type: "card_error", code: "x\u001b]0;pwned\u0007", message: "m\u001b[2J" } }));
+    const r = exec(
+      ["decode", "-"],
+      JSON.stringify({
+        error: { type: "card_error", code: "x\u001b]0;pwned\u0007", message: "m\u001b[2J" },
+      }),
+    );
     // eslint-disable-next-line no-control-regex
     expect(r.out).not.toMatch(/\u001b/);
   });

@@ -8,7 +8,7 @@ describe("parseInput", () => {
   });
 
   it("splits a top-level array into records", () => {
-    const r = parseInput("[1, {\"b\":2}]");
+    const r = parseInput('[1, {"b":2}]');
     expect(r.ok && r.value.records).toEqual([1, { b: 2 }]);
   });
 

@@ -178,7 +178,10 @@ export type ProviderAdapter<Parsed = unknown> = {
 
   detect(input: unknown): DetectionResult;
   /** Validate the input against the detected format. Never throws. */
-  parse(input: unknown, format: string): { ok: true; value: Parsed } | { ok: false; issues: string[] };
+  parse(
+    input: unknown,
+    format: string,
+  ): { ok: true; value: Parsed } | { ok: false; issues: string[] };
   normalize(parsed: Parsed, ctx: NormalizeContext): NormalizedEventDraft[];
   /** Errors carried by the input. A webhook batch can contain several. */
   decodeErrors(parsed: Parsed, ctx: NormalizeContext): DecodedErrorDraft[];
