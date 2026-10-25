@@ -54,7 +54,7 @@ Every change goes through a pull request, including the maintainer's own.
 3. **Commit in small, meaningful steps.** The first line says what the commit does in the imperative mood ("Add Trustly payout statuses"), at most about 72 characters. Add a body when the reason is not obvious.
 4. **Run the checks locally** (see below) before you open the pull request.
 5. **Open a pull request** that links the issue with `Closes #<number>` and fills in the template.
-6. **Review and merge.** CI must pass. The maintainer reviews, then merges with a squash or merge commit. The issue closes automatically.
+6. **Review and merge.** CI must pass. The maintainer reviews and squash-merges it. The issue closes and the branch is deleted automatically.
 
 ### Branch names
 
