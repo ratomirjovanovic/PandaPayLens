@@ -45,12 +45,48 @@ Open a `new-provider` issue first. A new adapter needs:
 6. Fixtures: valid, missing optional fields, unknown fields, duplicates, out-of-order, unsupported types.
 7. Docs and supported-version notes.
 
+## Workflow
+
+Every change goes through a pull request, including the maintainer's own.
+
+1. **Start from an issue.** Search existing issues first. If none fits, open one with the problem, a proposed solution and acceptance criteria. Small typo fixes can skip this step.
+2. **Create one branch per issue** from an up-to-date `main`, named `<type>/<issue>-<short-description>`.
+3. **Commit in small, meaningful steps.** The first line says what the commit does in the imperative mood ("Add Trustly payout statuses"), at most about 72 characters. Add a body when the reason is not obvious.
+4. **Run the checks locally** (see below) before you open the pull request.
+5. **Open a pull request** that links the issue with `Closes #<number>` and fills in the template.
+6. **Review and merge.** CI must pass. The maintainer reviews, then merges with a squash or merge commit. The issue closes automatically.
+
+### Branch names
+
+| Prefix      | Use for                                       | Example                        |
+| ----------- | --------------------------------------------- | ------------------------------ |
+| `feat/`     | new analyzer, CLI or site features            | `feat/4-cli-output-file`       |
+| `provider/` | new or improved provider adapters             | `provider/12-trustly`          |
+| `fix/`      | bug fixes                                     | `fix/15-skrill-padded-codes`   |
+| `docs/`     | documentation only                            | `docs/8-contribution-workflow` |
+| `chore/`    | tooling, templates, dependencies, CI          | `chore/7-issue-forms`          |
+| `security/` | hardening (vulnerabilities go to SECURITY.md) | `security/20-csp-report-only`  |
+
+### Checks before a pull request
+
+```bash
+pnpm typecheck
+pnpm format:check
+pnpm test
+pnpm build:pages && pnpm --filter @pandapaylens/pages run test:e2e   # UI changes
+```
+
+CI runs the same checks plus the full app build, end-to-end and privacy tests, and CodeQL.
+
 ## Pull requests
 
-- Keep PRs focused.
-- `pnpm test`, `pnpm typecheck` and `pnpm build` must pass.
-- Describe what changed and how you verified it.
+- Keep PRs focused: one issue, one concern.
+- Describe what changed and how you verified it, and add screenshots for UI changes.
 - Use the PR template checklist.
+
+## Releases
+
+PandaPayLens follows [Semantic Versioning](https://semver.org/). Each release is tagged, listed in [CHANGELOG.md](CHANGELOG.md) and published as a GitHub Release. Planned work is in [ROADMAP.md](ROADMAP.md).
 
 ## Reporting security issues
 

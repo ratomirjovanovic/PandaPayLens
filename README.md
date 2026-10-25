@@ -125,6 +125,7 @@ The core package has no dependency on React, Next.js, a database or the network.
 - [Providers](https://ratomirjovanovic.github.io/PandaPayLens/providers/)
 - [Deployment and self-hosting](docs/deployment.md)
 - [Adding a provider](docs/contributing/add-provider.md)
+- [Wiki](https://github.com/ratomirjovanovic/PandaPayLens/wiki): how analysis works, input formats, rules and the CLI
 
 ## Contributing
 
@@ -139,12 +140,9 @@ pnpm test:e2e         # Playwright against the full app (after pnpm build)
 
 ## Roadmap
 
-1. Foundation, analyzer, Stripe and Adyen: done
-2. Admin control plane with passkey MFA: done
-3. Wave 1 providers (payabl., Checkout.com, PayPal, Braintree, Mollie, Square): done, several with limited capabilities
-4. GitHub Pages demo and first tagged release: in progress
-5. High-risk providers (HR-1: CCBill, Segpay, Verotel, NETbilling, PXP, Trust Payments): in progress, each released only when tested
-6. Remaining waves: research done for most candidates; adapters follow wave by wave
+Released: the analyzer, CLI and demo (0.1.0), high-risk waves HR-1 (0.2.0) and HR-2 (0.3.0). In progress: wave HR-3 (Finrax, Inpay, DECTA, Trustly). Planned: research for the remaining general providers, XML input and npm packages.
+
+See [ROADMAP.md](ROADMAP.md) for details.
 
 ## License
 
