@@ -118,6 +118,21 @@ const BLOCKED_KEYS = new Set([
   "buyername",
   "buyeremail",
   "buyerip",
+  // Authorize.net card, track, credential and verification fields
+  "cardcode",
+  "expirationdate",
+  "track1",
+  "track2",
+  "tlvdata",
+  "datavalue",
+  "cardholderauthenticationvalue",
+  "transactionkey",
+  "nameonaccount",
+  "customerip",
+  "payeremail",
+  "secureacceptanceurl",
+  "transhash",
+  "transhashsha2",
 ]);
 
 const PATTERNS: { name: string; re: RegExp }[] = [
