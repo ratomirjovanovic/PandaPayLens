@@ -1,0 +1,108 @@
+[
+  {
+    "eventId": "PPLsynth-evt-0001-a",
+    "eventTimestamp": "2026-10-20T09:15:02.110",
+    "eventDetails": {
+      "classification": "payment",
+      "downstreamReference": "PPLsynth-ds-0001",
+      "orderReference": "PPLsynth-order-0001",
+      "transactionReference": "PPLsynth-txn-0001",
+      "type": "sentForAuthorization",
+      "date": "2026-10-20",
+      "amount": {
+        "value": 2599,
+        "currencyCode": "EUR"
+      },
+      "_links": {
+        "payment": {
+          "href": ""
+        }
+      }
+    }
+  },
+  {
+    "eventId": "PPLsynth-evt-0001-b",
+    "eventTimestamp": "2026-10-20T09:15:03.480",
+    "eventDetails": {
+      "classification": "payment",
+      "downstreamReference": "PPLsynth-ds-0001",
+      "orderReference": "PPLsynth-order-0001",
+      "transactionReference": "PPLsynth-txn-0001",
+      "paymentId": "payPPLsynthLifecycle0001",
+      "commandId": "cmdPPLsynthLifecycleAuth1",
+      "type": "authorized",
+      "date": "2026-10-20",
+      "amount": {
+        "value": 2599,
+        "currencyCode": "EUR"
+      },
+      "riskFactors": [
+        {
+          "type": "cvc",
+          "risk": "notChecked"
+        },
+        {
+          "type": "avs",
+          "risk": "notMatched",
+          "detail": "postcode"
+        }
+      ],
+      "paymentInstrument": {
+        "category": "consumer",
+        "countryCode": "GB",
+        "cardBrand": "visa",
+        "fundingType": "credit"
+      },
+      "_links": {
+        "payment": {
+          "href": ""
+        }
+      }
+    }
+  },
+  {
+    "eventId": "PPLsynth-evt-0001-c",
+    "eventTimestamp": "2026-10-20T11:02:44.002",
+    "eventDetails": {
+      "classification": "payment",
+      "downstreamReference": "PPLsynth-ds-0001",
+      "orderReference": "PPLsynth-order-0001",
+      "transactionReference": "PPLsynth-txn-0001",
+      "paymentId": "payPPLsynthLifecycle0001",
+      "commandId": "cmdPPLsynthLifecycleSett1",
+      "type": "sentForSettlement",
+      "date": "2026-10-20",
+      "reference": "PPLsynth-settle-0001",
+      "amount": {
+        "value": 2599,
+        "currencyCode": "EUR"
+      },
+      "_links": {
+        "payment": {
+          "href": ""
+        }
+      }
+    }
+  },
+  {
+    "eventId": "PPLsynth-evt-0001-d",
+    "eventTimestamp": "2026-10-21T06:30:00.000",
+    "eventDetails": {
+      "classification": "payment",
+      "downstreamReference": "PPLsynth-ds-0001",
+      "orderReference": "PPLsynth-order-0001",
+      "transactionReference": "PPLsynth-txn-0001",
+      "type": "settled",
+      "date": "2026-10-20",
+      "amount": {
+        "value": 2599,
+        "currencyCode": "EUR"
+      },
+      "_links": {
+        "payment": {
+          "href": ""
+        }
+      }
+    }
+  }
+]

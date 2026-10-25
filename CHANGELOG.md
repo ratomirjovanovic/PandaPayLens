@@ -2,7 +2,18 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.6.0] - 2026-10-25
+
+Wave 2 general providers.
+
+### Providers
+
+- New adapters with limited support, built from official documentation and tested with synthetic fixtures:
+  - Worldpay (Access Worldpay JSON): Events webhooks, Payments API and Card Payments v7 responses, `errorName` errors and Payment Queries. Refusal codes are decoded with the Worldpay or raw scheme reading the payload supports.
+  - Cybersource: REST Payments API responses and errors, the webhook envelope, Transaction Details and Pay by Bank payloads.
+  - Authorize.net: JSON transaction responses with the API and transaction result layers decoded separately, and webhooks.
+  - Nuvei: REST API 1.0 responses, payment and withdrawal DMNs and chargeback events, with codes decoded by field.
+- 30 of 42 roadmap providers can now be analyzed.
 
 ### Fixed
 

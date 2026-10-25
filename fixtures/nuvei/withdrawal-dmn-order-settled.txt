@@ -1,0 +1,6 @@
+POST /PPLsynth/nuvei/withdrawal-dmn HTTP/1.1
+Host: merchant.example.com
+Content-Type: application/x-www-form-urlencoded
+X-PPL-Fixture: synthetic; Nuvei publishes no raw withdrawal DMN, so this is built from the documented parameter table
+
+wdRequestId=PPLsynth-wd-3001&merchantWDRequestId=PPLsynth-mwd-3001&wdRequestState=Closed&wdRequestStatus=Approved&wdOrderId=PPLsynth-wdo-3001&wdOrderStatus=Settled&settlementType=Withdrawal&userPMId=PPLsynth-pm-1&pmDisplayName=PPLsynth+Card&gwTrxId=PPLsynth1110000000030000001&gwErrCode=0&gwExtendedErrorCode=0&gwReason=&apmErrorCode=0&apmErrorDetails=&merchantUniqueId=PPLsynth-mwd-3001&checksum=9d3e5f7a9c1b3d5f7e9a0c2e4f6b8d0a1c3e5f7a9b5e1f0c3a9b7d2e4f6a8c0b

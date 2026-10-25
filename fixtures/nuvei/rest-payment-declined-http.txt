@@ -1,0 +1,5 @@
+HTTP/1.1 200 OK
+Content-Type: application/json
+X-PPL-Fixture: synthetic; built from the documented output table and decline reason list, not an official Nuvei example
+
+{"orderId":"PPLsynth271308091","transactionStatus":"DECLINED","gwErrorCode":-1,"gwErrorReason":"Do not honor","gwExtendedErrorCode":0,"transactionType":"Auth","transactionId":"PPLsynth1110000000010304191","clientUniqueId":"PPLsynth-order-1003","internalRequestId":222320331,"status":"SUCCESS","errCode":0,"reason":"","merchantId":"PPLsynth427583496191624621","merchantSiteId":"PPLsynth142033","version":"1.0","merchantAdviceCode":"03"}

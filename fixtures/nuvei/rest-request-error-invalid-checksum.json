@@ -1,0 +1,10 @@
+{
+  "internalRequestId": 222320401,
+  "status": "ERROR",
+  "errCode": 1001,
+  "reason": "Invalid checksum",
+  "merchantId": "PPLsynth427583496191624621",
+  "merchantSiteId": "PPLsynth142033",
+  "version": "1.0",
+  "clientRequestId": "PPLsynth-request-1005"
+}

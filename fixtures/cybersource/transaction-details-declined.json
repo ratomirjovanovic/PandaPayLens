@@ -1,0 +1,14 @@
+{
+  "id": "PPLsynth00000000001601",
+  "rootId": "PPLsynth00000000001601",
+  "submitTimeUTC": "2026-10-20T17:00:00Z",
+  "clientReferenceInformation": { "code": "PPLsynth-order-1601" },
+  "applicationInformation": {
+    "reasonCode": "204",
+    "rCode": "0",
+    "applications": [{ "name": "ics_auth", "reasonCode": "204", "rCode": "0" }]
+  },
+  "_links": {
+    "self": { "href": "/tss/v2/transactions/PPLsynth00000000001601", "method": "GET" }
+  }
+}

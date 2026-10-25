@@ -1,0 +1,37 @@
+{
+  "paymentId": "payPPLsynthQueryLife0015",
+  "transactionReference": "PPLsynth-txn-0015",
+  "lastEvent": "refundRequestSubmitted",
+  "events": [
+    {
+      "eventName": "authorizationRequested",
+      "timestamp": "2026-10-20T09:00:00.100Z",
+      "commandId": "cmdPPLsynthQueryAuth0015"
+    },
+    {
+      "eventName": "authorizationSucceeded",
+      "timestamp": "2026-10-20T09:00:00.900Z",
+      "commandId": "cmdPPLsynthQueryAuth0015"
+    },
+    {
+      "eventName": "settlementRequested",
+      "timestamp": "2026-10-20T12:00:00.000Z",
+      "commandId": "cmdPPLsynthQuerySett0015"
+    },
+    {
+      "eventName": "settlementRequestSubmitted",
+      "timestamp": "2026-10-20T12:00:02.000Z",
+      "commandId": "cmdPPLsynthQuerySett0015"
+    },
+    {
+      "eventName": "refundRequested",
+      "timestamp": "2026-10-22T08:30:00.000Z",
+      "commandId": "cmdPPLsynthQueryRefd0015"
+    },
+    {
+      "eventName": "refundRequestSubmitted",
+      "timestamp": "2026-10-22T08:30:01.000Z",
+      "commandId": "cmdPPLsynthQueryRefd0015"
+    }
+  ]
+}

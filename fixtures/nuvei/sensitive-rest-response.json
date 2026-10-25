@@ -1,0 +1,46 @@
+{
+  "orderId": "PPLsynth271308099",
+  "userTokenId": "PLANTEDUSERTOKEN",
+  "paymentOption": {
+    "userPaymentOptionId": "PLANTEDUPO",
+    "card": {
+      "ccCardNumber": "4****PLANTED",
+      "bin": "PLANTEDBIN",
+      "last4Digits": "PLANTEDLAST4",
+      "ccExpMonth": "PLANTEDEXPMONTH",
+      "ccExpYear": "PLANTEDEXPYEAR",
+      "cardHolderName": "Planted Holder Name",
+      "paymentAccountReference": "PLANTEDPAR",
+      "cvv2Reply": "N",
+      "avsCode": "N",
+      "threeD": {
+        "acsUrl": "https://acs.example.com/PLANTEDACSURL",
+        "cReq": "PLANTEDCREQ",
+        "cavv": "PLANTEDCAVV",
+        "dsTransID": "PLANTEDDSTRANS",
+        "eci": "PLANTEDECI"
+      }
+    }
+  },
+  "transactionStatus": "DECLINED",
+  "gwErrorCode": -1,
+  "gwErrorReason": "Do not honor",
+  "gwExtendedErrorCode": 0,
+  "paymentMethodErrorCode": 0,
+  "paymentMethodErrorReason": "Contact planted.person@example.com",
+  "transactionType": "Sale",
+  "transactionId": "PPLsynth1110000000010304199",
+  "transactionLinkId": "PLANTEDLINKID",
+  "authCode": "PLANTEDAUTHCODE",
+  "customData": "PLANTEDCUSTOMDATA",
+  "sessionToken": "PLANTEDSESSIONTOKEN",
+  "clientUniqueId": "planted.buyer@example.com",
+  "internalRequestId": 222320499,
+  "status": "SUCCESS",
+  "errCode": 0,
+  "reason": "",
+  "merchantId": "PLANTEDMERCHANTID",
+  "merchantSiteId": "PLANTEDMERCHANTSITE",
+  "version": "1.0",
+  "clientRequestId": "PLANTEDCLIENTREQUEST"
+}

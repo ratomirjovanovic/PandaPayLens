@@ -1,0 +1,11 @@
+{
+  "eventType": "payments.authorization.status.rejected",
+  "webhookId": "PPLsynth-webhook-0001",
+  "productId": "payments",
+  "organizationId": "PPLsynth_org_0001",
+  "eventDate": "2026-10-20T16:00:01",
+  "transactionTraceId": "PPLsynth-trace-1301",
+  "retryNumber": 0,
+  "payload": "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2R0NNIn0.PPLsynthEncryptedKey1301.PPLsynthIv1301.PPLsynthCiphertext1301.PPLsynthTag1301",
+  "requestType": "NEW"
+}

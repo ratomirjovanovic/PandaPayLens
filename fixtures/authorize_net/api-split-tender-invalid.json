@@ -1,0 +1,12 @@
+{
+  "refId": "PPLsynth-ref-0701",
+  "messages": {
+    "resultCode": "Error",
+    "message": [
+      {
+        "code": "E00027",
+        "text": "The specified SplitTenderID is invalid."
+      }
+    ]
+  }
+}

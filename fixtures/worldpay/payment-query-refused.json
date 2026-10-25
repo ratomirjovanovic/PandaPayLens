@@ -1,0 +1,20 @@
+{
+  "paymentId": "payPPLsynthQueryRefus005",
+  "transactionReference": "PPLsynth-txn-0005",
+  "lastEvent": "authorizationRefused",
+  "events": [
+    {
+      "eventName": "authorizationRequested",
+      "timestamp": "2026-10-22T16:19:24.365Z",
+      "commandId": "cmdPPLsynthQueryRefus005"
+    },
+    {
+      "eventName": "authorizationRefused",
+      "timestamp": "2026-10-22T16:19:24.801Z",
+      "description": "Do not honour",
+      "code": "5",
+      "outcome": "refused",
+      "commandId": "cmdPPLsynthQueryRefus005"
+    }
+  ]
+}

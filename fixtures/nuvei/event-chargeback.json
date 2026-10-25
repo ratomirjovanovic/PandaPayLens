@@ -1,0 +1,32 @@
+{
+  "EventId": "PPLsynth-7d3e1c2a-1b4f-4e8a-9c0d-2f6a8b1e3c5d",
+  "EventDate": "2026-10-24T10:21:23.374",
+  "EventType": "Chargeback",
+  "ProcessingEntityType": "client",
+  "ProcessingEntityId": "PPLsynth151999723",
+  "AttemptNumber": 1,
+  "ClientId": 151999723,
+  "ClientName": "PPLsynth Test Client",
+  "EventDateUTC": "2026-10-24T08:21:23.3749665Z",
+  "EventCorrelationId": "PPLsynth-0bd473cb-093b-4540-971b-6f0773be755b",
+  "Chargeback": {
+    "Date": "10/24/2026 10:37:17",
+    "ChargebackStatusCategory": "Regular",
+    "Type": "Chargeback",
+    "Status": null,
+    "Amount": 10.25,
+    "Currency": "eur",
+    "ChargebackReason": "10.4 - Other Fraud-Card Absent Environment",
+    "ReasonMessage": "Other Fraud-Card Absent Environment",
+    "ChargebackReasonCategory": "Fraud",
+    "DisputeDueDate": null
+  },
+  "TransactionDetails": {
+    "TransactionId": "PPLsynth1110000000020000001",
+    "TransactionDate": "10/20/2026 10:15:00",
+    "ClientUniqueId": "PPLsynth-order-2001",
+    "AcquirerName": "PPLsynth Demo Bank",
+    "MaskedCardNumber": "4***********1111",
+    "ARN": "PPLsynth05295314304000000000456"
+  }
+}

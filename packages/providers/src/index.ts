@@ -11,6 +11,10 @@ import { checkoutAdapter } from "@pandapaylens/checkout";
 import { paypalAdapter } from "@pandapaylens/paypal";
 import { mollieAdapter } from "@pandapaylens/mollie";
 import { squareAdapter } from "@pandapaylens/square";
+import { nuveiAdapter } from "@pandapaylens/nuvei";
+import { authorizeNetAdapter } from "@pandapaylens/authorize-net";
+import { cybersourceAdapter } from "@pandapaylens/cybersource";
+import { worldpayAdapter } from "@pandapaylens/worldpay";
 import { trustlyAdapter } from "@pandapaylens/trustly";
 import { dectaAdapter } from "@pandapaylens/decta";
 import { inpayAdapter } from "@pandapaylens/inpay";
@@ -39,6 +43,10 @@ export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   paypalAdapter,
   mollieAdapter,
   squareAdapter,
+  nuveiAdapter,
+  authorizeNetAdapter,
+  cybersourceAdapter,
+  worldpayAdapter,
   trustlyAdapter,
   dectaAdapter,
   inpayAdapter,

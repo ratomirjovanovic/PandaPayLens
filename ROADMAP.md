@@ -12,6 +12,8 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 | 0.2.0   | High-risk wave HR-1: CCBill, Segpay, Verotel, NETbilling, PXP Financial, Trust Payments; lifecycle rules |
 | 0.3.0   | High-risk wave HR-2: emerchantpay, Ecommpay, Paymentwall, NMI, MiFinity, AstroPay, Skrill, eZeeWallet    |
 | 0.4.0   | High-risk wave HR-3: Finrax, Inpay, DECTA, Trustly                                                       |
+| 0.5.0   | Research for Worldpay, Cybersource, Authorize.net and Nuvei; plain-text HTTP error bodies                |
+| 0.6.0   | Wave 2 adapters: Worldpay, Cybersource, Authorize.net, Nuvei                                             |
 
 ## In progress
 
@@ -21,7 +23,6 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 
 ### Providers
 
-- **General providers with verified documentation:** Worldpay (Access Worldpay JSON), Cybersource (REST Payments API), Authorize.net (JSON API and webhooks) and Nuvei (REST API 1.0 and DMNs). Research is in [docs/providers/research](docs/providers/research); adapters are the next step.
 - **General providers with research in progress:** Paysafe, Airwallex, Rapyd, dLocal, EBANX, BlueSnap, PayU India, Razorpay, Paystack and Flutterwave. Each one needs a documentation review and the qualification gate before an adapter is written.
 - **Blocked:** Pavilion Payments and Epoch publish no developer documentation without a merchant relationship. They stay listed as blocked until that changes.
 

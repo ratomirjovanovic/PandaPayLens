@@ -1,0 +1,27 @@
+{
+  "outcome": "refused",
+  "paymentId": "payPPLsynthRefused00002",
+  "commandId": "cmdPPLsynthRefused00002",
+  "transactionReference": "PPLsynth-txn-0002",
+  "refusalDescription": "Limit exceeded",
+  "refusalCode": "51",
+  "advice": {
+    "code": "24"
+  },
+  "riskFactors": [
+    {
+      "risk": "notChecked",
+      "type": "cvc"
+    },
+    {
+      "risk": "notChecked",
+      "detail": "address",
+      "type": "avs"
+    },
+    {
+      "risk": "notChecked",
+      "detail": "postcode",
+      "type": "avs"
+    }
+  ]
+}

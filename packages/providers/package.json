@@ -32,10 +32,12 @@
   "dependencies": {
     "@pandapaylens/adyen": "workspace:*",
     "@pandapaylens/astropay": "workspace:*",
+    "@pandapaylens/authorize-net": "workspace:*",
     "@pandapaylens/braintree": "workspace:*",
     "@pandapaylens/ccbill": "workspace:*",
     "@pandapaylens/checkout": "workspace:*",
     "@pandapaylens/core": "workspace:*",
+    "@pandapaylens/cybersource": "workspace:*",
     "@pandapaylens/decta": "workspace:*",
     "@pandapaylens/ecommpay": "workspace:*",
     "@pandapaylens/emerchantpay": "workspace:*",
@@ -46,6 +48,7 @@
     "@pandapaylens/mollie": "workspace:*",
     "@pandapaylens/netbilling": "workspace:*",
     "@pandapaylens/nmi": "workspace:*",
+    "@pandapaylens/nuvei": "workspace:*",
     "@pandapaylens/payabl": "workspace:*",
     "@pandapaylens/paymentwall": "workspace:*",
     "@pandapaylens/paypal": "workspace:*",
@@ -56,6 +59,7 @@
     "@pandapaylens/stripe": "workspace:*",
     "@pandapaylens/trust-payments": "workspace:*",
     "@pandapaylens/trustly": "workspace:*",
-    "@pandapaylens/verotel": "workspace:*"
+    "@pandapaylens/verotel": "workspace:*",
+    "@pandapaylens/worldpay": "workspace:*"
   }
 }

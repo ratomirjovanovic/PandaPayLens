@@ -33,7 +33,7 @@ Paste a payment error, webhook or event log from a supported provider. PandaPayL
 
 <!-- providers:start -->
 
-26 of 42 roadmap providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Research candidates and planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
+30 of 42 roadmap providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Research candidates and planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
 
 | Provider       | Overall   | Errors    | API responses | Webhooks     | Timeline     | Correlation |
 | -------------- | --------- | --------- | ------------- | ------------ | ------------ | ----------- |
@@ -45,6 +45,10 @@ Paste a payment error, webhook or event log from a supported provider. PandaPayL
 | PayPal         | limited   | supported | supported     | limited      | limited      | limited     |
 | Mollie         | limited   | limited   | supported     | limited      | limited      | supported   |
 | Square         | limited   | supported | supported     | supported    | limited      | limited     |
+| Nuvei          | limited   | supported | limited       | limited      | limited      | limited     |
+| Authorize.net  | limited   | supported | limited       | limited      | limited      | limited     |
+| Cybersource    | limited   | supported | supported     | limited      | limited      | limited     |
+| Worldpay       | limited   | supported | supported     | limited      | limited      | limited     |
 | Trustly        | limited   | limited   | limited       | limited      | limited      | limited     |
 | DECTA          | limited   | supported | limited       | limited      | limited      | limited     |
 | Inpay          | limited   | limited   | limited       | limited      | limited      | supported   |
@@ -144,7 +148,7 @@ pnpm test:e2e         # Playwright against the full app (after pnpm build)
 
 ## Roadmap
 
-Released: the analyzer, CLI and demo (0.1.0) and high-risk waves HR-1 (0.2.0), HR-2 (0.3.0) and HR-3 (0.4.0). Planned: research for the remaining general providers, XML input and npm packages.
+Released: the analyzer, CLI and demo (0.1.0), high-risk waves HR-1 (0.2.0), HR-2 (0.3.0) and HR-3 (0.4.0), and the wave 2 gateways Worldpay, Cybersource, Authorize.net and Nuvei (0.6.0). Planned: research for the remaining general providers, XML input and npm packages.
 
 See [ROADMAP.md](ROADMAP.md) for details.
 

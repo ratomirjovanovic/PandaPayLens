@@ -1,0 +1,50 @@
+[
+  {
+    "receivedAt": "2026-10-24T12:00:01Z",
+    "payload": {
+      "eventId": "PPLsynth-evt-0008",
+      "eventTimestamp": "2026-10-24T12:00:00.000",
+      "eventDetails": {
+        "classification": "payment",
+        "transactionReference": "PPLsynth-txn-0008",
+        "paymentId": "payPPLsynthDuplicate0008",
+        "commandId": "cmdPPLsynthDuplicate0008",
+        "type": "authorized",
+        "date": "2026-10-24",
+        "amount": {
+          "value": 4200,
+          "currencyCode": "USD"
+        },
+        "_links": {
+          "payment": {
+            "href": ""
+          }
+        }
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-10-24T12:00:15Z",
+    "payload": {
+      "eventId": "PPLsynth-evt-0008",
+      "eventTimestamp": "2026-10-24T12:00:00.000",
+      "eventDetails": {
+        "classification": "payment",
+        "transactionReference": "PPLsynth-txn-0008",
+        "paymentId": "payPPLsynthDuplicate0008",
+        "commandId": "cmdPPLsynthDuplicate0008",
+        "type": "authorized",
+        "date": "2026-10-24",
+        "amount": {
+          "value": 4200,
+          "currencyCode": "USD"
+        },
+        "_links": {
+          "payment": {
+            "href": ""
+          }
+        }
+      }
+    }
+  }
+]

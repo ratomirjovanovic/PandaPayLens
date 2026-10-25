@@ -1,0 +1,9 @@
+{
+  "id": "PPLsynth00000000001501",
+  "reconcillationID": "PPLsynth-recon-1501",
+  "status": "settled",
+  "submitTimeUTC": "2026-10-21T17:38:48Z",
+  "clientReferenceInformation.code": "PPLsynth-order-1501",
+  "orderInformation.amountDetails.totalAmount": "1999.99",
+  "orderInformation.amountDetails.currency": "GBP"
+}

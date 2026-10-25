@@ -1,0 +1,15 @@
+{
+  "notificationId": "PPLsynth-notif-0801",
+  "eventType": "net.authorize.payment.authcapture.created",
+  "eventDate": "2026-10-20T14:48:02.0080095Z",
+  "webhookId": "PPLsynth-webhook-01",
+  "payload": {
+    "responseCode": 1,
+    "merchantReferenceId": "PPLsynth-ref-0801",
+    "authCode": "PPL7W1",
+    "avsResponse": "Y",
+    "authAmount": 45.0,
+    "entityName": "transaction",
+    "id": "80000000801"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "outcome": "refused",
+  "paymentId": "payPPLsynthRawCode00003",
+  "commandId": "cmdPPLsynthRawCode00003",
+  "refusalCode": "05",
+  "gatewayRefusalCode": "5",
+  "refusalDescription": "Do not honor",
+  "riskFactors": [
+    {
+      "risk": "notMatched",
+      "type": "cvc"
+    }
+  ],
+  "_links": {
+    "cardPayments:events": {
+      "href": "https://try.access.worldpay.com/payments/events/PPLsynthLinkData0003"
+    },
+    "curies": [
+      {
+        "name": "cardPayments",
+        "href": "https://try.access.worldpay.com/rels/cardPayments/{rel}",
+        "templated": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "eventType": "tms.networktoken.provisioned",
+  "webhookId": "PPLsynth-webhook-0002",
+  "productId": "tokenManagement",
+  "organizationId": "PPLsynth_org_0001",
+  "eventDate": "2026-10-20T11:38:45",
+  "transactionTraceId": "PPLsynth-trace-1401",
+  "retryNumber": 0,
+  "payload": {
+    "data": {
+      "_links": {
+        "paymentInstruments": [{ "href": "/tms/v1/paymentinstruments/PPLsynthPI0001" }],
+        "instrumentIdentifiers": [{ "href": "/tms/v1/instrumentidentifiers/PPLsynthII0001" }]
+      },
+      "id": "PPLsynthTOKENENROLLMENT0001",
+      "type": "tokenizedCardEnrollments",
+      "version": "1.0"
+    },
+    "organizationId": "PPLsynth_org_child_0001"
+  },
+  "requestType": "NEW"
+}

@@ -1,0 +1,34 @@
+[
+  {
+    "receivedAt": "2026-10-21T08:15:03Z",
+    "payload": {
+      "notificationId": "PPLsynth-notif-1001",
+      "eventType": "net.authorize.payment.void.created",
+      "eventDate": "2026-10-21T08:15:01.5000000Z",
+      "webhookId": "PPLsynth-webhook-01",
+      "payload": {
+        "responseCode": 1,
+        "merchantReferenceId": "PPLsynth-ref-1001",
+        "authAmount": 15.5,
+        "entityName": "transaction",
+        "id": "80000001001"
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-10-21T08:18:09Z",
+    "payload": {
+      "notificationId": "PPLsynth-notif-1001",
+      "eventType": "net.authorize.payment.void.created",
+      "eventDate": "2026-10-21T08:15:01.5000000Z",
+      "webhookId": "PPLsynth-webhook-01",
+      "payload": {
+        "responseCode": 1,
+        "merchantReferenceId": "PPLsynth-ref-1001",
+        "authAmount": 15.5,
+        "entityName": "transaction",
+        "id": "80000001001"
+      }
+    }
+  }
+]

@@ -11,6 +11,10 @@ import { checkoutManifest } from "@pandapaylens/checkout/manifest";
 import { paypalManifest } from "@pandapaylens/paypal/manifest";
 import { mollieManifest } from "@pandapaylens/mollie/manifest";
 import { squareManifest } from "@pandapaylens/square/manifest";
+import { nuveiManifest } from "@pandapaylens/nuvei/manifest";
+import { authorizeNetManifest } from "@pandapaylens/authorize-net/manifest";
+import { cybersourceManifest } from "@pandapaylens/cybersource/manifest";
+import { worldpayManifest } from "@pandapaylens/worldpay/manifest";
 import { trustlyManifest } from "@pandapaylens/trustly/manifest";
 import { dectaManifest } from "@pandapaylens/decta/manifest";
 import { inpayManifest } from "@pandapaylens/inpay/manifest";
@@ -39,6 +43,10 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   paypalManifest,
   mollieManifest,
   squareManifest,
+  nuveiManifest,
+  authorizeNetManifest,
+  cybersourceManifest,
+  worldpayManifest,
   trustlyManifest,
   dectaManifest,
   inpayManifest,
@@ -127,7 +135,7 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     id: "worldpay",
     displayName: "Worldpay (Access Worldpay)",
     wave: 2,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general", "gateway_acquiring"],
     note: "Access Worldpay JSON APIs and webhooks. The XML gateways (WPG, cnpAPI) are separate integrations and out of scope while XML is unsupported.",
   },
@@ -135,21 +143,21 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     id: "cybersource",
     displayName: "Cybersource",
     wave: 2,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general", "gateway_acquiring"],
   },
   {
     id: "authorize_net",
     displayName: "Authorize.net",
     wave: 2,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general", "gateway_acquiring"],
   },
   {
     id: "nuvei",
     displayName: "Nuvei",
     wave: 2,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general", "gateway_acquiring"],
     note: "API generations and DMN formats are handled as separate families.",
   },

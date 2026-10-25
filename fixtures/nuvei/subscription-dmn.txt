@@ -1,0 +1,1 @@
+dmnType=subscription&subscriptionId=PPLsynth-sub-4001&subscriptionState=ACTIVE&planId=PPLsynth-plan-1&templateId=PPLsynth-template-1&userTokenId=PPLsynth-user-4001&responsechecksum=e9a0c2e4f6b8d0a1c3e5f7a9b5e1f0c3a9b7d2e4f6a8c0b1d3e5f7a9c1b3d5f7

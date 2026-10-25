@@ -1,0 +1,35 @@
+[
+  {
+    "_links": {
+      "authReversal": {
+        "method": "POST",
+        "href": "/pts/v2/payments/PPLsynth00000000000701/reversals"
+      },
+      "self": { "method": "GET", "href": "/pts/v2/payments/PPLsynth00000000000701" },
+      "capture": { "method": "POST", "href": "/pts/v2/payments/PPLsynth00000000000701/captures" }
+    },
+    "id": "PPLsynth00000000000701",
+    "orderInformation": { "amountDetails": { "authorizedAmount": "55.50", "currency": "USD" } },
+    "status": "AUTHORIZED",
+    "submitTimeUtc": "2026-10-20T11:00:00Z"
+  },
+  {
+    "_links": { "self": { "method": "GET", "href": "/pts/v2/reversals/PPLsynth00000000000702" } },
+    "id": "PPLsynth00000000000702",
+    "orderInformation": { "amountDetails": { "currency": "USD" } },
+    "reversalAmountDetails": { "reversedAmount": "55.50" },
+    "processorInformation": { "responseCode": "00" },
+    "status": "REVERSED",
+    "submitTimeUtc": "2026-10-20T11:30:00Z"
+  },
+  {
+    "id": "PPLsynth00000000000702",
+    "rootId": "PPLsynth00000000000701",
+    "submitTimeUTC": "2026-10-20T11:30:00Z",
+    "applicationInformation": {
+      "rCode": "1",
+      "reasonCode": "100",
+      "applications": [{ "name": "ics_auth_reversal", "reasonCode": "100", "rCode": "1" }]
+    }
+  }
+]

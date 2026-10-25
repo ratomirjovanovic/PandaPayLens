@@ -1,0 +1,11 @@
+{
+  "refId": "PPLsynth-ref-0601",
+  "messages": {
+    "resultCode": "Error",
+    "message": [
+      {
+        "code": "E00007"
+      }
+    ]
+  }
+}

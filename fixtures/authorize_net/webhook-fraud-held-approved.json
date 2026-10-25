@@ -1,0 +1,36 @@
+[
+  {
+    "notificationId": "PPLsynth-notif-1101",
+    "eventType": "net.authorize.payment.fraud.held",
+    "eventDate": "2026-10-23T17:47:39.7740424Z",
+    "webhookId": "PPLsynth-webhook-01",
+    "payload": {
+      "responseCode": 4,
+      "authCode": "PPL7F1",
+      "avsResponse": "Y",
+      "authAmount": 5000.0,
+      "fraudList": [
+        {
+          "fraudFilter": "AmountFilter",
+          "fraudAction": "authAndHold"
+        }
+      ],
+      "entityName": "transaction",
+      "id": "80000001101"
+    }
+  },
+  {
+    "notificationId": "PPLsynth-notif-1102",
+    "eventType": "net.authorize.payment.fraud.approved",
+    "eventDate": "2026-10-23T19:02:11.1000000Z",
+    "webhookId": "PPLsynth-webhook-01",
+    "payload": {
+      "responseCode": 1,
+      "authCode": "PPL7F1",
+      "avsResponse": "Y",
+      "authAmount": 5000.0,
+      "entityName": "transaction",
+      "id": "80000001101"
+    }
+  }
+]

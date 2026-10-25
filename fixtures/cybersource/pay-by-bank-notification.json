@@ -1,0 +1,8 @@
+{
+  "eventType": "payments.payments.updated",
+  "productId": "alternativePaymentMethods",
+  "organizationId": "PPLsynth_org_0001",
+  "transactionTraceId": "PPLsynth00000000001501",
+  "payload": "{CBC}PPLsynthCBCCiphertext0001PPLsynthCBCCiphertext0002",
+  "metadata": { "notificationTypeID": "5", "notificationReason": "payment" }
+}

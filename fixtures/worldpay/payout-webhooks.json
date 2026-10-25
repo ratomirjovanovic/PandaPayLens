@@ -1,0 +1,42 @@
+[
+  {
+    "eventId": "PPLsynth-evt-0011-a",
+    "eventTimestamp": "2026-10-24T14:00:00.000",
+    "eventDetails": {
+      "classification": "payout",
+      "transactionReference": "PPLsynth-payout-0011",
+      "type": "requested",
+      "amount": {
+        "value": 5000,
+        "currencyCode": "GBP"
+      }
+    }
+  },
+  {
+    "eventId": "PPLsynth-evt-0011-b",
+    "eventTimestamp": "2026-10-24T14:00:02.000",
+    "eventDetails": {
+      "classification": "payout",
+      "transactionReference": "PPLsynth-payout-0011",
+      "type": "pending",
+      "amount": {
+        "value": 5000,
+        "currencyCode": "GBP"
+      }
+    }
+  },
+  {
+    "eventId": "PPLsynth-evt-0011-c",
+    "eventTimestamp": "2026-10-24T14:10:00.000",
+    "eventDetails": {
+      "classification": "payout",
+      "transactionReference": "PPLsynth-payout-0011",
+      "type": "refused",
+      "octReference": "PPLsynthOCT0011",
+      "amount": {
+        "value": 5000,
+        "currencyCode": "GBP"
+      }
+    }
+  }
+]

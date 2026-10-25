@@ -1,0 +1,33 @@
+{
+  "transactionResponse": {
+    "responseCode": "1",
+    "authCode": "PPL7A1",
+    "avsResultCode": "Y",
+    "cvvResultCode": "M",
+    "cavvResultCode": "",
+    "transId": "80000000101",
+    "refTransID": "",
+    "transHash": "",
+    "testRequest": "0",
+    "accountNumber": "XXXX1111",
+    "accountType": "Visa",
+    "messages": [
+      {
+        "code": "1",
+        "description": "This transaction has been approved."
+      }
+    ],
+    "transHashSha2": "PPLSYNTH0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "networkTransId": "PPLSYNTHNTI0001"
+  },
+  "refId": "PPLsynth-ref-0101",
+  "messages": {
+    "resultCode": "Ok",
+    "message": [
+      {
+        "code": "I00001",
+        "text": "Successful."
+      }
+    ]
+  }
+}

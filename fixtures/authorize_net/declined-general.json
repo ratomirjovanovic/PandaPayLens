@@ -1,0 +1,30 @@
+{
+  "transactionResponse": {
+    "responseCode": "2",
+    "authCode": "",
+    "avsResultCode": "N",
+    "cvvResultCode": "N",
+    "cavvResultCode": "",
+    "transId": "80000000201",
+    "refTransID": "",
+    "testRequest": "0",
+    "accountNumber": "XXXX0027",
+    "accountType": "Mastercard",
+    "errors": [
+      {
+        "errorCode": "2",
+        "errorText": "This transaction has been declined."
+      }
+    ]
+  },
+  "refId": "PPLsynth-ref-0201",
+  "messages": {
+    "resultCode": "Error",
+    "message": [
+      {
+        "code": "E00027",
+        "text": "The transaction was unsuccessful."
+      }
+    ]
+  }
+}
