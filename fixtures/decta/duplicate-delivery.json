@@ -1,0 +1,68 @@
+[
+  {
+    "receivedAt": "2026-10-20T11:00:02Z",
+    "payload": {
+      "type": "order",
+      "id": "PPLsynth-order-0004",
+      "number": "DE1004",
+      "status": "paid",
+      "status_changes": [
+        {
+          "new_status": "created",
+          "currency": "EUR",
+          "operation_amount": "15.00"
+        },
+        {
+          "new_status": "issued",
+          "currency": "EUR",
+          "operation_amount": "15.00"
+        },
+        {
+          "new_status": "paid",
+          "currency": "EUR",
+          "operation_amount": "15.00"
+        }
+      ],
+      "transaction_details": {
+        "processing_status": {
+          "code": "000",
+          "description": "Approved"
+        },
+        "processing_payment_id": "PPLsynth-proc-0004"
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T11:00:32Z",
+    "payload": {
+      "type": "order",
+      "id": "PPLsynth-order-0004",
+      "number": "DE1004",
+      "status": "paid",
+      "status_changes": [
+        {
+          "new_status": "created",
+          "currency": "EUR",
+          "operation_amount": "15.00"
+        },
+        {
+          "new_status": "issued",
+          "currency": "EUR",
+          "operation_amount": "15.00"
+        },
+        {
+          "new_status": "paid",
+          "currency": "EUR",
+          "operation_amount": "15.00"
+        }
+      ],
+      "transaction_details": {
+        "processing_status": {
+          "code": "000",
+          "description": "Approved"
+        },
+        "processing_payment_id": "PPLsynth-proc-0004"
+      }
+    }
+  }
+]

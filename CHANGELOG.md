@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-10-25
+
+High-risk wave HR-3.
+
+### Providers
+
+- New adapters with limited support, built from official documentation and tested with synthetic fixtures:
+  - Finrax: crypto payments, deposits, refunds and withdrawals. Underpaid payments stay an unknown outcome; approved withdrawals stay pending until completed.
+  - Inpay: bank transfer payouts and pay-by-bank orders, with the documented payout reason codes.
+  - DECTA: card orders, Host2Host and 3-D Secure responses and webhooks, with the raw acquirer code table and Mastercard advice codes.
+  - Trustly: EU JSON-RPC notifications and errors and the North America event and transaction APIs, kept as separate platforms.
+- All high-risk candidates with public documentation are now implemented. Pavilion Payments and Epoch remain blocked.
+- 26 of 42 roadmap providers can now be analyzed.
+
 ## [0.3.0] - 2026-10-25
 
 High-risk wave HR-2.

@@ -1,0 +1,7 @@
+{
+  "timestamp": 1792780100,
+  "httpStatus": 401,
+  "httpError": "Unauthorized",
+  "message": "Invalid authorization token",
+  "path": "/api/v1/withdrawals"
+}

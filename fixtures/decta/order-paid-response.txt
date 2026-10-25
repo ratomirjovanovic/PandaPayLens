@@ -1,0 +1,72 @@
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "type": "order",
+  "id": "PPLsynth-order-0001",
+  "number": "DE1001",
+  "status": "paid",
+  "is_payable": false,
+  "payment_system": "SMS",
+  "permitted_actions": [
+    "refund",
+    "reverse"
+  ],
+  "issued": "2026-10-20T10:00:00Z",
+  "viewed": "2026-10-20T10:00:20Z",
+  "paid": "2026-10-20T10:01:05Z",
+  "status_changes": [
+    {
+      "new_status": "created",
+      "currency": "EUR",
+      "operation_amount": "25.00"
+    },
+    {
+      "new_status": "issued",
+      "currency": "EUR",
+      "operation_amount": "25.00"
+    },
+    {
+      "new_status": "viewed",
+      "currency": "EUR",
+      "operation_amount": "25.00"
+    },
+    {
+      "new_status": "in_progress",
+      "currency": "EUR",
+      "operation_amount": "25.00"
+    },
+    {
+      "new_status": "paid",
+      "currency": "EUR",
+      "operation_amount": "25.00"
+    }
+  ],
+  "transaction_details": {
+    "processing_status": {
+      "code": "000",
+      "description": "Approved"
+    },
+    "processing_payment_id": "PPLsynth-proc-0001",
+    "three_d_secure_status": {
+      "three_d_flow": "Frictionless",
+      "three_d_source": "DECTA MPI",
+      "three_d_secure_protocol": "2.2.0",
+      "eci": "05"
+    },
+    "auth_eci": "05",
+    "fraud_check_status": {
+      "code": "PPLsynth-fc-0",
+      "description": "Synthetic check"
+    },
+    "amount_refunded": "0.00",
+    "cleared": "2026-10-21T02:00:00Z"
+  },
+  "avs_status": {
+    "avs_status": "Y",
+    "description": "Address and postcode match"
+  },
+  "card_name_validation": {
+    "full_name_validation": "full_match"
+  }
+}

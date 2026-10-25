@@ -1,0 +1,5 @@
+POST /trustly/notifications HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Authorization: Basic UExBTlRFREFVVEhIRUFERVIwMDAx
+
+merchantId=PPLsynth1002463580&merchantReference=PPLsynth-ref-b001&paymentType=2&transactionType=2&eventId=PPLsynthE2001&eventType=Failed&objectId=PPLsynthT2001&objectType=Transaction&message=&timeZone=Etc%2FUTC&createdAt=1792494000000&splitToken=PLANTEDSPLITTOKEN0001&fiCode=PLANTEDFICODE&paymentProviderTransaction.status=SW021&paymentProviderTransaction.statusMessage=SW021&paymentProviderTransaction.reasonCode=12&suggestedRetryAmount=25.00&status=5&statusMessage=Failed

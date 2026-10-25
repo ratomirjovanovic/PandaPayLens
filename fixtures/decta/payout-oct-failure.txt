@@ -1,0 +1,31 @@
+POST /PPLsynth/webhooks/decta HTTP/1.1
+Host: merchant.example
+Content-Type: application/json
+X-Webhook-Event: oct.failure
+X-Webhook-Version: v0.6
+
+{
+  "type": "order",
+  "id": "PPLsynth-order-0006",
+  "number": "DE1006",
+  "status": "failed",
+  "status_changes": [
+    {
+      "new_status": "created",
+      "currency": "EUR",
+      "operation_amount": "120.00"
+    },
+    {
+      "new_status": "failed",
+      "currency": "EUR",
+      "operation_amount": "120.00"
+    }
+  ],
+  "transaction_details": {
+    "processing_status": {
+      "code": "119",
+      "description": "Transaction not permitted to cardholder"
+    },
+    "processing_payment_id": "PPLsynth-proc-0006"
+  }
+}

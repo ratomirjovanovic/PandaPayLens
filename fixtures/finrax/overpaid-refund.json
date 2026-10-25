@@ -1,0 +1,47 @@
+{
+  "paymentId": "PPLsynth-pay-0003",
+  "clientPaymentId": "PPLSYNTH-ORDER-0003",
+  "status": "OVERPAID",
+  "type": "ONE_TIME",
+  "rateType": "FIXED",
+  "displayCurrency": "EUR",
+  "expectedDisplayAmount": "45.00",
+  "actualDisplayAmount": "60.00",
+  "depositCurrency": "LTC",
+  "expectedNetwork": "LITECOIN",
+  "expectedDepositAmount": "0.62500000",
+  "expectedUniformAmount": "45.00",
+  "actualUniformAmount": "60.00",
+  "overpaymentPolicy": "EXCESS_REFUND",
+  "processorType": "BLOCKCHAIN",
+  "expirationMinutes": 30,
+  "paymentInitiatedAt": 1792720000,
+  "paymentRequestedAt": 1792720000,
+  "archived": false,
+  "deposits": [
+    {
+      "id": "PPLsynth-dep-0003",
+      "transactionId": "PLANTEDTXHASH0003",
+      "status": "CONFIRMED",
+      "fromAddress": "PLANTEDFROMADDRESS0003",
+      "toAddress": "PLANTEDWALLETADDRESS0003",
+      "depositCurrency": "LTC",
+      "network": "LITECOIN",
+      "depositAmount": "0.83333333",
+      "onChainFee": "0.00001000",
+      "depositReceivedAt": 1792720300,
+      "refund": {
+        "type": "PARTIAL",
+        "status": "CONFIRMED",
+        "reason": "OVERPAYMENT",
+        "destinationAddress": "PLANTEDREFUNDADDRESS0003",
+        "amount": "0.20833333",
+        "transactionId": "PLANTEDREFUNDTXHASH0003",
+        "confirmedAt": 1792721500,
+        "initiatedBy": "planted.user@example.com",
+        "initiatedAt": 1792720900,
+        "createdAt": 1792720310
+      }
+    }
+  ]
+}

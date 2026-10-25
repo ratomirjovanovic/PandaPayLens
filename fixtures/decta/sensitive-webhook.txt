@@ -1,0 +1,67 @@
+POST /PPLsynth/webhooks/decta HTTP/1.1
+Host: merchant.example
+Content-Type: application/json
+Authorization: Bearer PLANTEDBEARERSECRET
+X-Webhook-Event: order.payment_failure
+X-Webhook-Version: v0.6
+
+{
+  "type": "order",
+  "id": "PPLsynth-order-0016",
+  "number": "DE1016",
+  "referrer": "Planted Referrer Text",
+  "status": "failed",
+  "is_payable": true,
+  "api_do_url": "https://gate.example/api/PLANTEDAPIDOURL/",
+  "full_page_checkout": "https://gate.example/p/PLANTEDCHECKOUTURL/",
+  "direct_post": "https://gate.example/p/PLANTEDDIRECTPOST/",
+  "paid_from_ip": "198.51.100.77",
+  "client": {
+    "email": "planted.person@example.com",
+    "phone": "+371PLANTED00",
+    "first_name": "PlantedFirst",
+    "last_name": "PlantedLast",
+    "birth_date": "1970-01-01",
+    "personal_code": "PLANTEDPERSONAL01"
+  },
+  "status_changes": [
+    {
+      "new_status": "created",
+      "author": "planted.author@example.com",
+      "currency": "EUR",
+      "operation_amount": "33.00"
+    },
+    {
+      "new_status": "failed",
+      "author": "Planted Author Name",
+      "currency": "EUR",
+      "operation_amount": "33.00"
+    }
+  ],
+  "transaction_details": {
+    "processing_status": {
+      "code": "100",
+      "description": "Do not honour"
+    },
+    "processing_payment_id": "PPLsynth-proc-0016",
+    "merchant_advice_code": "03",
+    "card_masked_pan": "522222PLANTED2222",
+    "cardholder_name": "Planted Holder Name",
+    "auth_appr_code": "PLANTEDAUTHCODE",
+    "rrn": "PLANTEDRRN02",
+    "arn": "PLANTEDARN00000000000002",
+    "three_d_secure_status": {
+      "eci": "PLANTEDECI1",
+      "xid": "PLANTEDXID",
+      "cavv": "PLANTEDCAVV",
+      "description": "Planted 3DS description"
+    },
+    "auth_eci": "PLANTEDECI2",
+    "errors": [
+      {
+        "code": "PPLsynth-err-1",
+        "description": "Synthetic attempt error"
+      }
+    ]
+  }
+}

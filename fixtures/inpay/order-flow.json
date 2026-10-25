@@ -1,0 +1,81 @@
+[
+  {
+    "business_unit": "default",
+    "amount": "100.55",
+    "amount_cents": 10055,
+    "currency": "EUR",
+    "language": "en",
+    "expires_at": "2026-10-20T12:00:00Z",
+    "uuid": "0b1c2d3e-4f50-4a61-8b72-c3d4e5f60001",
+    "redirect_url": "https://pay.example.test/?token=PLANTEDREDIRECTTOKEN",
+    "back_to_merchant_url": "https://merchant.example.test/welcome_back",
+    "reference": "PPLsynth-order-0001",
+    "status": "received",
+    "status_reasons": [],
+    "refund": null,
+    "payments": [],
+    "primary_payment": null
+  },
+  {
+    "business_unit": "default",
+    "amount": "100.55",
+    "amount_cents": 10055,
+    "currency": "EUR",
+    "language": "en",
+    "expires_at": "2026-10-20T12:00:00Z",
+    "uuid": "0b1c2d3e-4f50-4a61-8b72-c3d4e5f60001",
+    "redirect_url": "https://pay.example.test/?token=PLANTEDREDIRECTTOKEN",
+    "back_to_merchant_url": "https://merchant.example.test/welcome_back",
+    "reference": "PPLsynth-order-0001",
+    "status": "processing",
+    "status_reasons": [],
+    "refund": null,
+    "payments": [
+      {
+        "uuid": "1a2b3c4d-5e6f-4a70-8b81-92a3b4c50001",
+        "status": "bank_authorised",
+        "type": "instant_bank_transfer",
+        "inpay_unique_reference": "PPLSYNTH1",
+        "redirect_url": "https://pay.example.test/bank?token=PLANTEDREDIRECTTOKEN",
+        "debtor_country_iso": "NL",
+        "debtor_full_name": "Planted Synthetic Payer",
+        "debtor_bank_uuid": "PPLSYNTH-BANKUUID-PLANTED",
+        "debtor_account_number": "NL02PPLS0123456789",
+        "debtor_bank_status_code": "ACSP",
+        "debtor_paid_amount": null
+      }
+    ],
+    "primary_payment": "PPLSYNTH1"
+  },
+  {
+    "business_unit": "default",
+    "amount": "100.55",
+    "amount_cents": 10055,
+    "currency": "EUR",
+    "language": "en",
+    "expires_at": "2026-10-20T12:00:00Z",
+    "uuid": "0b1c2d3e-4f50-4a61-8b72-c3d4e5f60001",
+    "redirect_url": "https://pay.example.test/?token=PLANTEDREDIRECTTOKEN",
+    "back_to_merchant_url": "https://merchant.example.test/welcome_back",
+    "reference": "PPLsynth-order-0001",
+    "status": "completed",
+    "status_reasons": [],
+    "refund": null,
+    "payments": [
+      {
+        "uuid": "1a2b3c4d-5e6f-4a70-8b81-92a3b4c50001",
+        "status": "completed",
+        "type": "instant_bank_transfer",
+        "inpay_unique_reference": "PPLSYNTH1",
+        "redirect_url": "https://pay.example.test/bank?token=PLANTEDREDIRECTTOKEN",
+        "debtor_country_iso": "NL",
+        "debtor_full_name": "Planted Synthetic Payer",
+        "debtor_bank_uuid": "PPLSYNTH-BANKUUID-PLANTED",
+        "debtor_account_number": "NL02PPLS0123456789",
+        "debtor_bank_status_code": "ACSC",
+        "debtor_paid_amount": "100.55"
+      }
+    ],
+    "primary_payment": "PPLSYNTH1"
+  }
+]

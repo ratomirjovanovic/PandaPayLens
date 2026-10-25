@@ -1,0 +1,38 @@
+[
+  {
+    "paymentId": "PPLsynth-pay-0008",
+    "clientPaymentId": "PPLSYNTH-ORDER-0008",
+    "status": "EXPIRED",
+    "type": "ONE_TIME",
+    "rateType": "FIXED",
+    "displayCurrency": "EUR",
+    "expectedDisplayAmount": "10.00",
+    "actualDisplayAmount": "0",
+    "depositCurrency": "LTC",
+    "paymentRequestedAt": 1792800000,
+    "deposits": []
+  },
+  {
+    "paymentId": "PPLsynth-pay-0009",
+    "clientPaymentId": "PPLSYNTH-ORDER-0008",
+    "status": "DEPOSITED",
+    "type": "ONE_TIME",
+    "rateType": "FIXED",
+    "displayCurrency": "EUR",
+    "expectedDisplayAmount": "10.00",
+    "actualDisplayAmount": "10.00",
+    "depositCurrency": "LTC",
+    "paymentRequestedAt": 1792803600,
+    "deposits": [
+      {
+        "id": "PPLsynth-dep-0009",
+        "status": "CONFIRMED",
+        "depositCurrency": "LTC",
+        "network": "LITECOIN",
+        "depositAmount": "0.13888889",
+        "depositReceivedAt": 1792803900,
+        "refund": null
+      }
+    ]
+  }
+]

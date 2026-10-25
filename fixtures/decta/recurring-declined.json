@@ -1,0 +1,33 @@
+{
+  "type": "order",
+  "id": "PPLsynth-order-0017",
+  "number": "DE1017",
+  "status": "failed",
+  "from_subscription": true,
+  "status_changes": [
+    {
+      "new_status": "created",
+      "currency": "EUR",
+      "operation_amount": "9.99"
+    },
+    {
+      "new_status": "issued",
+      "currency": "EUR",
+      "operation_amount": "9.99"
+    },
+    {
+      "new_status": "failed",
+      "currency": "EUR",
+      "operation_amount": "9.99"
+    }
+  ],
+  "transaction_details": {
+    "processing_status": {
+      "code": "116",
+      "description": "Not sufficient funds"
+    },
+    "processing_payment_id": "PPLsynth-proc-0017",
+    "merchant_advice_code": "02",
+    "trace_id": "PPLsynth-trace-0001"
+  }
+}

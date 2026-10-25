@@ -1,0 +1,21 @@
+POST /PPLsynth/webhooks/decta HTTP/1.1
+Host: merchant.example
+Content-Type: application/json
+X-Webhook-Event: card.created
+X-Webhook-Version: v0.6
+
+{
+  "id": "PPLsynth-card-0011",
+  "transaction_type": "PPLsynth",
+  "client": "PPLsynth-client-0011",
+  "merchant": "PPLsynth-merchant-0011",
+  "masked_pan": "411111PLANTED1111",
+  "exp_month": 12,
+  "exp_year": 2030,
+  "is_default": true,
+  "cardholder_name": "Planted Card Holder",
+  "product_type": "PPLsynth",
+  "issuer_country": "LV",
+  "region_card_issuer": "PPLsynth",
+  "card_type": "PPLsynth"
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.002.001.11">
+  <CstmrPmtStsRpt>
+    <GrpHdr>
+      <MsgId>PPLsynth-iso-msg-0001</MsgId>
+      <CreDtTm>2026-10-20T10:00:00</CreDtTm>
+      <InitgPty><Nm>PPLsynth Initiating Party</Nm></InitgPty>
+    </GrpHdr>
+    <OrgnlGrpInfAndSts>
+      <OrgnlMsgId>PPLsynth-iso-orig-0001</OrgnlMsgId>
+      <OrgnlMsgNmId>pain.001.001.10</OrgnlMsgNmId>
+      <GrpSts>RJCT</GrpSts>
+      <StsRsnInf>
+        <Rsn><Cd>NARR</Cd></Rsn>
+        <AddtlInf>SyntaxError</AddtlInf>
+      </StsRsnInf>
+    </OrgnlGrpInfAndSts>
+  </CstmrPmtStsRpt>
+</Document>

@@ -1,0 +1,18 @@
+{
+  "paymentId": "PPLsynth-pay-0005",
+  "clientPaymentId": "PPLSYNTH-ORDER-0005",
+  "status": "EXPIRED",
+  "type": "ONE_TIME",
+  "rateType": "FIXED",
+  "displayCurrency": "USD",
+  "expectedDisplayAmount": "25.00",
+  "actualDisplayAmount": "0",
+  "depositCurrency": "ETH",
+  "expectedNetwork": "ETHEREUM",
+  "expectedDepositAmount": "0.00950000",
+  "overpaymentPolicy": "PROCESS",
+  "processorType": "BLOCKCHAIN",
+  "expirationMinutes": 30,
+  "paymentRequestedAt": 1792740000,
+  "deposits": []
+}

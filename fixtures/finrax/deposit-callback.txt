@@ -1,0 +1,35 @@
+POST /pplsynth/finrax/deposit-received HTTP/1.1
+Host: merchant.pplsynth.example
+Content-Type: application/json
+Signature: PLANTEDRSASIGNATURE0001
+Timestamp: 1792750601
+
+{
+  "actualDepositAmount": "0.20000000",
+  "actualDisplayAmount": 15,
+  "clientPaymentId": "PPLSYNTH-ORDER-0006",
+  "depositAddress": "PLANTEDWALLETADDRESS0006",
+  "depositCurrency": "LTC",
+  "depositId": "PPLsynth-dep-0006",
+  "displayCurrency": "EUR",
+  "displayServiceFee": 0.15,
+  "expectedDepositAmount": "0.20000000",
+  "expectedDisplayAmount": 15,
+  "network": "LITECOIN",
+  "expirationTime": 1792752400,
+  "onChainFee": "0.00001000",
+  "paymentId": "PPLsynth-pay-0006",
+  "paymentReceivedAt": 1792750600,
+  "paymentRequestedAt": 1792750000,
+  "rateType": "FIXED",
+  "settlementAmount": 14.85,
+  "settlementCurrency": "EUR",
+  "settlementServiceFee": 0.15,
+  "status": "CONFIRMED",
+  "fromAddress": "PLANTEDFROMADDRESS0006",
+  "transactionId": "PLANTEDTXHASH0006",
+  "displayRateDepegLossAmount": 0,
+  "settlementRateDepegLossAmount": 0,
+  "settlementDistributedUserServiceFee": 0,
+  "displayDistributedUserServiceFee": 0
+}

@@ -1,0 +1,39 @@
+[
+  {
+    "receivedAt": "2026-10-20T10:00:01Z",
+    "payload": {
+      "debtor_account": { "id": "PPLSYNTH-VACCOUNT-PLANTED", "scheme_name": "VirtualAccount" },
+      "end_to_end_id": "PPLsynth-e2e-0001",
+      "inpay_unique_reference": "PPLsynthPO0001",
+      "amount": "250.00",
+      "currency": "EUR",
+      "timestamp": "2026-10-20 10:00:00",
+      "state": "received"
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T10:02:05Z",
+    "payload": {
+      "debtor_account": { "id": "PPLSYNTH-VACCOUNT-PLANTED", "scheme_name": "VirtualAccount" },
+      "end_to_end_id": "PPLsynth-e2e-0001",
+      "inpay_unique_reference": "PPLsynthPO0001",
+      "amount": "250.00",
+      "currency": "EUR",
+      "timestamp": "2026-10-20 10:02:04",
+      "state": "processing",
+      "reasons": [{ "category": "vop_info", "code": "match", "details": {} }]
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T10:15:31Z",
+    "payload": {
+      "debtor_account": { "id": "PPLSYNTH-VACCOUNT-PLANTED", "scheme_name": "VirtualAccount" },
+      "end_to_end_id": "PPLsynth-e2e-0001",
+      "inpay_unique_reference": "PPLsynthPO0001",
+      "amount": "250.00",
+      "currency": "EUR",
+      "timestamp": "2026-10-20 10:15:30",
+      "state": "completed"
+    }
+  }
+]

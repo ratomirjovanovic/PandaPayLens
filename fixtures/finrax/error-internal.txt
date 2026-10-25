@@ -1,0 +1,10 @@
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+
+{
+  "timestamp": 1792780200,
+  "httpStatus": 500,
+  "httpError": "Internal Server Error",
+  "message": "Internal error while handling the request",
+  "path": "/api/v1/withdrawals"
+}

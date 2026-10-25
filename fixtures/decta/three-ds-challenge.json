@@ -1,0 +1,13 @@
+{
+  "next_step": "tds_validate",
+  "next_step_url": "https://transactions.gateway.example/p/PLANTEDSTEPURL/3d/tds_enrollment/",
+  "processing_status": null,
+  "redirectToACSForm": "<form action='https://acs.example/PLANTEDACSFORM'></form>",
+  "status": "tds_pending",
+  "three_d_secure_details": {
+    "mdstatus": "9",
+    "protocol": "3DS2.2.0",
+    "txid": "PPLsynth-txid-0007",
+    "xid": "UExBTlRFRFhJRDAwMDE="
+  }
+}

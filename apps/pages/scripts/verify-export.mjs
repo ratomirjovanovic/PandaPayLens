@@ -48,11 +48,16 @@ for (const f of files) {
     "RESEND_API_KEY",
     "postgres://",
     "postgresql://",
-    "/api/admin",
-    "/api/auth",
   ]) {
     if (text.includes(needle)) errors.push(`${rel} contains "${needle}"`);
   }
+  // Server-only routes of this app. A path on another host (for example a
+  // provider's documentation at https://docs.example.com/api/authentication)
+  // is not a reference to these routes.
+  const serverRoute = new RegExp(`(?:(?<![\\w.-])|(?<=${basePath}))/api/(?:admin|auth)\\b`).exec(
+    text,
+  );
+  if (serverRoute) errors.push(`${rel} references the server route "${serverRoute[0]}"`);
   if (rel.endsWith(".html")) {
     if (/(?:src|href)="\/_next\//.test(text))
       errors.push(`${rel} references /_next/ without the base path`);
