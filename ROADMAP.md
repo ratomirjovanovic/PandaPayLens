@@ -21,7 +21,8 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 
 ### Providers
 
-- **General providers with research in progress:** Worldpay, Cybersource, Authorize.net, Nuvei, Paysafe, Airwallex, Rapyd, dLocal, EBANX, BlueSnap, PayU India, Razorpay, Paystack and Flutterwave. Each one needs a documentation review and the qualification gate before an adapter is written.
+- **General providers with verified documentation:** Worldpay (Access Worldpay JSON), Cybersource (REST Payments API), Authorize.net (JSON API and webhooks) and Nuvei (REST API 1.0 and DMNs). Research is in [docs/providers/research](docs/providers/research); adapters are the next step.
+- **General providers with research in progress:** Paysafe, Airwallex, Rapyd, dLocal, EBANX, BlueSnap, PayU India, Razorpay, Paystack and Flutterwave. Each one needs a documentation review and the qualification gate before an adapter is written.
 - **Blocked:** Pavilion Payments and Epoch publish no developer documentation without a merchant relationship. They stay listed as blocked until that changes.
 
 ### Analyzer
