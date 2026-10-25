@@ -102,18 +102,15 @@ test("imported data is not transmitted anywhere", async ({ page }) => {
   const requests: Request[] = [];
   page.on("request", (r) => requests.push(r));
   await page.goto("analyze/");
-  await page
-    .getByLabel("Payment JSON")
-    .fill(
-      JSON.stringify({
-        error: {
-          type: "card_error",
-          code: "card_declined",
-          message: MARKER,
-          payment_intent: { id: `pi_${MARKER}` },
-        },
-      }),
-    );
+  const payload = JSON.stringify({
+    error: {
+      type: "card_error",
+      code: "card_declined",
+      message: MARKER,
+      payment_intent: { id: `pi_${MARKER}` },
+    },
+  });
+  await page.getByLabel("Payment JSON").fill(payload);
   await page.getByRole("button", { name: "Analyze", exact: true }).click();
   await expect(page.getByRole("tabpanel")).toContainText("card_declined");
   await Promise.all([
