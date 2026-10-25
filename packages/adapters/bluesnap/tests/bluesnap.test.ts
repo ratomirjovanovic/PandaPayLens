@@ -966,14 +966,16 @@ describe("bluesnap webhooks", () => {
     expect(r.records[0]!.status).toBe("invalid");
   });
 
-  it("does not throw on malformed input", () => {
+  it("does not throw on malformed input and reports XML as an unsupported record", () => {
     expect(analyzeText("{not json", options).ok).toBe(false);
     const xml = analyzeText(
       '<messages xmlns="http://ws.plimus.com"><message/></messages>',
       options,
     );
-    expect(xml.ok).toBe(false);
-    if (!xml.ok) expect(xml.error.code).toBe("UNSUPPORTED_FORMAT");
+    expect(xml).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
     expect(() => bluesnapAdapter.parse({}, "bluesnap.unknown")).not.toThrow();
     expect(bluesnapAdapter.parse({}, "bluesnap.unknown").ok).toBe(false);
     const r = analyze(

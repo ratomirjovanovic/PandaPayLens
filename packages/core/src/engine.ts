@@ -213,7 +213,7 @@ function runAnalysis(
     const meta: RecordMeta = metaList[recordIndex] ?? { format: "json" };
     // The receivedAt envelope only exists for JSON input.
     const { payload, observedTimestamp } =
-      meta.format === "form"
+      meta.format === "form" || meta.format === "xml"
         ? { payload: record, observedTimestamp: undefined }
         : unwrapEnvelope(record);
 

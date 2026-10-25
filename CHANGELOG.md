@@ -2,6 +2,14 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Analyzer
+
+- XML input is read instead of rejected. One document (or an HTTP message with an XML body) becomes one record that adapters can analyze; the root element and its namespace are kept so adapters can identify the provider. Until an adapter supports a provider's XML, such records are reported as unsupported records instead of a parse error.
+- XML is read safely: documents with a DOCTYPE or entity declarations are rejected, so external entities and entity expansion cannot happen; only predefined and numeric character references are decoded; depth, element count and text length are limited, and parsing is a single linear pass.
+- The getting-started page and the CLI help list every accepted input format.
+
 ## [0.10.0] - 2026-10-25
 
 ### Analyzer

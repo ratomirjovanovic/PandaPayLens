@@ -236,13 +236,15 @@ describe("worldpay parsing", () => {
     });
   });
 
-  it("does not analyze XML (WPG, cnpAPI) or malformed JSON", () => {
+  it("reports XML (WPG, cnpAPI) as an unsupported record and fails cleanly on malformed JSON", () => {
     const xml = analyzeText(
       '<?xml version="1.0"?><paymentService version="1.4" merchantCode="PPLSYNTH"><reply/></paymentService>',
       options,
     );
-    expect(xml.ok).toBe(false);
-    if (!xml.ok) expect(xml.error.code).toBe("UNSUPPORTED_FORMAT");
+    expect(xml).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
     const bad = analyzeText('{"eventId": "PPLsynth-evt", "eventDetails": {', options);
     expect(bad.ok).toBe(false);
   });

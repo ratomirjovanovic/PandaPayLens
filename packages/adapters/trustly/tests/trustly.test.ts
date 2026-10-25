@@ -321,7 +321,7 @@ describe("trustly parsing", () => {
     expect(r.records[0]!.status).not.toBe("analyzed");
   });
 
-  it("fails cleanly on malformed input, including the documentation's unclosed error example", () => {
+  it("fails cleanly on malformed input, including the documentation's unclosed error example, and reports XML as an unsupported record", () => {
     const unclosed = `{
     "version": "1.1",
     "error": {
@@ -341,7 +341,10 @@ describe("trustly parsing", () => {
     const commented = analyzeText('{"method": "kyc", // comment\n "version": "1.1",}', options);
     expect(commented.ok && commented.result.warnings.map((w) => w.code)).toContain("LENIENT_JSON");
     const xml = analyzeText("<methodResponse></methodResponse>", options);
-    expect(!xml.ok && xml.error.code).toBe("UNSUPPORTED_FORMAT");
+    expect(xml).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
   });
 
   it("tolerates unknown fields, numeric ids and camelCase Account Assessment keys", () => {

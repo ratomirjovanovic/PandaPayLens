@@ -245,13 +245,16 @@ describe("decta parsing", () => {
     expect(firstError(json(failed(116))).code).toBe("116");
   });
 
-  it("fails cleanly on malformed input and XML", () => {
+  it("fails cleanly on malformed input and reports XML as an unsupported record", () => {
     const r = analyzeText('{"type": "order", "id": ', options);
     expect(r.ok).toBe(false);
     expect(!r.ok && r.error.code).toBe("INVALID_JSON");
     expect(analyzeText(fixture("malformed/invalid-json.txt"), options).ok).toBe(false);
     const xml = analyzeText("<order><status>paid</status></order>", options);
-    expect(!xml.ok && xml.error.code).toBe("UNSUPPORTED_FORMAT");
+    expect(xml).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
   });
 
   it("recognizes but does not analyze card webhooks", () => {

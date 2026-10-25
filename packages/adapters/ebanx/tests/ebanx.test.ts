@@ -284,13 +284,16 @@ describe("ebanx parsing", () => {
     });
   });
 
-  it("fails cleanly on malformed input", () => {
+  it("fails cleanly on malformed input and reports XML as an unsupported record", () => {
     const bad = analyzeText('{"payment": {"hash": ', options);
     expect(bad.ok).toBe(false);
     const wrongType = analyze(json(payment({ refunds: "none", status: 5 })));
     expect(wrongType.records[0]!.status).toBe("invalid");
     const xml = analyzeText("<payment><hash>PPLsynth</hash></payment>", options);
-    expect(xml.ok).toBe(false);
+    expect(xml).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
   });
 
   it("accepts numeric amounts, nulls, unknown fields and lenient JSON", () => {

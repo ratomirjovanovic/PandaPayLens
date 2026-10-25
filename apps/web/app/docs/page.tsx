@@ -24,9 +24,17 @@ export default function DocsPage() {
       </p>
       <p>Accepted shapes:</p>
       <ul>
-        <li>A single object (an API error, a PaymentIntent, a webhook body).</li>
+        <li>A single JSON object (an API error, a PaymentIntent, a webhook body).</li>
         <li>A JSON array of such objects.</li>
         <li>JSON Lines: one object per line.</li>
+        <li>URL-encoded form data, as many postbacks and callbacks are sent.</li>
+        <li>
+          A raw HTTP request or response, including its status line and headers, or a callback URL
+          with the data in its query string.
+        </li>
+        <li>
+          An XML document. Documents with a DOCTYPE or entity declarations are rejected for safety.
+        </li>
       </ul>
       <p>
         Default limits: 5 MB per file, 20 MB per session, 5,000 records, nesting depth 64. Larger or

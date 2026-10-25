@@ -4,4 +4,5 @@ export * from "./redact.js";
 export * from "./engine.js";
 export * from "./report.js";
 export * from "./adapter-kit.js";
+export * from "./xml.js";
 export { CORE_VERSION } from "./version.js";
