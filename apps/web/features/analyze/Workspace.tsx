@@ -24,6 +24,20 @@ type ImportedFile = { name: string; text: string; size: number };
 
 const PASTE_SOURCE = "Pasted JSON";
 
+/** Provider list grouped by overall support level, alphabetical within each. */
+const byName = (a: { displayName: string }, b: { displayName: string }) =>
+  a.displayName.localeCompare(b.displayName);
+const PROVIDER_GROUPS = [
+  {
+    label: "Full support",
+    manifests: MANIFESTS.filter((m) => m.status === "supported").sort(byName),
+  },
+  {
+    label: "Limited support",
+    manifests: MANIFESTS.filter((m) => m.status !== "supported").sort(byName),
+  },
+].filter((g) => g.manifests.length > 0);
+
 /**
  * Example groups. "High-risk payments" is a context for recurring billing,
  * deposits, payouts and disputes; it is chosen by provider roadmap focus,
@@ -60,7 +74,7 @@ export function Workspace() {
   );
 
   const analyze = useCallback(
-    async (overrideText?: string) => {
+    async (overrideText?: string, providerOverride?: string) => {
       const pasted = overrideText ?? text;
       const sources: SourceText[] = [
         ...(pasted.trim() ? [{ name: PASTE_SOURCE, text: pasted }] : []),
@@ -72,10 +86,11 @@ export function Workspace() {
       }
       setNotice(null);
       setBusy(true);
+      const chosen = providerOverride ?? provider;
       setHighlight([]);
       const res = await analyzeInBrowser({
         sources,
-        provider: provider === "auto" ? null : provider,
+        provider: chosen === "auto" ? null : chosen,
       });
       setBusy(false);
       setResponse(res);
@@ -201,14 +216,15 @@ export function Workspace() {
               className="rounded-md border border-border bg-bg px-2 py-1.5 text-sm"
             >
               <option value="auto">Auto-detect</option>
-              {[...MANIFESTS]
-                .sort((a, b) => a.displayName.localeCompare(b.displayName))
-                .map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.displayName}
-                    {m.status === "supported" ? "" : ` (${m.status})`}
-                  </option>
-                ))}
+              {PROVIDER_GROUPS.map((g) => (
+                <optgroup key={g.label} label={g.label}>
+                  {g.manifests.map((m) => (
+                    <option key={m.id} value={m.id}>
+                      {m.displayName}
+                    </option>
+                  ))}
+                </optgroup>
+              ))}
             </select>
           </label>
           <label className="flex flex-col gap-1 text-xs font-medium">
@@ -395,7 +411,15 @@ export function Workspace() {
           </label>
         </div>
 
-        {result && <DetectionSummary records={result.records} />}
+        {result && (
+          <DetectionSummary
+            records={result.records}
+            onAnalyzeAs={(id) => {
+              setProvider(id);
+              void analyze(undefined, id);
+            }}
+          />
+        )}
 
         <div
           role="tablist"

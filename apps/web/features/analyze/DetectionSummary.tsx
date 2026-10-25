@@ -5,7 +5,14 @@ import { MANIFESTS } from "@pandapaylens/providers/manifests";
 const confidenceLabel = (c: number) => (c >= 0.9 ? "high" : c >= 0.7 ? "medium" : "low");
 
 /** Which provider and format each group of records was recognized as. */
-export function DetectionSummary({ records }: { records: RecordSummary[] }) {
+export function DetectionSummary({
+  records,
+  onAnalyzeAs,
+}: {
+  records: RecordSummary[];
+  /** Re-runs the analysis with a manually chosen provider. */
+  onAnalyzeAs?: (providerId: string) => void;
+}) {
   const groups = new Map<
     string,
     {
@@ -38,6 +45,8 @@ export function DetectionSummary({ records }: { records: RecordSummary[] }) {
         const m = g.provider ? MANIFESTS.find((x) => x.id === g.provider) : undefined;
         const family = m?.apiFamilies.find((f) => f.id === g.format);
         const ok = g.status === "analyzed";
+        // A provider matched below the automatic threshold: offer to use it.
+        const suggest = !ok && g.status === "unsupported" && m && g.confidence > 0 && onAnalyzeAs;
         return (
           <li
             key={`${g.provider}|${g.format}|${g.status}`}
@@ -50,6 +59,20 @@ export function DetectionSummary({ records }: { records: RecordSummary[] }) {
             </span>
             {family && family.status !== "supported" && (
               <span className="text-warn">{family.status} support</span>
+            )}
+            {suggest && (
+              <span className="flex flex-wrap items-center gap-1.5">
+                <span className="text-fg-muted">
+                  Looks like {m.displayName}, but the record alone does not prove it.
+                </span>
+                <button
+                  type="button"
+                  onClick={() => onAnalyzeAs(m.id)}
+                  className="rounded-md border border-accent/40 px-2 py-0.5 font-medium text-accent hover:bg-accent/10"
+                >
+                  Analyze as {m.displayName}
+                </button>
+              </span>
             )}
             {m && (
               <Link

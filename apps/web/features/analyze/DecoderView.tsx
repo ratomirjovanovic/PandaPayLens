@@ -1,8 +1,30 @@
 import { maskIdentifier, type AnalysisResult } from "@pandapaylens/core";
+import { MANIFESTS } from "@pandapaylens/providers/manifests";
 import { CATEGORY_LABEL, CONFIDENCE_LABEL, RETRY_CLASS, RETRY_LABEL } from "./labels";
 import { CopyButton } from "./CopyButton";
 
-const SAFE_DOC = /^https:\/\/docs\.(stripe|adyen)\.com\//;
+const hostOf = (url: string) => {
+  try {
+    const u = new URL(url);
+    return u.protocol === "https:" ? u.hostname : null;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Documentation links are shown only for https hosts that the provider
+ * manifests themselves cite as official documentation.
+ */
+const DOC_HOSTS = new Set(
+  MANIFESTS.flatMap((m) => m.documentation.map((d) => hostOf(d.url))).filter(
+    (h): h is string => h !== null,
+  ),
+);
+const safeDoc = (url: string) => {
+  const host = hostOf(url);
+  return host !== null && DOC_HOSTS.has(host);
+};
 
 export function DecoderView({ result, showIds }: { result: AnalysisResult; showIds: boolean }) {
   if (!result.errors.length) {
@@ -90,22 +112,26 @@ export function DecoderView({ result, showIds }: { result: AnalysisResult; showI
                   </dd>
                 </>
               )}
-              <dt className="font-medium text-fg-muted">Documentation</dt>
-              <dd className="flex flex-col gap-1">
-                {e.documentation
-                  .filter((d) => SAFE_DOC.test(d.url))
-                  .map((d) => (
-                    <a
-                      key={d.url + d.title}
-                      href={d.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-accent underline underline-offset-2"
-                    >
-                      {d.title} ↗
-                    </a>
-                  ))}
-              </dd>
+              {e.documentation.some((d) => safeDoc(d.url)) && (
+                <>
+                  <dt className="font-medium text-fg-muted">Documentation</dt>
+                  <dd className="flex flex-col gap-1">
+                    {e.documentation
+                      .filter((d) => safeDoc(d.url))
+                      .map((d) => (
+                        <a
+                          key={d.url + d.title}
+                          href={d.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-accent underline underline-offset-2"
+                        >
+                          {d.title} ↗
+                        </a>
+                      ))}
+                  </dd>
+                </>
+              )}
             </dl>
             {result.events.length <= 1 && (
               <p className="mt-4 border-t border-border pt-3 text-xs text-fg-muted">
