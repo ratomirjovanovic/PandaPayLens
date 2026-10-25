@@ -8,6 +8,14 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.10.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "Identical records from providers without a delivery id are recognized as a possible repeated delivery and counted once, so a refund delivered twice no longer looks like two refunds.",
+    ],
+  },
+  {
     version: "0.9.0",
     date: "2026-10-25",
     status: "released",

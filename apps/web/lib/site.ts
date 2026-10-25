@@ -20,4 +20,4 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3
   "",
 );
 
-export const APP_VERSION = "0.9.0";
+export const APP_VERSION = "0.10.0";
