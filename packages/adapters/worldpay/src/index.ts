@@ -13,8 +13,15 @@
  * - `worldpay.card_payments_events_query`
  *                                Deprecated Card Payments v7 events query (Title Case `lastEvent`)
  *
- * WPG and cnpAPI are XML and never reach the adapter (XML input is rejected
- * before detection).
+ * XML (see xml.ts):
+ * - `worldpay.wpg.reply`            WPG paymentService replies (error, orderStatus, ok)
+ * - `worldpay.wpg.notification`     WPG order notifications (notify/orderStatusEvent)
+ * - `worldpay.cnpapi.online_response`
+ *                                cnpAPI cnpOnlineResponse with a card transaction response
+ *
+ * Recognized but not supported: other WPG documents (`worldpay.wpg`: requests,
+ * reports, other replies) and other cnpAPI documents (`worldpay.cnpapi`: batch
+ * files, requests, other transaction responses).
  *
  * `refusalCode` holds the Worldpay refusal code by default and the raw scheme
  * code when the merchant is configured for raw codes. Only Card Payments v7
@@ -77,6 +84,17 @@ import {
   type RefusalEntry,
 } from "./catalog.js";
 import { worldpayManifest, WORLDPAY_ADAPTER_VERSION } from "./manifest.js";
+import {
+  CNP_FORMATS,
+  DOCTYPE_HINT,
+  WPG_FORMATS,
+  XML_FORMATS,
+  decodeXmlErrors,
+  detectXml,
+  normalizeXml,
+  parseXmlRecord,
+  type XmlParsed,
+} from "./xml.js";
 
 export { worldpayManifest, WORLDPAY_ADAPTER_VERSION };
 
@@ -215,7 +233,8 @@ export type WorldpayParsed =
   | { kind: "payment_response"; value: PaymentResponseFields }
   | { kind: "error"; value: z.infer<typeof ApiError> }
   | { kind: "payment_query"; value: z.infer<typeof PaymentQuery> }
-  | { kind: "card_payments_events_query"; value: z.infer<typeof CardEventsQuery> };
+  | { kind: "card_payments_events_query"; value: z.infer<typeof CardEventsQuery> }
+  | XmlParsed;
 
 const FORMATS = {
   "worldpay.event": ["event", Webhook],
@@ -302,6 +321,8 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
     reasons: [],
   };
   if (!isObj(input) || meta?.format === "form") return none;
+  // An XML document (or XML HTTP body) is only read as WPG or cnpAPI.
+  if (meta?.xml) return detectXml(input, meta.xml) ?? none;
   // Stripe objects carry `object`; Access Worldpay bodies never do.
   if ("object" in input) return none;
 
@@ -525,6 +546,7 @@ function parse(
   input: unknown,
   format: string,
 ): { ok: true; value: WorldpayParsed } | { ok: false; issues: string[] } {
+  if (XML_FORMATS.includes(format)) return parseXmlRecord(input, format);
   const entry = lookup(FORMATS, format);
   if (!entry) return { ok: false, issues: [`Unsupported Worldpay format "${format}".`] };
   const r = entry[1].safeParse(input);
@@ -665,6 +687,7 @@ function signaturePresent(meta: RecordMeta | undefined): boolean | undefined {
 }
 
 function normalize(parsed: WorldpayParsed, ctx: NormalizeContext): NormalizedEventDraft[] {
+  if (parsed.kind === "wpg" || parsed.kind === "cnp") return normalizeXml(parsed, ctx);
   const source = { recordIndex: ctx.recordIndex, path: "" };
   const observed = ctx.observedTimestamp ? { observedTimestamp: ctx.observedTimestamp } : {};
   const httpStatus = ctx.meta?.http?.status;
@@ -1321,6 +1344,7 @@ function decodeRefusedWebhook(
 }
 
 function decodeErrors(parsed: WorldpayParsed, ctx: NormalizeContext): DecodedErrorDraft[] {
+  if (parsed.kind === "wpg" || parsed.kind === "cnp") return decodeXmlErrors(parsed, ctx);
   const source = { recordIndex: ctx.recordIndex, path: "" };
   const at = (path: string) => ({ recordIndex: ctx.recordIndex, path });
 
@@ -1473,12 +1497,35 @@ export const worldpayAdapter: ProviderAdapter<WorldpayParsed> = {
       id: "worldpay.card_payments_events_query",
       description: "Deprecated Card Payments events query (Title Case lastEvent)",
     },
+    {
+      id: WPG_FORMATS.reply,
+      description: `WPG paymentService reply with error, orderStatus (payment or error) or ok, pasted as XML or as the body of an HTTP response. ${DOCTYPE_HINT}`,
+    },
+    {
+      id: WPG_FORMATS.notification,
+      description: `WPG order notification (paymentService notify orderStatusEvent with payment and lastEvent). ${DOCTYPE_HINT}`,
+    },
+    {
+      id: CNP_FORMATS.onlineResponse,
+      description:
+        "cnpAPI cnpOnlineResponse (namespace http://www.vantivcnp.com/schema) with an authorization, sale, capture, credit, void or authorization reversal response",
+    },
   ],
   detect,
   parse,
   normalize,
   decodeErrors,
   correlationKeys(event: NormalizedEvent): string[] {
+    // WPG orders are linked by orderCode, which Worldpay requires to be unique.
+    // cnpAPI responses are linked by cnpTxnId and by the merchant's orderId.
+    if (event.sourceFormat.startsWith("worldpay.wpg"))
+      return event.paymentReference ? [`wpg-order:${event.paymentReference}`] : [];
+    if (event.sourceFormat.startsWith("worldpay.cnpapi")) {
+      const keys: string[] = [];
+      if (event.paymentReference) keys.push(`cnp-txn:${event.paymentReference}`);
+      if (event.merchantReference) keys.push(`cnp-order:${event.merchantReference}`);
+      return keys;
+    }
     // paymentId spans the whole lifecycle; commandId identifies one request of
     // that payment; transactionReference is documented as identifying a payment
     // throughout its lifecycle and is the only link for events without a
@@ -1492,4 +1539,13 @@ export const worldpayAdapter: ProviderAdapter<WorldpayParsed> = {
 };
 
 export * from "./catalog.js";
+export {
+  CNP_FORMATS,
+  DOCTYPE_HINT,
+  WPG_FORMATS,
+  decodeWpgError,
+  decodeWpgRefusal,
+  providerText,
+  wpgMinorUnits,
+} from "./xml.js";
 export default worldpayAdapter;

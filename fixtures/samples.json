@@ -511,6 +511,13 @@
     "description": "A Card Payments v7 refusal where the raw scheme code and the Worldpay code are shown side by side."
   },
   {
+    "id": "worldpay-wpg-refused",
+    "title": "Worldpay: refused WPG XML reply",
+    "provider": "worldpay",
+    "file": "worldpay/wpg-refused-iso8583.xml",
+    "description": "A WPG paymentService reply with a REFUSED lastEvent and an ISO8583ReturnCode, with card holder and address fields that PandaPayLens hides."
+  },
+  {
     "id": "cybersource-capture-refund",
     "title": "Cybersource: authorization, capture and refund",
     "provider": "cybersource",
