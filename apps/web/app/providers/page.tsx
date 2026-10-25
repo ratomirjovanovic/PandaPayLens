@@ -19,8 +19,14 @@ export default function ProvidersPage() {
         {live} of {entries.length} providers on the roadmap can be analyzed today. Each adapter is
         built from the provider&apos;s official documentation and tested against synthetic fixtures.
         A capability is marked <em>supported</em> only when it is implemented and tested;{" "}
-        <em>limited</em> means it works with documented gaps. Providers marked <em>planned</em> are
-        not analyzed yet.
+        <em>limited</em> means it works with documented gaps. Research candidates and other
+        providers without an adapter are not analyzed yet.
+      </p>
+      <p className="mt-3 max-w-3xl text-sm text-fg-muted">
+        High-risk candidates are research items until their documentation passes the qualification
+        gate and an adapter is tested. PandaPayLens is a diagnostic tool, not a merchant account,
+        referral, underwriting or approval service. Listing a provider implies no partnership or
+        endorsement, and merchant eligibility always depends on the provider&apos;s own policies.
       </p>
       <div className="mt-8">
         <ProviderDirectory entries={entries} />

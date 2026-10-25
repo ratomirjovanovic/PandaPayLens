@@ -11,9 +11,9 @@ describe("provider registry", () => {
     }
   });
 
-  it("lists 22 roadmap providers with unique ids, and every manifest is on the roadmap", () => {
-    expect(ROADMAP).toHaveLength(22);
-    expect(new Set(ROADMAP.map((r) => r.id)).size).toBe(22);
+  it("lists 42 roadmap providers with unique ids, and every manifest is on the roadmap", () => {
+    expect(ROADMAP).toHaveLength(42);
+    expect(new Set(ROADMAP.map((r) => r.id)).size).toBe(42);
     for (const m of MANIFESTS) expect(ROADMAP.some((r) => r.id === m.id)).toBe(true);
   });
 
@@ -45,6 +45,32 @@ describe("manifest samples", () => {
         expect(s, `${m.id} lists unknown sample ${id}`).toBeDefined();
         expect(s!.provider).toBe(m.id);
       }
+    }
+  });
+});
+
+describe("research status honesty", () => {
+  it("only providers with a tested adapter are released; candidates are never released", () => {
+    for (const r of ROADMAP) {
+      const m = MANIFESTS.find((x) => x.id === r.id);
+      if (m) {
+        expect(["tested", "released"]).toContain(m.researchStatus);
+      } else {
+        expect([
+          "research_only",
+          "documentation_verified",
+          "implementation_in_progress",
+          "blocked",
+        ]).toContain(r.researchStatus);
+      }
+    }
+  });
+
+  it("manifests declare categories, documentation access and fixture provenance", () => {
+    for (const m of MANIFESTS) {
+      expect(m.categories.length).toBeGreaterThan(0);
+      expect(m.fixtureProvenance).toMatch(/[Ss]ynthetic/);
+      for (const s of m.sectors) expect(s.source).toMatch(/^https:\/\//);
     }
   });
 });

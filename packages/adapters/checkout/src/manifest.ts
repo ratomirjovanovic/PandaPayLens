@@ -7,6 +7,12 @@ export const checkoutManifest: ProviderManifest = {
   displayName: "Checkout.com",
   version: CHECKOUT_ADAPTER_VERSION,
   wave: 1,
+  researchStatus: "released",
+  categories: ["acquiring", "gateway"],
+  sectors: [],
+  documentationAccess: "public",
+  fixtureProvenance:
+    "Synthetic payloads modelled on the provider's public documentation; not official examples.",
   status: "limited",
   apiFamilies: [
     {

@@ -7,6 +7,12 @@ export const stripeManifest: ProviderManifest = {
   displayName: "Stripe",
   version: STRIPE_ADAPTER_VERSION,
   wave: 0,
+  researchStatus: "released",
+  categories: ["payment_facilitator", "gateway"],
+  sectors: [],
+  documentationAccess: "public",
+  fixtureProvenance:
+    "Synthetic payloads modelled on the provider's public documentation; not official examples.",
   status: "supported",
   apiFamilies: [
     {

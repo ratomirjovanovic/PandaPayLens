@@ -200,7 +200,13 @@ function providers(io: Io, format: string, onlyAvailable: boolean): number {
           formats: a.manifest.apiFamilies,
           limitations: a.manifest.limitations,
         }
-      : { id: r.id, name: r.displayName, status: "planned" as const };
+      : {
+          id: r.id,
+          name: r.displayName,
+          status: "planned" as const,
+          researchStatus: r.researchStatus,
+          wave: r.wave,
+        };
   });
   if (format === "json") {
     io.stdout(`${JSON.stringify(data, null, 2)}\n`);
@@ -208,7 +214,11 @@ function providers(io: Io, format: string, onlyAvailable: boolean): number {
   }
   for (const p of data) {
     if (p.status === "planned" || !("capabilities" in p) || !p.capabilities || !p.formats) {
-      io.stdout(`${p.name} (${p.id}) - planned, not analyzed yet\n`);
+      const research =
+        "researchStatus" in p && p.researchStatus
+          ? String(p.researchStatus).replace(/_/g, " ")
+          : "planned";
+      io.stdout(`${p.name} (${p.id}) - not analyzed yet (${research})\n`);
       continue;
     }
     io.stdout(`${p.name} (${p.id}, adapter ${p.version}) - ${p.status}\n`);

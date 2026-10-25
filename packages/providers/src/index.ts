@@ -23,4 +23,10 @@ export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   squareAdapter,
 ];
 
-export { MANIFESTS, ROADMAP, manifestFor, type RoadmapEntry } from "./manifests.js";
+export {
+  MANIFESTS,
+  ROADMAP,
+  manifestFor,
+  type RoadmapEntry,
+  type RoadmapFocus,
+} from "./manifests.js";

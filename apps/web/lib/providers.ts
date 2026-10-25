@@ -9,6 +9,8 @@ export function directoryEntries(): DirectoryEntry[] {
       id: r.id,
       displayName: m?.displayName ?? r.displayName,
       wave: r.wave,
+      researchStatus: m?.researchStatus ?? r.researchStatus,
+      focus: r.focus,
       ...(r.note ? { note: r.note } : {}),
       status: m?.status ?? null,
       ...(m

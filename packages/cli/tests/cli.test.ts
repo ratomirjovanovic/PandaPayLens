@@ -36,7 +36,7 @@ describe("cli", () => {
       id: string;
       status: string;
     }[];
-    expect(all).toHaveLength(22);
+    expect(all).toHaveLength(42);
     const available = JSON.parse(exec(["providers", "--supported", "-f", "json"]).out) as {
       id: string;
     }[];

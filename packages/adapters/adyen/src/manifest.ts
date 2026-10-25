@@ -7,6 +7,12 @@ export const adyenManifest: ProviderManifest = {
   displayName: "Adyen",
   version: ADYEN_ADAPTER_VERSION,
   wave: 0,
+  researchStatus: "released",
+  categories: ["acquiring", "card_processing", "gateway"],
+  sectors: [],
+  documentationAccess: "public",
+  fixtureProvenance:
+    "Synthetic payloads modelled on the provider's public documentation; not official examples.",
   status: "supported",
   apiFamilies: [
     {

@@ -180,6 +180,28 @@ export type TransactionGroup = {
   latestOutcome: Outcome;
 };
 
+/** What kind of business the provider is, per its own documentation. */
+export type ProviderBusinessCategory =
+  | "card_processing"
+  | "acquiring"
+  | "gateway"
+  | "payment_facilitator"
+  | "wallet"
+  | "alternative_payment_method"
+  | "orchestration"
+  | "merchant_account_intermediary";
+
+/** Where a provider is in the research and release process. */
+export type ProviderResearchStatus =
+  | "research_only"
+  | "documentation_verified"
+  | "implementation_in_progress"
+  | "tested"
+  | "released"
+  | "blocked";
+
+export type RolloutWave = 0 | 1 | 2 | 3 | "HR-1" | "HR-2" | "HR-3";
+
 export type CapabilityStatus =
   "supported" | "limited" | "experimental" | "unsupported" | "deprecated";
 
@@ -203,7 +225,21 @@ export type ProviderManifest = {
   displayName: string;
   version: string;
   /** Rollout wave from the provider roadmap (0 = initial providers). */
-  wave: 0 | 1 | 2 | 3;
+  wave: RolloutWave;
+  researchStatus: ProviderResearchStatus;
+  categories: readonly ProviderBusinessCategory[];
+  /**
+   * Merchant sectors the provider itself documents, each with a source.
+   * Empty means not researched; it never means "all sectors".
+   */
+  sectors: readonly { sector: string; source: string }[];
+  /** Regional or regulatory limitations, as documented. */
+  regions?: string;
+  documentationAccess: "public" | "partial" | "merchant_login" | "unavailable";
+  /** Where the test fixtures come from. */
+  fixtureProvenance: string;
+  /** Other gateways or platforms this integration depends on. */
+  dependencies?: readonly string[];
   /** Overall maturity; experimental adapters are labeled as such in the UI. */
   status: "supported" | "limited" | "experimental";
   apiFamilies: readonly { id: string; description: string; status: CapabilityStatus }[];

@@ -7,6 +7,12 @@ export const paypalManifest: ProviderManifest = {
   displayName: "PayPal",
   version: PAYPAL_ADAPTER_VERSION,
   wave: 1,
+  researchStatus: "released",
+  categories: ["wallet", "payment_facilitator"],
+  sectors: [],
+  documentationAccess: "public",
+  fixtureProvenance:
+    "Synthetic payloads modelled on the provider's public documentation; not official examples.",
   status: "limited",
   apiFamilies: [
     {

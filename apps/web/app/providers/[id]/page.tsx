@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MANIFESTS, ROADMAP } from "@pandapaylens/providers/manifests";
 import { DocPage } from "@/components/DocPage";
-import { StatusBadge } from "@/features/providers/ProviderDirectory";
+import { RESEARCH_LABEL, StatusBadge } from "@/features/providers/ProviderDirectory";
 import { SAMPLES } from "@/lib/samples";
 
 const CAPABILITY_LABELS = {
@@ -46,15 +46,27 @@ export default async function ProviderPage({ params }: { params: Promise<{ id: s
   const m = MANIFESTS.find((x) => x.id === id);
 
   if (!m) {
+    const status = RESEARCH_LABEL[r.researchStatus];
     return (
-      <DocPage title={r.displayName} lead="Planned for a later release.">
+      <DocPage title={r.displayName} lead={`Not implemented. Status: ${status}.`}>
         <p>
           PandaPayLens does not analyze {r.displayName} payloads yet. It is part of wave {r.wave} of
           the provider roadmap. {r.note}
         </p>
         <p>
-          Until the adapter is implemented and tested, {r.displayName} input is reported as an
-          unsupported format rather than guessed. See <Link href="/providers">all providers</Link>.
+          A provider is implemented only after its official documentation passes the qualification
+          gate and an adapter with synthetic fixtures and tests is released. Until then,{" "}
+          {r.displayName} input is reported as an unsupported format rather than guessed.
+        </p>
+        {r.focus.includes("high_risk") && (
+          <p>
+            This provider is on the high-risk roadmap. PandaPayLens is a diagnostic tool only: it is
+            not a merchant account, referral, underwriting or approval service, and listing a
+            provider here implies no partnership or endorsement.
+          </p>
+        )}
+        <p>
+          See <Link href="/providers">all providers</Link>.
         </p>
       </DocPage>
     );

@@ -7,6 +7,12 @@ export const squareManifest: ProviderManifest = {
   displayName: "Square",
   version: SQUARE_ADAPTER_VERSION,
   wave: 1,
+  researchStatus: "released",
+  categories: ["payment_facilitator", "card_processing"],
+  sectors: [],
+  documentationAccess: "public",
+  fixtureProvenance:
+    "Synthetic payloads modelled on the provider's public documentation; not official examples.",
   status: "limited",
   apiFamilies: [
     {
