@@ -62,7 +62,7 @@ try {
   );
   await page.setContent(`<!doctype html><html><body style="margin:0;width:1280px;height:640px;background:#0f1115;color:#ecedf0;font-family:Segoe UI,system-ui,sans-serif;display:flex;align-items:center;">
   <div style="padding:0 80px;flex:1">
-    <div style="display:flex;align-items:center;gap:24px"><div style="width:120px;height:120px">${logo}</div>
+    <div style="display:flex;align-items:center;gap:24px"><div style="width:132px;height:132px;background:#ffffff;border-radius:28px;display:flex;align-items:center;justify-content:center"><div style="width:112px">${logo}</div></div>
     <div style="font-size:72px;font-weight:700">PandaPay<span style="color:#3fcf8e">Lens</span></div></div>
     <p style="font-size:34px;line-height:1.35;margin:36px 0 0;max-width:680px">Decode payment errors. Visualize transaction events. Understand what went wrong.</p>
     <p style="font-size:22px;color:#a2a7b3;margin-top:28px">Open source · local-first · runs in your browser</p>

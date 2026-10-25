@@ -75,6 +75,12 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* Keep the logo's black ears visible on dark backgrounds. */
+.dark .panda-ear {
+  stroke: #4a505c;
+  stroke-width: 16;
+}
+
 :focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;

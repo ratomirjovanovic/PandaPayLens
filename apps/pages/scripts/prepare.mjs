@@ -13,6 +13,10 @@ mkdirSync(out, { recursive: true });
 const samples = JSON.parse(readFileSync(join(repo, "fixtures", "samples.json"), "utf8"));
 for (const s of samples) copyFileSync(join(repo, "fixtures", s.file), join(out, `${s.id}.txt`));
 copyFileSync(join(repo, "apps", "web", "app", "icon.svg"), join(app, "app", "icon.svg"));
+copyFileSync(
+  join(repo, "apps", "web", "app", "apple-icon.png"),
+  join(app, "app", "apple-icon.png"),
+);
 // GitHub Pages: do not run Jekyll over the export (it hides _next/).
 mkdirSync(join(app, "public"), { recursive: true });
 copyFileSync(join(here, "nojekyll"), join(app, "public", ".nojekyll"));

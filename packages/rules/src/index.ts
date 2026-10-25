@@ -17,8 +17,9 @@ import type {
   DiagnosticRule,
   NormalizedEvent,
 } from "@pandapaylens/core";
+import { LIFECYCLE_RULES } from "./lifecycle.js";
 
-export const RULE_CATALOG_VERSION = "2026.10.0";
+export const RULE_CATALOG_VERSION = "2026.10.1";
 
 type Finding = Omit<DiagnosticFinding, "ruleId" | "ruleVersion">;
 
@@ -540,4 +541,7 @@ export const defaultRules: readonly DiagnosticRule[] = Object.freeze([
   duplicateDelivery,
   outOfOrderArrival,
   unknownEventType,
+  ...LIFECYCLE_RULES,
 ]);
+
+export * from "./lifecycle.js";

@@ -74,6 +74,51 @@ export default defineConfig({
         find: /^@pandapaylens\/square$/,
         replacement: src("./packages/adapters/square/src/index.ts"),
       },
+      {
+        find: /^@pandapaylens\/verotel\/manifest$/,
+        replacement: src("./packages/adapters/verotel/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/verotel$/,
+        replacement: src("./packages/adapters/verotel/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/netbilling\/manifest$/,
+        replacement: src("./packages/adapters/netbilling/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/netbilling$/,
+        replacement: src("./packages/adapters/netbilling/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/pxp\/manifest$/,
+        replacement: src("./packages/adapters/pxp/src/manifest.ts"),
+      },
+      { find: /^@pandapaylens\/pxp$/, replacement: src("./packages/adapters/pxp/src/index.ts") },
+      {
+        find: /^@pandapaylens\/ccbill\/manifest$/,
+        replacement: src("./packages/adapters/ccbill/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/ccbill$/,
+        replacement: src("./packages/adapters/ccbill/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/segpay\/manifest$/,
+        replacement: src("./packages/adapters/segpay/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/segpay$/,
+        replacement: src("./packages/adapters/segpay/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/trust-payments\/manifest$/,
+        replacement: src("./packages/adapters/trust-payments/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/trust-payments$/,
+        replacement: src("./packages/adapters/trust-payments/src/index.ts"),
+      },
       { find: /^@\/(.*)$/, replacement: `${src("./apps/web/")}$1` },
     ],
   },

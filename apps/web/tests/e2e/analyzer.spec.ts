@@ -59,9 +59,9 @@ test("shows the timeline, filters events and highlights evidence", async ({ page
 test("filters findings by severity", async ({ page }) => {
   await page.goto("/analyze?sample=adyen-duplicate-conflict");
   const findings = page.getByRole("complementary");
-  await expect(findings).toContainText("3 of 3 finding(s)");
+  await expect(findings).toContainText("4 of 4 finding(s)");
   await findings.getByLabel("Severity").selectOption("info");
-  await expect(findings).toContainText("1 of 3 finding(s)");
+  await expect(findings).toContainText("1 of 4 finding(s)");
   await expect(findings.getByRole("heading", { name: /delivered 2 times/ })).toBeVisible();
 });
 
@@ -181,7 +181,7 @@ test("provider directory lists all roadmap providers honestly and filters them",
   await page.getByLabel("Category").selectOption("high_risk");
   await expect(page.getByText("20 of 42 providers")).toBeVisible();
   await expect(page.getByRole("listitem").filter({ hasText: "CCBill" })).toContainText(
-    "research candidate",
+    "in progress",
   );
   await page.getByLabel("Category").selectOption("");
   await page.getByLabel("Provider", { exact: true }).fill("stripe");

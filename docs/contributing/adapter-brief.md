@@ -40,6 +40,16 @@ Export from `src/index.ts`: the adapter as `<id>Adapter` (camelCase, e.g. `payab
 11. **Tests** (in `tests/<id>.test.ts`, run with `npx vitest run packages/adapters/<id>` from the repo root). Cover, where the provider documents the behavior: successful response, decline, validation error, authentication failure, timeout/unknown outcome, supported notification, duplicate delivery, missing required fields (parse issues, no throw), unsupported format/version (recognized but not analyzed, where applicable), malformed payload, unrecognized error code (honest `unknown`/`insufficient`), multiple related events in one group, unrelated transactions kept apart, sensitive-data redaction (planted values absent from `JSON.stringify(result.events)` and from `toJsonReport(result)`), detection does not fire on Stripe/Adyen fixtures. Use `analyzeText` / `analyzeRecords` from `@pandapaylens/core` with `adapters: [yourAdapter]`, `rules: defaultRules` from `@pandapaylens/rules`, `catalogVersion: "test"`. For form-encoded fixtures, pass the raw text to `analyzeText`.
 12. **Style.** Match the reference adapters: strict TypeScript, no `any` except where the reference adapters use it, comments explain non-obvious decisions only. Never use the em dash or en dash characters anywhere (code, comments, strings, docs); use a plain hyphen.
 
+## High-risk adapters
+
+For providers from the high-risk roadmap (waves `HR-1`, `HR-2`, `HR-3`), the research file is in `docs/providers/high-risk/research/<id>.md` and these additional rules apply:
+
+- Manifest: `wave: "HR-1"` (or HR-2/HR-3), `researchStatus: "tested"`, `categories` and `sectors` exactly as established in the research file (each sector with a first-party source URL), `documentationAccess` (`public`, `partial` or `merchant_login`), `fixtureProvenance` stating that fixtures are synthetic and, where the provider publishes no literal examples, that they were built from documented field tables. `regions` and `dependencies` where documented.
+- Keep wallet, bank-transfer, card and subscription lifecycles separate. A wallet transfer approval is not a card authorization; a rebill is its own operation; a payout is its own operation.
+- Subscription events (signup, rebill, cancellation, expiry, chargeback, refund) map to stages honestly: rebill success is a `payment`, cancellation is `cancellation`, chargeback is `dispute`, refund/credit is `refund`. Keep the provider's own event name in `eventType` and the subscription id in `relatedReference` or `paymentReference` as the research supports.
+- Never claim why an acquirer declined or restricted a merchant unless the payload says so. Never suggest retries against documented provider or issuer guidance.
+- Never treat a pasted postback or webhook as verified. Signature fields are sensitive and are never copied.
+
 ## Scope of an adapter pull request
 
 Keep the adapter itself to `packages/adapters/<id>/` and `fixtures/<id>/`. Registering it (`packages/providers`), adding examples and updating docs are separate, small steps described in [add-provider.md](add-provider.md). If the adapter needs a change in `packages/core`, open an issue or a separate pull request for it first.

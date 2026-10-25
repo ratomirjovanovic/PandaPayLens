@@ -587,6 +587,8 @@ describe("mollie correlation and timeline", () => {
     // points as deliveries. The capture was created before paidAt but is listed
     // after the payment, so the rule reports it, with "possible" confidence only.
     expect(r.findings.map((f) => [f.ruleId, f.confidence])).toEqual([
+      ["CHARGEBACK_REPORTED", "confirmed"],
+      ["REFUND_PENDING", "possible"],
       ["OUT_OF_ORDER_ARRIVAL", "possible"],
     ]);
   });

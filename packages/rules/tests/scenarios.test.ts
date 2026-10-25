@@ -12,13 +12,19 @@ describe("rule catalog", () => {
 
   it("covers the initial finding set", () => {
     expect(defaultRules.map((r) => r.id).sort()).toEqual([
+      "AMOUNT_MISMATCH",
+      "CAPTURE_FAILED_AFTER_AUTHORIZATION",
+      "CHARGEBACK_REPORTED",
       "CONFLICTING_OBSERVATIONS",
       "DUPLICATE_DELIVERY",
       "MISSING_REFERENCE",
       "OUT_OF_ORDER_ARRIVAL",
       "PAYMENT_FAILURE",
+      "PAYOUT_STATUS",
       "POSSIBLE_RETRY_RISK",
       "POTENTIAL_STATE_INCONSISTENCY",
+      "RECURRING_PAYMENT_FAILED",
+      "REFUND_PENDING",
       "UNKNOWN_EVENT_TYPE",
       "UNRESOLVED_OUTCOME",
     ]);
@@ -94,6 +100,7 @@ describe("reference scenarios", () => {
   it("Adyen duplicate + conflicting capture", () => {
     const r = analyzeFixture("adyen/duplicate-and-conflict.json");
     expect(ruleIds(r)).toEqual([
+      "CAPTURE_FAILED_AFTER_AUTHORIZATION",
       "CONFLICTING_OBSERVATIONS",
       "DUPLICATE_DELIVERY",
       "PAYMENT_FAILURE",
@@ -231,7 +238,7 @@ describe("reports", () => {
     const report = buildReport(result);
     expect(report).toMatchObject({
       tool: "PandaPayLens",
-      catalogVersion: "2026.10.0",
+      catalogVersion: "2026.10.1",
       redaction: {
         identifiersMasked: true,
         sensitiveFieldsExcluded: true,

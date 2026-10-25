@@ -54,6 +54,8 @@ export type LifecycleStage =
   | "reversal"
   | "dispute"
   | "settlement"
+  | "payout"
+  | "subscription"
   | "error"
   | "other";
 
@@ -84,6 +86,10 @@ export type NormalizedEvent = {
   /** Secondary identifier (Stripe charge, Adyen modification pspReference). */
   relatedReference?: string;
   merchantReference?: string;
+  /** Subscription or membership the event belongs to, when the provider has one. */
+  subscriptionReference?: string;
+  /** True for a recurring charge (rebill) as opposed to an initial or one-time payment. */
+  isRecurring?: boolean;
 
   /**
    * Identity used to recognize repeated deliveries of the same business event.

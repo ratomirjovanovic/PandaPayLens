@@ -936,7 +936,7 @@ describe("braintree correlation", () => {
       "PPLsynthSALE2",
       "dispute:PPLsynthDSP2",
     ]);
-    expect(ruleIds(r)).toEqual([]);
+    expect(ruleIds(r)).toEqual(["CHARGEBACK_REPORTED"]);
   });
 
   it("keeps transactions that only share an order id apart", () => {
