@@ -1,0 +1,29 @@
+{
+  "payment": {
+    "hash": "PPLsynthe7f6c011776e8db7cd330b54174fd76f7d0216b6",
+    "merchant_payment_code": "PPLsynth-3ds-8002",
+    "status": "CA",
+    "status_date": "2026-10-20 10:05:00",
+    "open_date": "2026-10-20 10:04:00",
+    "amount_br": "80.30",
+    "amount_ext": "80.00",
+    "amount_iof": "0.30",
+    "currency_ext": "BRL",
+    "payment_type_code": "creditcard",
+    "pre_approved": false,
+    "capture_available": false,
+    "transaction_status": {
+      "acquirer": "EBANX",
+      "code": "NOK"
+    },
+    "threedsecure": {
+      "has_threeds": true,
+      "status": "UNABLE_TO_AUTHENTICATE",
+      "threeds_result": {
+        "eci": "07",
+        "liability": "MERCHANT"
+      }
+    }
+  },
+  "status": "SUCCESS"
+}

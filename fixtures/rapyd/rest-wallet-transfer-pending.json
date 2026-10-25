@@ -1,0 +1,27 @@
+{
+  "status": {
+    "error_code": "",
+    "status": "SUCCESS",
+    "message": "",
+    "response_code": "",
+    "operation_id": "PPLsynth-0000-4000-a000-000000000111"
+  },
+  "data": {
+    "id": "PPLsynth-transfer-0000-000000000111",
+    "status": "PEN",
+    "amount": 5,
+    "currency_code": "USD",
+    "destination_phone_number": null,
+    "destination_ewallet_id": "ewallet_PPLsynth00000000000000000002",
+    "destination_transaction_id": "",
+    "source_ewallet_id": "ewallet_PPLsynth00000000000000000001",
+    "source_transaction_id": "wt_PPLsynth00000000000000000111",
+    "transfer_response_at": 0,
+    "created_at": 1792000000,
+    "metadata": {
+      "merchant_defined": true
+    },
+    "response_metadata": {},
+    "expiration": 0
+  }
+}

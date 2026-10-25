@@ -1,0 +1,26 @@
+{
+  "payment": {
+    "hash": "PPLsynth2b7e151628aed2a6abf7158809cf4f3c762e7160",
+    "merchant_payment_code": "PPLsynth-order-4001",
+    "status": "CA",
+    "status_date": "2026-10-20 16:00:01",
+    "open_date": "2026-10-20 16:00:00",
+    "amount_br": "50.19",
+    "amount_ext": "50.00",
+    "amount_iof": "0.19",
+    "currency_ext": "BRL",
+    "instalments": "1",
+    "payment_type_code": "visa",
+    "pre_approved": false,
+    "capture_available": false,
+    "transaction_status": {
+      "acquirer": "EBANX",
+      "code": "NOK",
+      "description": "Insufficient funds",
+      "description_code": "INSUFFICIENT_FUNDS",
+      "iso_code": "51",
+      "mac_code": "24"
+    }
+  },
+  "status": "SUCCESS"
+}

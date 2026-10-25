@@ -1,0 +1,6 @@
+{
+  "type": "invalid_request_error",
+  "message": "Empty amount",
+  "status_code": "HP-CM-09",
+  "code": "HP-CM-09"
+}

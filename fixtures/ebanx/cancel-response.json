@@ -1,0 +1,21 @@
+{
+  "payment": {
+    "hash": "PPLsynth3c59dc048e8850243be8079a5c74d079a2f1f0e1",
+    "merchant_payment_code": "PPLsynth-oxxo-7001",
+    "country": "mx",
+    "status": "CA",
+    "status_date": "2026-10-20 18:30:00",
+    "open_date": "2026-10-20 12:00:00",
+    "amount_br": "350.00",
+    "amount_ext": "350.00",
+    "amount_iof": "0.00",
+    "currency_ext": "MXN",
+    "due_date": "2026-10-23",
+    "instalments": "1",
+    "payment_type_code": "oxxopay",
+    "pre_approved": false,
+    "capture_available": null
+  },
+  "operation": "cancel",
+  "status": "SUCCESS"
+}

@@ -1,0 +1,38 @@
+{
+  "payment": {
+    "hash": "PPLsynth5a15e30b970d9f9f4bc33466e42e92515c7a7ed7",
+    "merchant_payment_code": "PPLsynth-1120a8eb178",
+    "order_number": null,
+    "status": "CO",
+    "status_date": "2017-11-22 20:50:18",
+    "open_date": "2017-11-22 20:50:17",
+    "confirm_date": "2017-11-22 20:50:18",
+    "transfer_date": null,
+    "amount_br": "100.38",
+    "amount_ext": "100.00",
+    "amount_iof": "0.38",
+    "currency_rate": "1.0000",
+    "currency_ext": "BRL",
+    "due_date": "2017-11-25",
+    "instalments": "1",
+    "payment_type_code": "visa",
+    "transaction_status": {
+      "acquirer": "EBANX",
+      "code": "OK",
+      "description": "Sandbox - Test credit card, transaction captured",
+      "authcode": "PPLsynth-45101"
+    },
+    "pre_approved": true,
+    "capture_available": false,
+    "chargeback": {
+      "chargeback_public_id": "PPLsynth-cb-01930f1e-7c3a-7b6e-9f2a",
+      "create_date": "2025-11-29 10:12:00",
+      "chargeback_date": "2025-11-27",
+      "reason_code": "0200/15",
+      "amount_ext": "100.00",
+      "dispute_status": "Not disputed",
+      "settled": false
+    }
+  },
+  "status": "SUCCESS"
+}

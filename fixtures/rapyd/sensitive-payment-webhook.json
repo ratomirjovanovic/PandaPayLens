@@ -1,0 +1,74 @@
+{
+  "id": "wh_PPLsynth00000000000000000018",
+  "type": "PAYMENT_COMPLETED",
+  "data": {
+    "id": "payment_PPLsynth00000000000000000501",
+    "amount": 40.11,
+    "original_amount": 40.11,
+    "currency_code": "EUR",
+    "country_code": "GB",
+    "status": "CLO",
+    "paid": true,
+    "captured": true,
+    "is_partial": false,
+    "paid_at": 1792000005,
+    "created_at": 1792000000,
+    "next_action": "not_applicable",
+    "payment_method": null,
+    "payment_method_type": "gb_visa_card",
+    "payment_method_type_category": "card",
+    "error_code": "",
+    "failure_code": "",
+    "failure_message": "contact planted.failure.PPLsynth@example.com",
+    "merchant_reference_id": "planted.PPLsynth@example.com",
+    "initiation_type": "customer_present",
+    "ewallet_id": "ewallet_PPLsynthPLANTEDwallet01",
+    "merchant_advice_code": null,
+    "merchant_advice_message": null,
+    "refunded": false,
+    "refunded_amount": 0,
+    "transaction_id": "",
+    "metadata": {
+      "note": "GB33BUKB20201555555555"
+    },
+    "customer_token": "cus_PPLsynthPLANTEDcustomer01",
+    "mid": "mid_PPLsynthPLANTEDmid01",
+    "receipt_email": "receipt.PPLsynth@example.com",
+    "redirect_url": "https://sandbox.example/PPLsynthPLANTEDredirect01",
+    "complete_payment_url": "https://merchant.example/PPLsynthPLANTEDcomplete01",
+    "network_reference_id": "PPLsynthPLANTEDnetref01",
+    "payment_method_data": {
+      "type": "gb_visa_card",
+      "number": "4111111111111111",
+      "last4": "1111",
+      "name": "PPLsynth Planted Holder",
+      "expiration_month": "12",
+      "expiration_year": "29",
+      "fingerprint_token": "ocfp_PPLsynthPLANTEDfingerprint01",
+      "network_reference_id": "PPLsynthPLANTEDnetref02",
+      "payment_account_reference": "V001PPLsynthPLANTEDpar01",
+      "bin_details": {
+        "bin_number": "411111",
+        "brand": "VISA"
+      },
+      "acs_check": "pass",
+      "cvv_check": "pass"
+    },
+    "address": {
+      "name": "PPLsynth Planted Name",
+      "line_1": "PPLsynth Planted Street 1",
+      "city": "PPLsynthPlantedCity",
+      "zip": "PPL123"
+    },
+    "authentication_result": {
+      "eci": "05",
+      "result": "Y",
+      "version": "2.2.0",
+      "cardholder_info": "PPLsynthPLANTEDcardholder01"
+    }
+  },
+  "trigger_operation_id": "PPLsynth-0000-4000-a000-000000000501",
+  "status": "NEW",
+  "created_at": 1792000180,
+  "extended_timestamp": 1792000180123
+}

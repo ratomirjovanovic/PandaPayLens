@@ -1,0 +1,31 @@
+{
+  "method": "POST",
+  "json": true,
+  "headers": {
+    "Content-Type": "application/json",
+    "timestamp": "1792000070",
+    "salt": "PPLsynthSaltValue000001",
+    "signature": "UFBMc3ludGhTaWduYXR1cmVOb3RSZWFsMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA="
+  },
+  "uri": "https://merchant.example/PPLsynth/webhooks",
+  "body": {
+    "id": "wh_PPLsynth00000000000000000007",
+    "type": "PAYMENT_DISPUTE_CREATED",
+    "data": {
+      "id": "PPLsynth-dispute-record-1",
+      "token": "dispute_PPLsynth00000000000000000001",
+      "status": "ACT",
+      "original_transaction_id": "payment_PPLsynth00000000000000000201",
+      "dispute_category": "Fraud",
+      "dispute_reason_description": "Fraud in a card-absent environment",
+      "pre_dispute": false,
+      "merchant_reference_id": "PPLsynth-order-201"
+    },
+    "trigger_operation_id": "PPLsynth-0000-4000-a000-000000000308",
+    "status": "NEW",
+    "created_at": 1792000070,
+    "extended_timestamp": 1792000070123
+  },
+  "timeout": 15000,
+  "resolveWithFullResponse": true
+}

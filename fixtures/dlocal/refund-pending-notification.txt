@@ -1,0 +1,19 @@
+POST /PPLsynth/dlocal/refunds HTTP/1.1
+Host: merchant.example.com
+Content-Type: application/json
+X-Date: 2026-10-21T08:00:00.000Z
+Authorization: V2-HMAC-SHA256, Signature: cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd
+X-PPL-Fixture: synthetic; built from the documented refund notification fields, not an official dLocal example
+
+{
+  "id": "REF-4-PPLsynth-0012",
+  "payment_id": "D-4-PPLsynth-pay-0012",
+  "order_refund_id": "PPLsynth-refund-0012",
+  "amount": 350.0,
+  "currency": "MXN",
+  "status": "PENDING",
+  "status_code": 100,
+  "status_detail": "The refund is pending.",
+  "created_date": "2026-10-21T08:00:00.000+0000",
+  "amount_refunded": 0
+}

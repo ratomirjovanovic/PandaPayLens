@@ -1,0 +1,64 @@
+{
+  "id": "PPLsynth-pay-9901",
+  "accountId": "PLANTEDACCOUNTID",
+  "paymentType": "CARD",
+  "paymentHandleToken": "PLANTEDHANDLETOKEN",
+  "merchantRefNum": "PPLsynth-order-9901",
+  "currencyCode": "USD",
+  "settleWithAuth": false,
+  "availableToSettle": 0,
+  "status": "FAILED",
+  "amount": 4200,
+  "txnTime": "2026-10-24T14:00:00Z",
+  "customerIp": "198.51.100.77",
+  "threatMetrixSessionId": "PLANTEDTMXSESSION",
+  "paymentAccountReference": "PLANTEDPARVALUE",
+  "card": {
+    "cardNum": "PLANTEDCARDNUMBER",
+    "cvv": "PLANTEDCVV",
+    "holderName": "Planted Holder Name",
+    "cardExpiry": { "month": "PLANTEDEXPMONTH", "year": "PLANTEDEXPYEAR" },
+    "cardBin": "PLANTEDBIN",
+    "lastDigits": "PLANTEDLAST",
+    "paymentToken": "PLANTEDCARDTOKEN",
+    "cardType": "VI"
+  },
+  "profile": {
+    "firstName": "PlantedFirst",
+    "lastName": "PlantedLast",
+    "email": "planted.person@example.com",
+    "phone": "PLANTEDPHONE",
+    "dateOfBirth": { "day": 1, "month": 2, "year": 1990 }
+  },
+  "billingDetails": {
+    "street": "Planted Street 12",
+    "city": "PlantedCity",
+    "zip": "PLANTEDZIP",
+    "country": "US"
+  },
+  "authentication": {
+    "id": "PLANTEDAUTHID",
+    "cavv": "PLANTEDCAVV",
+    "xid": "PLANTEDXID",
+    "directoryServerTransactionId": "PLANTEDDSTRANS",
+    "threeDResult": "N"
+  },
+  "returnLinks": [{ "rel": "default", "href": "https://planted.example.invalid/PLANTEDRETURN" }],
+  "merchantDescriptor": { "dynamicDescriptor": "PLANTEDDESCRIPTOR" },
+  "gatewayResponse": {
+    "code": "VPS",
+    "responseCode": "51",
+    "responseCodeDescription": "Insufficient funds",
+    "authCode": "PLANTEDAUTHCODE",
+    "mid": "PLANTEDMID",
+    "terminalId": "PLANTEDTERMINAL",
+    "sid": "PLANTEDSID",
+    "avsResponse": "NO_MATCH",
+    "cvvVerification": "NO_MATCH"
+  },
+  "error": {
+    "code": "3022",
+    "message": "Insufficient funds. Contact planted.support@example.com",
+    "details": ["Card 4111 1111 1111 1111 declined for planted.details@example.com"]
+  }
+}

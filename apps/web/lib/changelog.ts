@@ -8,6 +8,17 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.7.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "New adapters with limited support: Paysafe, Airwallex, Rapyd, dLocal and EBANX.",
+      "35 of 42 roadmap providers can now be analyzed.",
+      "Verified research for BlueSnap, PayU India, Razorpay, Paystack and Flutterwave.",
+      "Redaction covers Nuvei checksum, session, card and payer fields.",
+    ],
+  },
+  {
     version: "0.6.0",
     date: "2026-10-25",
     status: "released",

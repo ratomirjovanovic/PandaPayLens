@@ -1,0 +1,31 @@
+{
+  "id": "PPLsynth-pay-9601",
+  "paymentType": "SKRILL",
+  "paymentHandleToken": "PPLsynthHT9601ef",
+  "merchantRefNum": "PPLsynth-order-9601",
+  "currencyCode": "EUR",
+  "settleWithAuth": true,
+  "txnTime": "2026-10-24T08:00:00Z",
+  "status": "COMPLETED",
+  "amount": 1999,
+  "gatewayReconciliationId": "PPLsynth-skrill-txn-9601",
+  "gatewayResponse": {
+    "processor": "SKRILL_QCO",
+    "status": "2",
+    "mb_transaction_id": "PPLsynth-mb-9601",
+    "transaction_id": "PPLsynth-skrill-txn-9601",
+    "merchant_id": "PLANTEDSKRILLMERCHANT",
+    "pay_to_email": "planted.merchant@example.com",
+    "pay_from_email": "planted.payer@example.com"
+  },
+  "settlements": [
+    {
+      "id": "PPLsynth-pay-9601",
+      "merchantRefNum": "PPLsynth-order-9601",
+      "amount": 1999,
+      "availableToRefund": 1999,
+      "status": "COMPLETED",
+      "txnTime": "2026-10-24T08:00:01.000+0000"
+    }
+  ]
+}

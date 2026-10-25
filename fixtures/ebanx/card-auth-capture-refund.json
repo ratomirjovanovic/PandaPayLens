@@ -1,0 +1,117 @@
+[
+  {
+    "payment": {
+      "hash": "PPLsynth8c1f0e2d3b4a59687766554433221100aabbccdd",
+      "merchant_payment_code": "PPLsynth-order-3001",
+      "order_number": "PPLsynth-3001",
+      "status": "PE",
+      "status_date": "2026-10-20 14:02:11",
+      "open_date": "2026-10-20 14:02:10",
+      "confirm_date": null,
+      "transfer_date": null,
+      "amount_br": "100.38",
+      "amount_ext": "100.00",
+      "amount_iof": "0.38",
+      "currency_rate": "1.0000",
+      "currency_ext": "BRL",
+      "due_date": "2026-10-23",
+      "instalments": "1",
+      "payment_type_code": "creditcard",
+      "pre_approved": true,
+      "capture_available": true,
+      "transaction_status": {
+        "acquirer": "EBANX",
+        "code": "OK",
+        "description": "Accepted",
+        "description_code": "ACCEPTED",
+        "authcode": "PPLsynth-auth-3001"
+      }
+    },
+    "status": "SUCCESS"
+  },
+  {
+    "payment": {
+      "hash": "PPLsynth8c1f0e2d3b4a59687766554433221100aabbccdd",
+      "merchant_payment_code": "PPLsynth-order-3001",
+      "status": "CO",
+      "status_date": "2026-10-20 15:10:00",
+      "open_date": "2026-10-20 14:02:10",
+      "confirm_date": "2026-10-20 15:10:00",
+      "amount_br": "100.38",
+      "amount_ext": "100.00",
+      "amount_iof": "0.38",
+      "currency_ext": "BRL",
+      "payment_type_code": "creditcard",
+      "pre_approved": true,
+      "capture_available": false,
+      "transaction_status": {
+        "acquirer": "EBANX",
+        "code": "OK",
+        "description": "Accepted",
+        "description_code": "ACCEPTED"
+      }
+    },
+    "status": "SUCCESS"
+  },
+  {
+    "payment": {
+      "hash": "PPLsynth8c1f0e2d3b4a59687766554433221100aabbccdd",
+      "merchant_payment_code": "PPLsynth-order-3001",
+      "status": "CO",
+      "status_date": "2026-10-20 15:10:00",
+      "confirm_date": "2026-10-20 15:10:00",
+      "amount_br": "100.38",
+      "amount_ext": "100.00",
+      "amount_iof": "0.38",
+      "currency_ext": "BRL",
+      "payment_type_code": "creditcard",
+      "pre_approved": true,
+      "capture_available": false,
+      "refunds": [
+        {
+          "id": "PPLsynth-refund-3001",
+          "merchant_refund_code": "PPLsynth-rf-3001",
+          "status": "RE",
+          "request_date": "2026-10-21 09:00:00",
+          "pending_date": null,
+          "confirm_date": null,
+          "cancel_date": null,
+          "amount_ext": "40.00",
+          "description": "Partial refund"
+        }
+      ]
+    },
+    "status": "SUCCESS"
+  },
+  {
+    "payment": {
+      "hash": "PPLsynth8c1f0e2d3b4a59687766554433221100aabbccdd",
+      "merchant_payment_code": "PPLsynth-order-3001",
+      "status": "CO",
+      "status_date": "2026-10-20 15:10:00",
+      "confirm_date": "2026-10-20 15:10:00",
+      "transfer_date": "2026-11-19 00:00:00",
+      "amount_br": "100.38",
+      "amount_ext": "100.00",
+      "amount_iof": "0.38",
+      "currency_ext": "BRL",
+      "payment_type_code": "creditcard",
+      "pre_approved": true,
+      "capture_available": false,
+      "refunds": [
+        {
+          "id": "PPLsynth-refund-3001",
+          "merchant_refund_code": "PPLsynth-rf-3001",
+          "status": "CO",
+          "request_date": "2026-10-21 09:00:00",
+          "pending_date": "2026-10-21 09:05:00",
+          "confirm_date": "2026-10-22 10:00:00",
+          "cancel_date": null,
+          "amount_ext": "40.00",
+          "description": "Partial refund"
+        }
+      ]
+    },
+    "status": "SUCCESS"
+  }
+]

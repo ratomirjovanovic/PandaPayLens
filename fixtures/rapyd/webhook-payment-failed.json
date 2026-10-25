@@ -1,0 +1,42 @@
+{
+  "id": "wh_PPLsynth00000000000000000001",
+  "type": "PAYMENT_FAILED",
+  "data": {
+    "id": "payment_PPLsynth00000000000000000103",
+    "amount": 0,
+    "original_amount": 1065,
+    "currency_code": "ISK",
+    "country_code": "GB",
+    "status": "ERR",
+    "paid": false,
+    "captured": false,
+    "is_partial": false,
+    "paid_at": 0,
+    "created_at": 1792000000,
+    "next_action": "not_applicable",
+    "payment_method": null,
+    "payment_method_type": "gb_visa_card",
+    "payment_method_type_category": "card",
+    "error_code": "ERROR_PROCESSING_CARD - [65]",
+    "failure_code": "65",
+    "failure_message": "Authentication Required or Activity Limit Exceeded",
+    "merchant_reference_id": "PPLsynth-order-103",
+    "initiation_type": "customer_present",
+    "ewallet_id": "ewallet_PPLsynth00000000000000000001",
+    "merchant_advice_code": "02",
+    "merchant_advice_message": "Try again later",
+    "refunded": false,
+    "refunded_amount": 0,
+    "transaction_id": "",
+    "metadata": {},
+    "authentication_result": {
+      "eci": "07",
+      "result": "N",
+      "version": "2.2.0"
+    }
+  },
+  "trigger_operation_id": "PPLsynth-0000-4000-a000-000000000103",
+  "status": "NEW",
+  "created_at": 1792000010,
+  "extended_timestamp": 1792000010123
+}

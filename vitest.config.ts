@@ -229,6 +229,46 @@ export default defineConfig({
         replacement: src("./packages/adapters/nuvei/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/paysafe\/manifest$/,
+        replacement: src("./packages/adapters/paysafe/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paysafe$/,
+        replacement: src("./packages/adapters/paysafe/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/airwallex\/manifest$/,
+        replacement: src("./packages/adapters/airwallex/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/airwallex$/,
+        replacement: src("./packages/adapters/airwallex/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/rapyd\/manifest$/,
+        replacement: src("./packages/adapters/rapyd/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/rapyd$/,
+        replacement: src("./packages/adapters/rapyd/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/dlocal\/manifest$/,
+        replacement: src("./packages/adapters/dlocal/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/dlocal$/,
+        replacement: src("./packages/adapters/dlocal/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/ebanx\/manifest$/,
+        replacement: src("./packages/adapters/ebanx/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/ebanx$/,
+        replacement: src("./packages/adapters/ebanx/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/skrill\/manifest$/,
         replacement: src("./packages/adapters/skrill/src/manifest.ts"),
       },

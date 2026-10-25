@@ -1,0 +1,138 @@
+[
+  {
+    "receivedAt": "2026-10-15T08:00:01Z",
+    "payload": {
+      "status": {
+        "error_code": "",
+        "status": "SUCCESS",
+        "message": "",
+        "response_code": "",
+        "operation_id": "PPLsynth-0000-4000-a000-000000000201"
+      },
+      "data": {
+        "id": "payment_PPLsynth00000000000000000201",
+        "amount": 40.11,
+        "original_amount": 40.11,
+        "currency_code": "EUR",
+        "country_code": "GB",
+        "status": "ACT",
+        "paid": false,
+        "captured": false,
+        "is_partial": false,
+        "paid_at": 0,
+        "created_at": 1792000000,
+        "next_action": "pending_capture",
+        "payment_method": null,
+        "payment_method_type": "gb_visa_card",
+        "payment_method_type_category": "card",
+        "error_code": "",
+        "failure_code": "",
+        "failure_message": "",
+        "merchant_reference_id": "PPLsynth-order-201",
+        "initiation_type": "customer_present",
+        "ewallet_id": "ewallet_PPLsynth00000000000000000001",
+        "merchant_advice_code": null,
+        "merchant_advice_message": null,
+        "refunded": false,
+        "refunded_amount": 0,
+        "transaction_id": "",
+        "metadata": {}
+      }
+    }
+  },
+  {
+    "receivedAt": "2026-10-15T08:10:00Z",
+    "payload": {
+      "id": "wh_PPLsynth00000000000000000012",
+      "type": "PAYMENT_CAPTURED",
+      "data": {
+        "id": "payment_PPLsynth00000000000000000201",
+        "amount": 40.11,
+        "original_amount": 40.11,
+        "currency_code": "EUR",
+        "country_code": "GB",
+        "status": "CLO",
+        "paid": true,
+        "captured": true,
+        "is_partial": false,
+        "paid_at": 1792000005,
+        "created_at": 1792000000,
+        "next_action": "not_applicable",
+        "payment_method": null,
+        "payment_method_type": "gb_visa_card",
+        "payment_method_type_category": "card",
+        "error_code": "",
+        "failure_code": "",
+        "failure_message": "",
+        "merchant_reference_id": "PPLsynth-order-201",
+        "initiation_type": "customer_present",
+        "ewallet_id": "ewallet_PPLsynth00000000000000000001",
+        "merchant_advice_code": null,
+        "merchant_advice_message": null,
+        "refunded": false,
+        "refunded_amount": 0,
+        "transaction_id": "",
+        "metadata": {}
+      },
+      "trigger_operation_id": "PPLsynth-0000-4000-a000-000000000202",
+      "status": "NEW",
+      "created_at": 1792000120,
+      "extended_timestamp": 1792000120123
+    }
+  },
+  {
+    "receivedAt": "2026-10-15T09:00:00Z",
+    "payload": {
+      "id": "wh_PPLsynth00000000000000000013",
+      "type": "REFUND_COMPLETED",
+      "data": {
+        "id": "refund_PPLsynth00000000000000000201",
+        "amount": 15,
+        "payment": "payment_PPLsynth00000000000000000201",
+        "currency": "EUR",
+        "failure_reason": "",
+        "metadata": {},
+        "status": "Completed",
+        "receipt_number": 0,
+        "created_at": 1792000100,
+        "updated_at": 1792000100,
+        "merchant_ewallet": null,
+        "merchant_reference_id": "PPLsynth-refund-201",
+        "payment_created_at": 1792000000,
+        "payment_method_type": "gb_visa_card",
+        "ewallets": [
+          {
+            "ewallet": "ewallet_PPLsynth00000000000000000001",
+            "amount": 15
+          }
+        ],
+        "proportional_refund": true
+      },
+      "trigger_operation_id": "PPLsynth-0000-4000-a000-000000000203",
+      "status": "NEW",
+      "created_at": 1792000130,
+      "extended_timestamp": 1792000130123
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T10:00:00Z",
+    "payload": {
+      "id": "wh_PPLsynth00000000000000000014",
+      "type": "PAYMENT_DISPUTE_CREATED",
+      "data": {
+        "id": "PPLsynth-dispute-record-2",
+        "token": "dispute_PPLsynth00000000000000000002",
+        "status": "ACT",
+        "original_transaction_id": "payment_PPLsynth00000000000000000201",
+        "dispute_category": "Fraud",
+        "dispute_reason_description": "Fraud in a card-absent environment",
+        "pre_dispute": false,
+        "merchant_reference_id": "PPLsynth-order-201"
+      },
+      "trigger_operation_id": "PPLsynth-0000-4000-a000-000000000204",
+      "status": "NEW",
+      "created_at": 1792000140,
+      "extended_timestamp": 1792000140123
+    }
+  }
+]

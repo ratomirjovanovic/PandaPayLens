@@ -1,0 +1,16 @@
+{
+  "id": "evt_PPLsynth_consent_0110",
+  "name": "payment_consent.verified",
+  "account_id": "acct_PPLsynthAccount01",
+  "data": {
+    "object": {
+      "id": "cst_PPLsynthConsent0110",
+      "customer_id": "cus_PPLsynth0110",
+      "status": "VERIFIED",
+      "next_triggered_by": "merchant",
+      "merchant_trigger_reason": "unscheduled"
+    }
+  },
+  "created_at": "2026-10-24T09:30:00+0000",
+  "version": "2026-08-21"
+}

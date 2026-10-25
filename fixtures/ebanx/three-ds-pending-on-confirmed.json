@@ -1,0 +1,27 @@
+{
+  "payment": {
+    "hash": "PPLsynthd4735e3a265e16eee03f59718b9b5d03019c07d8",
+    "merchant_payment_code": "PPLsynth-3ds-8001",
+    "status": "CO",
+    "status_date": "2026-10-20 10:00:05",
+    "open_date": "2026-10-20 10:00:00",
+    "confirm_date": "2026-10-20 10:00:05",
+    "amount_br": "80.30",
+    "amount_ext": "80.00",
+    "amount_iof": "0.30",
+    "currency_ext": "BRL",
+    "payment_type_code": "visa",
+    "pre_approved": true,
+    "capture_available": false,
+    "transaction_status": {
+      "acquirer": "EBANX",
+      "code": "OK",
+      "description": "Accepted"
+    },
+    "threedsecure": {
+      "has_threeds": true,
+      "status": "PENDING_AUTHENTICATION"
+    }
+  },
+  "status": "SUCCESS"
+}

@@ -1,0 +1,9 @@
+{
+  "status": {
+    "error_code": "ERROR_PPLSYNTH_NOT_IN_CATALOG",
+    "status": "ERROR",
+    "message": "Synthetic error that no documented table lists.",
+    "response_code": "ERROR_PPLSYNTH_NOT_IN_CATALOG",
+    "operation_id": "PPLsynth-0000-4000-a000-000000000107"
+  }
+}

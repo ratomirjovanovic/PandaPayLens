@@ -1,0 +1,9 @@
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+
+{
+  "code": "internal_error",
+  "message": "Synthetic internal error.",
+  "trace_id": "PPLsynthtrace000000000000000005",
+  "details": {}
+}

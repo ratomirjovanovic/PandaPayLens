@@ -1,0 +1,4 @@
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{"status": "ERROR", "status_code": "BP-DR-119", "status_message": "Timeout while processing the payment with the acquirer"}

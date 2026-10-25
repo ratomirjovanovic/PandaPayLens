@@ -1,0 +1,91 @@
+[
+  {
+    "payload": {
+      "id": "PPLsynth-handle-9001",
+      "merchantRefNum": "PPLsynth-order-9001",
+      "paymentHandleToken": "PPLsynthHT9001ab",
+      "amount": 2500,
+      "currencyCode": "EUR",
+      "paymentType": "EPS",
+      "usage": "SINGLE_USE",
+      "action": "REDIRECT",
+      "executionMode": "SYNCHRONOUS",
+      "transactionType": "PAYMENT",
+      "status": "PROCESSING",
+      "txnTime": "2026-10-22T09:00:05Z"
+    },
+    "eventType": "PAYMENT_HANDLE_PROCESSING",
+    "attemptNumber": "1",
+    "resourceId": "PPLsynth-handle-9001",
+    "eventDate": "2026-10-22T09:00:05Z",
+    "links": [{ "rel": "payment_handle" }],
+    "mode": "live",
+    "eventName": "PAYMENT_HANDLE_PROCESSING"
+  },
+  {
+    "payload": {
+      "id": "PPLsynth-handle-9001",
+      "merchantRefNum": "PPLsynth-order-9001",
+      "paymentHandleToken": "PPLsynthHT9001ab",
+      "amount": 2500,
+      "currencyCode": "EUR",
+      "paymentType": "EPS",
+      "usage": "SINGLE_USE",
+      "action": "REDIRECT",
+      "executionMode": "SYNCHRONOUS",
+      "transactionType": "PAYMENT",
+      "status": "PAYABLE",
+      "txnTime": "2026-10-22T09:01:40Z"
+    },
+    "eventType": "PAYMENT_HANDLE_PAYABLE",
+    "attemptNumber": "1",
+    "resourceId": "PPLsynth-handle-9001",
+    "eventDate": "2026-10-22T09:01:40Z",
+    "links": [{ "rel": "payment_handle" }],
+    "mode": "live",
+    "eventName": "PAYMENT_HANDLE_PAYABLE"
+  },
+  {
+    "payload": {
+      "id": "PPLsynth-handle-9001",
+      "merchantRefNum": "PPLsynth-order-9001",
+      "paymentHandleToken": "PPLsynthHT9001ab",
+      "amount": 2500,
+      "currencyCode": "EUR",
+      "paymentType": "EPS",
+      "usage": "SINGLE_USE",
+      "action": "REDIRECT",
+      "executionMode": "SYNCHRONOUS",
+      "transactionType": "PAYMENT",
+      "status": "COMPLETED",
+      "txnTime": "2026-10-22T09:01:52Z"
+    },
+    "eventType": "PAYMENT_HANDLE_COMPLETED",
+    "attemptNumber": "1",
+    "resourceId": "PPLsynth-handle-9001",
+    "eventDate": "2026-10-22T09:01:52Z",
+    "links": [{ "rel": "payment_handle" }],
+    "mode": "live",
+    "eventName": "PAYMENT_HANDLE_COMPLETED"
+  },
+  {
+    "payload": {
+      "id": "PPLsynth-pay-9001",
+      "merchantRefNum": "PPLsynth-order-9001",
+      "paymentHandleToken": "PPLsynthHT9001ab",
+      "amount": 2500,
+      "currencyCode": "EUR",
+      "paymentType": "EPS",
+      "settleWithAuth": true,
+      "status": "COMPLETED",
+      "txnTime": "2026-10-22T09:01:53Z"
+    },
+    "eventType": "PAYMENT_COMPLETED",
+    "attemptNumber": "1",
+    "resourceId": "PPLsynth-pay-9001",
+    "eventDate": "2026-10-22T09:01:53Z",
+    "links": [{ "rel": "payment" }],
+    "mode": "live",
+    "eventName": "PAYMENT_COMPLETED"
+  }
+]

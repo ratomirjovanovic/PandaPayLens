@@ -1,0 +1,5 @@
+{
+  "status": "ERROR",
+  "status_code": "BP-SA-1",
+  "status_message": "Parameter integration_key not found"
+}

@@ -1,0 +1,9 @@
+{
+  "status": {
+    "error_code": "MISSING_PAYMENT_METHOD_REQUIRED_FIELD - [EXPIRATION_MONTH]",
+    "status": "ERROR",
+    "message": "The request tried to create a payment, but a required field of the payment method was missing. The request was rejected. Corrective action: Add the missing field.",
+    "response_code": "MISSING_PAYMENT_METHOD_REQUIRED_FIELD - [EXPIRATION_MONTH]",
+    "operation_id": "PPLsynth-0000-4000-a000-000000000104"
+  }
+}

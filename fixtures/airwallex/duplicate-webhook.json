@@ -1,0 +1,44 @@
+[
+  {
+    "receivedAt": "2026-10-21T12:00:03.000Z",
+    "payload": {
+      "id": "evt_PPLsynth_duplicate_0020",
+      "name": "payment_attempt.authorized",
+      "account_id": "acct_PPLsynthAccount01",
+      "data": {
+        "object": {
+          "id": "att_PPLsynthDuplicate0020",
+          "payment_intent_id": "int_PPLsynthDuplicate0020",
+          "status": "AUTHORIZED",
+          "amount": 30,
+          "currency": "NZD",
+          "captured_amount": 0,
+          "updated_at": "2026-10-21T12:00:01+0000"
+        }
+      },
+      "created_at": "2026-10-21T12:00:01+0000",
+      "version": "2026-08-21"
+    }
+  },
+  {
+    "receivedAt": "2026-10-21T12:04:10.000Z",
+    "payload": {
+      "id": "evt_PPLsynth_duplicate_0020",
+      "name": "payment_attempt.authorized",
+      "account_id": "acct_PPLsynthAccount01",
+      "data": {
+        "object": {
+          "id": "att_PPLsynthDuplicate0020",
+          "payment_intent_id": "int_PPLsynthDuplicate0020",
+          "status": "AUTHORIZED",
+          "amount": 30,
+          "currency": "NZD",
+          "captured_amount": 0,
+          "updated_at": "2026-10-21T12:00:01+0000"
+        }
+      },
+      "created_at": "2026-10-21T12:00:01+0000",
+      "version": "2026-08-21"
+    }
+  }
+]

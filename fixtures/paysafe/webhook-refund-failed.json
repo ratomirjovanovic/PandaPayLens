@@ -1,0 +1,30 @@
+{
+  "payload": {
+    "accountId": "PPLsynth-acct-1002786770",
+    "id": "PPLsynth-refund-8001",
+    "merchantRefNum": "PPLsynth-order-8001-r1",
+    "amount": 1122,
+    "currencyCode": "EUR",
+    "source": "SingleAPI",
+    "status": "FAILED",
+    "paymentType": "EPS",
+    "txnTime": "2026-10-21T13:05:05Z",
+    "error": {
+      "code": "ALTERNATE-PAYMENTS-GATEWAY-6",
+      "message": "Over refund",
+      "details": ["The total refund amount cannot exceed the original payment amount."]
+    }
+  },
+  "eventType": "REFUND_FAILED",
+  "attemptNumber": "1",
+  "resourceId": "PPLsynth-refund-8001",
+  "eventDate": "2026-10-21T13:05:05Z",
+  "links": [
+    {
+      "href": "https://api.test.paysafe.com/alternatepayments/v1/accounts/PPLsynth-acct-1002786770/refunds/PPLsynth-refund-8001",
+      "rel": "refund"
+    }
+  ],
+  "mode": "live",
+  "eventName": "REFUND_FAILED"
+}

@@ -1,0 +1,21 @@
+{
+  "attemptNumber": "1",
+  "payload": {
+    "id": "PPLsynth-handle-9501",
+    "merchantRefNum": "PPLsynth-order-9501",
+    "paymentHandleToken": "PPLsynthHT9501cd",
+    "paymentType": "CARD",
+    "usage": "SINGLE_USE",
+    "action": "NONE",
+    "status": "PAYABLE",
+    "txnTime": "2026-10-20T17:21:33.4",
+    "merchantDescriptor": {
+      "dynamicDescriptor": "PPLsynthStore",
+    },
+  },
+  "resourceId": "PPLsynth-handle-9501",
+  "type": "PAYMENT_HANDLE",
+  "eventDate": "2026-10-20T17:21:33Z",
+  "links": [{ "rel": "payment_handle" }],
+  "eventName": "PAYMENT_HANDLE_PAYABLE",
+}

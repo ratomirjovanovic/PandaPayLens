@@ -1,0 +1,21 @@
+{
+  "id": "D-4-PPLsynth-pay-0007",
+  "amount": 15000.0,
+  "currency": "ARS",
+  "payment_method_id": "IO",
+  "payment_method_type": "BANK_TRANSFER",
+  "payment_method_flow": "DIRECT",
+  "country": "AR",
+  "bank_transfer": {
+    "bank_name": "PPLsynth Bank",
+    "beneficiary_name": "PPLsynth Collector S.A.",
+    "reference": "PPLSYNTH0007",
+    "payment_instruction": "Transfer the exact amount and use the reference.",
+    "user_payment_amount": 15000.0
+  },
+  "created_date": "2026-10-20T13:00:00.000+0000",
+  "status": "PENDING",
+  "status_detail": "The payment is pending.",
+  "status_code": "100",
+  "order_id": "PPLsynth-order-0007"
+}

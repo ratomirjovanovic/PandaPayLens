@@ -2,7 +2,20 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.7.0] - 2026-10-25
+
+Wave 3 general providers.
+
+### Providers
+
+- New adapters with limited support, built from official documentation and tested with synthetic fixtures:
+  - Paysafe: Payments API v1 resources, errors and webhooks, with merchant advice and ISO response codes.
+  - Airwallex: PaymentIntents, attempts, refunds, disputes and payments webhooks; issuer codes are decoded with the card brand.
+  - Rapyd: Merchant API responses and webhooks for payments, refunds, disputes and payouts.
+  - dLocal: Payins payments, refunds, chargebacks and errors, and Payouts v3, with status codes decoded per object type.
+  - EBANX: Pay-in Direct API responses and errors, notifications and payouts.
+- Research for BlueSnap, PayU India, Razorpay, Paystack and Flutterwave; all five passed the documentation gate.
+- 35 of 42 roadmap providers can now be analyzed.
 
 ### Security
 

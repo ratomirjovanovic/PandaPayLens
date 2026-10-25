@@ -1,0 +1,28 @@
+[
+  {
+    "payment": {
+      "hash": "PPLsynth1111111111aaaaaaaaaa1111111111aaaaaaaaaa",
+      "merchant_payment_code": "PPLsynth-order-a",
+      "order_number": "PPLsynth-shared-order",
+      "status": "CO",
+      "status_date": "2026-10-20 10:00:00",
+      "amount_ext": "10.00",
+      "currency_ext": "BRL",
+      "payment_type_code": "pix"
+    },
+    "status": "SUCCESS"
+  },
+  {
+    "payment": {
+      "hash": "PPLsynth2222222222bbbbbbbbbb2222222222bbbbbbbbbb",
+      "merchant_payment_code": "PPLsynth-order-b",
+      "order_number": "PPLsynth-shared-order",
+      "status": "CA",
+      "status_date": "2026-10-20 10:05:00",
+      "amount_ext": "10.00",
+      "currency_ext": "BRL",
+      "payment_type_code": "pix"
+    },
+    "status": "SUCCESS"
+  }
+]

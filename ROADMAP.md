@@ -14,6 +14,7 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 | 0.4.0   | High-risk wave HR-3: Finrax, Inpay, DECTA, Trustly                                                       |
 | 0.5.0   | Research for Worldpay, Cybersource, Authorize.net and Nuvei; plain-text HTTP error bodies                |
 | 0.6.0   | Wave 2 adapters: Worldpay, Cybersource, Authorize.net, Nuvei                                             |
+| 0.7.0   | Wave 3 adapters: Paysafe, Airwallex, Rapyd, dLocal, EBANX                                                |
 
 ## In progress
 
@@ -23,7 +24,6 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 
 ### Providers
 
-- **General providers with verified documentation:** Paysafe (Payments API v1), Airwallex (Payments Client API), Rapyd (Merchant API), dLocal (Payins API) and EBANX (Pay-in Direct API). Research is in [docs/providers/research](docs/providers/research); adapters are the next step.
 - **General providers with verified documentation, adapters next:** BlueSnap (JSON Payment API and webhooks), PayU India (form-encoded responses and webhooks, Verify Payment JSON), Razorpay (Payments API and webhooks), Paystack (Transactions API and webhooks) and Flutterwave (v3 API and webhooks).
 - **Blocked:** Pavilion Payments and Epoch publish no developer documentation without a merchant relationship. They stay listed as blocked until that changes.
 

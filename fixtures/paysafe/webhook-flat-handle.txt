@@ -1,0 +1,16 @@
+POST /pplsynth/paysafe/webhooks HTTP/1.1
+Content-Type: application/json
+Signature: PLANTEDSIGNATUREVALUEPLANTEDSIGNATUREVALUE=
+
+{
+  "accountId": "PPLsynth-acct-9301",
+  "id": "PPLsynth-handle-9301",
+  "merchantRefNum": "PPLsynth-order-9301",
+  "amount": 1000,
+  "usage": "SINGLE_USE",
+  "executionMode": "SYNCHRONOUS",
+  "currencyCode": "CAD",
+  "type": "PAYMENT_HANDLE",
+  "status": "PAYABLE",
+  "paymentType": "INTERAC_ETRANSFER"
+}

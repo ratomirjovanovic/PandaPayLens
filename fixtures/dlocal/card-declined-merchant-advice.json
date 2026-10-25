@@ -1,0 +1,23 @@
+{
+  "id": "T-4-PPLsynth-pay-0003",
+  "amount": 120.5,
+  "currency": "BRL",
+  "payment_method_id": "CARD",
+  "payment_method_type": "CARD",
+  "payment_method_flow": "DIRECT",
+  "country": "BR",
+  "card": {
+    "brand": "MC"
+  },
+  "created_date": "2026-10-20T10:00:00.000+0000",
+  "status": "REJECTED",
+  "status_detail": "Rejected by bank.",
+  "status_code": "301",
+  "order_id": "PPLsynth-order-0003",
+  "acquirer": {
+    "network_response_code": "05",
+    "network_response_description": "Do not honor",
+    "merchant_advice_code": "24",
+    "merchant_advice_description": "Retry after 1 hour"
+  }
+}

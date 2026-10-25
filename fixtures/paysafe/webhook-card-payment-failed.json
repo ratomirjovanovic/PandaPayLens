@@ -1,0 +1,25 @@
+{
+  "attemptNumber": "1",
+  "payload": {
+    "id": "PPLsynth-pay-7001",
+    "status": "FAILED",
+    "error": {
+      "code": "3028",
+      "message": "The external processing gateway has reported a system error."
+    },
+    "txnTime": "2026-10-20T17:32:22Z",
+    "merchantRefNum": "PPLsynth-order-7001",
+    "amount": "6",
+    "currencyCode": "USD",
+    "cardType": "VI"
+  },
+  "resourceId": "PPLsynth-pay-7001",
+  "type": "PAYMENT",
+  "eventDate": "2026-10-20T17:32:22Z",
+  "links": [
+    {
+      "rel": "payment"
+    }
+  ],
+  "eventName": "PAYMENT_FAILED"
+}

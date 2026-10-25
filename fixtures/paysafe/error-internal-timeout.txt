@@ -1,0 +1,12 @@
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+X-Application-Status-Code: 1007
+X-INTERNAL-CORRELATION-ID: PPLsynth-corr-4001
+
+{
+  "error": {
+    "code": "1007",
+    "message": "An internal error occurred.",
+    "details": ["The clearing house timed out."]
+  }
+}

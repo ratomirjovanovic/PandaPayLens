@@ -1,0 +1,9 @@
+{
+  "event_type": "ACCOUNT_STATUS_UPDATE",
+  "account_id": "PPLsynth-account-0021",
+  "account_external_reference": "PPLsynth-ext-0021",
+  "notification_date": "2026-10-20T23:00:00.000Z",
+  "payload": {
+    "status": "PPLSYNTH"
+  }
+}

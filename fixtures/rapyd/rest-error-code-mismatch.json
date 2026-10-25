@@ -1,0 +1,9 @@
+{
+  "status": {
+    "error_code": "IMMUTABLE_FIELD",
+    "status": "ERROR",
+    "message": "The request tried to update the currency of a payment, but the currency cannot change after the payment is created. The request was rejected.",
+    "response_code": "ERROR_INVALID_PARAMETER_VALUE",
+    "operation_id": "PPLsynth-0000-4000-a000-000000000106"
+  }
+}

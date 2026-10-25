@@ -1,0 +1,4 @@
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+
+{"status":{"error_code":"UNAUTHENTICATED_API_CALL","status":"ERROR","message":"The request was rejected because the access key was not recognized. Corrective action: Use the access key of this environment.","response_code":"UNAUTHENTICATED_API_CALL","operation_id":"PPLsynth-0000-4000-a000-000000000105"}}

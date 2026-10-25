@@ -1,0 +1,35 @@
+[
+  {
+    "payload": {
+      "id": "PPLsynth-credit-9401",
+      "merchantRefNum": "PPLsynth-payout-9401",
+      "amount": 5000,
+      "currencyCode": "USD",
+      "status": "COMPLETED",
+      "txnTime": "2026-10-20T15:00:00Z"
+    },
+    "eventType": "SA_CREDIT_COMPLETED",
+    "attemptNumber": "1",
+    "resourceId": "PPLsynth-credit-9401",
+    "eventDate": "2026-10-20T15:00:00Z",
+    "links": [{ "rel": "standalone_credit" }],
+    "mode": "live",
+    "eventName": "SA_CREDIT_COMPLETED"
+  },
+  {
+    "payload": {
+      "id": "PPLsynth-credit-9401",
+      "merchantRefNum": "PPLsynth-payout-9401",
+      "amount": 5000,
+      "currencyCode": "USD",
+      "txnTime": "2026-10-20T15:00:00Z"
+    },
+    "eventType": "SA_CREDIT_RETURN_COMPLETED",
+    "attemptNumber": "1",
+    "resourceId": "PPLsynth-credit-9401",
+    "eventDate": "2026-10-23T09:30:00Z",
+    "links": [{ "rel": "standalone_credit" }],
+    "mode": "live",
+    "eventName": "SA_CREDIT_RETURN_COMPLETED"
+  }
+]

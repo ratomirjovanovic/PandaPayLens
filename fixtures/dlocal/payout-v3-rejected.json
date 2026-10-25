@@ -1,0 +1,41 @@
+[
+  {
+    "id": "PO-4-PPLsynth-0016",
+    "external_id": "PPLsynth-payout-0016",
+    "status": "PENDING",
+    "status_code": "100",
+    "status_detail": "The payout is pending.",
+    "on_hold": false,
+    "flow_type": "B2C",
+    "currency_to_pay": "MXN",
+    "purpose": "PPLSYNTH",
+    "statement_descriptor": "PPLSYNTH",
+    "last_updated": "2026-10-20T18:00:00.00Z"
+  },
+  {
+    "id": "PO-4-PPLsynth-0016",
+    "external_id": "PPLsynth-payout-0016",
+    "status": "DELIVERED",
+    "status_code": "500",
+    "status_detail": "The payout was delivered.",
+    "on_hold": false,
+    "flow_type": "B2C",
+    "currency_to_pay": "MXN",
+    "purpose": "PPLSYNTH",
+    "statement_descriptor": "PPLSYNTH",
+    "last_updated": "2026-10-20T18:05:00.00Z"
+  },
+  {
+    "id": "PO-4-PPLsynth-0016",
+    "external_id": "PPLsynth-payout-0016",
+    "status": "REJECTED",
+    "status_code": "306",
+    "status_detail": "Beneficiary name mismatch.",
+    "on_hold": false,
+    "flow_type": "B2C",
+    "currency_to_pay": "MXN",
+    "purpose": "PPLSYNTH",
+    "statement_descriptor": "PPLSYNTH",
+    "last_updated": "2026-10-21T09:00:00.00Z"
+  }
+]

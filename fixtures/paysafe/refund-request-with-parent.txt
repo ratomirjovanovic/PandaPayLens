@@ -1,0 +1,10 @@
+POST /paymenthub/v1/settlements/PPLsynth-pay-1001/refunds HTTP/1.1
+Host: api.test.paysafe.com
+Content-Type: application/json
+Authorization: Basic PLANTEDBASICAUTH
+
+{
+  "merchantRefNum": "PPLsynth-order-1001-r1",
+  "amount": 200,
+  "dupCheck": true
+}

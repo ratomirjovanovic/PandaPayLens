@@ -1,0 +1,34 @@
+{
+  "id": "int_PPLsynthDeclined0002",
+  "request_id": "PPLsynth-request-0002",
+  "amount": 16.66,
+  "currency": "EUR",
+  "merchant_order_id": "PPLsynth-order-0002",
+  "status": "REQUIRES_PAYMENT_METHOD",
+  "captured_amount": 0,
+  "latest_payment_attempt": {
+    "id": "att_PPLsynthDeclined0002",
+    "payment_intent_id": "int_PPLsynthDeclined0002",
+    "status": "FAILED",
+    "amount": 16.66,
+    "currency": "EUR",
+    "captured_amount": 0,
+    "failure_code": "authorization_failed",
+    "failure_details": {
+      "code": "issuer_declined",
+      "message": "The card issuer declined this transaction. Please refer to the original response code.",
+      "trace_id": "PPLsynthtrace000000000000000007",
+      "details": { "original_response_code": "05" }
+    },
+    "provider_original_response_code": "05",
+    "payment_method": {
+      "type": "card",
+      "card": { "brand": "visa", "bin": "400000", "last4": "0002", "name": "PPLsynth Shopper" }
+    },
+    "authentication_data": { "avs_result": "U", "cvc_result": "M" },
+    "created_at": "2026-10-21T14:00:00+0000",
+    "updated_at": "2026-10-21T14:00:02+0000"
+  },
+  "created_at": "2026-10-21T13:59:30+0000",
+  "updated_at": "2026-10-21T14:00:02+0000"
+}

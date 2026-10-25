@@ -1,0 +1,26 @@
+{
+  "id": "int_PPLsynth3ds0004",
+  "request_id": "PPLsynth-request-0004",
+  "amount": 75.5,
+  "currency": "HKD",
+  "merchant_order_id": "PPLsynth-order-0004",
+  "status": "REQUIRES_CUSTOMER_ACTION",
+  "captured_amount": 0,
+  "next_action": {
+    "type": "redirect_iframe",
+    "method": "GET",
+    "url": "https://api.airwallex.com/api/v1/pa/gateway/hk/domain_secure/redirect/int_PPLsynth3ds0004/start?key=PPLsynthRedirectKey0004"
+  },
+  "latest_payment_attempt": {
+    "id": "att_PPLsynth3ds0004",
+    "payment_intent_id": "int_PPLsynth3ds0004",
+    "status": "AUTHENTICATION_REDIRECTED",
+    "amount": 75.5,
+    "currency": "HKD",
+    "payment_method": { "type": "card", "card": { "brand": "mastercard", "last4": "0004" } },
+    "created_at": "2026-10-22T10:00:00+0000",
+    "updated_at": "2026-10-22T10:00:01+0000"
+  },
+  "created_at": "2026-10-22T09:59:50+0000",
+  "updated_at": "2026-10-22T10:00:01+0000"
+}

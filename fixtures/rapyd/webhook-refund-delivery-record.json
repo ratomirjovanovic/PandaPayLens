@@ -1,0 +1,37 @@
+{
+  "id": "PPLsynth-record-0000-000000000005",
+  "token": "wh_PPLsynth00000000000000000005",
+  "type": "REFUND_COMPLETED",
+  "data": {
+    "id": "refund_PPLsynth00000000000000000110",
+    "amount": 15,
+    "payment": "payment_PPLsynth00000000000000000304",
+    "currency": "EUR",
+    "failure_reason": "",
+    "metadata": {},
+    "status": "Completed",
+    "receipt_number": 0,
+    "created_at": 1792000100,
+    "updated_at": 1792000100,
+    "merchant_ewallet": null,
+    "merchant_reference_id": "PPLsynth-refund-110",
+    "payment_created_at": 1792000000,
+    "payment_method_type": "gb_visa_card",
+    "ewallets": [
+      {
+        "ewallet": "ewallet_PPLsynth00000000000000000001",
+        "amount": 15
+      }
+    ],
+    "proportional_refund": true
+  },
+  "trigger_operation_id": "PPLsynth-0000-4000-a000-000000000305",
+  "status": "",
+  "created_at": 0,
+  "organization_id": "PPLsynth-organization",
+  "org_pk": 1,
+  "uri": "https://merchant.example/PPLsynth/webhooks",
+  "attempts": [],
+  "first_attempt_at": 0,
+  "next_attempt_at": 0
+}

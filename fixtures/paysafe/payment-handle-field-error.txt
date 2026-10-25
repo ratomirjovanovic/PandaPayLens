@@ -1,0 +1,20 @@
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+X-Application-Status-Code: 5068
+X-INTERNAL-CORRELATION-ID: PPLsynth-corr-6001
+
+{
+  "error": {
+    "code": "5068",
+    "message": "Field error(s)",
+    "details": [
+      "Either you submitted a request that is missing a mandatory field or the value of a field does not match the format expected."
+    ],
+    "fieldErrors": [
+      {
+        "field": "billingAddress.street",
+        "error": "size must be between 0 and 50"
+      }
+    ]
+  }
+}

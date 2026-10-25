@@ -1,0 +1,38 @@
+[
+  {
+    "eventName": "PAYMENT_COMPLETED",
+    "type": "PAYMENT",
+    "attemptNumber": "1",
+    "resourceId": "PPLsynth-pay-9101",
+    "eventDate": "2026-10-23T11:20:00Z",
+    "payload": {
+      "id": "PPLsynth-pay-9101",
+      "merchantRefNum": "PPLsynth-order-9101",
+      "amount": 1500,
+      "currencyCode": "GBP",
+      "paymentType": "CARD",
+      "settleWithAuth": false,
+      "availableToSettle": 1500,
+      "status": "COMPLETED",
+      "txnTime": "2026-10-23T11:20:00Z"
+    }
+  },
+  {
+    "eventName": "PAYMENT_COMPLETED",
+    "type": "PAYMENT",
+    "attemptNumber": "2",
+    "resourceId": "PPLsynth-pay-9101",
+    "eventDate": "2026-10-23T11:20:00Z",
+    "payload": {
+      "id": "PPLsynth-pay-9101",
+      "merchantRefNum": "PPLsynth-order-9101",
+      "amount": 1500,
+      "currencyCode": "GBP",
+      "paymentType": "CARD",
+      "settleWithAuth": false,
+      "availableToSettle": 1500,
+      "status": "COMPLETED",
+      "txnTime": "2026-10-23T11:20:00Z"
+    }
+  }
+]

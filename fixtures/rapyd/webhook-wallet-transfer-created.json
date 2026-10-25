@@ -1,0 +1,19 @@
+{
+  "id": "wh_PPLsynth00000000000000000017",
+  "type": "TRANSFER_FUNDS_BETWEEN_EWALLETS_CREATED",
+  "data": {
+    "id": "PPLsynth-transfer-0000-000000000112",
+    "status": "PEN",
+    "amount": 5,
+    "currency_code": "USD",
+    "destination_ewallet_id": "ewallet_PPLsynth00000000000000000002",
+    "source_ewallet_id": "ewallet_PPLsynth00000000000000000001",
+    "source_transaction_id": "wt_PPLsynth00000000000000000112",
+    "destination_transaction_id": "",
+    "created_at": 1792000000
+  },
+  "trigger_operation_id": "PPLsynth-0000-4000-a000-000000000313",
+  "status": "NEW",
+  "created_at": 1792000170,
+  "extended_timestamp": 1792000170123
+}
