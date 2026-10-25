@@ -8,9 +8,10 @@ import { migrate } from "drizzle-orm/neon-serverless/migrator";
 import { fileURLToPath } from "node:url";
 import ws from "ws";
 
-const url = process.env.DATABASE_MIGRATION_URL;
+// DATABASE_URL_UNPOOLED is the owner connection set by the Vercel Neon integration.
+const url = process.env.DATABASE_MIGRATION_URL ?? process.env.DATABASE_URL_UNPOOLED;
 if (!url) {
-  console.log("[migrate] DATABASE_MIGRATION_URL not set, skipping migrations.");
+  console.log("[migrate] No migration database URL set, skipping migrations.");
   process.exit(0);
 }
 neonConfig.webSocketConstructor = globalThis.WebSocket ?? ws;

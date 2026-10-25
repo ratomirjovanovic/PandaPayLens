@@ -16,7 +16,9 @@ export type AdminConfig = {
 
 export function adminConfig(): AdminConfig | null {
   const env = process.env;
-  const databaseUrl = env.DATABASE_URL;
+  // Runtime uses the least-privilege role when configured; DATABASE_URL is the
+  // owner connection provided by the Neon integration.
+  const databaseUrl = env.ADMIN_DATABASE_URL ?? env.DATABASE_URL;
   const authSecret = env.BETTER_AUTH_SECRET;
   const resendApiKey = env.RESEND_API_KEY;
   const emailFrom = env.EMAIL_FROM;
