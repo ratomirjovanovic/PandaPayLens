@@ -580,7 +580,10 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
 }
 
 function normalizeV4Type(type: string): string {
-  const t = type.replace(/[`.]+$/g, "").trim();
+  // A loop instead of /[`.]+$/ keeps the cost linear on any input.
+  let end = type.length;
+  while (end > 0 && (type[end - 1] === "." || type[end - 1] === "`")) end--;
+  const t = type.slice(0, end).trim();
   return V4_TYPE_ALIASES[t] ?? t;
 }
 
