@@ -2,6 +2,20 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] - 2026-10-25
+
+Wave 4: the last general providers on the roadmap.
+
+### Providers
+
+- New adapters with limited support, built from official documentation and tested with synthetic fixtures:
+  - BlueSnap: JSON Payment API card transactions, refunds and errors decoded by error name, and form-encoded webhooks.
+  - PayU India: form-encoded payment responses and webhooks, Verify Payment JSON and refund command responses.
+  - Razorpay: Payments API errors and entities (payment, order, refund, dispute, settlement, payout) and webhooks.
+  - Paystack: Transactions and Charge API responses, errors, refunds, disputes, transfers and webhooks.
+  - Flutterwave: v3 and v4 responses and webhooks, including refunds, chargebacks, voids and transfers.
+- 40 of 42 roadmap providers can now be analyzed. The remaining two, Pavilion Payments and Epoch, publish no developer documentation and stay blocked.
+
 ## [0.7.0] - 2026-10-25
 
 Wave 3 general providers.
