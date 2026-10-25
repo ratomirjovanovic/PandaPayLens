@@ -13,6 +13,7 @@
       <StsRsnInf>
         <Rsn><Cd>NARR</Cd></Rsn>
         <AddtlInf>SyntaxError</AddtlInf>
+        <AddtlInf>CdtrAcct NL02PPLS0123456789 not readable</AddtlInf>
       </StsRsnInf>
     </OrgnlGrpInfAndSts>
   </CstmrPmtStsRpt>

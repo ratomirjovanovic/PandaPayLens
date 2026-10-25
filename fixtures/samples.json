@@ -329,6 +329,13 @@
     "description": "A chargeback event linked to the original transaction by its unique id."
   },
   {
+    "id": "emerchantpay-xml-declined",
+    "title": "emerchantpay: declined XML response",
+    "provider": "emerchantpay",
+    "file": "emerchantpay/response-xml-authorize-declined.xml",
+    "description": "A Genesis XML payment_response for a declined authorization, read from XML and decoded like its JSON form."
+  },
+  {
     "id": "ecommpay-two-step",
     "title": "Ecommpay: authorization and capture",
     "provider": "ecommpay",
@@ -397,6 +404,13 @@
     "provider": "skrill",
     "file": "skrill/status-url-chargeback.txt",
     "description": "A status -3 post: a chargeback with no link to the original payment."
+  },
+  {
+    "id": "skrill-xml-refund-pending",
+    "title": "Skrill: pending refund (XML over HTTP)",
+    "provider": "skrill",
+    "file": "skrill/api-refund-pending-http.txt",
+    "description": "A raw HTTP response from refund.pl with an XML body. A pending refund stays pending, not completed."
   },
   {
     "id": "ezeewallet-transfer-declined",

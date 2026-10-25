@@ -2,19 +2,25 @@
  * Authorize.net adapter.
  *
  * Supported input families:
- * - `authorize_net.transaction_response`  Authorize.net API (JSON) createTransactionResponse:
+ * - `authorize_net.transaction_response`  Authorize.net API createTransactionResponse, JSON or XML:
  *                                         `transactionResponse` (responseCode 1-4, reason codes in
- *                                         `errors[]` / `messages[]`, AVS/CVV/CAVV) and the API-level
- *                                         `messages` (resultCode Ok/Error, I/E codes). Accepted
- *                                         unwrapped (as documented) or wrapped in
+ *                                         `errors` / `messages`, AVS/CVV/CAVV) and the API-level
+ *                                         `messages` (resultCode Ok/Error, I/E codes). JSON is
+ *                                         accepted unwrapped (as documented) or wrapped in
  *                                         `createTransactionResponse`.
  * - `authorize_net.api_messages`          Any API response that carries only the API-level
- *                                         `messages` object
+ *                                         `messages` object, JSON or XML (for example the XML
+ *                                         `ErrorResponse`)
  * - `authorize_net.webhook`               Webhook notification (`notificationId`, `eventType`
  *                                         `net.authorize.*`, `eventDate`, `webhookId`, `payload`)
  *
  * Recognized but not analyzed: getTransactionDetails responses, Webhooks REST
  * API notification history records and partner boarding webhooks.
+ *
+ * XML is read only from documents whose root element is in the AnetApiSchema.xsd
+ * namespace and ends in "Response". The XML carries the same element names as the
+ * JSON; its lists are wrapped (`<errors><error>`), so it is mapped onto the JSON
+ * shape before the same validation and decoding run.
  *
  * The API reports two result layers whose numbers overlap: responseCode 1-4
  * and the reason codes, where 1-4 also exist with other meanings. They are
@@ -154,15 +160,23 @@ type ApiMessagesT = z.infer<typeof ApiMessages>;
 type ApiMessageT = z.infer<typeof ApiMessage>;
 type WebhookT = z.infer<typeof Webhook>;
 
+/** Where the response sits in the record and how its lists are named there. */
+type Location = {
+  /** "" for an unwrapped JSON response, otherwise the root key or XML root element. */
+  root: string;
+  wrapped: boolean;
+  /** Paths of the transaction-level lists below transactionResponse. */
+  lists: { errors: string; messages: string };
+};
+
 export type AuthorizeNetParsed =
-  | {
+  | ({
       kind: "transaction";
       value: TxEnvelope;
       /** The raw response object, for presence checks of fields that are never copied. */
       raw: Record<string, unknown>;
-      wrapped: boolean;
-    }
-  | { kind: "api"; value: ApiMessagesT; raw: Record<string, unknown>; wrapped: boolean }
+    } & Location)
+  | ({ kind: "api"; value: ApiMessagesT; raw: Record<string, unknown> } & Location)
   | { kind: "webhook"; value: WebhookT; info: EventInfo | undefined };
 
 // ---------------------------------------------------------------------------
@@ -252,6 +266,72 @@ function unwrap(input: Record<string, unknown>): {
     if (isObj(inner)) return { body: inner, wrapped: true };
   }
   return { body: input, wrapped: false };
+}
+
+/** Namespace of AnetApiSchema.xsd, declared on the root of every XML response. */
+export const ANET_XML_NAMESPACE = "AnetApi/xml/v1/schema/AnetApiSchema.xsd";
+
+const JSON_LISTS = { errors: "errors", messages: "messages" };
+
+/** An element that may repeat reads as one value or an array; absent is empty. */
+const many = (v: unknown): unknown[] => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
+
+/**
+ * Drops XML attributes (for example xsi:nil) so that an element reads as its
+ * text, as in the JSON flavor. Mixed text beside child elements is dropped.
+ */
+function plain(v: unknown): unknown {
+  if (Array.isArray(v)) return v.map(plain);
+  if (!isObj(v)) return v;
+  const children = Object.keys(v).filter((k) => !k.startsWith("@") && k !== "#text");
+  if (children.length === 0) return typeof v["#text"] === "string" ? v["#text"] : "";
+  return Object.fromEntries(children.map((k) => [k, plain(v[k])]));
+}
+
+/**
+ * `<list><item/>...</list>` becomes an array of items and an empty list element
+ * an empty array. Anything else is left as it is for validation to report.
+ */
+function unwrapList(v: unknown, item: string): unknown {
+  if (v === "") return [];
+  if (isObj(v) && Object.keys(v).length > 0 && Object.keys(v).every((k) => k === item))
+    return many(v[item]);
+  return v;
+}
+
+type XmlResponse = { root: string; body: Record<string, unknown>; lists: Location["lists"] };
+
+/**
+ * Maps an XML response in the Authorize.net namespace onto the JSON shape:
+ * `<messages><message>` and `<errors><error>` become arrays, a single item
+ * included. Returns null for any other XML document.
+ */
+function fromXml(input: unknown, xml: RecordMeta["xml"]): XmlResponse | null {
+  if (!xml || xml.namespace !== ANET_XML_NAMESPACE || !/^[A-Za-z]{1,64}Response$/.test(xml.root))
+    return null;
+  if (!isObj(input) || !has(input, xml.root)) return null;
+  const doc = plain(input[xml.root]);
+  const body: Record<string, unknown> = isObj(doc) ? { ...doc } : {};
+  const lists = { errors: "errors.error", messages: "messages.message" };
+  const top = body.messages;
+  if (isObj(top) && has(top, "message")) body.messages = { ...top, message: many(top.message) };
+  if (body.transactionResponse === "") delete body.transactionResponse;
+  const tr = body.transactionResponse;
+  if (isObj(tr)) {
+    const t: Record<string, unknown> = { ...tr };
+    if (has(tr, "messages")) t.messages = unwrapList(tr.messages, "message");
+    else if (has(tr, "message")) {
+      // One documented XML example has <message> directly under <transactionResponse>.
+      t.messages = many(tr.message);
+      delete t.message;
+      lists.messages = "message";
+    }
+    if (has(tr, "errors")) t.errors = unwrapList(tr.errors, "error");
+    if (has(tr, "splitTenderPayments"))
+      t.splitTenderPayments = unwrapList(tr.splitTenderPayments, "splitTenderPayment");
+    body.transactionResponse = t;
+  }
+  return { root: xml.root, body, lists };
 }
 
 /** messages: { resultCode: Ok|Error, message: [{ code: I/E + 5 digits }] } */
@@ -424,6 +504,27 @@ function detectWebhook(input: Record<string, unknown>): DetectionResult | null {
   };
 }
 
+/**
+ * XML: the root element must be in the AnetApiSchema.xsd namespace and end in
+ * "Response", and the body must carry the same documented fields as the JSON.
+ */
+function detectXml(
+  input: Record<string, unknown>,
+  xml: NonNullable<RecordMeta["xml"]>,
+): DetectionResult | null {
+  const x = fromXml(input, xml);
+  if (!x) return null;
+  const d =
+    (x.root === "createTransactionResponse" ? detectTransaction(x.body, false) : null) ??
+    detectApi(x.body, false);
+  if (!d) return null;
+  return {
+    ...d,
+    confidence: round(Math.min(d.confidence + 0.1, 0.95)),
+    reasons: [`XML root element <${x.root}> in the ${ANET_XML_NAMESPACE} namespace`, ...d.reasons],
+  };
+}
+
 function detect(input: unknown, meta?: RecordMeta): DetectionResult {
   const none: DetectionResult = {
     provider: PROVIDER,
@@ -433,6 +534,7 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
     reasons: [],
   };
   if (!isObj(input) || meta?.format === "form") return none;
+  if (meta?.xml) return detectXml(input, meta.xml) ?? none;
   const { body, wrapped } = unwrap(input);
   return (
     detectTransaction(body, wrapped) ?? detectApi(body, wrapped) ?? detectWebhook(input) ?? none
@@ -449,19 +551,35 @@ function issuesOf(error: z.ZodError, prefix = ""): string[] {
 function parse(
   input: unknown,
   format: string,
+  meta?: RecordMeta,
 ): { ok: true; value: AuthorizeNetParsed } | { ok: false; issues: string[] } {
   if (!isObj(input)) return { ok: false, issues: ["(root): expected an object"] };
   if (format === AUTHORIZE_NET_FORMATS.transaction || format === AUTHORIZE_NET_FORMATS.api) {
-    const { body, wrapped } = unwrap(input);
-    const prefix = wrapped ? "createTransactionResponse." : "";
+    let body: Record<string, unknown>;
+    let loc: Location;
+    if (meta?.xml) {
+      const x = fromXml(input, meta.xml);
+      if (!x) return { ok: false, issues: ["(root): not an Authorize.net XML response"] };
+      body = x.body;
+      loc = { root: x.root, wrapped: false, lists: x.lists };
+    } else {
+      const u = unwrap(input);
+      body = u.body;
+      loc = {
+        root: u.wrapped ? "createTransactionResponse" : "",
+        wrapped: u.wrapped,
+        lists: JSON_LISTS,
+      };
+    }
+    const prefix = loc.root ? `${loc.root}.` : "";
     if (format === AUTHORIZE_NET_FORMATS.transaction) {
       const r = TransactionEnvelope.safeParse(body);
       if (!r.success) return { ok: false, issues: issuesOf(r.error, prefix) };
-      return { ok: true, value: { kind: "transaction", value: r.data, raw: body, wrapped } };
+      return { ok: true, value: { kind: "transaction", value: r.data, raw: body, ...loc } };
     }
     const r = ApiEnvelope.safeParse(body);
     if (!r.success) return { ok: false, issues: issuesOf(r.error, prefix) };
-    return { ok: true, value: { kind: "api", value: r.data.messages, raw: body, wrapped } };
+    return { ok: true, value: { kind: "api", value: r.data.messages, raw: body, ...loc } };
   }
   if (format === AUTHORIZE_NET_FORMATS.webhook) {
     const r = Webhook.safeParse(input);
@@ -634,7 +752,7 @@ function normalizeTransaction(
       wrapped: p.wrapped ? true : undefined,
       httpStatus: ctx.meta?.http?.status,
     }),
-    source: { recordIndex: ctx.recordIndex, path: p.wrapped ? "createTransactionResponse" : "" },
+    source: { recordIndex: ctx.recordIndex, path: p.root },
     ...(ctx.observedTimestamp ? { observedTimestamp: ctx.observedTimestamp } : {}),
   });
 }
@@ -677,7 +795,7 @@ function normalizeApi(
       wrapped: p.wrapped ? true : undefined,
       httpStatus: ctx.meta?.http?.status,
     }),
-    source: { recordIndex: ctx.recordIndex, path: p.wrapped ? "createTransactionResponse" : "" },
+    source: { recordIndex: ctx.recordIndex, path: p.root },
     ...(ctx.observedTimestamp ? { observedTimestamp: ctx.observedTimestamp } : {}),
   });
 }
@@ -863,7 +981,7 @@ function decodeTransaction(
   const avs = shortCode(tr.avsResultCode, 1);
   const cvv = shortCode(tr.cvvResultCode, 1);
   const top = p.value.messages ?? undefined;
-  const base = p.wrapped ? "createTransactionResponse." : "";
+  const base = p.root ? `${p.root}.` : "";
   const out: DecodedErrorDraft[] = [];
 
   const commonMissing: string[] = [];
@@ -887,7 +1005,7 @@ function decodeTransaction(
     const entry = reasonEntry(r.code);
     const shown = shownCode(r.code);
     const missing = [...commonMissing];
-    const path = `${base}transactionResponse.${r.list}[${r.index}]`;
+    const path = `${base}transactionResponse.${p.lists[r.list]}[${r.index}]`;
     const sc = subCodes({ reasonCode: shown });
     if (!entry) {
       out.push(
@@ -1103,7 +1221,7 @@ function decodeApi(
   p: Extract<AuthorizeNetParsed, { kind: "api" }>,
   ctx: NormalizeContext,
 ): DecodedErrorDraft[] {
-  const base = p.wrapped ? "createTransactionResponse." : "";
+  const base = p.root ? `${p.root}.` : "";
   const out: DecodedErrorDraft[] = [];
   (p.value.message ?? []).forEach((m, i) => {
     const d = decodeApiMessage(m, `${base}messages.message[${i}]`, ctx);
@@ -1230,11 +1348,12 @@ export const authorizeNetAdapter: ProviderAdapter<AuthorizeNetParsed> = {
     {
       id: AUTHORIZE_NET_FORMATS.transaction,
       description:
-        "Authorize.net API (JSON) createTransactionResponse (transactionResponse with responseCode and reason codes, plus messages)",
+        "Authorize.net API createTransactionResponse, JSON or XML (transactionResponse with responseCode and reason codes, plus messages)",
     },
     {
       id: AUTHORIZE_NET_FORMATS.api,
-      description: "Authorize.net API (JSON) response with only messages (resultCode, I/E codes)",
+      description:
+        "Authorize.net API response with only messages (resultCode, I/E codes), JSON or XML (for example ErrorResponse)",
     },
     {
       id: AUTHORIZE_NET_FORMATS.webhook,

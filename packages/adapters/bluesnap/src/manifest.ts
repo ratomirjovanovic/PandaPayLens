@@ -3,6 +3,7 @@ import type { ProviderManifest } from "@pandapaylens/core";
 export const BLUESNAP_ADAPTER_VERSION = "0.1.0";
 
 const JSON_REF = "https://developers.bluesnap.com/v8976-JSON/reference";
+const XML_REF = "https://developers.bluesnap.com/v8976-XML/reference";
 const TOOLS_REF = "https://developers.bluesnap.com/v8976-Tools/reference";
 const BASICS_REF = "https://developers.bluesnap.com/reference";
 const SUPPORT = "https://support.bluesnap.com/docs";
@@ -42,7 +43,7 @@ export const bluesnapManifest: ProviderManifest = {
     "Legal entities: BlueSnap Payment Services (Ireland) Ltd, authorised by the Central Bank of Ireland (C431532); BlueSnap Payment Services Ltd, authorised by the UK FCA (629580); BlueSnap Payment Services Israel Ltd, authorised by the Israel Securities Authority; entities in Canada, Australia, India and the US without a stated licence. transactionRegion values are AU, CA, EU, IL, IN, UK and US. Shoppers in OFAC sanctioned countries are refused (15012). Mandates are for Australia and Canada only; some card brands are only for US, UK and EUR merchants; proceeding without 3-D Secure is not available for Europe and the UK. BlueSnap's Prohibited Items list names internet gambling, virtual gaming credits, cryptocurrency, foreign currency exchange and binary options, debt relief, weapons and several adult categories. Eligibility depends on jurisdiction, licensing and underwriting.",
   documentationAccess: "public",
   fixtureProvenance:
-    "Synthetic payloads with PPLsynth identifiers. Card transaction, refund and error bodies follow the field tables and response examples of the public BlueSnap Payment API (JSON) reference and the declined authorizations support guide; webhooks follow the two documented webhook examples (CHARGE, CANCELLATION) and, for DECLINE, REFUND, CHARGEBACK, RECURRING and the other types without a published example, the webhook parameter reference. BlueSnap transaction IDs are numbers; the fixtures use PPLsynth strings instead. None is an official BlueSnap example.",
+    "Synthetic payloads with PPLsynth identifiers. Card transaction, refund and error bodies follow the field tables and response examples of the public BlueSnap Payment API (JSON) reference and the declined authorizations support guide; the XML card transaction and error documents carry the same content with the kebab-case element names and the http://ws.plimus.com namespace of the Payment API (XML) reference; webhooks follow the two documented webhook examples (CHARGE, CANCELLATION) and, for DECLINE, REFUND, CHARGEBACK, RECURRING and the other types without a published example, the webhook parameter reference. BlueSnap transaction IDs are numbers; the fixtures use PPLsynth strings instead. None is an official BlueSnap example.",
   dependencies: [
     "Payroc: BlueSnap states that Payroc acquired it in 2025 (site footer: BlueSnap, Powered by Payroc). The documented API and webhook formats are still BlueSnap's own.",
     "Card processors and issuers behind BlueSnap, not named in the documentation; BlueSnap normalizes their responses into its own errorName values and may append the processor's code and text to description.",
@@ -88,14 +89,27 @@ export const bluesnapManifest: ProviderManifest = {
       status: "unsupported",
     },
     {
+      id: "bluesnap.card_transaction_xml",
+      description:
+        "Payment API (XML, namespace http://ws.plimus.com) card transaction responses (<card-transaction> with card-transaction-type, transaction-id, processing-info), read with the JSON logic through the kebab-case element names",
+      status: "limited",
+    },
+    {
+      id: "bluesnap.error_xml",
+      description:
+        "Payment API (XML, namespace http://ws.plimus.com) error body: <messages> with message elements holding error-name, code, description and invalid-property, decoded by error-name like the JSON body",
+      status: "supported",
+    },
+    {
       id: "bluesnap.payment_api_xml",
       description:
-        "Payment API in XML (namespace http://ws.plimus.com); XML input is not supported",
+        "Other XML documents in the namespace http://ws.plimus.com (refund, alt-transaction, vaulted-shopper, recurring-subscription and any other root); recognized as BlueSnap, not analyzed",
       status: "unsupported",
     },
     {
       id: "bluesnap.extended_payment_api",
-      description: "Extended Payment API (XML only in the documentation); not supported",
+      description:
+        "Extended Payment API (XML only in the documentation); its element names are not in the reviewed sources, so its documents are only recognized through the namespace as BlueSnap XML, not analyzed",
       status: "unsupported",
     },
     {
@@ -136,6 +150,7 @@ export const bluesnapManifest: ProviderManifest = {
       url: `${JSON_REF}/error-handling-overview`,
     },
     { topic: "messages", title: "message object", url: `${JSON_REF}/messages` },
+    { topic: "messages-xml", title: "message object (XML)", url: `${XML_REF}/messages` },
     {
       topic: "card-transaction-errors",
       title: "Card transaction errors",
@@ -175,6 +190,12 @@ export const bluesnapManifest: ProviderManifest = {
       url: `${JSON_REF}/processing-info`,
     },
     { topic: "auth-capture", title: "Auth Capture", url: `${JSON_REF}/auth-capture` },
+    { topic: "auth-capture-xml", title: "Auth Capture (XML)", url: `${XML_REF}/auth-capture` },
+    {
+      topic: "card-transaction-errors-xml",
+      title: "Card transaction errors (XML)",
+      url: `${XML_REF}/card-transaction-errors`,
+    },
     { topic: "refund", title: "Refund", url: `${JSON_REF}/refund` },
     { topic: "idempotency", title: "Idempotency", url: `${BASICS_REF}/idempotency` },
     { topic: "webhooks", title: "Webhooks (IPNs)", url: `${BASICS_REF}/webhooks-ipns` },
@@ -213,7 +234,8 @@ export const bluesnapManifest: ProviderManifest = {
     docsUrl: `${SUPPORT}/ipn-faqs`,
   },
   limitations: [
-    "Only the JSON Payment API and form-encoded webhooks are analyzed. The XML Payment API (namespace http://ws.plimus.com) and the Extended Payment API (documented with XML examples only) are not supported, because PandaPayLens rejects XML input. Alt transaction responses (ACH/ECP, SEPA, PayPal, BECS, Pre-Authorized Debit) are recognized but not analyzed; batch transaction results, browser callbacks (Hosted Payment Fields, 3-D Secure) and the Reporting API are not analyzed.",
+    "The JSON Payment API, the XML Payment API card transaction and error documents, and form-encoded webhooks are analyzed. Other XML documents in the namespace http://ws.plimus.com (refund, alt-transaction, vaulted-shopper, recurring-subscription) and the Extended Payment API, whose element names are not in the reviewed sources, are recognized as BlueSnap XML but not analyzed. Alt transaction responses (ACH/ECP, SEPA, PayPal, BECS, Pre-Authorized Debit) are recognized but not analyzed; batch transaction results, browser callbacks (Hosted Payment Fields, 3-D Secure) and the Reporting API are not analyzed.",
+    "XML is claimed only in BlueSnap's namespace http://ws.plimus.com; the same elements without that namespace are not attributed to BlueSnap. The XML Payment API has the same semantics as the JSON one, and its kebab-case element names are read as the corresponding JSON fields (card-transaction-type as cardTransactionType, processing-info as processingInfo, error-name as errorName, invalid-property as invalidProperty). The names of elements the reviewed sources do not list, such as the children of fraud-events, are read through that same correspondence and are an inference. Attributes are ignored, empty elements count as absent, and XML gives every value as text, so true and false are read as booleans. Errors in XML are decoded by error-name exactly like the JSON body; the XML card error page lacks four names of the JSON page, which are still decoded from the JSON table.",
     "Errors are decoded by errorName, not by the numeric code: 37 card error names share 14002, and some numbers mean different things on different pages (14034, 20051, 24011, 90014, 90032). When a name appears in several tables with different guidance (for example NO_AVAILABLE_PROCESSORS, EXPIRED_TOKEN, INVALID_CARD_NUMBER), the card transaction reading is used with possible confidence and all readings are listed. A code alone, or an undocumented name, is decoded only when the code belongs to a single documented row, with possible confidence.",
     "Processor (issuer) decline codes are not documented. A processor code and text that BlueSnap appends to description (for example after 'processing failure.:') is shown as provider text only and is not decoded.",
     "Category and retry guidance per error are PandaPayLens suggestions. BlueSnap's own advice is shown for card transaction errors; where its pages conflict (SYSTEM_TECHNICAL_ERROR: do not retry on the Payment API page, retry on the Extended Payment API page) the Payment API advice is used.",

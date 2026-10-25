@@ -1,0 +1,12 @@
+HTTP/1.1 200 OK
+Content-Type: text/xml;charset=UTF-8
+X-PPL-Fixture: synthetic; element names and order follow the published refund.pl execution response, not an official Skrill example
+
+<?xml version="1.0" encoding="UTF-8"?>
+<response>
+  <mb_amount>10</mb_amount>
+  <mb_currency>EUR</mb_currency>
+  <mb_transaction_id>PPLsynth300000107</mb_transaction_id>
+  <status>0</status>
+  <transaction_id/>
+</response>

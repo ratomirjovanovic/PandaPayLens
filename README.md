@@ -65,7 +65,7 @@ Paste a payment error, webhook or event log from a supported provider. PandaPayL
 | Finrax         | limited   | limited   | limited       | limited      | limited      | supported   |
 | AstroPay       | limited   | limited   | supported     | limited      | limited      | limited     |
 | eZeeWallet     | limited   | limited   | limited       | limited      | experimental | limited     |
-| Skrill         | limited   | limited   | experimental  | limited      | limited      | limited     |
+| Skrill         | limited   | supported | limited       | limited      | limited      | limited     |
 | MiFinity       | limited   | limited   | limited       | limited      | limited      | limited     |
 | NMI            | limited   | supported | supported     | limited      | limited      | limited     |
 | Paymentwall    | limited   | limited   | limited       | supported    | limited      | limited     |

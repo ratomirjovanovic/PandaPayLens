@@ -14,6 +14,7 @@
  * Pay-in reason table:          https://app.inpay.com/docs/data/reason-codes-collection.json
  * Error model and HTTP codes:   https://app.inpay.com/docs/api/api-errors.md, response-codes.md
  * JWT authentication errors:    https://app.inpay.com/docs/api/getting-started/sign-and-encrypt-jwt-errors.md
+ * ISO 20022 channel:            https://app.inpay.com/docs/api/iso-introduction.md, iso-2022-status-codes.md
  *
  * Meanings are short paraphrases. Category and retry values are PandaPayLens
  * suggestions derived from the documented meaning; Inpay gives no per-code
@@ -47,6 +48,7 @@ export const JWT_ERRORS_URL = `${DOCS}/api/getting-started/sign-and-encrypt-jwt-
 export const SECURITY_MODEL_URL = `${DOCS}/api/getting-started/security-model.md`;
 export const X_REQUEST_ID_URL = `${DOCS}/api/getting-started/http-headers/x-request-id.md`;
 export const ISO_STATUS_URL = `${DOCS}/api/iso-2022-status-codes.md`;
+export const ISO_INTRO_URL = `${DOCS}/api/iso-introduction.md`;
 export const BUSINESS_VALUE_URL = `${DOCS}/docs-overview/business-value.md`;
 
 export type ErrorMapping = {
@@ -1101,6 +1103,71 @@ export const ERROR_TITLES: Record<string, ErrorMapping> = {
   "validation error": { meaning: "Validation error", category: INVALID, retry: "do_not_retry" },
   "resource not found": { meaning: "Resource not found", category: INVALID, retry: "do_not_retry" },
   "not authorized": { meaning: "Not authorized", category: "configuration", retry: "do_not_retry" },
+};
+
+// ISO 20022 payout channel
+
+/**
+ * Status report versions Inpay documents as replies of its ISO 20022 payout
+ * endpoint (to pain.001.001.10 and pacs.008.001.12 requests).
+ */
+export const ISO_DOCUMENTED_VERSIONS: Record<string, { report: string; answers: string }> = {
+  "pain.002.001.11": { report: "CstmrPmtStsRpt", answers: "pain.001.001.10" },
+  "pacs.002.001.12": { report: "FIToFIPmtStsRpt", answers: "pacs.008.001.12" },
+};
+
+/**
+ * The four group status (`GrpSts`) values Inpay documents. They are standard
+ * ISO codes; Inpay documents no others, so any other value stays unknown.
+ * An accepted report means the checks passed, not that the payout was sent.
+ */
+export const ISO_GROUP_STATUSES: Record<string, StateEntry> = {
+  RCVD: {
+    stage: "payout",
+    outcome: "pending",
+    meaning: "Message received; further checks follow",
+    final: false,
+  },
+  PDNG: {
+    stage: "payout",
+    outcome: "pending",
+    meaning: "Pending",
+    final: false,
+  },
+  ACCP: {
+    stage: "payout",
+    outcome: "pending",
+    meaning: "Technical and customer profile checks passed",
+    final: false,
+    note: "Accepted for processing. The report does not confirm that the payouts were sent or credited.",
+  },
+  RJCT: {
+    stage: "payout",
+    outcome: "failure",
+    meaning: "Message rejected",
+    final: true,
+  },
+};
+
+/**
+ * Status reason codes (`StsRsnInf/Rsn/Cd`) seen in Inpay's ISO 20022
+ * documentation. Inpay publishes no reason code list; the rejected example
+ * shows NARR with the reason as text in `AddtlInf`.
+ */
+export const ISO_REASON_CODES: Record<string, { seenIn: string; note: string }> = {
+  NARR: {
+    seenIn: "Inpay's rejected status report example",
+    note: "the example gives the reason as text in AddtlInf",
+  },
+};
+
+/** `AddtlInf` texts seen in Inpay's ISO 20022 examples. */
+export const ISO_REASON_TEXTS: Record<string, ErrorMapping> = {
+  SyntaxError: {
+    meaning: "The submitted message has a syntax error",
+    category: INVALID,
+    retry: "do_not_retry",
+  },
 };
 
 export const RETRY_TEXT: Record<RetryGuidance, string> = {

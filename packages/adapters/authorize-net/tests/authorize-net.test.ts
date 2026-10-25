@@ -12,6 +12,7 @@ import { defaultRules } from "@pandapaylens/rules";
 import { ADAPTERS } from "@pandapaylens/providers";
 import { nmiAdapter } from "@pandapaylens/nmi";
 import defaultExport, {
+  ANET_XML_NAMESPACE,
   API_MESSAGE_CODES,
   AUTHORIZE_NET_ADAPTER_VERSION,
   AUTHORIZE_NET_FORMATS,
@@ -644,15 +645,253 @@ describe("authorize.net createTransactionResponse", () => {
     expect(r.errors[0]!.code).toBe("2");
   });
 
-  it("reports XML as an unsupported record", () => {
+  it("leaves an empty XML response unclaimed", () => {
     const r = analyzeText(
       '<createTransactionResponse xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd"></createTransactionResponse>',
       options,
     );
     expect(r).toMatchObject({
       ok: true,
-      result: { records: [{ status: "unsupported" }], events: [] },
+      result: { records: [{ status: "unsupported", provider: null }], events: [] },
     });
+  });
+});
+
+describe("authorize.net XML", () => {
+  const xmlDoc = (root: string, inner: string, ns: string | null = ANET_XML_NAMESPACE) =>
+    `<?xml version="1.0" encoding="utf-8"?><${root} xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"${ns === null ? "" : ` xmlns="${ns}"`}>${inner}</${root}>`;
+  const XML_E27 =
+    "<messages><resultCode>Error</resultCode><message><code>E00027</code></message></messages>";
+  const detectText = (text: string) => {
+    const parsed = parseInput(text);
+    if (!parsed.ok) throw new Error(parsed.error.message);
+    return authorizeNetAdapter.detect(parsed.value.records[0], parsed.value.meta[0]);
+  };
+  // Engine-assigned ids and the record path differ by flavor; everything else must match.
+  const comparable = (items: readonly object[]) =>
+    items.map((x) => {
+      const rest: Record<string, unknown> = { ...x };
+      for (const k of ["id", "eventId", "source", "contentFingerprint"]) delete rest[k];
+      return rest;
+    });
+
+  it.each([
+    ["xml-auth-capture-approved.xml", AUTHORIZE_NET_FORMATS.transaction, 0.95],
+    ["xml-declined-general.xml", AUTHORIZE_NET_FORMATS.transaction, 0.95],
+    ["xml-error-response.xml", AUTHORIZE_NET_FORMATS.api, 0.85],
+    ["xml-avs-decline-http.txt", AUTHORIZE_NET_FORMATS.transaction, 0.95],
+  ])("recognizes %s by root element, namespace and fields", (file, format, confidence) => {
+    const d = detectText(fixture(file));
+    expect(d.format).toBe(format);
+    expect(d.confidence).toBe(confidence);
+    expect(d.supported).toBe(true);
+    expect(d.reasons[0]).toMatch(/in the AnetApi\/xml\/v1\/schema\/AnetApiSchema\.xsd namespace/);
+  });
+
+  it.each([
+    ["auth-capture-approved.json", "xml-auth-capture-approved.xml"],
+    ["declined-general.json", "xml-declined-general.xml"],
+  ])("decodes %s and %s the same way", (jsonFile, xmlFile) => {
+    const a = analyzeFixture(jsonFile);
+    const b = analyzeFixture(xmlFile);
+    expect(b.records[0]!.status).toBe("analyzed");
+    expect(b.records[0]!.format).toBe(a.records[0]!.format);
+    expect(comparable(b.events)).toEqual(comparable(a.events));
+    expect(comparable(b.errors)).toEqual(comparable(a.errors));
+    expect(ruleIds(b)).toEqual(ruleIds(a));
+    expect(b.events[0]!.source.path).toBe("createTransactionResponse");
+  });
+
+  it("points decoded XML errors at the XML elements", () => {
+    const r = analyzeFixture("xml-declined-general.xml");
+    expect(r.errors.map((e) => e.source.path)).toEqual([
+      "createTransactionResponse.transactionResponse.errors.error[0]",
+    ]);
+    expect(r.events[0]!.attributes.wrapped).toBeUndefined();
+  });
+
+  it("analyzes an XML ErrorResponse from the API-level messages", () => {
+    const r = analyzeFixture("xml-error-response.xml");
+    expect(r.records[0]!.format).toBe(AUTHORIZE_NET_FORMATS.api);
+    expect(r.events[0]).toMatchObject({
+      eventType: "apiResponse",
+      stage: "error",
+      outcome: "failure",
+      providerStatus: "resultCode=Error",
+      source: { path: "ErrorResponse" },
+    });
+    expect(r.events[0]!.attributes.apiMessageCodes).toEqual(["E00003"]);
+    expect(r.errors).toHaveLength(1);
+    expect(r.errors[0]).toMatchObject({
+      code: "E00003",
+      category: "invalid_request",
+      retry: "do_not_retry",
+      confidence: "strong",
+      outcomeKnown: true,
+      source: { path: "ErrorResponse.messages.message[0]" },
+    });
+    expect(r.errors[0]!.explanation).toMatch(/XML parse error/);
+  });
+
+  it("decodes a raw HTTP response with Content-Type application/xml", () => {
+    const parsed = parseInput(fixture("xml-avs-decline-http.txt"));
+    if (!parsed.ok) throw new Error(parsed.error.message);
+    expect(parsed.value.meta[0]).toMatchObject({
+      format: "http",
+      http: { status: 200, contentType: "application/xml" },
+      xml: { root: "createTransactionResponse", namespace: ANET_XML_NAMESPACE },
+    });
+    const r = analyzeFixture("xml-avs-decline-http.txt");
+    expect(r.records[0]!.status).toBe("analyzed");
+    expect(r.events[0]).toMatchObject({
+      stage: "payment",
+      outcome: "failure",
+      paymentReference: "80000001401",
+      merchantReference: "PPLsynth-ref-1401",
+      providerStatus: "responseCode=2 resultCode=Error",
+    });
+    expect(r.events[0]!.attributes).toMatchObject({
+      httpStatus: 200,
+      reasonCodes: ["27"],
+      avsResultCode: "A",
+      cvvResultCode: "M",
+    });
+    expect(r.errors).toHaveLength(1);
+    expect(r.errors[0]).toMatchObject({
+      code: "27",
+      category: "fraud_or_risk",
+      confidence: "strong",
+      outcomeKnown: true,
+      subCodes: { responseCode: "2", reasonCode: "27", resultCode: "Error", avsResultCode: "A" },
+    });
+    expect(r.errors[0]!.missingInformation.join(" ")).toMatch(/AVS result is A/);
+    expect(ruleIds(r)).toContain("PAYMENT_FAILURE");
+  });
+
+  it("reads one item or several from wrapped lists", () => {
+    const tx = (inner: string) =>
+      xmlDoc(
+        "createTransactionResponse",
+        `${XML_E27}<transactionResponse><responseCode>3</responseCode><transId>0</transId>${inner}</transactionResponse>`,
+      );
+    const two = analyze(
+      tx(
+        "<errors><error><errorCode>16</errorCode></error><error><errorCode>9999</errorCode><errorText>x</errorText></error></errors>",
+      ),
+    );
+    expect(two.errors.map((e) => e.code)).toEqual(["16", "9999"]);
+    expect(two.errors[1]!.source.path).toBe(
+      "createTransactionResponse.transactionResponse.errors.error[1]",
+    );
+    expect(two.events[0]!.attributes.reasonCodes).toEqual(["16", "9999"]);
+    expect(two.events[0]!.stage).toBe("error");
+
+    const empty = analyze(tx("<errors /><messages />"));
+    expect(empty.records[0]!.status).toBe("analyzed");
+    expect(empty.errors.map((e) => e.code)).toEqual(["responseCode=3"]);
+  });
+
+  it("accepts <message> directly under <transactionResponse>, as in one documented example", () => {
+    const r = analyze(
+      xmlDoc(
+        "createTransactionResponse",
+        "<messages><resultCode>Ok</resultCode><message><code>I00001</code></message></messages>" +
+          "<transactionResponse><responseCode>1</responseCode><transId>80000009301</transId>" +
+          "<message><code>1</code><description>This transaction has been approved.</description></message>" +
+          "</transactionResponse>",
+      ),
+    );
+    expect(r.events[0]).toMatchObject({ outcome: "success", paymentReference: "80000009301" });
+    expect(r.events[0]!.attributes.reasonCodes).toEqual(["1"]);
+    expect(r.errors).toEqual([]);
+  });
+
+  it("reads elements that carry attributes as their text", () => {
+    const r = analyze(
+      xmlDoc(
+        "createTransactionResponse",
+        `${XML_E27}<transactionResponse><responseCode>2</responseCode>` +
+          '<avsResultCode xsi:nil="true" /><cvvResultCode note="x">N</cvvResultCode>' +
+          "<transId>80000009302</transId><errors><error><errorCode>2</errorCode></error></errors>" +
+          "</transactionResponse>",
+      ),
+    );
+    expect(r.records[0]!.status).toBe("analyzed");
+    expect(r.events[0]!.attributes.avsResultCode).toBeUndefined();
+    expect(r.events[0]!.attributes.cvvResultCode).toBe("N");
+    expect(r.errors[0]!.code).toBe("2");
+  });
+
+  it("recognizes but does not analyze an XML getTransactionDetailsResponse", () => {
+    const r = analyze(
+      xmlDoc(
+        "getTransactionDetailsResponse",
+        "<messages><resultCode>Ok</resultCode><message><code>I00001</code></message></messages>" +
+          "<transaction><transId>80000009303</transId><transactionStatus>settledSuccessfully</transactionStatus></transaction>",
+      ),
+    );
+    expect(r.records[0]).toMatchObject({
+      status: "unsupported",
+      provider: "authorize_net",
+      format: AUTHORIZE_NET_FORMATS.details,
+    });
+  });
+
+  it("reports a malformed XML response as invalid without throwing", () => {
+    const r = analyze(
+      xmlDoc(
+        "createTransactionResponse",
+        `${XML_E27}<transactionResponse><responseCode>2</responseCode><transId>80000009304</transId><errors>declined</errors></transactionResponse>`,
+      ),
+    );
+    expect(r.records[0]!.status).toBe("invalid");
+    expect(r.records[0]!.reasons.join(" ")).toMatch(
+      /createTransactionResponse\.transactionResponse\.errors/,
+    );
+  });
+
+  it.each([
+    ["no namespace", xmlDoc("ErrorResponse", XML_E27, null)],
+    ["another namespace", xmlDoc("ErrorResponse", XML_E27, "urn:PPLsynth:other")],
+    [
+      "a request root",
+      xmlDoc(
+        "createTransactionRequest",
+        "<merchantAuthentication><name>PPLsynth</name></merchantAuthentication>",
+      ),
+    ],
+    ["a root that is not a response", xmlDoc("messages", "<resultCode>Error</resultCode>")],
+    [
+      "a response without documented fields",
+      xmlDoc("createTransactionResponse", "<status>ok</status>"),
+    ],
+    [
+      "API-level messages with codes that are not I/E codes",
+      xmlDoc(
+        "ErrorResponse",
+        "<messages><resultCode>Error</resultCode><message><code>100</code></message></messages>",
+      ),
+    ],
+  ])("does not claim XML with %s", (_, text) => {
+    expect(detectText(text).confidence).toBe(0);
+  });
+
+  it("is not claimed by NMI or any other registered adapter", () => {
+    const files = readdirSync(`${root}authorize_net`).filter((f) => f.startsWith("xml-"));
+    expect(files).toHaveLength(4);
+    for (const file of files) {
+      const parsed = parseInput(fixture(file));
+      if (!parsed.ok) throw new Error(`${file}: ${parsed.error.message}`);
+      const [record, meta] = [parsed.value.records[0], parsed.value.meta[0]];
+      expect(meta?.xml?.namespace).toBe(ANET_XML_NAMESPACE);
+      expect(nmiAdapter.detect(record, meta).confidence, `nmi on ${file}`).toBe(0);
+      for (const a of ADAPTERS) {
+        if (a.id === "authorize_net") continue;
+        expect(a.detect(record, meta).confidence, `${a.id} on ${file}`).toBe(0);
+      }
+      const all = analyze(fixture(file), { adapters: ADAPTERS });
+      expect(all.records[0]).toMatchObject({ provider: "authorize_net", alternatives: [] });
+    }
   });
 });
 
@@ -950,5 +1189,72 @@ describe("authorize.net redaction", () => {
     const dump = json(r.events) + json(r.errors) + toJsonReport(r);
     for (const p of PLANTED) expect(dump, p).not.toContain(p);
     expect(r.events[0]!.merchantReference).toBeUndefined();
+  });
+
+  it("keeps planted sensitive values out of an XML response", () => {
+    const xml = `<?xml version="1.0" encoding="utf-8"?>
+<createTransactionResponse xmlns="${ANET_XML_NAMESPACE}">
+  <refId>planted.payer@example.com</refId>
+  <messages><resultCode>Error</resultCode><message><code>E00027</code></message></messages>
+  <transactionResponse>
+    <responseCode>2</responseCode>
+    <authCode>PLANTEDAUTHCODE</authCode>
+    <avsResultCode>N</avsResultCode>
+    <transId>80000009401</transId>
+    <transHash>PLANTEDHASH</transHash>
+    <rawResponseCode>PLANTEDRAWCODE</rawResponseCode>
+    <accountNumber>XXXX9876</accountNumber>
+    <accountType>Visa</accountType>
+    <errors>
+      <error>
+        <errorCode>2</errorCode>
+        <errorText>Card 4111111111111111 for planted.payer@example.com</errorText>
+      </error>
+    </errors>
+    <userFields>
+      <userField><name>note</name><value>PLANTEDUSERFIELD</value></userField>
+      <userField><name>ip</name><value>203.0.113.77</value></userField>
+    </userFields>
+    <secureAcceptance>
+      <SecureAcceptanceUrl>https://x.example/PLANTEDSECUREURL</SecureAcceptanceUrl>
+      <PayerID>PLANTEDPAYERID</PayerID>
+      <PayerEmail>planted.payer@example.com</PayerEmail>
+    </secureAcceptance>
+    <emvResponse><tlvData>PLANTEDTLV</tlvData></emvResponse>
+    <prePaidCard><balanceOnCard>PLANTEDBALANCE</balanceOnCard></prePaidCard>
+    <transHashSha2>PLANTEDSHA2</transHashSha2>
+    <networkTransId>PLANTEDNETWORKID</networkTransId>
+    <payment>
+      <creditCard>
+        <cardNumber>4111PLANTED11111</cardNumber>
+        <expirationDate>PLANTEDEXPIRY</expirationDate>
+        <cardCode>PLANTEDCARDCODE</cardCode>
+      </creditCard>
+      <bankAccount>
+        <routingNumber>PLANTEDROUTING</routingNumber>
+        <accountNumber>PLANTEDBANKACCT</accountNumber>
+        <nameOnAccount>PLANTEDNAMEONACCT</nameOnAccount>
+      </bankAccount>
+      <trackData><track1>PLANTEDTRACK1</track1></trackData>
+      <opaqueData><dataValue>PLANTEDOPAQUE</dataValue></opaqueData>
+    </payment>
+    <cardholderAuthentication>
+      <cardholderAuthenticationValue>PLANTEDCAVV</cardholderAuthenticationValue>
+    </cardholderAuthentication>
+    <billTo><firstName>PLANTEDFIRSTNAME</firstName><address>PLANTEDSTREET</address></billTo>
+    <merchantAuthentication>
+      <name>PLANTEDLOGINID</name>
+      <transactionKey>PLANTEDTRANSKEY</transactionKey>
+      <accessToken>PLANTEDACCESSTOKEN</accessToken>
+    </merchantAuthentication>
+  </transactionResponse>
+</createTransactionResponse>`;
+    const r = analyze(xml);
+    expect(r.records[0]!.status).toBe("analyzed");
+    expect(r.errors[0]!.providerMessage).toBe("Card [redacted] for [redacted]");
+    const dump = json(r.events) + json(r.errors) + toJsonReport(r);
+    for (const p of PLANTED) expect(dump, p).not.toContain(p);
+    expect(r.events[0]!.merchantReference).toBeUndefined();
+    expect(r.sensitiveData.detected).toBe(true);
   });
 });

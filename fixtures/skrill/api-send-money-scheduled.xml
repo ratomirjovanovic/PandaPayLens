@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic fixture: send money transfer response with status 1. The status_msg text for status 1 is not documented, so the element is left out. -->
+<response>
+  <transaction>
+    <amount>25</amount>
+    <currency>EUR</currency>
+    <id>PPLsynth497031</id>
+    <status>1</status>
+  </transaction>
+</response>

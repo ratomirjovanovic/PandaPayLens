@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic fixture: the documented error shape with an error string that is not in the Skrill documentation. -->
+<response>
+  <error>
+    <error_msg>PPLSYNTH_UNDOCUMENTED_ERROR</error_msg>
+  </error>
+</response>

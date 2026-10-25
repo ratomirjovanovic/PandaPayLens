@@ -1,0 +1,5 @@
+HTTP/1.1 200 OK
+Content-Type: application/xml; charset=utf-8
+
+<?xml version="1.0" encoding="utf-8"?>
+<createTransactionResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd"><refId>PPLsynth-ref-1401</refId><messages><resultCode>Error</resultCode><message><code>E00027</code><text>The transaction was unsuccessful.</text></message></messages><transactionResponse><responseCode>2</responseCode><authCode /><avsResultCode>A</avsResultCode><cvvResultCode>M</cvvResultCode><cavvResultCode /><transId>80000001401</transId><refTransID /><testRequest>0</testRequest><accountNumber>XXXX0002</accountNumber><accountType>Visa</accountType><errors><error><errorCode>27</errorCode></error></errors></transactionResponse></createTransactionResponse>

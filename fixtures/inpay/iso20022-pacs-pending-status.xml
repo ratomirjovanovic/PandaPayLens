@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pacs.002.001.12">
+  <FIToFIPmtStsRpt>
+    <GrpHdr>
+      <MsgId>PPLsynth-iso-msg-0004</MsgId>
+      <CreDtTm>2026-10-21T08:30:00Z</CreDtTm>
+    </GrpHdr>
+    <OrgnlGrpInfAndSts>
+      <OrgnlMsgId>PPLsynth-iso-orig-0004</OrgnlMsgId>
+      <OrgnlMsgNmId>pacs.008.001.12</OrgnlMsgNmId>
+      <GrpSts>PDNG</GrpSts>
+    </OrgnlGrpInfAndSts>
+  </FIToFIPmtStsRpt>
+</Document>

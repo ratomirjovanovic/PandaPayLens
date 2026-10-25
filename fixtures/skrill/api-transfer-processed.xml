@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic fixture: element names and order follow the published transfer execution response; values are not real. -->
+<response>
+  <transaction>
+    <amount>1.20</amount>
+    <currency>EUR</currency>
+    <id>PPLsynth497029</id>
+    <status>2</status>
+    <status_msg>processed</status_msg>
+  </transaction>
+</response>

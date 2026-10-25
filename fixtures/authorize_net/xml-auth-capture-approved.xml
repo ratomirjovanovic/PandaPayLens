@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<createTransactionResponse xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd">
+  <refId>PPLsynth-ref-0101</refId>
+  <messages>
+    <resultCode>Ok</resultCode>
+    <message>
+      <code>I00001</code>
+      <text>Successful.</text>
+    </message>
+  </messages>
+  <transactionResponse>
+    <responseCode>1</responseCode>
+    <authCode>PPL7A1</authCode>
+    <avsResultCode>Y</avsResultCode>
+    <cvvResultCode>M</cvvResultCode>
+    <cavvResultCode />
+    <transId>80000000101</transId>
+    <refTransID />
+    <transHash />
+    <testRequest>0</testRequest>
+    <accountNumber>XXXX1111</accountNumber>
+    <accountType>Visa</accountType>
+    <messages>
+      <message>
+        <code>1</code>
+        <description>This transaction has been approved.</description>
+      </message>
+    </messages>
+    <transHashSha2>PPLSYNTH0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000</transHashSha2>
+    <networkTransId>PPLSYNTHNTI0001</networkTransId>
+  </transactionResponse>
+</createTransactionResponse>

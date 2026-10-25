@@ -1,0 +1,18 @@
+HTTP/1.1 200 OK
+Content-Type: text/xml; charset=utf-8
+
+<?xml version="1.0" encoding="UTF-8"?>
+<payment_response>
+  <transaction_type>sale3d</transaction_type>
+  <status>pending_async</status>
+  <mode>test</mode>
+  <transaction_id>PPLsynth-order-6004</transaction_id>
+  <unique_id>PPLsynth-uid-sale3d-6004</unique_id>
+  <redirect_url>https://staging.gate.example.invalid/threeds/PPLsynth-redirect-planted-xml</redirect_url>
+  <technical_message>TESTMODE: No real money will be transferred!</technical_message>
+  <message>TESTMODE: No real money will be transferred!</message>
+  <timestamp>2026-10-21T10:00:00Z</timestamp>
+  <amount>2000</amount>
+  <currency>EUR</currency>
+  <sent_to_acquirer>false</sent_to_acquirer>
+</payment_response>

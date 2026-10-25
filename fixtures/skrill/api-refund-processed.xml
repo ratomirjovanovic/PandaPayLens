@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Synthetic fixture: element names and order follow the published refund.pl execution response; values are not real. -->
+<response>
+  <mb_amount>10</mb_amount>
+  <mb_currency>EUR</mb_currency>
+  <mb_transaction_id>PPLsynth300000201</mb_transaction_id>
+  <order_note>PPLsynth Planted Note</order_note>
+  <status>2</status>
+  <transaction_id>PPLsynth-refund-3001</transaction_id>
+</response>

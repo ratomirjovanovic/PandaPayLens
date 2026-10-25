@@ -28,7 +28,7 @@ export const skrillManifest: ProviderManifest = {
     "Skrill does not accept customers from Afghanistan, Cuba, Eritrea, Iran, Iraq, Japan, Kyrgyzstan, Libya, North Korea, Sudan, South Sudan and Syria, and takes no new registrations from India. Legal entities: Paysafe Payment Solutions Limited (EEA, Central Bank of Ireland), Skrill USA, Inc. (US) and Skrill Limited (other countries, FCA). Merchant balances are split into EEA and non-EEA groups (account_id). Merchants outside the EU/EEA/US get no right to show Visa/Mastercard marks under the Skrill processing agreement. Payment methods have their own country lists.",
   documentationAccess: "public",
   fixtureProvenance:
-    "Synthetic fixtures with PPLsynth identifiers. Skrill publishes no raw Quick Checkout status_url example, so the status_url, refund, recurring and bank payout status fixtures were built from the documented field tables (the HTTP fixtures say so in an X-PPL-Fixture header). The bank payout error fixtures use documented codes with synthetic messages. The payout status report fixture follows the shape of the published payout status post with synthetic values. None are official provider examples.",
+    "Synthetic fixtures with PPLsynth identifiers. Skrill publishes no raw Quick Checkout status_url example, so the status_url, refund, recurring and bank payout status fixtures were built from the documented field tables (the HTTP fixtures say so in an X-PPL-Fixture header). The bank payout error fixtures use documented codes with synthetic messages. The payout status report fixture follows the shape of the published payout status post with synthetic values. The XML API fixtures follow the element names and order of the published refund.pl, pay.pl and ondemand_request.pl example responses with synthetic values, and the MQI error fixture uses the documented 403 Transaction not found text in a plain-text body whose exact layout is not documented. None are official provider examples.",
   status: "limited",
   apiFamilies: [
     {
@@ -59,14 +59,38 @@ export const skrillManifest: ProviderManifest = {
       status: "experimental",
     },
     {
-      id: "skrill.api.xml",
+      id: "skrill.api.error",
       description:
-        "XML responses of refund.pl, pay.pl and ondemand_request.pl (error_msg strings are in the catalog only)",
+        "XML error responses of refund.pl, pay.pl and ondemand_request.pl (<response><error><error_msg>), decoded with the documented API error strings",
+      status: "supported",
+    },
+    {
+      id: "skrill.api.refund",
+      description:
+        "XML refund.pl execution response (mb_amount, mb_currency, mb_transaction_id, status 2, 0 or -2, transaction_id)",
+      status: "supported",
+    },
+    {
+      id: "skrill.api.transaction",
+      description:
+        "XML <response><transaction> execution response (amount, currency, id, status, status_msg) shared by pay.pl send money, Quick Checkout payouts and ondemand_request.pl 1-Tap; the operation is known only when the status is documented for one of them",
+      status: "limited",
+    },
+    {
+      id: "skrill.api.prepare",
+      description:
+        "XML prepare response (<response><sid>, optionally with verificationOfPayee), recognized only",
       status: "unsupported",
     },
     {
+      id: "skrill.mqi.http_error",
+      description:
+        "MQI HTTP errors 401 to 405 with a plain-text body, analyzed only when Skrill is selected manually",
+      status: "experimental",
+    },
+    {
       id: "skrill.mqi.text",
-      description: "MQI status_rec / status_od text, history CSV and MQI HTTP errors",
+      description: "MQI status_rec / status_od text and history CSV",
       status: "unsupported",
     },
     {
@@ -81,12 +105,14 @@ export const skrillManifest: ProviderManifest = {
     },
   ],
   capabilities: {
-    // failed_reason_code decoding is tested end to end; the 58 API/MQI error
-    // strings arrive in XML, which core does not parse, so they are catalog-only.
-    errorDecoding: "limited",
-    // Only the bank payout JSON errors can be imported; the refund, transfer and
-    // 1-Tap responses are XML.
-    paymentResponses: "experimental",
+    // failed_reason_code, the API error strings (XML error responses), bank
+    // payout codes and MQI HTTP errors are decoded and tested end to end. The
+    // two Bank API codes remain catalog-only.
+    errorDecoding: "supported",
+    // Refund, transfer, payout and 1-Tap execution responses and errors are
+    // decoded, but payments go through a hosted page without a synchronous
+    // response, and a <transaction> response does not always name its operation.
+    paymentResponses: "limited",
     // Payment and refund posts are fully decoded, but payout posts share the
     // payment field set and recurring / 1-Tap field sets are partly undocumented.
     webhookParsing: "limited",
@@ -159,7 +185,11 @@ export const skrillManifest: ProviderManifest = {
     "transaction_id is a merchant reference (in refund reports it is the refund transaction ID) and is never used for correlation. mb_transaction_id and rec_payment_id (recurring / 1-Tap mandate) are the only correlation keys.",
     "Posts carry no timestamp and no event id. Repeated deliveries are recognized by mb_transaction_id and status. Recurring posts have no reliable delivery key. Retry behavior for refund and recurring posts and the delivery order are not documented; events are shown in the order supplied.",
     "md5sig, sha2sig and msid are never verified (that needs the merchant's secret word) and never copied; only their presence and hex length are shown. A pasted post is never treated as authentic.",
-    "XML responses of refund.pl, pay.pl and ondemand_request.pl, MQI text responses (status_rec, status_od, history) and MQI HTTP errors cannot be imported, because PandaPayLens core does not parse XML or plain text. Their codes (58 API/MQI error strings, 5 MQI HTTP errors, 2 Bank API codes) are available in the catalog only.",
+    "XML API responses are analyzed only in the documented shapes: <response><error><error_msg>, the flat refund.pl execution response and <response><transaction>. The prepare answer (<response><sid>) is recognized but not analyzed, because it carries no outcome; the session id is never copied, and Verification of Payee results in Quick Checkout payout prepare responses are not decoded. Other roots, namespaced roots and undocumented elements are not claimed.",
+    "An XML error response does not name the endpoint (refund.pl, pay.pl or ondemand_request.pl) or the step (prepare or execute), so the decoded error is not tied to a refund, payout or payment. A value of error_msg that is not shaped like an error code is never shown.",
+    "pay.pl send money, Quick Checkout payouts and ondemand_request.pl 1-Tap payments answer with the same <transaction> element. Status 1 (send money) and 0 (Quick Checkout payout) identify a payout; status 2 and -2 are documented for several of these operations, so the event is shown with stage other and the possible operations, and is never counted as a payment or a payout. A transfer response with status 2 means the transfer was processed; it is not a status report.",
+    "The refund.pl execution response is a refund, never a payment. Status 2 means the refund was processed and 0 that it is pending until the refund status report arrives (they share the refund's mb_transaction_id). The response has no field for the original payment, and echoed merchant_fields elements are never copied. A failed execution (status -2) without error_msg is shown as a failed refund without a decoded reason.",
+    "MQI errors are documented only as HTTP status codes 401 to 405 (and the text 403 Transaction not found: TRN_ID); the body layout is not documented. A plain-text HTTP error is offered below the detection threshold and is analyzed only when Skrill is selected manually; the transaction id in the body is never copied. MQI text responses (status_rec, status_od) and history CSV are not imported, and the two Bank API codes are in the catalog only.",
     "The rec_status_url post is decoded only for status 2 and -2; the docs describe that URL both as a cancellation URL and as receiving every recurring payment, and its field set is partly undocumented. ondemand_status_url (1-Tap cancellation) field names are not documented and are not recognized.",
     "Bank payout JSON errors are documented both as flat code/message/description and as nested error.code with details. Numeric 70xx codes in the nested shape are not claimed automatically, because Paysafe JSON uses the same shape; select the provider manually. Code 7016 is not documented. Bank payout success responses are not analyzed.",
     "Skrill used as a payment method inside Paysafe Checkout or the Paysafe Payments API uses Paysafe's own JSON format (paymentType SKRILL). It is not recognized by this adapter.",

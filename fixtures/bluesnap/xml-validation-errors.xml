@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<messages xmlns="http://ws.plimus.com">
+  <message>
+    <error-name>VALIDATION_GENERAL_FAILURE</error-name>
+    <code>10001</code>
+    <description>Synthetic description: a field is not valid.</description>
+    <invalid-property>
+      <name>cardHolderInfo.zip</name>
+      <message-value>PLANTEDZIP99</message-value>
+    </invalid-property>
+  </message>
+  <message>
+    <error-name>INVALID_MERCHANT_TRANSACTION_ID</error-name>
+    <code>10001</code>
+    <description>Synthetic description: the merchant transaction ID is too long.</description>
+  </message>
+</messages>

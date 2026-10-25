@@ -18,6 +18,10 @@ import {
   EXAMPLE_ONLY_REASONS,
   HTTP_STATUSES,
   INPAY_ADAPTER_VERSION,
+  ISO_DOCUMENTED_VERSIONS,
+  ISO_GROUP_STATUSES,
+  ISO_REASON_CODES,
+  ISO_REASON_TEXTS,
   JWT_ERRORS,
   NUMERIC_ERRORS,
   ORDER_REASONS,
@@ -31,6 +35,7 @@ import {
   inpayManifest,
 } from "@pandapaylens/inpay";
 import defaultExport from "@pandapaylens/inpay";
+import { ADAPTERS } from "@pandapaylens/providers";
 import { FIXED_NOW, fixture } from "../../../rules/tests/helpers.js";
 
 const options: AnalyzeOptions = {
@@ -244,14 +249,6 @@ describe("inpay parsing", () => {
     expect(r.ok).toBe(false);
     expect(!r.ok && r.error.code).toBe("INVALID_JSON");
     expect(analyzeText(fixture("malformed/invalid-json.txt"), options).ok).toBe(false);
-  });
-
-  it("reports ISO 20022 XML status reports as unsupported records", () => {
-    const r = analyzeText(fixture("inpay/iso20022-rejected-status.xml"), options);
-    expect(r).toMatchObject({
-      ok: true,
-      result: { records: [{ status: "unsupported" }], events: [] },
-    });
   });
 });
 
@@ -932,6 +929,514 @@ describe("inpay correlation", () => {
   });
 });
 
+const PAIN_NS = "urn:iso:std:iso:20022:tech:xsd:pain.002.001.11";
+const PACS_NS = "urn:iso:std:iso:20022:tech:xsd:pacs.002.001.12";
+const ISO_FIXTURES = [
+  "inpay/iso20022-rejected-status.xml",
+  "inpay/iso20022-received-status.xml",
+  "inpay/iso20022-accepted-status.xml",
+  "inpay/iso20022-pacs-pending-status.xml",
+];
+const isoGroup = (status: string, extra = "", orig = "PPLsynth-iso-orig-0900") =>
+  `<OrgnlGrpInfAndSts><OrgnlMsgId>${orig}</OrgnlMsgId><GrpSts>${status}</GrpSts>${extra}</OrgnlGrpInfAndSts>`;
+const isoReason = (code: string, ...texts: string[]) =>
+  `<StsRsnInf><Rsn><Cd>${code}</Cd></Rsn>${texts.map((t) => `<AddtlInf>${t}</AddtlInf>`).join("")}</StsRsnInf>`;
+const isoReport = ({
+  ns = PAIN_NS as string | null,
+  element = "CstmrPmtStsRpt",
+  header = "<MsgId>PPLsynth-iso-msg-0900</MsgId>",
+  body = isoGroup("ACCP"),
+} = {}) =>
+  `<Document${ns === null ? "" : ` xmlns="${ns}"`}><${element}><GrpHdr>${header}</GrpHdr>${body}</${element}></Document>`;
+const INPAY_NAMED = "<MsgId>PPLsynth-iso-msg-0900</MsgId><InitgPty><Nm>Inpay</Nm></InitgPty>";
+
+function detectText(text: string) {
+  const parsed = parseInput(text);
+  if (!parsed.ok) throw new Error(parsed.error.message);
+  return inpayAdapter.detect(parsed.value.records[0], parsed.value.meta[0]);
+}
+const isoManual = (text: string) => analyze(text, inpayOnly);
+
+describe("inpay ISO 20022 status reports", () => {
+  it.each([
+    ["inpay/iso20022-rejected-status.xml", 0.4],
+    ["inpay/iso20022-received-status.xml", 0.7],
+    ["inpay/iso20022-accepted-status.xml", 0.7],
+    ["inpay/iso20022-pacs-pending-status.xml", 0.4],
+  ])("detects %s with confidence %d", (path, confidence) => {
+    expect(detectText(fixture(path))).toMatchObject({
+      format: "inpay.iso20022",
+      confidence,
+      supported: true,
+    });
+  });
+
+  it("stays below the threshold without the Inpay name, whatever the version", () => {
+    const ns = (v: string) => `urn:iso:std:iso:20022:tech:xsd:${v}`;
+    expect(detectText(isoReport()).confidence).toBe(0.4);
+    expect(detectText(isoReport({ body: isoGroup("ACSC") })).confidence).toBe(0.35);
+    expect(detectText(isoReport({ ns: ns("pain.002.001.03") })).confidence).toBe(0.3);
+    expect(detectText(isoReport({ ns: null })).confidence).toBe(0.2);
+    // Without a namespace the Inpay name does not count.
+    expect(detectText(isoReport({ ns: null, header: INPAY_NAMED })).confidence).toBe(0.2);
+    expect(
+      detectText(isoReport({ ns: ns("pain.002.001.03"), header: INPAY_NAMED })).confidence,
+    ).toBe(0.6);
+    expect(detectText(isoReport({ header: INPAY_NAMED })).confidence).toBe(0.7);
+    expect(
+      detectText(isoReport({ header: "<InitgPty><Nm>Other Bank</Nm></InitgPty>" })).confidence,
+    ).toBe(0.4);
+    for (const text of [
+      isoReport(),
+      isoReport({ ns: null }),
+      isoReport({ ns: ns("pain.002.001.03") }),
+      isoReport({ element: "FIToFIPmtStsRpt", ns: PACS_NS }),
+    ]) {
+      const d = detectText(text);
+      expect(d.confidence, text).toBeLessThan(0.5);
+      expect(d.unsupportedReason).toMatch(/generic standard/);
+    }
+    expect(detectText(isoReport({ header: INPAY_NAMED })).unsupportedReason).toBeUndefined();
+  });
+
+  it("ignores other ISO 20022 messages and mismatched namespaces", () => {
+    for (const text of [
+      isoReport({ ns: "urn:iso:std:iso:20022:tech:xsd:pain.001.001.10" }),
+      isoReport({ ns: PACS_NS }),
+      isoReport({ element: "FIToFIPmtStsRpt", ns: PAIN_NS }),
+      isoReport({ ns: "urn:iso:std:iso:20022:tech:xsd:camt.054.001.08" }),
+      isoReport({ element: "CstmrCdtTrfInitn" }),
+      `<Document xmlns="${PAIN_NS}"><CstmrPmtStsRpt/><FIToFIPmtStsRpt/></Document>`,
+      `<CstmrPmtStsRpt xmlns="${PAIN_NS}">${isoGroup("ACCP")}</CstmrPmtStsRpt>`,
+      `<Document xmlns="${PAIN_NS}"><CstmrPmtStsRpt>RJCT</CstmrPmtStsRpt></Document>`,
+    ]) {
+      expect(detectText(text).confidence, text).toBe(0);
+    }
+    // A converted JSON copy has no namespace and stays at the lowest score.
+    expect(
+      inpayAdapter.detect({
+        Document: { CstmrPmtStsRpt: { OrgnlGrpInfAndSts: { GrpSts: "ACCP" } } },
+      }).confidence,
+    ).toBe(0.2);
+  });
+
+  it("leaves a report without an Inpay marker unanalyzed unless Inpay is selected", () => {
+    const r = analyzeFixture("inpay/iso20022-rejected-status.xml");
+    expect(r.records[0]).toMatchObject({
+      status: "unsupported",
+      provider: "inpay",
+      format: "inpay.iso20022",
+      confidence: 0.4,
+    });
+    expect(r.events).toEqual([]);
+    expect(r.warnings.map((w) => w.message).join(" ")).toMatch(
+      /generic standard.*Select Inpay manually/,
+    );
+    const named = analyzeFixture("inpay/iso20022-received-status.xml");
+    expect(named.records[0]).toMatchObject({ status: "analyzed", format: "inpay.iso20022" });
+  });
+
+  it("analyzes a rejected pain.002 report with Inpay selected manually", () => {
+    const r = isoManual(fixture("inpay/iso20022-rejected-status.xml"));
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "inpay.iso20022" });
+    expect(r.events).toHaveLength(1);
+    const e = r.events[0]!;
+    expect(e).toMatchObject({
+      eventType: "iso20022.group_status.RJCT",
+      eventTypeKnown: true,
+      stage: "payout",
+      providerStatus: "RJCT",
+      outcome: "failure",
+      paymentReference: "PPLsynth-iso-orig-0001",
+      eventReference: "PPLsynth-iso-msg-0001",
+      source: { path: "Document.CstmrPmtStsRpt.OrgnlGrpInfAndSts" },
+      attributes: {
+        message: "pain.002.001.11",
+        messageVersionDocumented: true,
+        originalMessageType: "pain.001.001.10",
+        groupStatus: "RJCT",
+        groupStatusFinal: true,
+        reasonCodes: ["NARR"],
+        providerIdentification: "not shown by the report (ISO 20022 is a generic standard)",
+        providerTimestamp: "2026-10-20T10:00:00",
+      },
+    });
+    expect(e.eventTimestamp).toBeUndefined();
+    expect(e.attributes.timestampZone).toMatch(/not placed on the timeline/);
+    expect(e.merchantReference).toBeUndefined();
+    expect(e.deliveryKey).toBeUndefined();
+
+    expect(r.errors).toHaveLength(1);
+    expect(r.errors[0]).toMatchObject({
+      code: "NARR",
+      subCodes: { group_status: "RJCT", message: "pain.002.001.11" },
+      category: "invalid_request",
+      retry: "do_not_retry",
+      confidence: "possible",
+      outcomeKnown: true,
+      paymentReference: "PPLsynth-iso-orig-0001",
+      providerMessage: "SyntaxError; CdtrAcct [redacted] not readable",
+      source: { path: "Document.CstmrPmtStsRpt.OrgnlGrpInfAndSts.StsRsnInf" },
+    });
+    expect(r.errors[0]!.explanation).toMatch(/SyntaxError.*rejected example/);
+    expect(r.errors[0]!.documentation.map((d) => d.url)).toContain(
+      "https://app.inpay.com/docs/api/iso-2022-status-codes.md",
+    );
+    expect(ruleIds(r)).toContain("PAYOUT_STATUS");
+    expect(ruleIds(r)).not.toContain("MISSING_REFERENCE");
+  });
+
+  it.each([
+    ["RCVD", "pending", false],
+    ["PDNG", "pending", false],
+    ["ACCP", "pending", false],
+    ["RJCT", "failure", true],
+  ])("maps the documented group status %s", (status, outcome, final) => {
+    const r = isoManual(isoReport({ body: isoGroup(status) }));
+    expect(r.events[0]).toMatchObject({
+      eventType: `iso20022.group_status.${status}`,
+      eventTypeKnown: true,
+      outcome,
+      attributes: { groupStatus: status, groupStatusFinal: final },
+    });
+    expect(r.events[0]!.attributes.groupStatusUndocumented).toBeUndefined();
+    expect(r.errors).toHaveLength(status === "RJCT" ? 1 : 0);
+  });
+
+  it.each(["ACSC", "ACSP", "PART", "ACTC", "rjct"])(
+    "keeps the undocumented group status %s unknown",
+    (status) => {
+      const r = isoManual(isoReport({ body: isoGroup(status, isoReason("NARR", "SyntaxError")) }));
+      expect(r.records[0]!.status).toBe("analyzed");
+      expect(r.events[0]).toMatchObject({
+        eventType: `iso20022.group_status.${status}`,
+        eventTypeKnown: false,
+        outcome: "unknown",
+        providerStatus: status,
+        attributes: { groupStatusUndocumented: true, reasonCodes: ["NARR"] },
+      });
+      expect(r.errors).toEqual([]);
+    },
+  );
+
+  it("reports a missing group status as unknown", () => {
+    const r = isoManual(
+      isoReport({
+        element: "FIToFIPmtStsRpt",
+        ns: PACS_NS,
+        body: "<TxInfAndSts><TxSts>ACSC</TxSts></TxInfAndSts>",
+      }),
+    );
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0]).toMatchObject({
+      eventType: "iso20022.group_status.unknown",
+      eventTypeKnown: false,
+      outcome: "unknown",
+      source: { path: "Document.FIToFIPmtStsRpt" },
+      attributes: {
+        groupStatusMissing: true,
+        transactionCount: 1,
+        transactionStatuses: ["ACSC"],
+        transactionStatusesDocumented: false,
+      },
+    });
+    expect(r.events[0]!.paymentReference).toBeUndefined();
+    expect(r.errors).toEqual([]);
+  });
+
+  it("decodes only the reason code and text Inpay documents", () => {
+    const narrOnly = isoManual(isoReport({ body: isoGroup("RJCT", isoReason("NARR")) })).errors;
+    expect(narrOnly[0]).toMatchObject({
+      code: "NARR",
+      category: "unknown",
+      retry: "manual_review",
+      confidence: "possible",
+      outcomeKnown: true,
+    });
+    expect(narrOnly[0]!.missingInformation.join(" ")).toMatch(/No AddtlInf text/);
+
+    const otherText = isoManual(
+      isoReport({ body: isoGroup("RJCT", isoReason("NARR", "Account blocked")) }),
+    ).errors[0]!;
+    expect(otherText).toMatchObject({
+      code: "NARR",
+      category: "unknown",
+      confidence: "possible",
+      providerMessage: "Account blocked",
+    });
+
+    const unknownCode = isoManual(isoReport({ body: isoGroup("RJCT", isoReason("AC04")) }))
+      .errors[0]!;
+    expect(unknownCode).toMatchObject({
+      code: "AC04",
+      category: "unknown",
+      retry: "unknown",
+      confidence: "insufficient",
+    });
+    expect(unknownCode.missingInformation.join(" ")).toMatch(
+      /"AC04" is not in Inpay's ISO 20022 documentation/,
+    );
+
+    const textOnly = isoManual(
+      isoReport({ body: isoGroup("RJCT", isoReason("AM05", "SyntaxError")) }),
+    ).errors[0]!;
+    expect(textOnly).toMatchObject({
+      code: "AM05",
+      category: "invalid_request",
+      confidence: "possible",
+    });
+    expect(textOnly.missingInformation.join(" ")).toMatch(/"AM05" is not in/);
+
+    const proprietary = isoManual(
+      isoReport({
+        body: isoGroup("RJCT", "<StsRsnInf><Rsn><Prtry>PPLSYNTH01</Prtry></Rsn></StsRsnInf>"),
+      }),
+    ).errors[0]!;
+    expect(proprietary).toMatchObject({
+      code: "PPLSYNTH01",
+      subCodes: { reason_type: "proprietary" },
+      confidence: "insufficient",
+    });
+
+    const noReason = isoManual(isoReport({ body: isoGroup("RJCT") })).errors;
+    expect(noReason).toHaveLength(1);
+    expect(noReason[0]).toMatchObject({
+      code: "RJCT",
+      category: "unknown",
+      confidence: "possible",
+    });
+    expect(noReason[0]!.missingInformation.join(" ")).toMatch(/No StsRsnInf/);
+
+    const two = isoManual(
+      isoReport({ body: isoGroup("RJCT", isoReason("NARR", "SyntaxError") + isoReason("AC04")) }),
+    ).errors;
+    expect(two.map((x) => [x.code, x.source.path])).toEqual([
+      ["NARR", "Document.CstmrPmtStsRpt.OrgnlGrpInfAndSts.StsRsnInf[0]"],
+      ["AC04", "Document.CstmrPmtStsRpt.OrgnlGrpInfAndSts.StsRsnInf[1]"],
+    ]);
+
+    const pending = isoManual(isoReport({ body: isoGroup("PDNG", isoReason("NARR", "x")) }));
+    expect(pending.events[0]!.attributes.reasonCodes).toEqual(["NARR"]);
+    expect(pending.errors).toEqual([]);
+  });
+
+  it("shows payment information and transaction statuses as undocumented", () => {
+    const r = analyzeFixture("inpay/iso20022-accepted-status.xml");
+    expect(r.records[0]).toMatchObject({ status: "analyzed", confidence: 0.7 });
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0]).toMatchObject({
+      eventType: "iso20022.group_status.ACCP",
+      outcome: "pending",
+      paymentReference: "PPLsynth-iso-orig-0002",
+      eventReference: "PPLsynth-iso-msg-0003",
+      eventTimestamp: "2026-10-20T10:05:00.000Z",
+      attributes: {
+        groupStatusFinal: false,
+        transactionCount: 1,
+        transactionStatuses: ["ACSP"],
+        paymentInformationStatuses: ["ACCP"],
+        transactionStatusesDocumented: false,
+        providerIdentification: "GrpHdr/InitgPty/Nm is Inpay",
+      },
+    });
+    expect(r.events[0]!.attributes.groupStatusNote).toMatch(/does not confirm/);
+    expect(r.events[0]!.amountMinor).toBeUndefined();
+    expect(r.errors).toEqual([]);
+  });
+
+  it("analyzes pacs.002 reports, one event per original group", () => {
+    const r = isoManual(fixture("inpay/iso20022-pacs-pending-status.xml"));
+    expect(r.events[0]).toMatchObject({
+      eventType: "iso20022.group_status.PDNG",
+      outcome: "pending",
+      paymentReference: "PPLsynth-iso-orig-0004",
+      eventTimestamp: "2026-10-21T08:30:00.000Z",
+      source: { path: "Document.FIToFIPmtStsRpt.OrgnlGrpInfAndSts" },
+      attributes: { message: "pacs.002.001.12", originalMessageType: "pacs.008.001.12" },
+    });
+
+    const two = isoManual(
+      isoReport({
+        element: "FIToFIPmtStsRpt",
+        ns: PACS_NS,
+        body:
+          isoGroup("ACCP", "", "PPLsynth-iso-orig-0901") +
+          isoGroup("RJCT", isoReason("NARR", "SyntaxError"), "PPLsynth-iso-orig-0902"),
+      }),
+    );
+    expect(two.events.map((e) => [e.eventType, e.paymentReference, e.source.path])).toEqual([
+      [
+        "iso20022.group_status.ACCP",
+        "PPLsynth-iso-orig-0901",
+        "Document.FIToFIPmtStsRpt.OrgnlGrpInfAndSts[0]",
+      ],
+      [
+        "iso20022.group_status.RJCT",
+        "PPLsynth-iso-orig-0902",
+        "Document.FIToFIPmtStsRpt.OrgnlGrpInfAndSts[1]",
+      ],
+    ]);
+    expect(two.groups).toHaveLength(2);
+    expect(two.errors).toHaveLength(1);
+    expect(two.errors[0]!.paymentReference).toBe("PPLsynth-iso-orig-0902");
+  });
+
+  it("keeps the non-ISO date of Inpay's pain.002 example off the timeline", () => {
+    const e = isoManual(
+      isoReport({
+        header: "<MsgId>PPLsynth-iso-msg-0900</MsgId><CreDtTm>28/06/2021 15:24</CreDtTm>",
+      }),
+    ).events[0]!;
+    expect(e.eventTimestamp).toBeUndefined();
+    expect(e.attributes.providerTimestamp).toBe("28/06/2021 15:24");
+    expect(e.attributes.timestampZone).toMatch(/not placed on the timeline/);
+  });
+
+  it("links reports by OrgnlMsgId only, never to JSON payouts by end_to_end_id", () => {
+    const r = analyzeSources(
+      [
+        { name: "received", text: fixture("inpay/iso20022-received-status.xml") },
+        { name: "accepted", text: fixture("inpay/iso20022-accepted-status.xml") },
+        { name: "rejected", text: fixture("inpay/iso20022-rejected-status.xml") },
+        {
+          name: "payout",
+          text: json(
+            payout({
+              end_to_end_id: "PPLsynth-e2e-iso-0002",
+              inpay_unique_reference: "PPLsynth-iso-orig-0002",
+            }),
+          ),
+        },
+      ],
+      { ...options, provider: "inpay" },
+    );
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    const typesOf = (eventIds: readonly string[]) =>
+      eventIds.map((id) => r.result.events.find((e) => e.id === id)!.eventType).sort();
+    expect(r.result.groups.map((g) => typesOf(g.eventIds)).sort()).toEqual([
+      ["iso20022.group_status.ACCP", "iso20022.group_status.RCVD"],
+      ["iso20022.group_status.RJCT"],
+      ["payout.processing"],
+    ]);
+    const ev = (fields: Partial<NormalizedEvent>): NormalizedEvent => ({
+      id: "ev-1",
+      provider: "inpay",
+      sourceFormat: "inpay.iso20022",
+      eventType: "iso20022.group_status.ACCP",
+      eventTypeKnown: true,
+      stage: "payout",
+      outcome: "pending",
+      attributes: {},
+      source: { recordIndex: 0, path: "" },
+      sourceIndex: 0,
+      ...fields,
+    });
+    expect(
+      inpayAdapter.correlationKeys(
+        ev({ paymentReference: "x1", merchantReference: "m1", eventReference: "r1" }),
+      ),
+    ).toEqual(["iso-orgnl-msg:x1"]);
+    expect(inpayAdapter.correlationKeys(ev({}))).toEqual([]);
+  });
+
+  it("reads status reports in HTTP messages", () => {
+    const response = isoManual(
+      [
+        "HTTP/1.1 200 OK",
+        "Content-Type: application/xml",
+        "",
+        fixture("inpay/iso20022-pacs-pending-status.xml"),
+      ].join("\n"),
+    );
+    expect(response.records[0]).toMatchObject({ status: "analyzed", format: "inpay.iso20022" });
+    expect(response.events[0]!.attributes).toMatchObject({
+      deliveredAs: "API response",
+      httpStatus: 200,
+    });
+
+    const delivery = analyze(
+      [
+        "POST /webhooks/inpay HTTP/1.1",
+        "Content-Type: application/xml",
+        "X-Request-ID: PPLsynth-req-0900",
+        "",
+        fixture("inpay/iso20022-received-status.xml"),
+      ].join("\n"),
+    );
+    expect(delivery.records[0]).toMatchObject({ status: "analyzed", format: "inpay.iso20022" });
+    expect(delivery.events[0]).toMatchObject({
+      eventReference: "PPLsynth-iso-msg-0002",
+      deliveryKey: "x-request-id:PPLsynth-req-0900",
+      attributes: { deliveredAs: "webhook (HTTP request)", signatureVerified: false },
+    });
+  });
+
+  it("reports invalid report shapes as parse issues without throwing", () => {
+    const r = isoManual(
+      isoReport({ body: "<OrgnlGrpInfAndSts><GrpSts><Cd>RJCT</Cd></GrpSts></OrgnlGrpInfAndSts>" }),
+    );
+    expect(r.records[0]).toMatchObject({ status: "invalid", format: "inpay.iso20022" });
+    expect(r.records[0]!.reasons.join(" ")).toMatch(/GrpSts/);
+    expect(r.events).toEqual([]);
+    expect(inpayAdapter.parse({}, "inpay.iso20022").ok).toBe(false);
+    expect(inpayAdapter.parse({ Document: { CstmrPmtStsRpt: "x" } }, "inpay.iso20022").ok).toBe(
+      false,
+    );
+    const mismatch = inpayAdapter.parse({ Document: { CstmrPmtStsRpt: {} } }, "inpay.iso20022", {
+      format: "xml",
+      xml: { root: "Document", namespace: PACS_NS },
+    });
+    expect(!mismatch.ok && mismatch.issues.join(" ")).toMatch(/not a pain\.002 status report/);
+  });
+
+  it.each(ISO_FIXTURES)("keeps planted values out of events and the JSON report (%s)", (path) => {
+    const r = isoManual(fixture(path));
+    expect(r.events.length).toBeGreaterThan(0);
+    const events = JSON.stringify(r.events);
+    const report = toJsonReport(r);
+    for (const value of [
+      "Planted Synthetic Payer",
+      "Planted Refund Creditor",
+      "GB33PPLS00000000000002",
+      "DE89PPLS00000000000001",
+      "NL02PPLS0123456789",
+      "PPLsynth Initiating Party",
+    ]) {
+      expect(events).not.toContain(value);
+      expect(report).not.toContain(value);
+    }
+  });
+
+  it.each(ISO_FIXTURES)("%s is not claimed by any other registered adapter", (path) => {
+    const others = ADAPTERS.filter((a) => a.id !== "inpay");
+    expect(others.length).toBeGreaterThan(10);
+    expect(ADAPTERS.some((a) => a.id === "inpay")).toBe(true);
+    const text = fixture(path);
+    const parsed = parseInput(text);
+    if (!parsed.ok) throw new Error(parsed.error.message);
+    for (const a of others) {
+      expect(
+        a.detect(parsed.value.records[0], parsed.value.meta[0]).confidence,
+        `${a.id} on ${path}`,
+      ).toBe(0);
+    }
+    const r = analyzeText(text, { ...options, adapters: others });
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      expect(r.result.records.every((x) => x.status !== "analyzed")).toBe(true);
+      expect(r.result.events).toEqual([]);
+    }
+    const all = analyzeText(text, { ...options, adapters: ADAPTERS });
+    expect(all.ok).toBe(true);
+    if (all.ok) {
+      expect(all.result.records[0]!.provider).toBe("inpay");
+      expect(all.result.records[0]!.alternatives).toEqual([]);
+      expect(all.result.warnings.map((w) => w.code)).not.toContain("AMBIGUOUS_PROVIDER");
+    }
+  });
+});
+
 describe("inpay sensitive data", () => {
   const PLANTED = [
     "PPLSYNTH-VACCOUNT-PLANTED",
@@ -1018,6 +1523,7 @@ describe("inpay manifest and catalog", () => {
     expect(limits).toMatch(/never verified/);
     expect(limits).toMatch(/not confirmed credit/);
     expect(limits).toMatch(/ISO 20022/);
+    expect(limits).toMatch(/does not prove the sender is Inpay/);
     expect(limits).toMatch(/not documented/);
     const families = inpayManifest.apiFamilies.map((f) => f.id);
     for (const f of inpayAdapter.supportedFormats) expect(families).toContain(f.id);
@@ -1040,6 +1546,13 @@ describe("inpay manifest and catalog", () => {
     expect(Object.keys(NUMERIC_ERRORS)).toHaveLength(5);
     expect(Object.keys(JWT_ERRORS)).toHaveLength(7);
     expect(Object.keys(ERROR_TITLES)).toHaveLength(3);
+    expect(Object.keys(ISO_GROUP_STATUSES).sort()).toEqual(["ACCP", "PDNG", "RCVD", "RJCT"]);
+    expect(Object.keys(ISO_DOCUMENTED_VERSIONS).sort()).toEqual([
+      "pacs.002.001.12",
+      "pain.002.001.11",
+    ]);
+    expect(Object.keys(ISO_REASON_CODES)).toEqual(["NARR"]);
+    expect(Object.keys(ISO_REASON_TEXTS)).toEqual(["SyntaxError"]);
     for (const hint of ORDER_REASON_HINTS) expect(ORDER_REASONS[hint.key]).toBeDefined();
   });
 
@@ -1059,6 +1572,10 @@ describe("inpay manifest and catalog", () => {
       NUMERIC_ERRORS,
       JWT_ERRORS,
       ERROR_TITLES,
+      ISO_DOCUMENTED_VERSIONS,
+      ISO_GROUP_STATUSES,
+      ISO_REASON_CODES,
+      ISO_REASON_TEXTS,
     ]);
     const dashes = new RegExp(`[${String.fromCharCode(0x2013, 0x2014)}]`);
     expect(text).not.toMatch(dashes);

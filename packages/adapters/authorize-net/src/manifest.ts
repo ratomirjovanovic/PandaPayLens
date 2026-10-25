@@ -1,6 +1,6 @@
 import type { ProviderManifest } from "@pandapaylens/core";
 
-export const AUTHORIZE_NET_ADAPTER_VERSION = "0.1.0";
+export const AUTHORIZE_NET_ADAPTER_VERSION = "0.2.0";
 
 const DEV = "https://developer.authorize.net";
 const SITE = "https://www.authorize.net";
@@ -28,7 +28,7 @@ export const authorizeNetManifest: ProviderManifest = {
     "No list of supported merchant countries is documented. eCheck is available only to businesses based in the U.S.; dynamic currency conversion requires U.S. dollars (reason code 240); some European processors require billing name and address fields (reason code 325); the card-on-file merchant-initiated rules are described for EEA cards. Authorize.net is moving onto the Visa Acceptance Platform, with Canada as the pilot market. A listed sector does not mean a merchant will be approved; eligibility depends on jurisdiction, licensing and underwriting by the merchant account provider.",
   documentationAccess: "public",
   fixtureProvenance:
-    "Synthetic fixtures with PPLsynth identifiers (refId, merchantReferenceId, notificationId, webhookId). Transaction ids are numeric strings made of synthetic digits because Authorize.net transaction ids are numeric; notification and webhook ids are not UUIDs so that they can carry the PPLsynth marker. Shapes follow the JSON createTransactionResponse and webhook examples of the public API reference and webhooks page; decline and held-for-review responses have no published example and are built from the field table and the response code reference (pairing E00027 with the decline follows that code's description; the held response carries no API-level messages because their content is not documented). Message texts are only those quoted in the documentation. None is an official Authorize.net example.",
+    "Synthetic fixtures with PPLsynth identifiers (refId, merchantReferenceId, notificationId, webhookId). Transaction ids are numeric strings made of synthetic digits because Authorize.net transaction ids are numeric; notification and webhook ids are not UUIDs so that they can carry the PPLsynth marker. Shapes follow the JSON createTransactionResponse and webhook examples of the public API reference and webhooks page; decline and held-for-review responses have no published example and are built from the field table and the response code reference (pairing E00027 with the decline follows that code's description; the held response carries no API-level messages because their content is not documented). Message texts are only those quoted in the documentation. The XML fixtures carry the same kind of synthetic values in the element names, element order and namespace of AnetApiSchema.xsd, with the list wrappers the XML flavor uses (<messages><message>, <errors><error>); two of them hold exactly the values of a JSON fixture. The ErrorResponse fixture uses the XSD's ErrorResponse element, which carries only the API-level messages. None is an official Authorize.net example.",
   dependencies: [
     "The merchant's payment processor: Authorize.net routes transactions to back-end processors (for example Chase Paymentech, Elavon, EVO, First Data, Global Payments, Heartland, Worldpay, Barclays, HSBC), and many reason codes are specific to one processor.",
     "A merchant account provider (acquiring bank or reseller) for the Gateway only plan.",
@@ -39,13 +39,13 @@ export const authorizeNetManifest: ProviderManifest = {
     {
       id: "authorize_net.transaction_response",
       description:
-        "Authorize.net API (JSON) createTransactionResponse: transactionResponse with responseCode 1-4 and reason codes, plus the API-level messages (unwrapped, or wrapped in createTransactionResponse)",
+        "Authorize.net API createTransactionResponse, JSON or XML: transactionResponse with responseCode 1-4 and reason codes, plus the API-level messages (JSON unwrapped or wrapped in createTransactionResponse; XML with the createTransactionResponse root in the AnetApiSchema.xsd namespace)",
       status: "limited",
     },
     {
       id: "authorize_net.api_messages",
       description:
-        "Authorize.net API (JSON) response that carries only the API-level messages object (resultCode Ok/Error with I/E codes), from any API method",
+        "Authorize.net API response that carries only the API-level messages object (resultCode Ok/Error with I/E codes), from any API method, JSON or XML (any root ending in Response in the AnetApiSchema.xsd namespace, for example ErrorResponse)",
       status: "supported",
     },
     {
@@ -69,12 +69,6 @@ export const authorizeNetManifest: ProviderManifest = {
     {
       id: "authorize_net.webhook.partner_boarding",
       description: "net.authorize.partner.boarding.* webhooks; recognized, not analyzed",
-      status: "unsupported",
-    },
-    {
-      id: "authorize_net.xml",
-      description:
-        "XML flavor of the API (AnetApiSchema.xsd); PandaPayLens does not accept XML input",
       status: "unsupported",
     },
     {
@@ -162,7 +156,8 @@ export const authorizeNetManifest: ProviderManifest = {
     "Webhook delivery order is not documented. notificationId is used as the delivery key: the notification history groups all attempts under it, but the documentation does not state that retries reuse it.",
     "AVS, card code and CAVV results are informational; a no-match result is mentioned on a decline only as a possible factor. Filter rejections appear as reason codes (27, 44, 45, 65, 127, 165). merchantAdvice codes (TSYS) are shown but not interpreted because their values are not documented. rawResponseCode, testRequest and SupplementalDataQualificationIndicator have no documented meaning and are not read.",
     "Card numbers, expiration dates, card codes, bank account data, track and EMV data, opaque wallet data, names, addresses, emails, IP addresses, PayPal payer data and URLs, user fields, auth codes and the masked accountNumber are never copied. API Login ID, transaction key and access tokens are never copied.",
-    "getTransactionDetails responses, notification history records and partner boarding webhooks are recognized but not analyzed. XML responses are rejected before analysis. Legacy AIM, SIM, DPM, Silent Post and Relay Response formats and the Accept Hosted transactResponse message are not recognized; an Authorize.net-shaped legacy payload may also come from another gateway's emulator.",
+    "XML is read only from documents whose root element is declared in the AnetApiSchema.xsd namespace (AnetApi/xml/v1/schema/AnetApiSchema.xsd) and ends in Response; XML without that namespace declaration and XML requests are not recognized. The XML lists (<messages><message>, <errors><error>, <splitTenderPayments><splitTenderPayment>) are read as the JSON arrays, a single item included, and attributes such as xsi:nil are ignored. One documented XML example places <message> directly under <transactionResponse>; that form is accepted too. NMI runs an Authorize.Net emulator that covers XML; whether it answers with this namespace is not documented, and if it does, the document alone cannot tell the two apart.",
+    "getTransactionDetails responses (JSON or XML), notification history records and partner boarding webhooks are recognized but not analyzed. Legacy AIM, SIM, DPM, Silent Post and Relay Response formats and the Accept Hosted transactResponse message are not recognized; an Authorize.net-shaped legacy payload may also come from another gateway's emulator.",
     "Category and retry guidance per code are PandaPayLens suggestions based on Authorize.net's descriptions and integration suggestions, not Authorize.net statements.",
   ],
   samples: ["authorize-net-capture-refund", "authorize-net-declined"],

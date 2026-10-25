@@ -11,6 +11,7 @@ import {
   type AnalyzeOptions,
   type RecordMeta,
 } from "@pandapaylens/core";
+import { ADAPTERS } from "@pandapaylens/providers";
 import { defaultRules } from "@pandapaylens/rules";
 import emerchantpayDefault, {
   CRYPTOGRAM_RESULTS,
@@ -117,6 +118,10 @@ describe("emerchantpay detection", () => {
     ["response-pending-async.json", "emerchantpay.payment_response.object", true],
     ["response-sale-approved.json", "emerchantpay.payment_response.object", true],
     ["response-wrapped-declined.json", "emerchantpay.payment_response.object", true],
+    ["response-xml-authorize-declined.xml", "emerchantpay.payment_response.xml", true],
+    ["response-xml-error-validation.xml", "emerchantpay.payment_response.xml", true],
+    ["response-xml-http.txt", "emerchantpay.payment_response.xml", true],
+    ["response-xml-sale-approved.xml", "emerchantpay.payment_response.xml", true],
     ["response-xml-string.json", "emerchantpay.xml", false],
     ["wpf-notification-approved.txt", "emerchantpay.wpf.notification", true],
   ] as const)("detects %s", (name, format, supported) => {
@@ -132,7 +137,7 @@ describe("emerchantpay detection", () => {
   });
 
   it("covers every fixture", () => {
-    expect(readdirSync(fixturePath("emerchantpay"))).toHaveLength(21);
+    expect(readdirSync(fixturePath("emerchantpay"))).toHaveLength(25);
   });
 
   it("does not claim generic shapes or provider names", () => {
@@ -717,23 +722,331 @@ describe("emerchantpay JSON payment responses", () => {
 
 // ---------------------------------------------------------------------------
 
+/** A Genesis XML payment_response with the given children, in order. */
+const xmlResponse = (fields: Record<string, string>) =>
+  `<?xml version="1.0" encoding="UTF-8"?>\n<payment_response>\n${Object.entries(fields)
+    .map(([k, v]) => `  <${k}>${v}</${k}>`)
+    .join("\n")}\n</payment_response>\n`;
+
+const XML_BASE = {
+  transaction_type: "sale",
+  status: "approved",
+  mode: "test",
+  transaction_id: "PPLsynth-order-9201",
+  unique_id: "PPLsynth-uid-9201",
+  timestamp: "2026-10-20T09:00:00Z",
+  amount: "1000",
+  currency: "EUR",
+  sent_to_acquirer: "true",
+};
+
+describe("emerchantpay XML payment responses", () => {
+  it("analyzes an approved XML response", () => {
+    const r = analyze(emp("response-xml-sale-approved.xml"));
+    expect(r.records[0]).toMatchObject({
+      status: "analyzed",
+      provider: "emerchantpay",
+      format: "emerchantpay.payment_response.xml",
+    });
+    expect(r.events[0]).toMatchObject({
+      sourceFormat: "emerchantpay.payment_response.xml",
+      eventType: "payment_response.sale",
+      stage: "payment",
+      outcome: "success",
+      providerStatus: "status=approved",
+      paymentReference: "PPLsynth-uid-sale-6001",
+      merchantReference: "PPLsynth-order-6001",
+      eventTimestamp: "2026-10-21T08:30:00.000Z",
+      amountMinor: "4999",
+      currency: "EUR",
+    });
+    expect(r.events[0]!.attributes).toMatchObject({
+      mode: "test",
+      sentToAcquirer: true,
+      schemeResponseCode: "00",
+      avsResponseCode: "A",
+      cvvResult: "match",
+    });
+    expect(r.events[0]!.attributes.wrappedInPaymentResponse).toBeUndefined();
+    expect(r.errors).toEqual([]);
+  });
+
+  it("decodes a declined XML response and refines the generic decline with the scheme code", () => {
+    const r = analyze(emp("response-xml-authorize-declined.xml"));
+    expect(r.events[0]).toMatchObject({
+      stage: "authorization",
+      outcome: "failure",
+      providerStatus: "status=declined; code=500",
+      amountMinor: "12500",
+      currency: "GBP",
+    });
+    const e = r.errors[0]!;
+    expect(e).toMatchObject({
+      code: "500",
+      category: "insufficient_funds",
+      retry: "customer_action_required",
+      confidence: "strong",
+      outcomeKnown: true,
+      providerMessage: "Transaction declined by issuer.",
+      paymentReference: "PPLsynth-uid-auth-6002",
+    });
+    expect(e.subCodes).toMatchObject({
+      field: "code",
+      family: "gateway",
+      status: "declined",
+      transaction_type: "authorize",
+      scheme_response_code: "51",
+      decline_code: "51",
+      response_code: "51",
+    });
+    expect(e.explanation).toMatch(/Scheme response code 51: insufficient funds/);
+  });
+
+  it("decodes the documented validation error example from XML", () => {
+    const r = analyze(emp("response-xml-error-validation.xml"));
+    expect(r.events[0]).toMatchObject({
+      stage: "error",
+      outcome: "failure",
+      providerStatus: "status=error; code=340",
+      eventTimestamp: "2026-10-19T11:55:33.000Z",
+      amountMinor: "100",
+      currency: "USD",
+    });
+    expect(r.events[0]!.attributes).toMatchObject({
+      mode: "live",
+      sentToAcquirer: false,
+      responseCode: "57",
+      code: "340",
+      codeFamily: "gateway",
+    });
+    expect(r.errors[0]).toMatchObject({
+      code: "340",
+      category: "invalid_request",
+      retry: "do_not_retry",
+      confidence: "strong",
+      providerMessage: "billing_address[zip_code] is invalid!",
+    });
+    expect(r.errors[0]!.subCodes).toMatchObject({ field: "code", response_code: "57" });
+  });
+
+  it("reads the same events from XML text values as from the JSON object", () => {
+    const fields = {
+      ...XML_BASE,
+      status: "declined",
+      code: "520",
+      scheme_response_code: "54",
+      recurring_advice_code: "03",
+    };
+    const fromXml = analyze(xmlResponse(fields));
+    const fromJson = analyze(json(fields));
+    const strip = (r: AnalysisResult) =>
+      r.events.map((e) => ({
+        eventType: e.eventType,
+        stage: e.stage,
+        outcome: e.outcome,
+        providerStatus: e.providerStatus,
+        paymentReference: e.paymentReference,
+        merchantReference: e.merchantReference,
+        eventTimestamp: e.eventTimestamp,
+        amountMinor: e.amountMinor,
+        currency: e.currency,
+        attributes: e.attributes,
+      }));
+    expect(fromXml.events[0]!.sourceFormat).toBe("emerchantpay.payment_response.xml");
+    expect(fromJson.events[0]!.sourceFormat).toBe("emerchantpay.payment_response.object");
+    expect(strip(fromXml)).toEqual(strip(fromJson));
+    expect(fromXml.errors.map((e) => [e.code, e.category, e.retry])).toEqual(
+      fromJson.errors.map((e) => [e.code, e.category, e.retry]),
+    );
+    expect(fromXml.errors[0]).toMatchObject({ code: "520", retry: "do_not_retry" });
+  });
+
+  it("keeps amounts in minor units and rejects a decimal amount", () => {
+    expect(analyze(xmlResponse({ ...XML_BASE, amount: "000123" })).events[0]!.amountMinor).toBe(
+      "000123",
+    );
+    const r = analyze(xmlResponse({ ...XML_BASE, amount: "10.50" }));
+    expect(r.records[0]).toMatchObject({
+      status: "invalid",
+      format: "emerchantpay.payment_response.xml",
+    });
+    expect(r.records[0]!.reasons.join(" ")).toMatch(/minor units/);
+  });
+
+  it("treats a success code as no error and keeps an empty element empty", () => {
+    const r = analyze(xmlResponse({ ...XML_BASE, code: "000", message: "" }));
+    expect(r.errors).toEqual([]);
+    expect(r.events[0]!.outcome).toBe("success");
+  });
+
+  it("reports a read field with attributes or child elements as a parse issue", () => {
+    const xml = emp("response-xml-error-validation.xml");
+    for (const [from, to, field] of [
+      ["<amount>100</amount>", '<amount currency="USD">100</amount>', /amount/],
+      ["<code>340</code>", "<code><value>340</value></code>", /code/],
+    ] as const) {
+      const r = analyze(xml.replace(from, to));
+      expect(r.records[0]).toMatchObject({
+        status: "invalid",
+        provider: "emerchantpay",
+        format: "emerchantpay.payment_response.xml",
+      });
+      expect(r.records[0]!.reasons.join(" ")).toMatch(field);
+    }
+  });
+
+  it("reads a raw HTTP response with Content-Type text/xml", () => {
+    const r = analyze(emp("response-xml-http.txt"));
+    expect(r.records[0]).toMatchObject({
+      status: "analyzed",
+      format: "emerchantpay.payment_response.xml",
+    });
+    expect(r.events[0]).toMatchObject({
+      eventType: "payment_response.sale3d",
+      stage: "payment",
+      outcome: "pending",
+      amountMinor: "2000",
+      currency: "EUR",
+    });
+    expect(r.events[0]!.attributes.redirectUrlPresent).toBe(true);
+    expect(JSON.stringify(r.events)).not.toContain("PPLsynth-redirect-planted-xml");
+
+    const declined = analyze(
+      `HTTP/1.1 200 OK\r\nContent-Type: text/xml\r\n\r\n${emp("response-xml-authorize-declined.xml")}`,
+    );
+    expect(declined.records[0]).toMatchObject({
+      status: "analyzed",
+      format: "emerchantpay.payment_response.xml",
+    });
+    expect(declined.errors[0]).toMatchObject({ code: "500", category: "insufficient_funds" });
+  });
+
+  it("links an XML response and the notification of the same transaction", () => {
+    const r = analyzeMany(
+      xmlResponse({
+        ...XML_BASE,
+        transaction_type: "sale3d",
+        unique_id: "PPLsynth-uid-9202",
+        status: "pending_async",
+      }),
+      notification({ unique_id: "PPLsynth-uid-9202", transaction_type: "sale3d" }),
+    );
+    expect(r.groups).toHaveLength(1);
+    expect(r.events.map((e) => e.outcome)).toEqual(["pending", "success"]);
+  });
+
+  it.each([
+    [
+      "wpf_payment",
+      "<wpf_payment><transaction_id>PPLsynth-wpf-order-1</transaction_id><unique_id>PPLsynth-wpf-uid-1</unique_id><status>new</status></wpf_payment>",
+      /does not record its fields/,
+    ],
+    [
+      "notification_echo",
+      "<notification_echo><unique_id>PPLsynth-uid-echo-1</unique_id></notification_echo>",
+      /nothing to analyze/,
+    ],
+    [
+      "reconcile",
+      "<reconcile><unique_id>PPLsynth-uid-rec-1</unique_id></reconcile>",
+      /reconcile request, not a response/,
+    ],
+    [
+      "payment_transaction",
+      "<payment_transaction><transaction_type>sale</transaction_type><transaction_id>PPLsynth-order-req-1</transaction_id><card_number>4200000000000000</card_number></payment_transaction>",
+      /Processing API request/,
+    ],
+    [
+      "blacklist_response",
+      "<blacklist_response><code>330</code><message>PPLsynth invalid card</message></blacklist_response>",
+      /blacklist API response/,
+    ],
+  ])("recognizes <%s> XML and reports it as unsupported", (_root, text, reason) => {
+    const r = analyze(`<?xml version="1.0" encoding="UTF-8"?>\n${text}`);
+    expect(r.records[0]).toMatchObject({
+      status: "unsupported",
+      provider: "emerchantpay",
+      format: "emerchantpay.xml",
+    });
+    expect(r.warnings[0]!.message).toMatch(reason);
+    expect(r.events).toEqual([]);
+    expect(r.errors).toEqual([]);
+    expect(JSON.stringify(r)).not.toContain("4200000000000000");
+  });
+
+  it("does not claim XML without the documented Genesis root and children", () => {
+    const meta = (root: string, namespace?: string): RecordMeta => ({
+      format: "xml",
+      xml: { root, ...(namespace ? { namespace } : {}) },
+    });
+    const d = (o: unknown, m: RecordMeta) => emerchantpayAdapter.detect(o, m).confidence;
+    const body = { transaction_type: "sale", status: "approved", unique_id: "PPLsynth-u" };
+    expect(d({ response: body }, meta("response"))).toBe(0);
+    expect(d({ payment_response: body }, meta("payment_response", "urn:PPLsynth"))).toBe(0);
+    expect(d({ payment_response: { status: "approved" } }, meta("payment_response"))).toBe(0);
+    expect(d({ payment_response: "approved" }, meta("payment_response"))).toBe(0);
+    expect(d({ reconcile: { start_date: "2026-10-01" } }, meta("reconcile"))).toBe(0);
+    expect(d({ blacklist_response: { code: "330" } }, meta("blacklist_response"))).toBe(0);
+    expect(d({ notification_echo: { status: "ok" } }, meta("notification_echo"))).toBe(0);
+    // An XML document is never read as a JSON object or as form data.
+    expect(d(body, meta("payment_response"))).toBe(0);
+    expect(d({ payment_response: body }, { format: "form" })).toBe(0);
+  });
+
+  it("is claimed by no other registered adapter", () => {
+    const others = ADAPTERS.filter((a) => a.id !== "emerchantpay");
+    expect(others.length).toBeGreaterThan(10);
+    const texts = [
+      ...[
+        "response-xml-sale-approved.xml",
+        "response-xml-authorize-declined.xml",
+        "response-xml-error-validation.xml",
+        "response-xml-http.txt",
+      ].map(emp),
+      "<wpf_payment><unique_id>PPLsynth-wpf-uid-2</unique_id></wpf_payment>",
+      "<notification_echo><unique_id>PPLsynth-uid-echo-2</unique_id></notification_echo>",
+    ];
+    for (const text of texts) {
+      const parsed = parseInput(text);
+      expect(parsed.ok).toBe(true);
+      if (!parsed.ok) continue;
+      parsed.value.records.forEach((record, i) => {
+        for (const a of others)
+          expect(a.detect(record, parsed.value.meta[i]).confidence, a.id).toBeLessThan(0.5);
+      });
+      const alone = analyzeText(text, { ...options, adapters: others });
+      expect(alone.ok).toBe(true);
+      if (alone.ok) expect(alone.result.events).toEqual([]);
+      const all = analyze(text, { adapters: ADAPTERS });
+      expect(all.records[0]!.provider).toBe("emerchantpay");
+      expect(all.warnings.map((w) => w.code)).not.toContain("AMBIGUOUS_PROVIDER");
+    }
+  });
+});
+
+// ---------------------------------------------------------------------------
+
 describe("emerchantpay unsupported and malformed input", () => {
   it("recognizes Genesis XML in a JSON string but does not analyze it", () => {
     const r = analyze(emp("response-xml-string.json"));
     expect(r.records[0]).toMatchObject({ status: "unsupported", format: "emerchantpay.xml" });
-    expect(r.warnings.map((w) => w.message).join(" ")).toMatch(/does not parse XML/);
+    expect(r.warnings.map((w) => w.message).join(" ")).toMatch(
+      /XML inside a JSON string, which is not read as XML/,
+    );
     expect(r.events).toEqual([]);
   });
 
-  it("reports raw Genesis XML text as an unsupported record", () => {
-    const r = analyzeText(
+  it("reports a payment_response XML without transaction_type as an unsupported record", () => {
+    const r = analyze(
       "<payment_response><status>error</status><unique_id>PPLsynth-x</unique_id></payment_response>",
-      options,
     );
-    expect(r).toMatchObject({
-      ok: true,
-      result: { records: [{ status: "unsupported" }], events: [] },
+    expect(r.records[0]).toMatchObject({
+      status: "unsupported",
+      provider: "emerchantpay",
+      format: "emerchantpay.xml",
     });
+    expect(r.warnings[0]!.message).toMatch(/lacks the fields needed to analyze it/);
+    expect(r.events).toEqual([]);
   });
 
   it("recognizes an APM external event notification as unsupported", () => {
@@ -929,6 +1242,45 @@ describe("emerchantpay redaction", () => {
     }
     expect(r.sensitiveData.detected).toBe(true);
   });
+
+  it("keeps values planted in XML responses out of events, errors and reports", () => {
+    const xmlPlanted = [
+      "PPLsynthCONSUMER61",
+      "PPLsynth-token-planted-6001",
+      "Planted Xml Holder",
+      "420000...0000",
+      "planted.xml@example.invalid",
+      "203.0.113.61",
+      "PPLsynth xml descriptor",
+      "PPLsynth-redirect-planted-xml",
+      "PPLsynthTERMINALTOKEN0061",
+      "4111111111111111",
+    ];
+    const r = analyzeMany(
+      emp("response-xml-sale-approved.xml"),
+      emp("response-xml-error-validation.xml"),
+      emp("response-xml-http.txt"),
+      xmlResponse({
+        ...XML_BASE,
+        status: "declined",
+        code: "510",
+        terminal_token: "PPLsynthTERMINALTOKEN0061",
+        card_number: "4111111111111111",
+        cvv: "123",
+      }),
+    );
+    expect(r.events.length).toBe(4);
+    expect(r.errors.length).toBe(2);
+    const events = JSON.stringify(r.events);
+    const errors = JSON.stringify(r.errors);
+    const report = toJsonReport(r);
+    for (const value of xmlPlanted) {
+      expect(events, value).not.toContain(value);
+      expect(errors, value).not.toContain(value);
+      expect(report, value).not.toContain(value);
+    }
+    expect(r.sensitiveData.detected).toBe(true);
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -964,7 +1316,14 @@ describe("emerchantpay manifest", () => {
       duplicatesDocumented: true,
     });
     expect(emerchantpayManifest.limitations.join(" ")).toMatch(/E-ComProcessing/);
-    expect(emerchantpayManifest.limitations.join(" ")).toMatch(/does not parse XML/);
+    expect(emerchantpayManifest.limitations.join(" ")).toMatch(/root payment_response/);
+    expect(emerchantpayManifest.limitations.join(" ")).not.toMatch(/does not parse XML/);
+    expect(
+      emerchantpayManifest.apiFamilies.find((f) => f.id === "emerchantpay.payment_response.xml"),
+    ).toMatchObject({ status: "supported" });
+    expect(emerchantpayManifest.apiFamilies.find((f) => f.id === "emerchantpay.xml")).toMatchObject(
+      { status: "unsupported" },
+    );
     expect(emerchantpayAdapter.manifest).toBe(emerchantpayManifest);
     expect(emerchantpayDefault).toBe(emerchantpayAdapter);
   });

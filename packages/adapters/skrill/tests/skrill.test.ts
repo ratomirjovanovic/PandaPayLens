@@ -10,6 +10,7 @@ import {
   type AnalysisResult,
   type AnalyzeOptions,
 } from "@pandapaylens/core";
+import { ADAPTERS } from "@pandapaylens/providers";
 import { defaultRules } from "@pandapaylens/rules";
 import {
   API_ERRORS,
@@ -23,9 +24,11 @@ import {
   FAILED_REASON_CODES,
   MQI_HTTP_ERRORS,
   PAYMENT_STATUSES,
+  REFUND_EXECUTION_STATUSES,
   SKRILL_ADAPTER_VERSION,
   skrillAdapter,
   skrillManifest,
+  TRANSACTION_STATUSES,
   UBP_EXECUTION_ERRORS,
   UBP_PREPARATION_ERRORS,
 } from "@pandapaylens/skrill";
@@ -781,8 +784,8 @@ describe("skrill manifest", () => {
     for (const s of skrillManifest.sectors)
       expect(s.source).toMatch(/^https:\/\/(www\.paysafe\.com|docs\.paysafe\.com)\//);
     expect(skrillManifest.capabilities).toEqual({
-      errorDecoding: "limited",
-      paymentResponses: "experimental",
+      errorDecoding: "supported",
+      paymentResponses: "limited",
       webhookParsing: "limited",
       timeline: "limited",
       correlation: "limited",
@@ -808,5 +811,415 @@ describe("skrill manifest", () => {
     ];
     for (const text of texts)
       for (const dash of [0x2013, 0x2014]) expect(text).not.toContain(String.fromCharCode(dash));
+  });
+});
+
+const xml = (inner: string) =>
+  `<?xml version="1.0" encoding="UTF-8"?><response>${inner}</response>`;
+const xmlError = (msg: string) => xml(`<error><error_msg>${msg}</error_msg></error>`);
+const xmlTransaction = (status: string, extra = "") =>
+  xml(
+    `<transaction><amount>5.50</amount><currency>EUR</currency><id>PPLsynth497040</id><status>${status}</status>${extra}</transaction>`,
+  );
+
+const XML_FIXTURES = [
+  "api-refund-processed.xml",
+  "api-refund-pending-http.txt",
+  "api-error-balance-not-enough.xml",
+  "api-error-undocumented.xml",
+  "api-transfer-processed.xml",
+  "api-send-money-scheduled.xml",
+  "api-payout-pending.xml",
+  "api-prepare-sid.xml",
+];
+
+describe("skrill XML API detection", () => {
+  it("documents the execution status values", () => {
+    expect(Object.keys(REFUND_EXECUTION_STATUSES).sort()).toEqual(["-2", "0", "2"]);
+    expect(Object.keys(TRANSACTION_STATUSES).sort()).toEqual(["-2", "0", "1", "2"]);
+  });
+
+  it.each([
+    ["api-refund-processed.xml", "skrill.api.refund", true, 0.7],
+    ["api-refund-pending-http.txt", "skrill.api.refund", true, 0.7],
+    ["api-error-balance-not-enough.xml", "skrill.api.error", true, 0.7],
+    ["api-error-undocumented.xml", "skrill.api.error", true, 0.5],
+    ["api-transfer-processed.xml", "skrill.api.transaction", true, 0.7],
+    ["api-send-money-scheduled.xml", "skrill.api.transaction", true, 0.6],
+    ["api-payout-pending.xml", "skrill.api.transaction", true, 0.6],
+    ["api-prepare-sid.xml", "skrill.api.prepare", false, 0.6],
+  ])("detects %s", (file, format, supported, min) => {
+    const d = detectText(fixture(`skrill/${file}`));
+    expect(d).toMatchObject({ format, supported });
+    expect(d.confidence).toBeGreaterThanOrEqual(min);
+  });
+
+  it("detects by root element and documented children only", () => {
+    const c = (text: string) => detectText(text).confidence;
+    expect(c("<payment_response><status>2</status></payment_response>")).toBe(0);
+    expect(
+      c(
+        '<response xmlns="urn:pplsynth"><error><error_msg>CANNOT_LOGIN</error_msg></error></response>',
+      ),
+    ).toBe(0);
+    expect(c(xml("<status>2</status><id>PPLsynth1</id>"))).toBe(0);
+    expect(c(xml("<error>CANNOT_LOGIN</error>"))).toBe(0);
+    expect(c(xml("<transaction><status>2</status></transaction>"))).toBe(0);
+    expect(c(xml("<sid>not-a-session-id</sid>"))).toBe(0);
+    expect(c(xml("<sid>7e3b9a0c5d1f4e2a8b6c0d9e1f2a3b4c</sid><status>2</status>"))).toBe(0);
+    expect(c("<response/>")).toBe(0);
+    // The same tree as JSON is not an XML response.
+    expect(
+      skrillAdapter.detect(
+        { response: { error: { error_msg: "CANNOT_LOGIN" } } },
+        { format: "json" },
+      ).confidence,
+    ).toBe(0);
+    // A free-text error_msg stays below the threshold.
+    expect(c(xmlError("Something went wrong"))).toBeLessThan(0.5);
+  });
+
+  it("recognizes a prepare response with Verification of Payee but does not analyze it", () => {
+    const d = detectText(
+      xml(
+        "<sid>7e3b9a0c5d1f4e2a8b6c0d9e1f2a3b4c</sid><verificationOfPayee><result>NO_MATCH</result></verificationOfPayee>",
+      ),
+    );
+    expect(d).toMatchObject({ format: "skrill.api.prepare", supported: false });
+    const r = analyzeFixture("api-prepare-sid.xml");
+    expect(r.records[0]).toMatchObject({ status: "unsupported", format: "skrill.api.prepare" });
+    expect(r.warnings.map((w) => w.message).join(" ")).toMatch(/prepare request/);
+    expect(r.events).toEqual([]);
+    expect(toJsonReport(r)).not.toContain("7e3b9a0c5d1f4e2a8b6c0d9e1f2a3b4c");
+  });
+});
+
+describe("skrill XML refund responses", () => {
+  it("normalizes a processed refund execution as a refund", () => {
+    const r = analyzeFixture("api-refund-processed.xml");
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "skrill.api.refund" });
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0]).toMatchObject({
+      eventType: "refund_response.processed",
+      eventTypeKnown: true,
+      stage: "refund",
+      outcome: "success",
+      providerStatus: "status=2",
+      paymentReference: "PPLsynth300000201",
+      merchantReference: "PPLsynth-refund-3001",
+      amountMinor: "1000",
+      currency: "EUR",
+      attributes: {
+        operation: "refund",
+        statusMeaning: "Refund processed",
+        mbTransactionId: "PPLsynth300000201",
+        parentReferenceInPayload: false,
+      },
+    });
+    expect(r.events[0]!.deliveryKey).toBeUndefined();
+    expect(r.errors).toEqual([]);
+  });
+
+  it("reads a raw HTTP response with an XML body and keeps a pending refund open", () => {
+    const parsed = parseInput(fixture("skrill/api-refund-pending-http.txt"));
+    expect(parsed.ok && parsed.value.meta[0]).toMatchObject({
+      format: "http",
+      xml: { root: "response" },
+      http: { kind: "response", status: 200 },
+    });
+    const r = analyzeFixture("api-refund-pending-http.txt");
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "skrill.api.refund" });
+    const e = r.events[0]!;
+    expect(e).toMatchObject({
+      eventType: "refund_response.pending",
+      stage: "refund",
+      outcome: "pending",
+      attributes: { httpStatus: 200, operation: "refund" },
+    });
+    // The empty <transaction_id/> element is not a reference.
+    expect(e.merchantReference).toBeUndefined();
+  });
+
+  it("joins the pending refund response with the later refund status report", () => {
+    const r = many("api-refund-pending-http.txt", "refund-status-processed.txt");
+    expect(r.events.map((e) => e.eventType)).toEqual([
+      "refund_response.pending",
+      "refund_status.processed",
+    ]);
+    expect(r.events.every((e) => e.stage === "refund")).toBe(true);
+    expect(r.groups).toHaveLength(1);
+    expect(r.groups[0]!.latestOutcome).toBe("success");
+  });
+
+  it("keeps a failed and an undocumented refund status apart from success", () => {
+    const refund = (status: string) =>
+      analyze(
+        xml(
+          `<mb_amount>3</mb_amount><mb_currency>EUR</mb_currency><mb_transaction_id>PPLsynth300000301</mb_transaction_id><status>${status}</status><transaction_id/>`,
+        ),
+      );
+    expect(refund("-2").events[0]).toMatchObject({
+      eventType: "refund_response.failed",
+      stage: "refund",
+      outcome: "failure",
+    });
+    expect(refund("9").events[0]).toMatchObject({
+      eventType: "refund_response.unknown",
+      eventTypeKnown: false,
+      stage: "refund",
+      outcome: "unknown",
+    });
+  });
+});
+
+describe("skrill XML transfer responses", () => {
+  it("does not decide between payout and 1-Tap payment for status 2", () => {
+    const r = analyzeFixture("api-transfer-processed.xml");
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "skrill.api.transaction" });
+    expect(r.events[0]).toMatchObject({
+      eventType: "api_transaction.processed",
+      stage: "other",
+      outcome: "success",
+      providerStatus: "status=2; status_msg=processed",
+      paymentReference: "PPLsynth497029",
+      amountMinor: "120",
+      currency: "EUR",
+      attributes: {
+        operation: "not_determinable",
+        possibleOperations: ["send_money", "quick_checkout_payout", "one_tap_payment"],
+        mbTransactionId: "PPLsynth497029",
+        statusMsg: "processed",
+      },
+    });
+    expect(r.errors).toEqual([]);
+  });
+
+  it("shows status 1 as a scheduled send money payout and status 0 as a pending payout", () => {
+    expect(analyzeFixture("api-send-money-scheduled.xml").events[0]).toMatchObject({
+      eventType: "api_transaction.scheduled",
+      stage: "payout",
+      outcome: "pending",
+      amountMinor: "2500",
+      attributes: { operation: "send_money" },
+    });
+    expect(analyzeFixture("api-payout-pending.xml").events[0]).toMatchObject({
+      eventType: "api_transaction.pending",
+      stage: "payout",
+      outcome: "pending",
+      attributes: { operation: "quick_checkout_payout" },
+    });
+  });
+
+  it("keeps a failed transfer open between payout and 1-Tap payment", () => {
+    expect(analyze(xmlTransaction("-2")).events[0]).toMatchObject({
+      eventType: "api_transaction.failed",
+      stage: "other",
+      outcome: "failure",
+      attributes: { possibleOperations: ["quick_checkout_payout", "one_tap_payment"] },
+    });
+  });
+
+  it("marks an undocumented status as unknown", () => {
+    const r = analyze(xmlTransaction("5", "<status_msg>odd</status_msg>"));
+    expect(r.records[0]!.status).toBe("analyzed");
+    expect(r.events[0]).toMatchObject({
+      eventType: "api_transaction.unknown",
+      eventTypeKnown: false,
+      stage: "other",
+      outcome: "unknown",
+    });
+    expect(r.events[0]!.attributes.possibleOperations).toBeUndefined();
+  });
+
+  it("joins a pending payout response with its payout status report by the Skrill id", () => {
+    const report = post({
+      mb_transaction_id: "PPLsynth497033",
+      transaction_id: "PPLsynth-payout-0033",
+      customer_id: undefined,
+      status: "2",
+      amount: "80",
+      mb_amount: "80",
+    });
+    const r = analyzeMany(fixture("skrill/api-payout-pending.xml"), report);
+    expect(r.events).toHaveLength(2);
+    expect(r.groups).toHaveLength(1);
+  });
+});
+
+describe("skrill XML error responses", () => {
+  it("decodes a documented error string", () => {
+    const r = analyzeFixture("api-error-balance-not-enough.xml");
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "skrill.api.error" });
+    expect(r.events[0]).toMatchObject({
+      eventType: "api.error",
+      stage: "error",
+      outcome: "failure",
+      providerStatus: "error_msg=BALANCE_NOT_ENOUGH",
+      attributes: { code: "BALANCE_NOT_ENOUGH", codeFamily: "api", operation: "unknown" },
+    });
+    expect(r.errors).toHaveLength(1);
+    const e = r.errors[0]!;
+    expect(e).toMatchObject({
+      code: "BALANCE_NOT_ENOUGH",
+      category: "insufficient_funds",
+      retry: "retry_conditionally",
+      confidence: "strong",
+      subCodes: { family: "api", field: "error_msg" },
+      outcomeKnown: true,
+    });
+    expect(e.documentation[0]!.url).toMatch(/error-messages$/);
+    expect(e.missingInformation.join(" ")).toMatch(/does not say which request/);
+  });
+
+  it("decodes wildcard families and the documented spelling variant", () => {
+    const wild = analyze(xmlError("MISSING_FRN_TRN_ID"));
+    expect(wild.errors[0]).toMatchObject({
+      code: "MISSING_FRN_TRN_ID",
+      category: "invalid_request",
+      subCodes: { pattern: "MISSING_*", parameter: "frn_trn_id" },
+    });
+    expect(wild.events[0]!.attributes).toMatchObject({
+      codePattern: "MISSING_*",
+      parameter: "frn_trn_id",
+    });
+    expect(analyze(xmlError("CC_REFUND_ FAILED")).errors[0]).toMatchObject({
+      code: "CC_REFUND_FAILED",
+      confidence: "possible",
+    });
+    expect(analyze(xmlError("SESSION_EXPIRED")).errors[0]!.retry).toBe(
+      "safe_to_retry_technical_request",
+    );
+  });
+
+  it("keeps an undocumented error string unknown", () => {
+    const r = analyzeFixture("api-error-undocumented.xml");
+    expect(r.records[0]!.status).toBe("analyzed");
+    expect(r.events[0]!.attributes.codeFamily).toBeUndefined();
+    expect(r.errors[0]).toMatchObject({
+      code: "PPLSYNTH_UNDOCUMENTED_ERROR",
+      category: "unknown",
+      retry: "unknown",
+      confidence: "insufficient",
+    });
+  });
+
+  it("reads an XML error inside a raw HTTP response", () => {
+    const r = analyze(
+      `HTTP/1.1 200 OK\nContent-Type: text/xml;charset=UTF-8\n\n${xmlError("CANNOT_LOGIN")}`,
+    );
+    expect(r.errors[0]).toMatchObject({
+      code: "CANNOT_LOGIN",
+      category: "authentication_failed",
+      subCodes: { httpStatus: "200" },
+    });
+  });
+
+  it("never shows a free-text error_msg", () => {
+    const text = xmlError("Contact planted.person@example.com about PPLsynth-order-5150");
+    expect(analyze(text).records[0]!.status).toBe("unsupported");
+    const r = analyze(text, { provider: "skrill" });
+    expect(r.errors[0]).toMatchObject({ code: "unrecognized", confidence: "insufficient" });
+    const report = toJsonReport(r);
+    for (const out of [JSON.stringify(r.events), JSON.stringify(r.errors), report]) {
+      expect(out).not.toContain("planted.person@example.com");
+      expect(out).not.toContain("PPLsynth-order-5150");
+    }
+  });
+});
+
+describe("skrill MQI plain-text errors", () => {
+  it("stays below the threshold unless Skrill is selected", () => {
+    const d = detectText(fixture("skrill/mqi-error-transaction-not-found.txt"));
+    expect(d).toMatchObject({ format: "skrill.mqi.http_error", supported: true });
+    expect(d.confidence).toBeGreaterThan(0);
+    expect(d.confidence).toBeLessThan(0.5);
+    const auto = analyzeFixture("mqi-error-transaction-not-found.txt");
+    expect(auto.records[0]!.status).toBe("unsupported");
+    expect(auto.events).toEqual([]);
+  });
+
+  it("decodes the HTTP status when Skrill is selected", () => {
+    const r = analyze(fixture("skrill/mqi-error-transaction-not-found.txt"), {
+      provider: "skrill",
+    });
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "skrill.mqi.http_error" });
+    expect(r.events[0]).toMatchObject({
+      eventType: "mqi.http_error",
+      stage: "error",
+      outcome: "failure",
+      attributes: { httpStatus: 403, transactionNotFound: true },
+    });
+    expect(r.errors[0]).toMatchObject({
+      code: "403",
+      category: "invalid_request",
+      confidence: "possible",
+      providerMessage: "Transaction not found",
+      subCodes: { family: "mqi_http", reason: "transaction_not_found" },
+    });
+    const report = toJsonReport(r);
+    for (const out of [JSON.stringify(r.events), JSON.stringify(r.errors), report])
+      expect(out).not.toContain("PPLsynth-order-4040");
+  });
+
+  it("claims only documented MQI statuses with a body", () => {
+    const c = (text: string) => detectText(text).confidence;
+    expect(c("HTTP/1.1 401 Unauthorized\nContent-Type: text/html\n\nCannot login")).toBe(0.3);
+    expect(c("HTTP/1.1 500 Internal Server Error\nContent-Type: text/html\n\nOops")).toBe(0);
+    expect(c("HTTP/1.1 403 Forbidden\n\n")).toBe(0);
+  });
+});
+
+describe("skrill XML redaction and cross-provider detection", () => {
+  it("keeps session ids, echoed merchant fields and MQI ids out of events and reports", () => {
+    const planted = [
+      "7e3b9a0c5d1f4e2a8b6c0d9e1f2a3b4c",
+      "PPLsynth Planted Note",
+      "PPLsynth-order-4040",
+      "planted.payee@example.com",
+    ];
+    const r = analyzeMany(
+      ...XML_FIXTURES.map((f) => fixture(`skrill/${f}`)),
+      fixture("skrill/mqi-error-transaction-not-found.txt"),
+      xml(
+        "<mb_amount>1</mb_amount><mb_currency>EUR</mb_currency><mb_transaction_id>PPLsynth300000401</mb_transaction_id><payee_email>planted.payee@example.com</payee_email><status>2</status><transaction_id/>",
+      ),
+    );
+    expect(r.events.length).toBeGreaterThanOrEqual(8);
+    const events = JSON.stringify(r.events);
+    const errors = JSON.stringify(r.errors);
+    const report = toJsonReport(r);
+    for (const value of planted) {
+      expect(events, value).not.toContain(value);
+      expect(errors, value).not.toContain(value);
+      expect(report, value).not.toContain(value);
+    }
+  });
+
+  it("is not claimed by any other registered adapter", () => {
+    const others = ADAPTERS.filter((a) => a.id !== "skrill");
+    expect(others.length).toBeGreaterThan(10);
+    const texts: [string, string][] = [
+      ...XML_FIXTURES.map((f): [string, string] => [f, fixture(`skrill/${f}`)]),
+      [
+        "mqi-error-transaction-not-found.txt",
+        fixture("skrill/mqi-error-transaction-not-found.txt"),
+      ],
+      ["transfer -2", xmlTransaction("-2")],
+      ["wildcard error", xmlError("MISSING_FRN_TRN_ID")],
+    ];
+    for (const [name, text] of texts) {
+      const parsed = parseInput(text);
+      if (!parsed.ok) throw new Error(parsed.error.message);
+      parsed.value.records.forEach((record, i) => {
+        for (const a of others) {
+          const d = a.detect(record, parsed.value.meta[i]);
+          expect(d.confidence, `${a.id} on ${name}`).toBeLessThan(0.5);
+        }
+      });
+      const r = analyzeText(text, { ...options, adapters: ADAPTERS });
+      expect(r.ok).toBe(true);
+      if (r.ok)
+        for (const rec of r.result.records) expect([null, "skrill"]).toContain(rec.provider);
+    }
   });
 });
