@@ -1,0 +1,16 @@
+{
+  "additionalValue1": null,
+  "bank_arn": null,
+  "refund_mode": "Instant Credit through UPI",
+  "bank_ref_num": "PPLsynth-bankref-4001",
+  "key": "PPLsynthKey01",
+  "amt": "72.00",
+  "remark": null,
+  "status": "failure",
+  "token": "PPLsynth-refund-4001",
+  "mihpayid": " PPLsynth23907365951 ",
+  "request_id": "PPLsynth-req-4001",
+  "merchantTxnId": "PPLsynth-order-4001",
+  "additionalValue2": null,
+  "action": "refund"
+}

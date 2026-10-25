@@ -1,0 +1,16 @@
+{
+  "cardTransactionType": "AUTH_CAPTURE",
+  "transactionId": "PPLsynth1000000027",
+  "amount": {
+    "value": 10
+  },
+  "currency": "USD",
+  "usdAmount": 10,
+  "transactionApprovalDate": "10/24/2026",
+  "creditCard": {
+    "cardType": "VISA"
+  },
+  "processingInfo": {
+    "processingStatus": 1
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "status": true,
+  "message": "Verification successful",
+  "data": {
+    "id": 900000401,
+    "domain": "test",
+    "status": "failed",
+    "reference": "PPLsynth-ref-0401",
+    "amount": 1500000,
+    "message": null,
+    "gateway_response": "Do Not Honour",
+    "paid_at": null,
+    "created_at": "2026-10-23T14:20:11.000Z",
+    "channel": "card",
+    "currency": "NGN",
+    "log": {
+      "time_spent": 9,
+      "attempts": 1,
+      "errors": 1,
+      "success": false,
+      "mobile": false,
+      "input": [],
+      "history": [
+        { "type": "action", "message": "Attempted to pay with card", "time": 8 },
+        { "type": "error", "message": "Error: Do Not Honour", "time": 9 }
+      ]
+    },
+    "fees": null,
+    "authorization": {
+      "authorization_code": "AUTH_PPLsynth0401",
+      "bin": "408408",
+      "last4": "0401",
+      "exp_month": "01",
+      "exp_year": "2029",
+      "channel": "card",
+      "card_type": "visa ",
+      "brand": "visa",
+      "reusable": false,
+      "signature": "SIG_PPLsynth0401"
+    },
+    "customer": {
+      "id": 900000904,
+      "email": "pplsynth.declined@example.com",
+      "customer_code": "CUS_PPLsynth0401"
+    },
+    "paidAt": null,
+    "createdAt": "2026-10-23T14:20:11.000Z"
+  }
+}

@@ -1,0 +1,6 @@
+POST /webhooks/paystack HTTP/1.1
+Host: merchant.example
+Content-Type: application/json
+X-Paystack-Signature: 0f3ac1PPLSYNTH0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+
+{"event":"charge.success","data":{"id":900000201,"domain":"live","status":"success","reference":"PPLsynth-ref-0201","amount":10000,"message":null,"gateway_response":"Approved by Financial Institution","paid_at":"2026-10-21T21:10:19.000Z","created_at":"2026-10-21T21:09:56.000Z","channel":"card","currency":"NGN","ip_address":"192.0.2.44","metadata":0,"log":{"time_spent":16,"attempts":1,"errors":0,"success":false,"mobile":false,"input":[],"history":[{"type":"action","message":"Attempted to pay with card","time":15},{"type":"auth","message":"Authentication Required: pin","time":16}]},"fees":null,"customer":{"id":900000902,"first_name":"PPLsynthFirst","last_name":"PPLsynthLast","customer_code":"CUS_PPLsynth0201","phone":null,"metadata":null,"risk_action":"default"},"authorization":{"authorization_code":"AUTH_PPLsynth0201","bin":"539999","last4":"8877","exp_month":"08","exp_year":"2030","card_type":"mastercard DEBIT","bank":"PPLsynth Test Bank","country_code":"NG","brand":"mastercard","account_name":"PPLsynth Webhook Cardholder"},"plan":{}}}

@@ -1,0 +1,25 @@
+{
+  "event": "charge.failed",
+  "data": {
+    "id": 900002101,
+    "domain": "test",
+    "status": "failed",
+    "reference": "PPLsynth-ref-2101",
+    "amount": 65000,
+    "message": null,
+    "gateway_response": "Declined",
+    "paid_at": null,
+    "created_at": "2026-10-24T22:10:00.000Z",
+    "channel": "card",
+    "currency": "NGN",
+    "authorization": {
+      "authorization_code": "AUTH_PPLsynth2101",
+      "bin": "408408",
+      "last4": "2101",
+      "channel": "card",
+      "brand": "visa",
+      "reusable": false,
+      "signature": "SIG_PPLsynth2101"
+    }
+  }
+}

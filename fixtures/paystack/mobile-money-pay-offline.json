@@ -1,0 +1,47 @@
+[
+  {
+    "status": true,
+    "message": "Charge attempted",
+    "data": {
+      "reference": "PPLsynth-ref-1501",
+      "status": "pay_offline",
+      "display_text": "Please complete authorization process on PPLsynth mobile 0241501"
+    }
+  },
+  {
+    "status": true,
+    "message": "Reference check successful",
+    "data": {
+      "reference": "PPLsynth-ref-1501",
+      "status": "pending"
+    }
+  },
+  {
+    "event": "charge.success",
+    "data": {
+      "id": 900001501,
+      "domain": "test",
+      "status": "success",
+      "reference": "PPLsynth-ref-1501",
+      "amount": 10000,
+      "message": "madePayment",
+      "gateway_response": "Approved",
+      "paid_at": "2026-10-24T16:45:30.000Z",
+      "created_at": "2026-10-24T16:44:02.000Z",
+      "channel": "mobile_money",
+      "currency": "GHS",
+      "authorization": {
+        "authorization_code": "AUTH_PPLsynth1501",
+        "bin": "055XXX",
+        "last4": "X501",
+        "exp_month": 12,
+        "exp_year": 9999,
+        "channel": "mobile_money",
+        "card_type": "",
+        "brand": "Mtn",
+        "reusable": false,
+        "signature": null
+      }
+    }
+  }
+]

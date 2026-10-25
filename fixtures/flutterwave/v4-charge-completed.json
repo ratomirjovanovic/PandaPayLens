@@ -1,0 +1,30 @@
+{
+  "webhook_id": "wbk_PPLsynth1900000000",
+  "timestamp": 1792490000000,
+  "type": "charge.completed",
+  "data": {
+    "id": "chg_PPLsynth1900",
+    "amount": 2000,
+    "currency": "NGN",
+    "customer": {
+      "id": "cus_PPLsynth1900",
+      "email": "pplsynth.customer@example.com"
+    },
+    "payment_method": {
+      "type": "card",
+      "card": {
+        "first6": "400000",
+        "last4": "0002",
+        "network": "MASTERCARD"
+      },
+      "id": "pmd_PPLsynth1900"
+    },
+    "reference": "PPLsynth-order-1900",
+    "status": "succeeded",
+    "processor_response": {
+      "type": "approved",
+      "code": "00"
+    },
+    "created_datetime": "2026-10-23T14:00:00.000Z"
+  }
+}

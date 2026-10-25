@@ -1,0 +1,100 @@
+[
+  {
+    "entity": "event",
+    "account_id": "acc_PPLsynth-Merch01",
+    "event": "payout.initiated",
+    "contains": ["payout"],
+    "payload": {
+      "payout": {
+        "entity": {
+          "id": "pout_PPLsynth-Pout01",
+          "entity": "payout",
+          "fund_account_id": "fa_PPLsynth-Fund01",
+          "fund_account": {
+            "id": "fa_PPLsynth-Fund01",
+            "entity": "fund_account",
+            "account_type": "bank_account",
+            "bank_account": {
+              "ifsc": "PPLS0000001",
+              "bank_name": "PPLsynth Bank",
+              "name": "PPLsynth Beneficiary",
+              "account_number": "PPLSYNTH000111222"
+            }
+          },
+          "amount": 1000000,
+          "currency": "INR",
+          "notes": {
+            "note_key": "PPLsynth payout note"
+          },
+          "fees": 590,
+          "tax": 90,
+          "status": "processing",
+          "purpose": "payout",
+          "utr": null,
+          "mode": "IMPS",
+          "reference_id": "PPLsynth-Ref-Secret",
+          "narration": "PPLsynth Narration",
+          "batch_id": null,
+          "debit_account_number": "PPLSYNTHDEBIT0001",
+          "status_details": {
+            "description": "Partner bank is processing the payout (synthetic text).",
+            "source": "gateway",
+            "reason": "payout_bank_processing"
+          },
+          "created_at": 1792836000,
+          "fee_type": null
+        }
+      }
+    },
+    "created_at": 1792836005
+  },
+  {
+    "entity": "event",
+    "account_id": "acc_PPLsynth-Merch01",
+    "event": "payout.reversed",
+    "contains": ["payout"],
+    "payload": {
+      "payout": {
+        "entity": {
+          "id": "pout_PPLsynth-Pout01",
+          "entity": "payout",
+          "fund_account_id": "fa_PPLsynth-Fund01",
+          "fund_account": {
+            "id": "fa_PPLsynth-Fund01",
+            "entity": "fund_account",
+            "account_type": "bank_account",
+            "bank_account": {
+              "ifsc": "PPLS0000001",
+              "bank_name": "PPLsynth Bank",
+              "name": "PPLsynth Beneficiary",
+              "account_number": "PPLSYNTH000111222"
+            }
+          },
+          "amount": 1000000,
+          "currency": "INR",
+          "notes": {
+            "note_key": "PPLsynth payout note"
+          },
+          "fees": 590,
+          "tax": 90,
+          "status": "reversed",
+          "purpose": "payout",
+          "utr": "PPLSYNTHUTR0001",
+          "mode": "IMPS",
+          "reference_id": "PPLsynth-Ref-Secret",
+          "narration": "PPLsynth Narration",
+          "batch_id": null,
+          "debit_account_number": "PPLSYNTHDEBIT0001",
+          "status_details": {
+            "description": "Beneficiary bank is offline (synthetic text).",
+            "source": "beneficiary_bank",
+            "reason": "beneficiary_bank_offline"
+          },
+          "created_at": 1792836000,
+          "fee_type": null
+        }
+      }
+    },
+    "created_at": 1792837800
+  }
+]

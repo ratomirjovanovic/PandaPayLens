@@ -1,0 +1,27 @@
+{
+  "status": true,
+  "message": "Verification successful",
+  "data": {
+    "id": 900000901,
+    "domain": "test",
+    "status": "failed",
+    "reference": "PPLsynth-ref-0901",
+    "amount": 75000,
+    "message": null,
+    "gateway_response": "Timed out",
+    "paid_at": null,
+    "created_at": "2026-10-24T08:00:00.000Z",
+    "channel": "card",
+    "currency": "GHS",
+    "fees": null,
+    "authorization": {
+      "authorization_code": "AUTH_PPLsynth0901",
+      "bin": "408408",
+      "last4": "0901",
+      "channel": "card",
+      "brand": "visa",
+      "reusable": false,
+      "signature": "SIG_PPLsynth0901"
+    }
+  }
+}

@@ -8,6 +8,15 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.8.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "New adapters with limited support: BlueSnap, PayU India, Razorpay, Paystack and Flutterwave.",
+      "40 of 42 roadmap providers can now be analyzed; Pavilion Payments and Epoch publish no developer documentation.",
+    ],
+  },
+  {
     version: "0.7.0",
     date: "2026-10-25",
     status: "released",

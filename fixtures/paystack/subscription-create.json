@@ -1,0 +1,20 @@
+{
+  "event": "subscription.create",
+  "data": {
+    "domain": "test",
+    "status": "active",
+    "subscription_code": "SUB_PPLsynth1901",
+    "amount": 50000,
+    "plan": {
+      "plan_code": "PLN_PPLsynth1901",
+      "interval": "monthly",
+      "currency": "NGN"
+    },
+    "customer": {
+      "customer_code": "CUS_PPLsynth1901",
+      "email": "pplsynth.subscriber@example.com"
+    },
+    "email_token": "PPLsynthEmailToken1901",
+    "created_at": "2026-10-24T21:00:00.000Z"
+  }
+}

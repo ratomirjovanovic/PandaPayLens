@@ -1,0 +1,24 @@
+{
+  "event": "transfer.completed",
+  "event.type": "Transfer",
+  "data": {
+    "id": 600201717,
+    "account_number": "0000000401",
+    "bank_code": "044",
+    "fullname": "PPLsynth Beneficiary",
+    "created_at": "2026-10-22T12:00:00.000Z",
+    "currency": "NGN",
+    "debit_currency": "NGN",
+    "amount": "10.70",
+    "fee": "0.00",
+    "status": "SUCCESSFUL",
+    "reference": "PPLsynth-funding-1717",
+    "meta": null,
+    "narration": "WALLET FUNDING",
+    "approver": null,
+    "complete_message": "Successful",
+    "requires_approval": 0,
+    "is_approved": 1,
+    "bank_name": "PPLSYNTH BANK"
+  }
+}

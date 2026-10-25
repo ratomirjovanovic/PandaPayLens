@@ -1,0 +1,18 @@
+{
+  "status": "failed",
+  "error": {
+    "type": "REQUEST_NOT_VALID",
+    "code": "10400",
+    "message": "Request is not valid",
+    "validation_errors": [
+      {
+        "field_name": "payment_method_id",
+        "message": "must not be null"
+      },
+      {
+        "field_name": "currency",
+        "message": "must not be null"
+      }
+    ]
+  }
+}

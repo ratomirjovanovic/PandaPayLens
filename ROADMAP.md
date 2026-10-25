@@ -15,6 +15,7 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 | 0.5.0   | Research for Worldpay, Cybersource, Authorize.net and Nuvei; plain-text HTTP error bodies                |
 | 0.6.0   | Wave 2 adapters: Worldpay, Cybersource, Authorize.net, Nuvei                                             |
 | 0.7.0   | Wave 3 adapters: Paysafe, Airwallex, Rapyd, dLocal, EBANX                                                |
+| 0.8.0   | Wave 4 adapters: BlueSnap, PayU India, Razorpay, Paystack, Flutterwave                                   |
 
 ## In progress
 
@@ -24,7 +25,7 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 
 ### Providers
 
-- **General providers with verified documentation, adapters next:** BlueSnap (JSON Payment API and webhooks), PayU India (form-encoded responses and webhooks, Verify Payment JSON), Razorpay (Payments API and webhooks), Paystack (Transactions API and webhooks) and Flutterwave (v3 API and webhooks).
+- **Every documented roadmap provider is implemented.** New providers are added on request through a "New provider" issue with links to official developer documentation.
 - **Blocked:** Pavilion Payments and Epoch publish no developer documentation without a merchant relationship. They stay listed as blocked until that changes.
 
 ### Analyzer

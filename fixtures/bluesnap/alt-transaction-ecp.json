@@ -1,0 +1,14 @@
+{
+  "transactionId": "PPLsynth1000000028",
+  "amount": 150,
+  "currency": "USD",
+  "vaultedShopperId": "PPLsynth28855201",
+  "ecpTransaction": {
+    "accountType": "CONSUMER_CHECKING",
+    "publicAccountNumber": "PPLSYNTH12",
+    "publicRoutingNumber": "PPLSYNTH34"
+  },
+  "processingInfo": {
+    "processingStatus": "PENDING"
+  }
+}

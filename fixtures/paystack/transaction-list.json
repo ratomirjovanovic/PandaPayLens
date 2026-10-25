@@ -1,0 +1,23 @@
+{
+  "status": true,
+  "message": "Transactions retrieved",
+  "data": [
+    {
+      "id": 900002001,
+      "domain": "test",
+      "status": "success",
+      "reference": "PPLsynth-ref-2001",
+      "amount": 20000,
+      "gateway_response": "Successful",
+      "channel": "card",
+      "currency": "NGN"
+    }
+  ],
+  "meta": {
+    "total": 1,
+    "skipped": 0,
+    "perPage": 50,
+    "page": 1,
+    "pageCount": 1
+  }
+}

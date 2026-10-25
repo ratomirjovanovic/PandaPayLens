@@ -1,0 +1,9 @@
+{
+  "message": [
+    {
+      "errorName": "PPLSYNTH_UNLISTED_ERROR",
+      "code": 14002,
+      "description": "Synthetic undocumented error."
+    }
+  ]
+}

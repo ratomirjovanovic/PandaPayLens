@@ -1,0 +1,38 @@
+{
+  "name": "@pandapaylens/flutterwave",
+  "version": "0.1.0",
+  "description": "Flutterwave adapter for PandaPayLens.",
+  "license": "Apache-2.0",
+  "author": "Ratomir Jovanovic (https://github.com/ratomirjovanovic)",
+  "homepage": "https://github.com/ratomirjovanovic/PandaPayLens#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ratomirjovanovic/PandaPayLens.git",
+    "directory": "packages/adapters/flutterwave"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./manifest": {
+      "types": "./dist/manifest.d.ts",
+      "default": "./dist/manifest.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@pandapaylens/core": "workspace:*",
+    "zod": "4.6.7"
+  }
+}

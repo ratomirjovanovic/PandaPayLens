@@ -1,0 +1,27 @@
+{
+  "webhook_id": "wbk_PPLsynth2200000000",
+  "timestamp": 1792500000000,
+  "type": "transfer.disburse",
+  "data": {
+    "id": "trf_PPLsynth2200",
+    "type": "bank",
+    "source_currency": "NGN",
+    "destination_currency": "NGN",
+    "amount": 50000,
+    "reference": "PPLsynth-payout-2200",
+    "status": "FAILED",
+    "fee": {
+      "currency": "NGN",
+      "value": 500
+    },
+    "provider_response": {
+      "type": "insufficient_balance",
+      "code": "0307",
+      "message": "DISBURSE FAILED: Insufficient wallet balance"
+    },
+    "payment_information": {
+      "proof": "PPLsynth-session-2200"
+    },
+    "meta": {}
+  }
+}

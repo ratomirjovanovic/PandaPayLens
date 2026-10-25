@@ -1,0 +1,9 @@
+{
+  "message": [
+    {
+      "errorName": "THREE_D_SECURITY_AUTHENTICATION_REQUIRED",
+      "code": 14002,
+      "description": "Synthetic description: 3-D Secure authentication is required."
+    }
+  ]
+}

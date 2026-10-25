@@ -1,0 +1,30 @@
+{
+  "cardTransactionType": "AUTH_CAPTURE",
+  "transactionId": "PPLsynth1000000001",
+  "merchantTransactionId": "PPLsynth-order-0001",
+  "softDescriptor": "BLS*PPLsynth",
+  "amount": 11,
+  "usdAmount": 11,
+  "currency": "USD",
+  "transactionApprovalDate": "10/24/2026",
+  "transactionApprovalTime": "13:08:47",
+  "vaultedShopperId": "PPLsynth28855193",
+  "creditCard": {
+    "cardType": "VISA",
+    "cardSubType": "CREDIT",
+    "cardCategory": "PLATINUM",
+    "binCategory": "CONSUMER",
+    "cardRegulated": "N",
+    "issuingCountryCode": "us"
+  },
+  "processingInfo": {
+    "processingStatus": "success",
+    "cvvResponseCode": "MA",
+    "authorizationCode": "PPL123",
+    "avsResponseCodeZip": "U",
+    "avsResponseCodeAddress": "U",
+    "avsResponseCodeName": "U",
+    "transactionRegion": "US"
+  },
+  "fraudResultInfo": {}
+}

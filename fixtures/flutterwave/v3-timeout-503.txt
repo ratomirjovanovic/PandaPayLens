@@ -1,0 +1,8 @@
+HTTP/1.1 503 Service Unavailable
+content-type: application/json
+
+{
+  "status": "error",
+  "message": "An error occurred. Please contact support",
+  "data": null
+}

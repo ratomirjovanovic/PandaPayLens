@@ -1,0 +1,15 @@
+{
+  "statusCode": 400,
+  "error": {
+    "code": "BAD_REQUEST_ERROR",
+    "description": "Authentication failed due to incorrect otp",
+    "field": null,
+    "source": "customer",
+    "step": "payment_authentication",
+    "reason": "invalid_otp",
+    "metadata": {
+      "payment_id": "pay_PPLsynth-Otp02",
+      "order_id": "order_PPLsynth-Otp02"
+    }
+  }
+}

@@ -269,6 +269,46 @@ export default defineConfig({
         replacement: src("./packages/adapters/ebanx/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/bluesnap\/manifest$/,
+        replacement: src("./packages/adapters/bluesnap/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/bluesnap$/,
+        replacement: src("./packages/adapters/bluesnap/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/payu-india\/manifest$/,
+        replacement: src("./packages/adapters/payu-india/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/payu-india$/,
+        replacement: src("./packages/adapters/payu-india/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/razorpay\/manifest$/,
+        replacement: src("./packages/adapters/razorpay/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/razorpay$/,
+        replacement: src("./packages/adapters/razorpay/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paystack\/manifest$/,
+        replacement: src("./packages/adapters/paystack/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paystack$/,
+        replacement: src("./packages/adapters/paystack/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/flutterwave\/manifest$/,
+        replacement: src("./packages/adapters/flutterwave/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/flutterwave$/,
+        replacement: src("./packages/adapters/flutterwave/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/skrill\/manifest$/,
         replacement: src("./packages/adapters/skrill/src/manifest.ts"),
       },

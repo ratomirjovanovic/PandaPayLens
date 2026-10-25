@@ -1,0 +1,50 @@
+{
+  "id": "pay_PPLsynth-Otp01",
+  "entity": "payment",
+  "amount": 125000,
+  "currency": "INR",
+  "status": "failed",
+  "order_id": "order_PPLsynth-Otp01",
+  "invoice_id": null,
+  "international": false,
+  "method": "card",
+  "amount_refunded": 0,
+  "refund_status": null,
+  "captured": false,
+  "description": "PPLsynth free text description",
+  "card_id": "card_PPLsynth-Otp01",
+  "card": {
+    "id": "card_PPLsynth-Otp01",
+    "entity": "card",
+    "name": "PPLsynth Cardholder",
+    "last4": "9473",
+    "network": "Visa",
+    "type": "credit",
+    "issuer": "PPLS",
+    "international": false,
+    "emi": false,
+    "iin": "512345",
+    "token_iin": null
+  },
+  "bank": null,
+  "wallet": null,
+  "vpa": null,
+  "email": "pplsynth.buyer@example.com",
+  "contact": "+919000000001",
+  "customer_id": "cust_PPLsynth-Cust01",
+  "token_id": "token_PPLsynth-Tok01",
+  "notes": {
+    "customer_name": "PPLsynth Notes Name"
+  },
+  "fee": null,
+  "tax": null,
+  "error_code": "BAD_REQUEST_ERROR",
+  "error_description": "Payment failed because the OTP entered was incorrect (synthetic text).",
+  "error_source": "customer",
+  "error_step": "payment_authentication",
+  "error_reason": "incorrect_otp",
+  "acquirer_data": {
+    "auth_code": null
+  },
+  "created_at": 1792836000
+}

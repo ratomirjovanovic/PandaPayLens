@@ -1,0 +1,12 @@
+{
+  "cardTransactionType": "AUTH_CAPTURE",
+  "transactionId": "PPLsynth1000000004",
+  "amount": 99.99,
+  "currency": "GBP",
+  "transactionApprovalDate": "10/24/2026",
+  "transactionApprovalTime": "11:02:44",
+  "processingInfo": {
+    "processingStatus": "PENDING_MERCHANT_REVIEW",
+    "transactionRegion": "UK"
+  }
+}

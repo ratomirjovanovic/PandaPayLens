@@ -1,0 +1,10 @@
+{
+  "event": "bvn.completed",
+  "data": {
+    "first_name": "PPLsynth",
+    "last_name": "Person",
+    "status": "COMPLETED",
+    "reference": "PPLsynth-bvn-1616"
+  },
+  "event.type": "BVN"
+}

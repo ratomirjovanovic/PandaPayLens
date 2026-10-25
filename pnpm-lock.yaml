@@ -196,6 +196,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/bluesnap:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/braintree:
     dependencies:
       '@pandapaylens/core':
@@ -295,6 +304,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/flutterwave:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/inpay:
     dependencies:
       '@pandapaylens/core':
@@ -385,6 +403,24 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/paystack:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/payu-india:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/pxp:
     dependencies:
       '@pandapaylens/core':
@@ -395,6 +431,15 @@ importers:
         version: 4.6.7
 
   packages/adapters/rapyd:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/razorpay:
     dependencies:
       '@pandapaylens/core':
         specifier: workspace:*
@@ -513,6 +558,9 @@ importers:
       '@pandapaylens/authorize-net':
         specifier: workspace:*
         version: link:../adapters/authorize-net
+      '@pandapaylens/bluesnap':
+        specifier: workspace:*
+        version: link:../adapters/bluesnap
       '@pandapaylens/braintree':
         specifier: workspace:*
         version: link:../adapters/braintree
@@ -549,6 +597,9 @@ importers:
       '@pandapaylens/finrax':
         specifier: workspace:*
         version: link:../adapters/finrax
+      '@pandapaylens/flutterwave':
+        specifier: workspace:*
+        version: link:../adapters/flutterwave
       '@pandapaylens/inpay':
         specifier: workspace:*
         version: link:../adapters/inpay
@@ -579,12 +630,21 @@ importers:
       '@pandapaylens/paysafe':
         specifier: workspace:*
         version: link:../adapters/paysafe
+      '@pandapaylens/paystack':
+        specifier: workspace:*
+        version: link:../adapters/paystack
+      '@pandapaylens/payu-india':
+        specifier: workspace:*
+        version: link:../adapters/payu-india
       '@pandapaylens/pxp':
         specifier: workspace:*
         version: link:../adapters/pxp
       '@pandapaylens/rapyd':
         specifier: workspace:*
         version: link:../adapters/rapyd
+      '@pandapaylens/razorpay':
+        specifier: workspace:*
+        version: link:../adapters/razorpay
       '@pandapaylens/segpay':
         specifier: workspace:*
         version: link:../adapters/segpay

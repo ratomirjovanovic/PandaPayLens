@@ -1,0 +1,7 @@
+{
+  "refundTransactionId": "PPLsynthR000000005",
+  "amount": 5,
+  "currency": "USD",
+  "refundStatus": "PENDING",
+  "cancelSubscriptions": false
+}

@@ -33,7 +33,7 @@ Paste a payment error, webhook or event log from a supported provider. PandaPayL
 
 <!-- providers:start -->
 
-35 of 42 roadmap providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Research candidates and planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
+40 of 42 roadmap providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Research candidates and planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
 
 | Provider       | Overall   | Errors    | API responses | Webhooks     | Timeline     | Correlation |
 | -------------- | --------- | --------- | ------------- | ------------ | ------------ | ----------- |
@@ -45,6 +45,11 @@ Paste a payment error, webhook or event log from a supported provider. PandaPayL
 | PayPal         | limited   | supported | supported     | limited      | limited      | limited     |
 | Mollie         | limited   | limited   | supported     | limited      | limited      | supported   |
 | Square         | limited   | supported | supported     | supported    | limited      | limited     |
+| Flutterwave    | limited   | limited   | supported     | limited      | limited      | limited     |
+| Paystack       | limited   | limited   | supported     | limited      | limited      | limited     |
+| Razorpay       | limited   | supported | supported     | supported    | limited      | supported   |
+| PayU India     | limited   | supported | limited       | limited      | limited      | limited     |
+| BlueSnap       | limited   | supported | limited       | limited      | limited      | limited     |
 | EBANX          | limited   | supported | supported     | limited      | limited      | supported   |
 | dLocal         | limited   | limited   | supported     | limited      | limited      | supported   |
 | Rapyd          | limited   | supported | limited       | limited      | limited      | limited     |
@@ -153,7 +158,7 @@ pnpm test:e2e         # Playwright against the full app (after pnpm build)
 
 ## Roadmap
 
-Released: the analyzer, CLI and demo (0.1.0), high-risk waves HR-1 (0.2.0), HR-2 (0.3.0) and HR-3 (0.4.0), the wave 2 gateways Worldpay, Cybersource, Authorize.net and Nuvei (0.6.0), and Paysafe, Airwallex, Rapyd, dLocal and EBANX (0.7.0). Planned: research for the remaining general providers, XML input and npm packages.
+Released: the analyzer, CLI and demo (0.1.0), high-risk waves HR-1 (0.2.0), HR-2 (0.3.0) and HR-3 (0.4.0), the wave 2 gateways Worldpay, Cybersource, Authorize.net and Nuvei (0.6.0), Paysafe, Airwallex, Rapyd, dLocal and EBANX (0.7.0), and BlueSnap, PayU India, Razorpay, Paystack and Flutterwave (0.8.0). Planned: research for the remaining general providers, XML input and npm packages.
 
 See [ROADMAP.md](ROADMAP.md) for details.
 

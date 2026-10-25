@@ -1,0 +1,56 @@
+[
+  {
+    "status": true,
+    "message": "Transfer requires OTP to continue",
+    "data": {
+      "integration": 900000001,
+      "domain": "test",
+      "amount": 350000,
+      "currency": "NGN",
+      "source": "balance",
+      "recipient": 900003401,
+      "status": "otp",
+      "transfer_code": "TRF_PPLsynth1401",
+      "id": 900004401,
+      "createdAt": "2026-10-24T10:00:00.000Z",
+      "updatedAt": "2026-10-24T10:00:00.000Z",
+      "reference": "PPLsynth-trf-1401",
+      "transferred_at": null
+    }
+  },
+  {
+    "event": "transfer.success",
+    "data": {
+      "amount": 350000,
+      "currency": "NGN",
+      "domain": "test",
+      "failures": null,
+      "id": 900004401,
+      "integration": {
+        "id": 900000001,
+        "is_live": true,
+        "business_name": "PPLsynth Merchant Ltd"
+      },
+      "reference": "PPLsynth-trf-1401",
+      "source": "balance",
+      "source_details": null,
+      "status": "success",
+      "titan_code": null,
+      "transfer_code": "TRF_PPLsynth1401",
+      "transferred_at": "2026-10-24T10:03:12.000Z",
+      "recipient": {
+        "recipient_code": "RCP_PPLsynth1401",
+        "type": "nuban",
+        "details": {
+          "account_number": "0000001401",
+          "account_name": "PPLsynth Account Holder",
+          "bank_code": "000",
+          "bank_name": "PPLsynth Bank"
+        }
+      },
+      "session": { "provider": "nip", "id": "PPLsynthSession1401" },
+      "created_at": "2026-10-24T10:00:00.000Z",
+      "updated_at": "2026-10-24T10:03:12.000Z"
+    }
+  }
+]

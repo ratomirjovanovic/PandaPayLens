@@ -1,0 +1,92 @@
+[
+  {
+    "status": true,
+    "message": "Authorization URL created",
+    "data": {
+      "authorization_url": "https://checkout.example/PPLsynthAccess0301",
+      "access_code": "PPLsynthAccess0301",
+      "reference": "PPLsynth-ref-0301"
+    }
+  },
+  {
+    "status": true,
+    "message": "Charge attempted",
+    "data": {
+      "reference": "PPLsynth-ref-0301",
+      "status": "send_pin"
+    }
+  },
+  {
+    "status": true,
+    "message": "Charge attempted",
+    "data": {
+      "reference": "PPLsynth-ref-0301",
+      "status": "send_otp",
+      "display_text": "Please enter the OTP sent to PPLsynth 0800***0301"
+    }
+  },
+  {
+    "event": "charge.success",
+    "data": {
+      "id": 900000301,
+      "domain": "test",
+      "status": "success",
+      "reference": "PPLsynth-ref-0301",
+      "amount": 250000,
+      "message": null,
+      "gateway_response": "Approved",
+      "paid_at": "2026-10-22T10:02:41.000Z",
+      "created_at": "2026-10-22T10:01:05.000Z",
+      "channel": "card",
+      "currency": "NGN",
+      "metadata": "",
+      "fees": 3750,
+      "customer": {
+        "id": 900000903,
+        "email": "pplsynth.lifecycle@example.com",
+        "customer_code": "CUS_PPLsynth0301",
+        "risk_action": "default"
+      },
+      "authorization": {
+        "authorization_code": "AUTH_PPLsynth0301",
+        "bin": "506099",
+        "last4": "0301",
+        "exp_month": "09",
+        "exp_year": "2031",
+        "channel": "card",
+        "card_type": "verve ",
+        "brand": "verve",
+        "reusable": true,
+        "signature": "SIG_PPLsynth0301"
+      },
+      "plan": {}
+    }
+  },
+  {
+    "status": true,
+    "message": "Verification successful",
+    "data": {
+      "id": 900000301,
+      "domain": "test",
+      "status": "success",
+      "reference": "PPLsynth-ref-0301",
+      "amount": 250000,
+      "message": null,
+      "gateway_response": "Approved",
+      "paid_at": "2026-10-22T10:02:41.000Z",
+      "created_at": "2026-10-22T10:01:05.000Z",
+      "channel": "card",
+      "currency": "NGN",
+      "fees": 3750,
+      "authorization": {
+        "authorization_code": "AUTH_PPLsynth0301",
+        "channel": "card",
+        "brand": "verve",
+        "reusable": true,
+        "signature": "SIG_PPLsynth0301"
+      },
+      "paidAt": "2026-10-22T10:02:41.000Z",
+      "createdAt": "2026-10-22T10:01:05.000Z"
+    }
+  }
+]

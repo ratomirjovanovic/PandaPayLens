@@ -1,0 +1,12 @@
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "message": [
+    {
+      "errorName": "PROCESSING_TIMEOUT",
+      "code": 14002,
+      "description": "Synthetic description: processing timed out."
+    }
+  ]
+}

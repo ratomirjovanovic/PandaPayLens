@@ -1,0 +1,21 @@
+{
+  "metaData": {
+    "message": null,
+    "referenceId": "PPLsynth-ref-a74a67e965537b0f",
+    "statusCode": null,
+    "txnId": "PPLsynth-order-5001",
+    "txnStatus": "Enrolled",
+    "unmappedStatus": "pending"
+  },
+  "result": {
+    "otpPostUrl": "",
+    "acsTemplate": "UFBMc3ludGggcGxhY2Vob2xkZXI="
+  },
+  "binData": {
+    "pureS2SSupported": false,
+    "issuingBank": "PPLSYNTH",
+    "category": "debitcard",
+    "cardType": "VISA",
+    "isDomestic": true
+  }
+}
