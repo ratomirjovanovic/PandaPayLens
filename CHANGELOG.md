@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Added
 
+- GitHub Pages static demo (`apps/pages`) built from the same pages and engine, with export verification, smoke and privacy tests, and a deploy workflow with a post-deployment check.
+- New home page with "Try a failed payment" and "Explore duplicate webhooks" examples, README screenshots and social preview.
 - Wave 1 provider adapters: payabl., Checkout.com, PayPal, Braintree, Mollie and Square, each with capability manifest, catalogs, synthetic fixtures and tests.
 - Input formats: URL-encoded form data (also one notification per line) and raw HTTP requests/responses.
 - Provider registry, public provider directory with capability status, provider pages.

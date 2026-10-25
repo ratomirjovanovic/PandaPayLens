@@ -1,38 +1,37 @@
-<p align="center"><img src="docs/logo.svg" width="96" alt="PandaPayLens logo: a panda with a magnifying lens"></p>
+<p align="center"><img src="docs/logo.svg" width="88" alt="PandaPayLens logo: a panda with a magnifying lens"></p>
 
 <h1 align="center">PandaPayLens</h1>
 
-<p align="center">Decode payment errors. Visualize transaction events. Understand what went wrong.</p>
+<p align="center">
+Decode payment errors. Visualize transaction events. Understand what went wrong.<br>
+An open-source, local-first toolkit for debugging payment integrations across supported providers.
+</p>
 
-PandaPayLens is an open-source, local-first payment debugging tool. Paste a payment error, webhook or event log from a supported provider and it explains the error, rebuilds the transaction timeline and points out duplicates, out-of-order deliveries, conflicting states and possible retry risks. Your data never leaves your browser.
+<p align="center">
+<a href="https://ratomirjovanovic.github.io/PandaPayLens/"><b>Live demo</b></a> ·
+<a href="https://ratomirjovanovic.github.io/PandaPayLens/docs/">Documentation</a> ·
+<a href="https://github.com/ratomirjovanovic/PandaPayLens/issues/new?template=bug_report.md">Report a bug</a>
+</p>
 
-**Live demo:** coming with the first release.
+<p align="center"><img src="docs/media/decoder-light.png" width="860" alt="PandaPayLens decoding a Stripe card_declined error with decline_code insufficient_funds"></p>
 
-## Key features
+Paste a payment error, webhook or event log from a supported provider. PandaPayLens detects the provider and format, explains the error, rebuilds the transaction timeline and points out duplicate deliveries, out-of-order events, conflicting states and possible retry risks. Everything runs in your browser.
 
-- **Error decoder:** provider error, decline and refusal codes (for example Stripe `decline_code`, Adyen refusal reasons, Checkout.com response codes, payabl. gateway codes), each with an explanation, the next step, retry guidance, a confidence level and a link to the provider's docs.
-- **Event timeline:** events grouped into transactions by explicit identifiers only, ordered by event time or by receipt order. Missing events are never invented.
-- **Deterministic findings:** nine explainable rules, each with evidence, confidence and limitations. No AI in the diagnostic path.
-- **Privacy by design:** analysis runs in a Web Worker in your browser, a strict CSP blocks requests to other origins, nothing is stored, and sensitive fields are hidden.
-- **Exports:** JSON and Markdown reports and a PNG timeline. Identifiers are masked by default.
+## Features
+
+- **Error decoder:** provider error, decline and refusal codes with an explanation, the next step, retry guidance, a confidence level and a link to the provider's documentation.
+- **Transaction timeline:** events grouped by explicit identifiers, ordered by event time or receipt order, with filters. Missing events are never invented.
+- **Deterministic findings:** explainable rules with evidence, confidence and limitations. No AI in the diagnostic path.
+- **Many input formats:** JSON, JSON Lines, URL-encoded notifications and raw HTTP requests or responses copied from logs.
+- **Privacy by design:** analysis in a Web Worker, a Content Security Policy that blocks requests to other origins, nothing stored, sensitive fields hidden.
+- **Exports:** JSON and Markdown reports and a PNG timeline, with identifiers masked by default.
 - **CLI and library:** the same engine runs offline in Node.js.
 
-## Quick start
+<p align="center"><img src="docs/media/timeline-dark.png" width="860" alt="Timeline of Adyen webhooks with a duplicate delivery and conflicting capture results"></p>
 
-Requires Node.js 22+ and pnpm 10.
+## Provider coverage
 
-```bash
-git clone https://github.com/ratomirjovanovic/PandaPayLens.git
-cd PandaPayLens
-pnpm install
-pnpm dev            # http://localhost:3000
-```
-
-No database, account or API key is needed to run the analyzer.
-
-## Supported providers
-
-8 providers are available today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps (for example, the provider does not document duplicate or ordering behavior). The full roadmap of 22 providers, including planned ones, is on the `/providers` page.
+8 providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
 
 | Provider     | Overall   | Errors    | API responses | Webhooks  | Timeline  | Correlation |
 | ------------ | --------- | --------- | ------------- | --------- | --------- | ----------- |
@@ -45,7 +44,20 @@ No database, account or API key is needed to run the analyzer.
 | Mollie       | limited   | limited   | supported     | limited   | limited   | supported   |
 | Square       | limited   | supported | supported     | supported | limited   | limited     |
 
-Input can be JSON, JSON arrays, JSON Lines, URL-encoded form data (for example payabl. notifications) or a raw HTTP request or response copied from a log. Each provider page lists the exact formats and known limitations. Adapters are built from the providers' official documentation; research notes are in `docs/providers/research/`.
+Adapters are built from each provider's official documentation; research notes are in [`docs/providers/research`](docs/providers/research). PandaPayLens is not affiliated with any of these providers.
+
+## Quick start
+
+Requires Node.js 22+ and pnpm 10. No database, account or API key is needed.
+
+```bash
+git clone https://github.com/ratomirjovanovic/PandaPayLens.git
+cd PandaPayLens
+pnpm install
+pnpm dev:pages        # static analyzer at http://localhost:3200/PandaPayLens/
+```
+
+`pnpm dev` runs the full Next.js application (Vercel target) at http://localhost:3000. Its admin area stays disabled unless configured; see [docs/deployment.md](docs/deployment.md).
 
 ## CLI
 
@@ -55,60 +67,70 @@ node packages/cli/dist/bin.js analyze fixtures/stripe/out-of-order.json
 node packages/cli/dist/bin.js decode - < error.json
 node packages/cli/dist/bin.js analyze events.jsonl --format markdown
 node packages/cli/dist/bin.js analyze log.json --fail-on medium
+node packages/cli/dist/bin.js providers --supported
 node packages/cli/dist/bin.js examples
 ```
 
 Exit codes: `0` ok, `1` findings at or above `--fail-on`, `2` invalid input, `3` unsupported provider or format, `4` internal error. A declined payment does not fail the run unless you ask for it.
 
-## Privacy and security
+## Privacy model
 
-- Imported payloads are processed only in the browser and are not sent to any server, analytics or logging.
-- `connect-src 'self'` in the Content Security Policy blocks requests to other origins.
+- Imported payloads are processed only in the browser and never sent to a server, analytics or logs.
+- The Content Security Policy allows requests only to the site itself (`connect-src 'self'`).
 - Nothing is written to cookies, localStorage, sessionStorage or IndexedDB; reloading clears the workspace.
 - Card data, secrets, contact details and bank details are hidden and never exported. Redaction is best effort and does not guarantee anonymization.
-- A Playwright privacy test plants unique marker values in the input and checks that none of them appear in any network request or in storage.
+- Pasted webhooks are never treated as verified, and no report confirms settlement.
+- Playwright tests plant unique marker values in the input and check that none appear in any network request or in browser storage, on both the Vercel app and the GitHub Pages build.
 
-See [SECURITY.md](SECURITY.md) for how to report a vulnerability.
+See [SECURITY.md](SECURITY.md) to report a vulnerability. PandaPayLens is not PCI DSS certified and has not had an independent penetration test.
 
 ## Architecture
 
 ```text
-packages/core              parsing, detection, normalization, correlation, rules engine, redaction, reports
+packages/core              parsing (JSON, JSONL, form, HTTP), detection, normalization,
+                           correlation, rules engine, redaction, reports
 packages/adapters/*        one package per provider: schemas, catalogs, normalization
-packages/providers         adapter registry, manifests and roadmap
+packages/providers         adapter registry, capability manifests, roadmap
 packages/rules             versioned diagnostic rule catalog
 packages/cli               offline command-line interface
-apps/web                   Next.js analyzer and documentation site
+apps/web                   Next.js application for Vercel (analyzer, docs, admin)
+apps/pages                 static export of the same pages for GitHub Pages
 fixtures                   synthetic test data (no real payment data)
 ```
 
-The core package has no dependency on React, Next.js, a database or the network. The web app and the CLI use it as a library.
+The core package has no dependency on React, Next.js, a database or the network. Both apps use the same pages, components and analysis engine; the GitHub Pages build excludes the admin area and all server code.
 
-## Development
+## Documentation
 
-```bash
-pnpm test             # unit, property-based and scenario tests
-pnpm test:coverage    # with coverage thresholds
-pnpm typecheck
-pnpm build
-pnpm test:e2e         # Playwright (run `pnpm build` first)
-```
+- [Getting started](https://ratomirjovanovic.github.io/PandaPayLens/docs/)
+- [Security and privacy](https://ratomirjovanovic.github.io/PandaPayLens/docs/security/)
+- [Providers](https://ratomirjovanovic.github.io/PandaPayLens/providers/)
+- [Deployment and self-hosting](docs/deployment.md)
+- [Adding a provider](docs/contributing/add-provider.md)
 
 ## Contributing
 
-Contributions are welcome, especially new fixtures, catalog entries and provider adapters. Read [CONTRIBUTING.md](CONTRIBUTING.md) first. Behavior changes need synthetic fixtures and tests.
+Contributions are welcome: provider adapters, error catalog entries, synthetic fixtures, accessibility and documentation. Read [CONTRIBUTING.md](CONTRIBUTING.md). Working on the analyzer never requires Vercel, Neon or admin access.
+
+```bash
+pnpm test             # unit, property-based, provider and scenario tests
+pnpm typecheck
+pnpm build:pages      # static demo, verified after build
+pnpm test:e2e         # Playwright against the full app (after pnpm build)
+```
 
 ## Roadmap
 
-1. **Foundation and functional MVP:** analyzer, Stripe and Adyen adapters, rules, exports, CLI (in progress)
-2. **Administration and hardening:** admin authentication with passkey step-up, rule-draft workflow, audit logs (planned)
-3. **Public release:** published packages, live demo, tagged release
-4. **Community expansion:** more providers and rules
+1. Foundation, analyzer, Stripe and Adyen: done
+2. Admin control plane with passkey MFA: done
+3. Wave 1 providers (payabl., Checkout.com, PayPal, Braintree, Mollie, Square): done, several with limited capabilities
+4. GitHub Pages demo and first tagged release: in progress
+5. Wave 2 and 3 providers and high-risk processors: planned, each released only when tested
+
+## License
+
+[Apache License 2.0](LICENSE).
 
 ## Maintainer
 
 [Ratomir Jovanovic](https://github.com/ratomirjovanovic)
-
-## License
-
-[Apache License 2.0](LICENSE). PandaPayLens is not affiliated with Stripe or Adyen.

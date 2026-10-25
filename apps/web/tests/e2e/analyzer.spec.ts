@@ -11,7 +11,7 @@ async function paste(page: Page, text: string) {
 
 test("home page links to the analyzer", async ({ page }) => {
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("Decode payment errors");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Understand what went wrong");
   await page.getByRole("link", { name: "Open the analyzer" }).click();
   await expect(page).toHaveURL(/\/analyze$/);
 });

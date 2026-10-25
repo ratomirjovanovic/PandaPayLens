@@ -24,7 +24,9 @@
     "test:coverage": "vitest run --coverage",
     "test:e2e": "pnpm --filter @pandapaylens/web run test:e2e",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "dev:pages": "pnpm build:packages && pnpm --filter @pandapaylens/pages run dev",
+    "build:pages": "pnpm build:packages && pnpm --filter @pandapaylens/pages run build"
   },
   "devDependencies": {
     "@types/node": "26.6.5",

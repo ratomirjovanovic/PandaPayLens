@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Scan apps/web sources even when this stylesheet is built by apps/pages. */
+@source "..";
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 :root {

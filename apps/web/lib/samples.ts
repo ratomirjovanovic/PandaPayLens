@@ -1,4 +1,5 @@
 import catalog from "@pandapaylens/fixtures/samples.json";
+import { BASE_PATH } from "./site";
 
 export type Sample = {
   id: string;
@@ -16,7 +17,7 @@ export const SAMPLES: Sample[] = catalog;
  */
 export async function loadSample(id: string): Promise<string | null> {
   if (!SAMPLES.some((s) => s.id === id) || !/^[a-z0-9-]+$/.test(id)) return null;
-  const res = await fetch(`/samples/${id}.txt`, { cache: "force-cache" });
+  const res = await fetch(`${BASE_PATH}/samples/${id}.txt`, { cache: "force-cache" });
   if (!res.ok) return null;
   const text = await res.text();
   // Pretty-print JSON examples for readability; keep other formats as they are.
