@@ -294,8 +294,8 @@ describe("finrax payments and deposits", () => {
       ["payment.NEW", "payment", "pending"],
       ["deposit_received.CONFIRMED", "payment", "success"],
       ["deposit_received.CONFIRMED", "payment", "success"],
-      ["deposit.CONFIRMED", "payment", "success"],
       ["payment.DEPOSITED", "payment", "success"],
+      ["deposit.CONFIRMED", "payment", "success"],
     ]);
     expect(r.groups).toHaveLength(1);
     expect(r.groups[0]!.references.sort()).toEqual([
@@ -332,8 +332,10 @@ describe("finrax payments and deposits", () => {
       transactionIdPresent: true,
       signatureVerified: false,
     });
-    // The snapshot has no status time, so it sorts after the dated events.
-    expect(r.events.at(-1)!.eventTimestamp).toBeUndefined();
+    // The snapshot has no status time, so it keeps its place after the callbacks.
+    expect(
+      r.events.find((e) => e.eventType === "payment.DEPOSITED")!.eventTimestamp,
+    ).toBeUndefined();
     expect(r.events.some((e) => e.stage === "settlement")).toBe(false);
     expect(ruleIds(r)).toEqual(["DUPLICATE_DELIVERY"]);
     expect(r.findings[0]!.recommendedAction).toMatch(/once per depositId/);
@@ -342,8 +344,8 @@ describe("finrax payments and deposits", () => {
   it("does not treat an underpaid DEPOSITED payment as a success", () => {
     const r = analyzeFixture("finrax/underpaid-payment.json");
     expect(r.events.map((e) => [e.eventType, e.outcome])).toEqual([
-      ["deposit.CONFIRMED", "unknown"],
       ["payment.DEPOSITED", "unknown"],
+      ["deposit.CONFIRMED", "unknown"],
     ]);
     const p = r.events.find((e) => e.eventType === "payment.DEPOSITED")!;
     expect(p.attributes).toMatchObject({
@@ -352,12 +354,13 @@ describe("finrax payments and deposits", () => {
       expectedDisplayAmount: "45.00",
       actualDisplayAmount: "22.50",
     });
-    expect(r.events[0]!.attributes).toMatchObject({
+    const d = r.events.find((e) => e.eventType === "deposit.CONFIRMED")!;
+    expect(d.attributes).toMatchObject({
       paymentAmountCheck: "actual_below_expected",
       depositCurrency: "USDT",
       depositAmount: "24.300000",
     });
-    expect(r.events[0]!.amountMinor).toBeUndefined();
+    expect(d.amountMinor).toBeUndefined();
     expect(r.groups[0]!.latestOutcome).toBe("unknown");
     expect(ruleIds(r)).toEqual(["UNRESOLVED_OUTCOME"]);
     expect(r.errors).toEqual([]);
@@ -386,11 +389,11 @@ describe("finrax payments and deposits", () => {
   it("shows an overpayment refund on the deposit without converting crypto amounts", () => {
     const r = analyzeFixture("finrax/overpaid-refund.json");
     expect(r.events.map((e) => [e.eventType, e.stage, e.outcome, e.eventTimestamp])).toEqual([
+      ["payment.OVERPAID", "payment", "success", undefined],
       ["deposit.CONFIRMED", "payment", "success", "2026-10-23T01:51:40.000Z"],
       ["refund.CONFIRMED", "refund", "success", "2026-10-23T02:11:40.000Z"],
-      ["payment.OVERPAID", "payment", "success", undefined],
     ]);
-    const refund = r.events[1]!;
+    const refund = r.events.find((e) => e.eventType === "refund.CONFIRMED")!;
     expect(refund).toMatchObject({
       paymentReference: "PPLsynth-pay-0003",
       relatedReference: "PPLsynth-dep-0003",
@@ -413,9 +416,9 @@ describe("finrax payments and deposits", () => {
   it("decodes a blocked deposit with an illicit-deposit refund awaiting an address", () => {
     const r = analyzeFixture("finrax/blocked-deposit.json");
     expect(r.events.map((e) => [e.eventType, e.outcome])).toEqual([
+      ["payment.BLOCKED", "failure"],
       ["deposit.BLOCKED", "failure"],
       ["refund.AWAITING_ADDRESS_INPUT", "pending"],
-      ["payment.BLOCKED", "failure"],
     ]);
     expect(
       r.errors.map((e) => [e.code, e.subCodes.object, e.category, e.retry, e.confidence]),
@@ -430,8 +433,10 @@ describe("finrax payments and deposits", () => {
       attemptReference: "PPLsynth-dep-0004",
       source: { path: "deposits[0]" },
     });
-    expect(r.events[1]!.attributes.destinationAddressPresent).toBe(false);
-    expect(r.events[0]!.attributes.riskAssessmentPresent).toBe(true);
+    const refund = r.events.find((e) => e.eventType === "refund.AWAITING_ADDRESS_INPUT")!;
+    const deposit = r.events.find((e) => e.eventType === "deposit.BLOCKED")!;
+    expect(refund.attributes.destinationAddressPresent).toBe(false);
+    expect(deposit.attributes.riskAssessmentPresent).toBe(true);
     expect(ruleIds(r)).toEqual(["PAYMENT_FAILURE", "REFUND_PENDING"]);
     expect(JSON.stringify(r.events)).not.toContain("Darknet");
   });
