@@ -11,6 +11,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Providers
 
+- Worldpay XML is analyzed:
+  - WPG `paymentService` replies (error codes, order status with `lastEvent`, the standard `ISO8583ReturnCode` values) and order notifications, linked by order code. Amounts follow the documented exponent; partial captures and refunds use the journal amount. Paste WPG documents without their DOCTYPE line, which is rejected for safety.
+  - cnpAPI `cnpOnlineResponse` transaction responses with the 379 documented payment transaction response codes and the request validation codes.
+  - WPG requests, reports, batch files and other replies are recognized and reported as unsupported. Extended ISO 8583 codes are shown with Worldpay's description but not decoded, because the WPG documentation does not tie them to a table.
 - Checkout.com no longer appears as a 0.4 alternative for records whose only Checkout.com trait is a `pay_` id, such as Razorpay payment entities. A bare `pay_` id now scores 0.3 (documented length) or 0.15 (other lengths), below a record with documented fields.
 
 ## [0.11.0] - 2026-10-25

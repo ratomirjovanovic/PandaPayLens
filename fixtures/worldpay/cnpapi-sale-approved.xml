@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cnpOnlineResponse version="12.49" xmlns="http://www.vantivcnp.com/schema" response="0" message="Valid Format">
+  <saleResponse id="PPLsynth-sale-01" reportGroup="PPLsynthGroup">
+    <cnpTxnId>820000000000000101</cnpTxnId>
+    <orderId>PPLsynth-cnp-order-0101</orderId>
+    <response>000</response>
+    <responseTime>2026-10-24T14:20:30Z</responseTime>
+    <postDate>2026-10-24</postDate>
+    <message>Approved</message>
+    <authCode>PPL101</authCode>
+  </saleResponse>
+</cnpOnlineResponse>

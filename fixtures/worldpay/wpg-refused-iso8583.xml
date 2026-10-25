@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<paymentService version="1.4" merchantCode="PPLSYNTHMERCHANT">
+  <reply>
+    <orderStatus orderCode="PPLsynth-wpg-order-0102">
+      <payment>
+        <paymentMethod>ECMC_CREDIT-SSL</paymentMethod>
+        <amount value="2550" currencyCode="GBP" exponent="2" debitCreditIndicator="credit"/>
+        <lastEvent>REFUSED</lastEvent>
+        <ISO8583ReturnCode code="5" description="REFUSED"/>
+        <CVCResultCode description="C"/>
+        <AVSResultCode description="E"/>
+        <cardHolderName><![CDATA[Planted Synthetic Holder]]></cardHolderName>
+        <cardNumber>5555********4444</cardNumber>
+        <shippingAddress>
+          <address>
+            <firstName>Planted</firstName>
+            <lastName>Synthetic</lastName>
+            <street>77 Planted Synthetic Road</street>
+            <postalCode>PL7 7SY</postalCode>
+            <city>Plantedtown</city>
+            <countryCode>GB</countryCode>
+          </address>
+        </shippingAddress>
+        <shopperEmailAddress>planted.holder@example.invalid</shopperEmailAddress>
+      </payment>
+    </orderStatus>
+  </reply>
+</paymentService>

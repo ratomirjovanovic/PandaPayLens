@@ -1,8 +1,10 @@
 import type { ProviderManifest } from "@pandapaylens/core";
 
-export const WORLDPAY_ADAPTER_VERSION = "0.1.0";
+export const WORLDPAY_ADAPTER_VERSION = "0.2.0";
 
 const ACCESS = "https://docs.worldpay.com/access/products";
+const WPG = "https://docs.worldpay.com/apis/wpg";
+const CNP = "https://docs.worldpay.com/apis/cnpapi";
 
 export const worldpayManifest: ProviderManifest = {
   id: "worldpay",
@@ -19,7 +21,7 @@ export const worldpayManifest: ProviderManifest = {
     'Worldpay states that "All payment features are subject to regional availability"; WPG is documented as globally available. Several Access features are Enterprise only versus SMB (Worldpay eCommerce). Financial services data (MCC 6012/6051) is required for providers in the Visa Europe region. Refusal code 13 also covers monthly gambling limits (Europe EUR 50,000; Azerbaijan, Moldova and Ukraine EUR 10,000). Card Payments v7 reversals refund US entities one day after the request and others after 15 minutes.',
   documentationAccess: "public",
   fixtureProvenance:
-    "Synthetic fixtures with PPLsynth identifiers, shaped after the public Access Worldpay OpenAPI files (Payments API 2024-06-01, Card Payments v7, Payment Queries v1, Events v1) and the webhook examples of the hosted payment pages and online refunds pages. Event ids are not UUIDs so that they can carry the PPLsynth marker. None is an official Worldpay example.",
+    "Synthetic fixtures with PPLsynth identifiers, shaped after the public Access Worldpay OpenAPI files (Payments API 2024-06-01, Card Payments v7, Payment Queries v1, Events v1) and the webhook examples of the hosted payment pages and online refunds pages. Event ids are not UUIDs so that they can carry the PPLsynth marker. WPG fixtures follow the paymentService DTD 1.4.2 and the reply and order notification descriptions of the public WPG pages; cnpAPI fixtures follow the cnpOnline and cnpTransaction XSD v12.49 of the archived official Java SDK and the public response code page. None is an official Worldpay example.",
   status: "limited",
   apiFamilies: [
     {
@@ -63,14 +65,33 @@ export const worldpayManifest: ProviderManifest = {
       status: "unsupported",
     },
     {
+      id: "worldpay.wpg.reply",
+      description:
+        "WPG (Worldwide Payment Gateway) paymentService replies: error codes 1-14, orderStatus with payment (lastEvent, amount, ISO8583ReturnCode) or error, and ok modification acknowledgements; pasted as XML without the DOCTYPE line or as an HTTP response body",
+      status: "limited",
+    },
+    {
+      id: "worldpay.wpg.notification",
+      description:
+        "WPG order notifications (notify/orderStatusEvent with payment, lastEvent, amount, ISO8583ReturnCode and journal); pasted as XML without the DOCTYPE line or as an HTTP request body",
+      status: "limited",
+    },
+    {
       id: "worldpay.wpg",
       description:
-        "WPG (Worldwide Payment Gateway) paymentService XML replies and order notifications; XML input is not supported",
+        "Other WPG documents: requests (submit, modify, inquiry, verify), order and transfer reports, batch status and other replies; recognized, not analyzed",
       status: "unsupported",
     },
     {
+      id: "worldpay.cnpapi.online_response",
+      description:
+        "cnpAPI (formerly Vantiv eCommerce) cnpOnlineResponse with an authorization, sale, capture, capture given auth, force capture, credit, void or authorization reversal response (response, message, cnpTxnId, orderId, responseTime), and rejected requests (response attribute 1 to 5)",
+      status: "limited",
+    },
+    {
       id: "worldpay.cnpapi",
-      description: "cnpAPI (formerly Vantiv eCommerce) XML; XML input is not supported",
+      description:
+        "Other cnpAPI documents: batch files (cnpResponse, batchResponse), requests and other transaction responses (eCheck, gift card, token, funding and others); recognized, not analyzed",
       status: "unsupported",
     },
   ],
@@ -147,6 +168,40 @@ export const worldpayManifest: ProviderManifest = {
       url: `${ACCESS}/hosted-payment-pages/webhooks`,
     },
     { topic: "testing", title: "Payments API testing values", url: `${ACCESS}/payments/testing` },
+    { topic: "wpg", title: "WPG (Worldwide Payment Gateway) XML API", url: WPG },
+    { topic: "wpg-errors", title: "WPG error codes", url: `${WPG}/troubleshoot` },
+    {
+      topic: "wpg-notifications",
+      title: "WPG order notifications and payment statuses",
+      url: `${WPG}/manage`,
+    },
+    { topic: "wpg-payment-process", title: "WPG payment process", url: `${WPG}/reference` },
+    {
+      topic: "wpg-response-codes",
+      title: "WPG authorisation response codes (ISO8583ReturnCode)",
+      url: `${WPG}/reference/usefultables`,
+    },
+    {
+      topic: "wpg-payment-requests",
+      title: "WPG payment requests and replies",
+      url: `${WPG}/directintegration/paymentrequests`,
+    },
+    { topic: "cnpapi", title: "cnpAPI introduction", url: CNP },
+    {
+      topic: "cnpapi-response-codes",
+      title: "cnpAPI payment transaction response codes",
+      url: `${CNP}/responsecodes/paymenttransaction`,
+    },
+    {
+      topic: "cnpapi-xml-validation",
+      title: "cnpAPI XML validation messages",
+      url: `${CNP}/responsecodes/xmlvalidation`,
+    },
+    {
+      topic: "cnpapi-header-errors",
+      title: "cnpAPI additional response header error messages",
+      url: `${CNP}/responsecodes/additionalresponseheaders`,
+    },
   ],
   verifiedAt: "2026-10-25",
   delivery: {
@@ -158,7 +213,14 @@ export const worldpayManifest: ProviderManifest = {
     docsUrl: `${ACCESS}/events`,
   },
   limitations: [
-    "Only Access Worldpay JSON is analyzed. WPG (paymentService XML, order notifications) and cnpAPI (XML) are documented by Worldpay but XML input is not supported. Account payouts webhooks (PaymentOutNotification) and Event Notifications (limited beta, format not documented) are not analyzed.",
+    "Account payouts webhooks (PaymentOutNotification) and Event Notifications (limited beta, format not documented) are not analyzed.",
+    "WPG documents begin with <!DOCTYPE paymentService ...>. PandaPayLens rejects any DOCTYPE declaration, so a WPG reply or order notification must be pasted without that line (also inside a raw HTTP message). One XML document is one record; several notifications are analyzed together when they are imported as separate inputs.",
+    "WPG: replies with <error> (the 14 DTD codes are decoded; the error text is provider text and is shown scrubbed), orderStatus and orderStatusEvent payments (all 26 documented lastEvent values, including CAPTURE_FAILED, which appears only in an example) and <ok> acknowledgements of capture, cancel, refund and void requests are analyzed. Batch status, token, address check and other replies, reports and requests are recognized but not analyzed. CGI/Text notifications are not supported.",
+    "WPG ISO8583ReturnCode: only the seven standard codes (0, 2, 5, 6, 34, 973, 975) are decoded. Extended response codes and codes from other acquirers keep the code and Worldpay's description, with an unknown category, because the WPG pages do not say that they follow the Access Worldpay refusal codes. IssuerResponseCode, schemeResponse, FraudSight, riskScore and 3DS results are not read; CVC and AVS result descriptions are shown as attributes.",
+    "WPG amounts are read from <amount value currencyCode exponent> and converted to minor units of the currency (left out when that would need rounding). Capture, refund, settlement and dispute events use the journal (accountTx) amount, which is the amount moved by that step; when the journal has no amount or amounts that differ, no amount is set and the order amount is shown as an attribute. WPG dates (bookingDate) carry no time zone, so WPG events have no event time and follow the input order.",
+    "WPG events are linked by orderCode, which Worldpay requires to be unique per order, and are never linked to Access Worldpay records. merchantCode, card numbers, card holder names, addresses, email addresses and authorisation ids are never read. WPG order notifications carry no notification id, so repeated deliveries are recognized only when their content is identical; authenticity (client certificate, reverse DNS) cannot be verified from pasted data.",
+    "cnpAPI: only cnpOnlineResponse in the namespace http://www.vantivcnp.com/schema is read (the older Litle schema is not). The 379 payment transaction response codes of the public response code page are decoded with their message and Worldpay's response type (Approved, Soft Decline, Hard Decline, Referral and others); retry guidance follows that type, and only codes whose message names the reason (for example insufficient funds) get a category. Responses with the response attribute 1 to 5 are decoded as rejected requests. Batch files, requests, AVS, card validation, fraud and 3DS result codes and other transaction responses are not analyzed.",
+    "cnpAPI responseTime is used as event time only when it carries a time zone; otherwise it is shown as sent. cnpAPI amounts are not read (approvedAmount is shown as sent, without a currency). Responses are linked by cnpTxnId and by the merchant's orderId; a capture, credit or void response carries a new cnpTxnId and no orderId, so it joins its authorization only through another record.",
     "No merchant sectors are listed: Worldpay publishes no list of accepted sectors. Its sector pages (financial services MCC 6012/6051, crypto ramp providers, airline, lodging and purchasing Level 2/3 data) and the gambling limit footnote are integration requirements, not eligibility statements.",
     "refusalCode carries the Worldpay refusal code by default, but the raw scheme or acquirer code when the merchant is configured for raw codes. Card Payments v7 then adds gatewayRefusalCode with the Worldpay code, and Card Payments v6 used separate code and rawCode fields. The Payments API has no such field, so a lone refusalCode is read as a Worldpay code, with possible confidence when the raw tables give it a different meaning (for example 55, 63 or Amex 106). Zero-padded and alphanumeric codes (05, 1A, N7) are read as raw codes.",
     "The scheme of a raw code is not taken from the payload, so a raw code with different meanings per scheme (for example 51 is a generic decline for Discover) is decoded with possible confidence and all scheme readings are shown. Worldpay notes that raw codes from third-party acquirers may not be listed at all.",

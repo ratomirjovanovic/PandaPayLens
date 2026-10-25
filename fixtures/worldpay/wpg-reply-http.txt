@@ -1,0 +1,20 @@
+HTTP/1.1 200 OK
+Content-Type: text/xml; charset=UTF-8
+
+<?xml version="1.0" encoding="UTF-8"?>
+<paymentService version="1.4" merchantCode="PPLSYNTHMERCHANT">
+  <reply>
+    <orderStatus orderCode="PPLsynth-wpg-order-0301">
+      <payment>
+        <paymentMethod>VISA_DEBIT-SSL</paymentMethod>
+        <amount value="1250" currencyCode="JPY" exponent="0" debitCreditIndicator="credit"/>
+        <lastEvent>AUTHORISED</lastEvent>
+        <AuthorisationId id="PPL301"/>
+        <balance accountType="IN_PROCESS_AUTHORISED">
+          <amount value="1250" currencyCode="JPY" exponent="0" debitCreditIndicator="credit"/>
+        </balance>
+        <cardNumber>4444********1111</cardNumber>
+      </payment>
+    </orderStatus>
+  </reply>
+</paymentService>

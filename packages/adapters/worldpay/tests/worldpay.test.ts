@@ -236,15 +236,24 @@ describe("worldpay parsing", () => {
     });
   });
 
-  it("reports XML (WPG, cnpAPI) as an unsupported record and fails cleanly on malformed JSON", () => {
+  it("reports WPG requests as unsupported records and fails cleanly on malformed JSON", () => {
     const xml = analyzeText(
-      '<?xml version="1.0"?><paymentService version="1.4" merchantCode="PPLSYNTH"><reply/></paymentService>',
+      '<?xml version="1.0"?><paymentService version="1.4" merchantCode="PPLSYNTH"><submit/></paymentService>',
       options,
     );
     expect(xml).toMatchObject({
       ok: true,
-      result: { records: [{ status: "unsupported" }], events: [] },
+      result: {
+        records: [{ status: "unsupported", provider: "worldpay", format: "worldpay.wpg" }],
+        events: [],
+      },
     });
+    // An empty reply has nothing to analyze and is not attributed.
+    const empty = analyzeText(
+      '<paymentService version="1.4" merchantCode="PPLSYNTH"><reply/></paymentService>',
+      options,
+    );
+    expect(empty).toMatchObject({ ok: true, result: { records: [{ status: "unsupported" }] } });
     const bad = analyzeText('{"eventId": "PPLsynth-evt", "eventDetails": {', options);
     expect(bad.ok).toBe(false);
   });
@@ -892,7 +901,7 @@ describe("worldpay manifest and catalog", () => {
     });
     const text = worldpayManifest.limitations.join(" ");
     expect(text).toMatch(/gatewayRefusalCode/);
-    expect(text).toMatch(/XML input is not supported/);
+    expect(text).toMatch(/must be pasted without that line/);
     expect(text).toMatch(/No merchant sectors are listed/);
     expect(manifestOnly).toBe(worldpayManifest);
     expect(defaultExport).toBe(worldpayAdapter);

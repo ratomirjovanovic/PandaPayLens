@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<paymentService version="1.4" merchantCode="PPLSYNTHMERCHANT">
+  <notify>
+    <orderStatusEvent orderCode="PPLsynth-wpg-order-0201">
+      <payment>
+        <paymentMethod>VISA_CREDIT-SSL</paymentMethod>
+        <amount value="2400" currencyCode="EUR" exponent="2" debitCreditIndicator="credit"/>
+        <lastEvent>AUTHORISED</lastEvent>
+        <AuthorisationId id="PPL201"/>
+        <CVCResultCode description="NOT SENT TO ACQUIRER"/>
+        <AVSResultCode description="NOT SENT TO ACQUIRER"/>
+        <cardHolderName><![CDATA[Planted Synthetic Holder]]></cardHolderName>
+        <balance accountType="IN_PROCESS_AUTHORISED">
+          <amount value="2400" currencyCode="EUR" exponent="2" debitCreditIndicator="credit"/>
+        </balance>
+        <cardNumber>4444********1111</cardNumber>
+        <riskScore value="0"/>
+      </payment>
+      <journal journalType="AUTHORISED">
+        <bookingDate>
+          <date dayOfMonth="24" month="10" year="2026"/>
+        </bookingDate>
+        <accountTx accountType="IN_PROCESS_AUTHORISED" batchId="30">
+          <amount value="2400" currencyCode="EUR" exponent="2" debitCreditIndicator="credit"/>
+        </accountTx>
+      </journal>
+    </orderStatusEvent>
+  </notify>
+</paymentService>

@@ -30,7 +30,6 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 
 ### Analyzer
 
-- XML for Worldpay (WPG and cnpAPI). emerchantpay, Skrill, Authorize.net, BlueSnap and Inpay (ISO 20022) XML responses are analyzed since 0.11.0.
 - Plain `key: value` text responses used by some legacy APIs.
 - Keyboard navigation between timeline events ([#3](https://github.com/ratomirjovanovic/PandaPayLens/issues/3)).
 

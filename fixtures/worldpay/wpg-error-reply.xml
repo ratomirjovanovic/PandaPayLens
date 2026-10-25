@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<paymentService version="1.4" merchantCode="PPLSYNTHMERCHANT">
+  <reply>
+    <error code="5"><![CDATA[XML failed validation: Invalid payment details : Cardholder name might contain a card number.]]></error>
+  </reply>
+</paymentService>

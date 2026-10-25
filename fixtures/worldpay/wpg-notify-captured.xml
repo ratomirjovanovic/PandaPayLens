@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<paymentService version="1.4" merchantCode="PPLSYNTHMERCHANT">
+  <notify>
+    <orderStatusEvent orderCode="PPLsynth-wpg-order-0201">
+      <payment>
+        <paymentMethod>VISA_CREDIT-SSL</paymentMethod>
+        <amount value="2400" currencyCode="EUR" exponent="2" debitCreditIndicator="credit"/>
+        <lastEvent>CAPTURED</lastEvent>
+        <balance accountType="IN_PROCESS_CAPTURED">
+          <amount value="1500" currencyCode="EUR" exponent="2" debitCreditIndicator="credit"/>
+        </balance>
+        <cardNumber>4444********1111</cardNumber>
+      </payment>
+      <journal journalType="CAPTURED">
+        <bookingDate>
+          <date dayOfMonth="25" month="10" year="2026"/>
+        </bookingDate>
+        <accountTx accountType="IN_PROCESS_AUTHORISED" batchId="31">
+          <amount value="1500" currencyCode="EUR" exponent="2" debitCreditIndicator="debit"/>
+        </accountTx>
+        <accountTx accountType="IN_PROCESS_CAPTURED" batchId="31">
+          <amount value="1500" currencyCode="EUR" exponent="2" debitCreditIndicator="credit"/>
+        </accountTx>
+      </journal>
+    </orderStatusEvent>
+  </notify>
+</paymentService>

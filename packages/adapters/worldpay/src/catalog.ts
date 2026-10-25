@@ -16,6 +16,9 @@
  * retry guidance is Worldpay's own. Worldpay warns that the refusal list
  * "might not be exhaustive" and that the error-name list is "not
  * comprehensive", so unknown codes are always possible.
+ *
+ * The WPG and cnpAPI (XML) tables at the end of this file list their own
+ * sources.
  */
 
 import type { ErrorCategory, LifecycleStage, Outcome, RetryGuidance } from "@pandapaylens/core";
@@ -1606,4 +1609,950 @@ export const NEXT_ACTION: Record<ErrorCategory, string> = {
   configuration:
     "Check the merchant entity, credentials and account configuration, or ask your Worldpay Implementation Manager.",
   unknown: "Contact Worldpay support with the payment id and the WP-CorrelationId response header.",
+};
+
+// ---------------------------------------------------------------------------
+// WPG (Worldwide Payment Gateway, paymentService XML) and cnpAPI (XML)
+//
+// Sources, verified 2026-10-25:
+//
+// paymentService DTD 1.4.2:      http://dtd.worldpay.com/paymentService_v1.dtd (error codes 1-14,
+//                                reply, notify, orderStatus, orderStatusEvent, payment, amount,
+//                                lastEvent, ISO8583ReturnCode, journal, ok)
+// WPG error codes:               https://docs.worldpay.com/apis/wpg/troubleshoot
+// WPG statuses:                  https://docs.worldpay.com/apis/wpg/manage (order notifications)
+//                                and https://docs.worldpay.com/apis/wpg/reference (the payment process)
+// WPG ISO8583ReturnCode values:  https://docs.worldpay.com/apis/wpg/reference/usefultables
+//                                (authorisation response codes)
+// cnpAPI schema:                 https://raw.githubusercontent.com/Vantiv/cnp-sdk-for-java/HEAD/src/main/xsd/cnpOnline_v12.49.xsd
+//                                and cnpTransaction_v12.49.xsd (namespace, cnpOnlineResponse,
+//                                transaction response element names)
+// cnpAPI response codes:         https://docs.worldpay.com/apis/cnpapi/responsecodes/paymenttransaction
+// cnpAPI response attribute:     https://docs.worldpay.com/apis/cnpapi/responsecodes/xmlvalidation
+//                                and https://docs.worldpay.com/apis/cnpapi/responsecodes/additionalresponseheaders
+
+export const WPG_TROUBLESHOOT_URL = `${WPG_URL}/troubleshoot`;
+export const WPG_NOTIFICATIONS_URL = `${WPG_URL}/manage`;
+export const WPG_PAYMENT_PROCESS_URL = `${WPG_URL}/reference`;
+export const WPG_USEFUL_TABLES_URL = `${WPG_URL}/reference/usefultables`;
+export const WPG_PAYMENT_REQUESTS_URL = `${WPG_URL}/directintegration/paymentrequests`;
+export const WPG_DTD_URL = "http://dtd.worldpay.com/paymentService_v1.dtd";
+export const CNP_RESPONSE_CODES_URL = `${CNPAPI_URL}/responsecodes/paymenttransaction`;
+export const CNP_XML_VALIDATION_URL = `${CNPAPI_URL}/responsecodes/xmlvalidation`;
+export const CNP_HEADER_ERRORS_URL = `${CNPAPI_URL}/responsecodes/additionalresponseheaders`;
+export const CNP_NAMESPACE = "http://www.vantivcnp.com/schema";
+
+export type WpgErrorEntry = {
+  /** Name of the code in the DTD comment. */
+  name: string;
+  meaning: string;
+  category: ErrorCategory;
+  retry: RetryGuidance;
+  /** The request was rejected and did not take effect. */
+  rejected: boolean;
+};
+
+const wpgError = (
+  name: string,
+  meaning: string,
+  category: ErrorCategory,
+  retry: RetryGuidance,
+  rejected = true,
+): WpgErrorEntry => ({ name, meaning, category, retry, rejected });
+
+/**
+ * WPG `<error code="...">` values (14), from the DTD comment and the WPG
+ * troubleshooting page. The DTD allows exactly these codes. Category and retry
+ * values are PandaPayLens suggestions; codes 1, 8, 9, 13 and 14 are
+ * server-side, so the request may or may not have taken effect.
+ */
+export const WPG_ERROR_CODES: Record<string, WpgErrorEntry> = {
+  "1": wpgError(
+    "ERROR_INTERNAL",
+    "General internal error; the request could not be processed and Worldpay asks to be contacted",
+    "provider_unavailable",
+    "manual_review",
+    false,
+  ),
+  "2": wpgError(
+    "ERROR_PARSE",
+    "The XML could not be parsed or is not valid against the DTD",
+    "invalid_request",
+    "do_not_retry",
+  ),
+  "3": wpgError(
+    "ERROR_ORDER_AMOUNT",
+    "The order or the amount is invalid",
+    "invalid_amount",
+    "do_not_retry",
+  ),
+  "4": wpgError(
+    "ERROR_SECURITY",
+    "Security violation: the login merchant code does not match merchantCode in paymentService, the IP address is not registered, or the environment is not active",
+    "configuration",
+    "do_not_retry",
+  ),
+  "5": wpgError(
+    "ERROR_INVALID_REQUEST",
+    "Invalid request, for example a duplicate order, a cancel of an order that does not exist, invalid order content, or a rejected dispute attachment",
+    "invalid_request",
+    "do_not_retry",
+  ),
+  "6": wpgError(
+    "ERROR_INVALID_CONTENT",
+    "One or more orders within a batch submission are invalid",
+    "invalid_request",
+    "do_not_retry",
+  ),
+  "7": wpgError(
+    "ERROR_PAYMENT_DETAILS",
+    "The payment details are not correct (for example an expiry date in the past), or a flexible account variable was rejected",
+    "invalid_request",
+    "customer_action_required",
+  ),
+  "8": wpgError(
+    "ERROR_NOT_AVAILABLE",
+    "The service is currently not available; try again later",
+    "provider_unavailable",
+    "safe_to_retry_technical_request",
+    false,
+  ),
+  "9": wpgError(
+    "ERROR_IDEMPOTENCY_SERVICE",
+    "Idempotency service error",
+    "provider_unavailable",
+    "manual_review",
+    false,
+  ),
+  "10": wpgError(
+    "ERROR_PRIME_ROUTING",
+    "Invalid prime routing request (for example not enabled or an invalid network name)",
+    "configuration",
+    "do_not_retry",
+  ),
+  "11": wpgError(
+    "ERROR_L2_L3_DATA",
+    "The XML supplied for the purchase element (Level 2/3 data) is invalid",
+    "invalid_request",
+    "do_not_retry",
+  ),
+  "12": wpgError(
+    "ERROR_LODGING_DATA",
+    "The XML supplied for the lodgingInfo element is invalid",
+    "invalid_request",
+    "do_not_retry",
+  ),
+  "13": wpgError(
+    "ERROR_3DS_FLEX",
+    "Error in the communication with Cardinal (3DS Flex)",
+    "provider_unavailable",
+    "retry_conditionally",
+    false,
+  ),
+  "14": wpgError(
+    "ERROR_TOKEN_MANAGEMENT_SERVICE",
+    "Error in the processing of, or communication with, the token management service",
+    "provider_unavailable",
+    "retry_conditionally",
+    false,
+  ),
+};
+
+/**
+ * WPG payment statuses (`<lastEvent>`), from the order notifications page and
+ * the payment process page. Statuses depend on the service level (C, M, R, S,
+ * A). CAPTURE_FAILED appears only in an order notification example.
+ */
+export const WPG_LAST_EVENTS: Record<string, EventInfo> = {
+  SENT_FOR_AUTHORISATION: ev(
+    "authorization",
+    "pending",
+    "Permission to process the payment was requested from the card issuer",
+  ),
+  AUTHORISED: ev(
+    "authorization",
+    "success",
+    "Approved; the funds are reserved in the shopper's account",
+    "An authorisation is a strong indication but not a guarantee of payment.",
+  ),
+  REFUSED: ev(
+    "authorization",
+    "failure",
+    "Declined by a third party or by a Worldpay fraud detection service",
+  ),
+  ERROR: ev(
+    "payment",
+    "failure",
+    "The payment was not completed; the shopper may want to reattempt it",
+  ),
+  CANCELLED: ev(
+    "cancellation",
+    "success",
+    "Stopped by the merchant or by a Worldpay fraud detection service",
+  ),
+  EXPIRED: ev(
+    "cancellation",
+    "failure",
+    "The authorisation period ended before a capture or cancel request was made",
+  ),
+  CAPTURED: ev(
+    "capture",
+    "success",
+    "The reserved funds were taken and are travelling to the merchant or Worldpay account",
+  ),
+  CAPTURE_FAILED: ev(
+    "capture",
+    "failure",
+    "Capture failed",
+    "This status appears only in an order notification example; Worldpay does not describe it.",
+  ),
+  SETTLED: ev(
+    "settlement",
+    "success",
+    "Worldpay received the funds and prepares the transfer to the merchant's bank account (M, R and S level)",
+  ),
+  SETTLED_BY_MERCHANT: ev(
+    "settlement",
+    "success",
+    "The gateway instructed the acquirer to transfer the funds; the acquirer confirms the actual settlement (C level)",
+  ),
+  SENT_FOR_REFUND: ev(
+    "refund",
+    "pending",
+    "A refund was requested; for an online refund this means the issuer authorised it",
+  ),
+  SENT_FOR_FAST_REFUND: ev(
+    "refund",
+    "pending",
+    "A Fast Refund was requested (C level, Visa and Mastercard only)",
+  ),
+  REFUNDED: ev(
+    "refund",
+    "success",
+    "The issuer will process the refund and the shopper will receive it (M, R and S level)",
+  ),
+  REFUNDED_BY_MERCHANT: ev(
+    "refund",
+    "success",
+    "The gateway instructed the acquirer to process the refund; the acquirer confirms the actual refund (C level)",
+  ),
+  REFUND_FAILED: ev(
+    "refund",
+    "failure",
+    "The refund could not be processed and the funds were returned to the merchant; for an online refund the issuer refused it",
+  ),
+  PUSH_REQUESTED: ev(
+    "payout",
+    "pending",
+    "Worldpay received the Fast Access disbursement request (C level)",
+  ),
+  PUSH_PENDING: ev(
+    "payout",
+    "pending",
+    "The disbursement was sent to Visa Direct or Mastercard Send and awaits a response (C level)",
+    "Worldpay: never resubmit a transaction in PUSH_PENDING, as this may cause a duplicate payment.",
+  ),
+  PUSH_APPROVED: ev(
+    "payout",
+    "success",
+    "Visa Direct or Mastercard Send approved the disbursement (C level)",
+  ),
+  PUSH_REFUSED: ev(
+    "payout",
+    "failure",
+    "The Fast Access disbursement request was refused (C level)",
+  ),
+  INFORMATION_REQUESTED: ev(
+    "dispute",
+    "pending",
+    "The card issuer requested information; the disputed amount is held (M, R and S level)",
+  ),
+  INFORMATION_SUPPLIED: ev(
+    "dispute",
+    "pending",
+    "Defence information was sent for the dispute (M, R and S level)",
+  ),
+  CHARGED_BACK: ev(
+    "dispute",
+    "failure",
+    "The funds were returned to the shopper after the card issuer's decision (M, R and S level)",
+  ),
+  CHARGEBACK_REVERSED: ev(
+    "dispute",
+    "success",
+    "Additional defence information reversed the chargeback (M, R and S level)",
+  ),
+  DISPUTE_EXPIRED: ev(
+    "dispute",
+    "unknown",
+    "The time frame for the dispute ended without a result (M, R and S level)",
+  ),
+  DISPUTE_RESERVE_RELEASED: ev(
+    "dispute",
+    "success",
+    "The card issuer ruled in the merchant's favour and the funds were released (M, R and S level)",
+  ),
+  VOIDED: ev(
+    "void",
+    "success",
+    "The void of a sale succeeded",
+    "US and Canada domestic acquiring only.",
+  ),
+};
+
+/** WPG modification acknowledgements (`<reply><ok>`), from the DTD comment. */
+export const WPG_OK_REPLIES: Record<string, EventInfo> = {
+  captureReceived: ev("capture", "pending", "Capture request received"),
+  cancelReceived: ev("cancellation", "pending", "Cancel request received"),
+  refundReceived: ev("refund", "pending", "Refund request received"),
+  voidReceived: ev("void", "pending", "Void request received"),
+};
+
+export type WpgReturnCodeEntry = {
+  message: string;
+  kind: CodeKind;
+  category: ErrorCategory;
+  retry: RetryGuidance;
+  /** Whether the standard and extended tables agree on the meaning. */
+  confidence: "strong" | "possible";
+  note?: string;
+};
+
+const wpgCode = (
+  message: string,
+  category: ErrorCategory,
+  retry: RetryGuidance,
+  confidence: "strong" | "possible",
+  note?: string,
+): WpgReturnCodeEntry => ({
+  message,
+  kind: "decline",
+  category,
+  retry,
+  confidence,
+  ...(note ? { note } : {}),
+});
+
+/**
+ * The seven standard WPG `<ISO8583ReturnCode>` values (useful tables page,
+ * authorisation response codes). The extended table of the same page uses
+ * these numbers with the same or a compatible meaning; code 6 reads "Error OR
+ * Try another card" there. Other codes come from the extended table, which
+ * PandaPayLens does not decode. The WPG pages do not say that WPG return codes
+ * follow the Access Worldpay refusal codes, so those tables are not used.
+ */
+export const WPG_STANDARD_RETURN_CODES: Record<string, WpgReturnCodeEntry> = {
+  "0": {
+    message: "AUTHORISED",
+    kind: "approval",
+    category: "unknown",
+    retry: "unknown",
+    confidence: "strong",
+    note: "This is an approval code, not a decline.",
+  },
+  "2": wpgCode("REFERRED", "card_declined", "customer_action_required", "strong"),
+  "5": wpgCode(
+    "Refused - Do Not Honor (Visa) OR REFUSED (Mastercard)",
+    "card_declined",
+    "customer_action_required",
+    "strong",
+  ),
+  "6": wpgCode(
+    "REFUSED",
+    "card_declined",
+    "customer_action_required",
+    "possible",
+    "Worldpay's note: try another card. The extended table reads this code as Error or Try another card.",
+  ),
+  "34": wpgCode(
+    "FRAUD SUSPICION",
+    "fraud_or_risk",
+    "manual_review",
+    "strong",
+    "Applies only with a Worldpay fraud detection service.",
+  ),
+  "973": wpgCode(
+    "Revocation of Authorization Order",
+    "card_declined",
+    "do_not_retry",
+    "strong",
+    "Recurring or tokenised billing: Worldpay says to stop any further authorisation attempts against this card and to notify the cardholder.",
+  ),
+  "975": wpgCode(
+    "Revocation of All Authorizations Order",
+    "card_declined",
+    "do_not_retry",
+    "strong",
+    "Recurring or tokenised billing: Worldpay says to stop any further authorisation attempts against this card and to notify the cardholder.",
+  ),
+};
+
+/**
+ * cnpAPI `response` attribute of cnpOnlineResponse (XML validation and
+ * additional response header pages). 0 means the request was valid XML; the
+ * transaction result is in the transaction response element.
+ */
+export const CNP_HEADER_RESPONSES: Record<
+  string,
+  { meaning: string; category: ErrorCategory; retry: RetryGuidance }
+> = {
+  "0": { meaning: "Valid format", category: "unknown", retry: "unknown" },
+  "1": {
+    meaning:
+      "The request failed XML validation against the schema; the message attribute names the problem",
+    category: "invalid_request",
+    retry: "do_not_retry",
+  },
+  "2": {
+    meaning: "The submission is not valid XML containing the user and password elements",
+    category: "invalid_request",
+    retry: "do_not_retry",
+  },
+  "3": {
+    meaning: "Empty or invalid credentials (user and password); Worldpay says to verify them",
+    category: "configuration",
+    retry: "do_not_retry",
+  },
+  "4": {
+    meaning:
+      "The merchant exceeded the maximum number of concurrent connections; Worldpay says the request can be resubmitted",
+    category: "rate_limiting",
+    retry: "safe_to_retry_technical_request",
+  },
+  "5": {
+    meaning:
+      "Objectionable content was detected or the message exceeds 20K characters; Worldpay says to reduce the message size or contact support",
+    category: "invalid_request",
+    retry: "do_not_retry",
+  },
+};
+
+/**
+ * cnpAPI transaction responses that are analyzed (element names from the
+ * cnpAPI XSD v12.49). A sale is an authorization and capture in one request.
+ */
+export const CNP_TRANSACTION_RESPONSES: Record<string, { stage: LifecycleStage; label: string }> = {
+  authorizationResponse: { stage: "authorization", label: "Authorization" },
+  saleResponse: { stage: "payment", label: "Sale (authorization and capture)" },
+  captureResponse: { stage: "capture", label: "Capture" },
+  captureGivenAuthResponse: { stage: "capture", label: "Capture given auth" },
+  forceCaptureResponse: { stage: "capture", label: "Force capture" },
+  creditResponse: { stage: "refund", label: "Credit (refund)" },
+  voidResponse: { stage: "void", label: "Void" },
+  authReversalResponse: { stage: "reversal", label: "Authorization reversal" },
+};
+
+/** Response Type column of the cnpAPI payment transaction response code table, as written. */
+export type CnpResponseType =
+  | "Approved"
+  | "Info"
+  | "Soft Decline"
+  | "Soft"
+  | "Hard Decline"
+  | "Hard or Soft Decline"
+  | "Soft or Hard Decline"
+  | "Referral"
+  | "N/A"
+  | "Other"
+  | "Success"
+  | "Advise";
+
+/**
+ * cnpAPI payment transaction `<response>` codes with their documented
+ * `<message>` and Response Type (379 codes), transcribed from
+ * https://docs.worldpay.com/apis/cnpapi/responsecodes/paymenttransaction.
+ * The Response Type is Worldpay's own classification and is the basis of the
+ * retry guidance; categories are PandaPayLens suggestions for a few codes
+ * only (see CNP_CATEGORIES).
+ */
+export const CNP_RESPONSE_CODES: Record<string, readonly [message: string, type: CnpResponseType]> =
+  {
+    "001": ["Transaction Received", "Info"],
+    "000": ["Approved", "Approved"],
+    "010": ["Partially Approved", "Approved"],
+    "011": ["Offline Approval", "Approved"],
+    "013": ["Offline Approval (unable to go online)", "Approved"],
+    "014": ["Inquiry Successful", "Info"],
+    "015": ["Pending Shopper Checkout Completion", "Info"],
+    "016": ["Shopper Checkout Expired", "Info"],
+    "100": ["Processing Network Unavailable", "Soft Decline"],
+    "101": ["Issuer Unavailable", "Soft Decline"],
+    "102": ["Re-submit Transaction", "Soft Decline"],
+    "103": ["Merchant not configured for processing at this site", "Soft Decline"],
+    "108": ["Try again later", "Soft"],
+    "110": ["Insufficient Funds", "Soft Decline"],
+    "111": ["Authorization amount has already been depleted", "Hard Decline"],
+    "112": ["Insufficient Funds, Retry after 1 hour", "Soft Decline"],
+    "113": ["Insufficient Funds, Retry after 24 hour", "Soft Decline"],
+    "114": ["Insufficient Funds, Retry after 2 days", "Soft Decline"],
+    "115": ["Insufficient Funds, Retry after 4 days", "Soft Decline"],
+    "116": ["Insufficient Funds, Retry after 6 days", "Soft Decline"],
+    "117": ["Insufficient Funds, Retry after 8 days", "Soft Decline"],
+    "118": ["Insufficient Funds, Retry after 10 days", "Soft Decline"],
+    "120": ["Call Issuer", "Soft Decline"],
+    "121": ["Call AMEX", "Referral"],
+    "122": ["Call Diners Club", "Referral"],
+    "123": ["Call Discover", "Referral"],
+    "124": ["Call JBS", "Referral"],
+    "125": ["Call Visa/Mastercard", "Referral"],
+    "126": ["Call Issuer - Update Cardholder Data", "Referral"],
+    "127": ["Exceeds Approval Amount Limit", "Soft Decline"],
+    "130": ["Call Indicated Number", "Referral"],
+    "131": ["Unacceptable PIN - Transaction declined - Retry", "Soft Decline"],
+    "132": ["PIN not changed", "Soft Decline"],
+    "137": ["Consumer, Multi-use virtual card number, Soft Decline", "Soft Decline"],
+    "138": ["Consumer non-reloadable prepaid card, Soft Decline", "Soft Decline"],
+    "139": ["Consumer single-use virtual card number, Soft Decline", "Soft Decline"],
+    "140": ["Update Cardholder Data", "Referral"],
+    "143": ["Merchant doesn't qualify for product code", "Soft Decline"],
+    "145": ["Lifecycle", "Hard or Soft Decline"],
+    "146": ["Policy", "Hard or Soft Decline"],
+    "147": ["Fraud/Security", "Hard or Soft Decline"],
+    "148": ["Invalid or expired card; contact cardholder to update", "Soft Decline"],
+    "149": [
+      "Invalid transaction or card restriction; verify information and resubmit",
+      "Soft Decline",
+    ],
+    "150": ["Original transaction found.", "Info"],
+    "151": ["Original transaction not found.", "Info"],
+    "152": ["Original transaction found, but response not yet available.", "Info"],
+    "153": ["Query transaction not enabled.", "Info"],
+    "154": ["At least one of origId or origCnpTxnId is required", "Soft Decline"],
+    "156": ["Incremental Auth not supported", "Hard Decline"],
+    "157": ["Set authIndicator to Incremental", "Soft Decline"],
+    "158": [
+      "Incremental value for authIndicator not allowed in this auth structure",
+      "Soft Decline",
+    ],
+    "159": [
+      "Cannot request an Incremental auth if original auth not set to Estimated",
+      "Hard Decline",
+    ],
+    "161": ["Transaction must reference the Estimated auth", "Soft Decline"],
+    "162": ["Incremented auth exceeds max transaction amount", "Hard Decline"],
+    "170": ["Submitted MCC not allowed", "Hard Decline"],
+    "191": ["The merchant is not registered in the update program.", "N/A"],
+    "192": ["Merchant not certified/enabled for IIAS", "Hard Decline"],
+    "206": ["Issuer Generated Error", "Soft Decline"],
+    "207": ["Pickup card - Other than Lost/Stolen", "Hard Decline"],
+    "209": ["Invalid Amount", "Hard Decline"],
+    "211": ["Reversal Unsuccessful", "Hard Decline"],
+    "212": ["Missing Data", "Hard Decline"],
+    "213": ["Pickup Card - Lost Card", "Hard Decline"],
+    "214": ["Pickup Card - Stolen Card", "Hard Decline"],
+    "215": ["Restricted Card", "Hard Decline"],
+    "216": ["Invalid Deactivate", "Hard Decline"],
+    "217": ["Card Already Active", "Hard Decline"],
+    "218": ["Card Not Active", "Soft Decline"],
+    "219": ["Card Already Deactivate", "Hard Decline"],
+    "221": ["Over Max Balance", "Hard Decline"],
+    "222": ["Invalid Activate", "Hard Decline"],
+    "223": ["No transaction Found for Reversal", "Hard Decline"],
+    "226": ["Incorrect CVV", "Hard Decline"],
+    "229": ["Illegal Transaction", "Soft Decline"],
+    "251": ["Duplicate Transaction", "Hard Decline"],
+    "252": ["System Error", "Hard Decline"],
+    "253": ["Deconverted BIN", "Hard Decline"],
+    "254": ["Merchant Depleted", "Hard Decline"],
+    "255": ["Gift Card Escheated", "Hard Decline"],
+    "256": ["Invalid Reversal Type for Credit Card Transaction", "Hard Decline"],
+    "257": ["System Error (message format error)", "Hard Decline"],
+    "258": ["System Error (cannot process)", "Soft Decline"],
+    "271": ["Refund rejected due to pending deposit status", "Soft Decline"],
+    "272": ["Refund rejected due to declined deposit status", "Hard Decline"],
+    "273": ["Refund rejected by the processing network", "Soft Decline"],
+    "284": [
+      "Capture, Credit and AuthReversal tags cannot be used for Gift Card Transactions",
+      "Hard Decline",
+    ],
+    "301": ["Invalid Account Number", "Hard Decline"],
+    "302": ["Account Number Does Not Match Payment Type", "Hard Decline"],
+    "303": ["Pick Up Card", "Hard Decline"],
+    "304": ["Lost/Stolen Card", "Hard Decline"],
+    "305": ["Expired Card", "Soft Decline"],
+    "306": ["Authorization has expired; no need to reverse", "Hard Decline"],
+    "307": ["Restricted Card", "Soft Decline"],
+    "308": ["Restricted Card - Chargeback", "Hard Decline"],
+    "309": ["Restricted Card - Prepaid Card Filtering Service", "Hard Decline"],
+    "310": ["Invalid track data", "Hard Decline"],
+    "311": ["Deposit is already referenced by a chargeback", "Hard Decline"],
+    "312": ["Restricted Card - International Card Filtering Service", "Hard Decline"],
+    "313": [
+      "International filtering for issuing card country <country> (where <country> is the 3-character country code)",
+      "Hard Decline",
+    ],
+    "315": ["Restricted Card - Auth Fraud Velocity Filtering Service", "Hard Decline"],
+    "316": ["Automatic Refund Already Issued", "Hard Decline"],
+    "317": ["Restricted Card - card under sanction", "Hard Decline"],
+    "318": ["Restricted Card - Auth Fraud Advice Filtering Service", "Hard Decline"],
+    "319": ["Restricted Card - Fraud AVS Filtering Service", "Hard Decline"],
+    "320": ["Invalid Expiration Date", "Hard Decline"],
+    "321": ["Invalid Merchant", "Soft Decline"],
+    "322": ["Invalid Transaction", "Hard Decline"],
+    "323": ["No such issuer", "Hard Decline"],
+    "324": ["Invalid Pin", "Soft Decline"],
+    "325": ["Transaction not allowed at terminal", "Soft Decline"],
+    "326": ["Exceeds number of PIN entries", "Hard Decline"],
+    "327": ["Cardholder transaction not permitted", "Hard Decline"],
+    "328": [
+      "Cardholder requested that recurring or installment payment be stopped",
+      "Hard Decline",
+    ],
+    "330": ["Invalid Payment Type", "Hard Decline"],
+    "331": [
+      "Invalid POS Capability for Cardholder Authorized Terminal Transaction",
+      "Hard Decline",
+    ],
+    "332": [
+      "Invalid POS Cardholder ID for Cardholder Authorized Terminal Transaction",
+      "Hard Decline",
+    ],
+    "335": ["This method of payment does not support authorization reversals", "Hard Decline"],
+    "336": ["Reversal amount does not match Authorization amount.", "Hard Decline"],
+    "337": ["Transaction did not convert to Pinless", "Soft Decline"],
+    "340": ["Invalid Amount", "Soft Decline"],
+    "341": ["Invalid Healthcare Amounts", "Hard Decline"],
+    "346": ["Invalid billing descriptor prefix", "Hard Decline"],
+    "347": ["Invalid billing descriptor", "Hard Decline"],
+    "348": ["Invalid Report Group", "Hard Decline"],
+    "349": ["Do Not Honor", "Soft Decline"],
+    "350": ["Generic Decline", "Soft or Hard Decline"],
+    "351": ["Decline - Request Positive ID", "Hard Decline"],
+    "352": ["Decline CVV2/CID Fail", "Soft Decline"],
+    "356": [
+      "Invalid purchase level III, the transaction contained bad or missing data",
+      "Soft Decline",
+    ],
+    "357": ["Missing healthcareIIAS tag for an FSA transaction", "Hard Decline"],
+    "358": ["Restricted by Vantiv due to security code mismatch.", "Hard Decline"],
+    "360": ["No transaction found with specified Transaction Id", "Hard Decline"],
+    "361": ["Authorization no longer available", "Hard Decline"],
+    "362": ["Transaction Not Voided - Already Settled", "Hard Decline"],
+    "363": ["Auto-void on refund", "Hard Decline"],
+    "364": [
+      "Invalid Account Number - original or NOC updated eCheck account required",
+      "Hard Decline",
+    ],
+    "365": ["Total credit amount exceeds capture amount", "Hard Decline"],
+    "366": ["Exceed the threshold for sending redeposits", "Hard Decline"],
+    "367": ["Deposit has not been returned for insufficient/non-sufficient funds", "Hard Decline"],
+    "368": ["Invalid check number", "Soft Decline"],
+    "369": ["Redeposit against invalid transaction type", "Hard Decline"],
+    "370": ["Internal System Error - Call Vantiv", "Hard Decline"],
+    "371": ["Original Transaction has been Processed - Future Redeposits Canceled", "Hard Decline"],
+    "372": ["Soft Decline - Auto Recycling In Progress", "Soft Decline"],
+    "373": ["Hard Decline - Auto Recycling Complete", "Hard Decline"],
+    "375": ["Merchant is not enabled for surcharging", "Hard Decline"],
+    "376": ["This method of payment does not support surcharging", "Hard Decline"],
+    "377": ["Surcharge is not valid for debit or prepaid cards", "Hard Decline"],
+    "378": ["Surcharge cannot exceeds the maximum allowed limit", "Hard Decline"],
+    "379": ["Transaction declined by the processing network", "Hard Decline"],
+    "380": ["Secondary amount cannot exceed the sale amount", "Hard Decline"],
+    "381": ["This method of payment does not support secondary amount", "Hard Decline"],
+    "382": ["Secondary amount cannot be less than zero", "Hard Decline"],
+    "383": [
+      "Partial transaction is not supported when including a secondary amount",
+      "Hard Decline",
+    ],
+    "384": ["Secondary amount required on partial refund when used on deposit", "Hard Decline"],
+    "385": ["Secondary amount not allowed on refund if not included on deposit", "Hard Decline"],
+    "386": ["Processing Network Error", "Soft Decline"],
+    "401": ["Invalid E-mail", "Hard Decline"],
+    "466": ["Invalid combination of accountFundingTransactionType and MCC", "Hard Decline"],
+    "467": ["Invalid accountFundingTransactionType for this Method of Payment", "Hard Decline"],
+    "468": ["Missing one or more receiver fields for Account Funding transaction", "Hard Decline"],
+    "469": ["Invalid Recurring Request - See Recurring Response for Details", "Hard Decline"],
+    "470": ["Approved - Recurring Subscription Created", "Approved"],
+    "471": ["Parent Transaction Declined - Recurring Subscription Not Created", "Hard Decline"],
+    "472": ["Invalid Plan Code", "Hard Decline"],
+    "473": ["Scheduled Recurring Payment Processed", "Approved"],
+    "475": ["Invalid Subscription Id", "Hard Decline"],
+    "476": ["Add On Code Already Exists", "Hard Decline"],
+    "477": ["Duplicate Add On Codes in Requests", "Hard Decline"],
+    "478": ["No Matching Add On Code for the Subscription", "Hard Decline"],
+    "480": ["No Matching Discount Code for the Subscription", "Hard Decline"],
+    "481": ["Duplicate Discount Codes in Request", "Hard Decline"],
+    "482": ["Invalid Start Date", "Hard Decline"],
+    "483": ["Merchant Not Registered for Recurring Engine", "Hard Decline"],
+    "484": ["Insufficient data to update subscription", "Hard Decline"],
+    "485": ["Invalid Billing Date", "Hard Decline"],
+    "486": ["Discount Code Already Exists", "Hard Decline"],
+    "487": ["Plan Code already exists", "Hard Decline"],
+    "500": ["The account number was changed", "Hard Decline"],
+    "501": ["The account was closed", "Hard Decline"],
+    "502": ["The expiration date was changed", "N/A"],
+    "503": ["The issuing bank does not participate in the update program", "N/A"],
+    "504": ["Contact the cardholder for updated information", "N/A"],
+    "505": ["No match found", "N/A"],
+    "506": ["No changes found", "N/A"],
+    "507": ["The cardholder has opted out of the update program", "N/A"],
+    "521": ["Soft Decline - Card reader decryption service is not available", "Soft Decline"],
+    "523": ["Soft Decline - Decryption failed", "Soft Decline"],
+    "524": ["Hard Decline - Input data is invalid.", "Hard Decline"],
+    "530": ["Apple Pay Key Mismatch", "Hard Decline"],
+    "531": ["Apple Pay Decryption Failed", "Hard Decline"],
+    "540": ["Hard Decline - Decryption Failed", "Hard Decline"],
+    "550": ["Advanced Fraud Filter Score Below Threshold", "Hard Decline"],
+    "555": ["Suspected Fraud", "Soft Decline"],
+    "560": ["System Error - Contact Worldpay representative", "Soft Decline"],
+    "561": ["Amazon Pay - Amazon Unavailable", "Soft Decline"],
+    "562": ["Amazon Pay - Amazon Declined", "Hard Decline"],
+    "563": ["Amazon Pay - Invalid Token", "Hard Decline"],
+    "564": ["Merchant not enabled for Amazon Pay", "Hard Decline"],
+    "565": ["Transaction not supported/blocked by issuer", "Soft Decline"],
+    "566": ["Blocked by cardholder/contact cardholder", "Soft Decline"],
+    "588": ["Parent transaction ID is not a valid format or valid value", "Hard Decline"],
+    "589": ["Parent transaction ID is too old to process", "Hard Decline"],
+    "601": ["Soft Decline - Primary Funding Source Failed", "Soft Decline"],
+    "602": ["Soft Decline - Buyer has alternate funding source", "Soft Decline"],
+    "610": ["Hard Decline - Invalid Billing Agreement Id", "Hard Decline"],
+    "611": ["Hard Decline - Primary Funding Source Failed", "Hard Decline"],
+    "612": ["Hard Decline - Issue with Paypal Account", "Hard Decline"],
+    "613": ["Hard Decline - PayPal authorization ID missing", "Hard Decline"],
+    "614": ["Hard Decline - confirmed email address is not available", "Hard Decline"],
+    "615": ["Hard Decline - PayPal buyer account denied", "Hard Decline"],
+    "616": ["Hard Decline - PayPal buyer account restricted", "Hard Decline"],
+    "617": ["Hard Decline - PayPal order has been voided, expired, or completed", "Hard Decline"],
+    "618": ["Hard Decline - issue with PayPal refund", "Hard Decline"],
+    "619": ["Hard Decline - PayPal credentials issue", "Hard Decline"],
+    "620": ["Hard Decline - PayPal authorization voided or expired", "Hard Decline"],
+    "621": ["Hard Decline - required PayPal parameter missing", "Hard Decline"],
+    "622": ["Hard Decline - PayPal transaction ID or auth ID is invalid", "Hard Decline"],
+    "623": [
+      "Hard Decline - Exceeded maximum number of PayPal authorization attempts",
+      "Hard Decline",
+    ],
+    "624": [
+      "Hard Decline - Transaction amount exceeds merchant's PayPal account limit.",
+      "Hard Decline",
+    ],
+    "625": ["Hard Decline - PayPal funding sources unavailable.", "Hard Decline"],
+    "626": ["Hard Decline - issue with PayPal primary funding source.", "Hard Decline"],
+    "627": ["Hard Decline - PayPal profile does not allow this transaction type.", "Hard Decline"],
+    "628": ["Internal System Error with PayPal - Contact Vantiv", "Hard Decline"],
+    "629": ["Hard Decline - Contact PayPal consumer for another payment method", "Hard Decline"],
+    "637": ["Invalid terminal Id", "Hard Decline"],
+    "639": ["PINLess authorization not eligible for partial capture", "Hard Decline"],
+    "640": ["Merchant not configured for PINless Debit processing", "Hard Decline"],
+    "641": ["PINless Debit processing not supported for partial auths", "Hard Decline"],
+    "642": [
+      "PINless Debit processing not supported for non-recurring transactions",
+      "Hard Decline",
+    ],
+    "643": ["Unknown PIN debit network name", "Hard Decline"],
+    "644": [
+      "Cannot send PIN debit network names with routingPreference=signatureOnly",
+      "Hard Decline",
+    ],
+    "645": ["Merchant not configured for Partial PINless Debit processing", "Hard Decline"],
+    "646": ["Declined, non-debit card submitted with routingPreference=debitOnly", "Hard Decline"],
+    "647": ["DIY merchant, missing PIN debit network names", "Hard Decline"],
+    "648": [
+      "Merchant not configured for Order Source with routingPreference=debitOnly",
+      "Hard Decline",
+    ],
+    "649": ["Transaction cannot be processed with routingPreference=debitOnly", "Hard Decline"],
+    "650": ["PIN debit network name only supported for DIY Merchants", "Hard Decline"],
+    "651": ["Decline - Customer Cancellation", "Hard Decline"],
+    "652": ["Decline - Re-try transaction", "Soft Decline"],
+    "653": ["Decline - Unable to locate record on file", "Hard Decline"],
+    "654": ["Decline - file update field edit error", "Soft Decline"],
+    "655": ["Remote function unknown", "Soft Decline"],
+    "656": ["Declined - Exceeds withdrawal frequency limit", "Soft Decline"],
+    "657": ["Decline - Card record not available", "Soft Decline"],
+    "658": ["Invalid Authorization Code", "Soft Decline"],
+    "659": ["Reconciliation error", "Soft Decline"],
+    "660": ["Preferred Debit Routing Denial: Credit transaction can be debit", "Soft Decline"],
+    "661": ["Declined - Currency Conversion Complete, No Auth Performed", "Soft Decline"],
+    "662": ["Declined - Multi-Currency DCC Fail", "Soft Decline"],
+    "663": ["Declined - Multi-Currency Invert Fail", "Soft Decline"],
+    "664": ["Invalid 3-D Secure Password", "Soft Decline"],
+    "665": ["Invalid Social Security Number", "Soft Decline"],
+    "666": ["Invalid Mother's Maiden Name", "Soft Decline"],
+    "667": ["Enrollment Inquiry Declined", "Soft Decline"],
+    "668": ["Social Security Number Not Available", "Soft Decline"],
+    "669": ["Mother's Maiden Name Not Available", "Soft Decline"],
+    "670": ["PIN Already Exists on Database", "Soft Decline"],
+    "701": ["Under 18 years old", "Hard Decline"],
+    "702": ["Bill to outside USA", "Hard Decline"],
+    "703": ["Bill to address is not equal to ship to address", "Hard Decline"],
+    "704": ["Declined, foreign currency, must be USD", "Hard Decline"],
+    "705": ["On negative file", "Hard Decline"],
+    "706": ["Blocked agreement", "Hard Decline"],
+    "707": ["Insufficient buying power", "Other"],
+    "708": ["Invalid Data", "Hard Decline"],
+    "709": ["Invalid Data - data elements missing", "Hard Decline"],
+    "710": ["Invalid Data - data format error", "Hard Decline"],
+    "711": ["Invalid Data - Invalid T&C version", "Hard Decline"],
+    "712": ["Duplicate transaction", "Soft Decline"],
+    "713": ["Verify billing address", "Hard Decline"],
+    "714": ["Inactive Account", "Hard Decline"],
+    "716": ["Invalid Auth", "Hard Decline"],
+    "717": ["Authorization already exists for the order", "Hard Decline"],
+    "730": ["Lodging transactions are not allowed for this MCC", "Hard Decline"],
+    "731": ["Duration cannot be negative", "Hard Decline"],
+    "732": ["Hotel Folio Number cannot be blank", "Hard Decline"],
+    "733": ["Invalid check in date", "Hard Decline"],
+    "734": ["Invalid check out date", "Hard Decline"],
+    "735": ["Invalid check in or check out date", "Hard Decline"],
+    "736": ["Check out date cannot be before check in date", "Hard Decline"],
+    "737": ["Number of adults cannot be negative", "Hard Decline"],
+    "738": ["Room rate cannot be negative", "Hard Decline"],
+    "739": ["Room tax cannot be negative", "Hard Decline"],
+    "740": ["Duration can only be from 0 to 99 for Visa", "Hard Decline"],
+    "801": ["Account number was successfully registered", "Approved"],
+    "802": ["Account number was previously registered", "Approved"],
+    "803": ["Valid Token", "Approved"],
+    "805": ["Card Validation Number Updated", "Approved"],
+    "820": ["Credit card number was invalid", "Hard Decline"],
+    "821": ["Merchant is not authorized for tokens", "Hard Decline"],
+    "822": ["Token was not found", "Hard Decline"],
+    "823": ["Token Invalid", "Hard Decline"],
+    "825": ["Merchant not authorized for eCheck tokens", "Hard Decline"],
+    "826": ["Checkout Id was invalid", "Soft Decline"],
+    "827": ["Checkout Id was not found", "Soft Decline"],
+    "828": ["Generic Checkout Id error", "Soft Decline"],
+    "835": ["Capture amount can not be more than authorized amount", "Hard Decline"],
+    "850": ["Tax Billing only allowed for MCC 9311", "Hard Decline"],
+    "851": ["MCC 9311 requires taxType element", "Hard Decline"],
+    "852": [
+      "Debt Repayment only allowed for VI transactions on MCCs 6012 and 6051",
+      "Hard Decline",
+    ],
+    "861": ["Routing Number did not match one on file for token", "Soft Decline"],
+    "862": ["Dynamic payout wallet balance found", "Success"],
+    "863": ["Not enabled for Dynamic Payout", "Hard Decline"],
+    "877": ["Invalid Pay Page Registration Id", "Hard Decline"],
+    "878": ["Expired Pay Page Registration Id", "Hard Decline"],
+    "879": ["Merchant is not authorized for Pay Page", "Hard Decline"],
+    "890": ["Maximum number of updates for this token exceeded", "Hard Decline"],
+    "891": ["Too many tokens created for existing namespace", "Hard Decline"],
+    "895": ["PIN validation not possible", "Soft Decline"],
+    "898": ["Generic token registration error", "Soft Decline"],
+    "899": ["Generic token use error", "Soft Decline"],
+    "900": ["Invalid Bank Routing Number", "Hard Decline"],
+    "901": ["Missing Name", "Hard Decline"],
+    "902": ["Invalid Name", "Hard Decline"],
+    "903": ["Missing Billing Country Code", "Hard Decline"],
+    "904": ["Invalid IBAN", "Hard Decline"],
+    "905": ["Missing Email Address", "Hard Decline"],
+    "906": ["Missing mandate reference", "Hard Decline"],
+    "907": ["Invalid mandate reference", "Hard Decline"],
+    "908": ["Missing mandate URL", "Hard Decline"],
+    "909": ["Invalid mandate URL", "Hard Decline"],
+    "911": ["Missing mandate signature date", "Hard Decline"],
+    "912": ["Invalid mandate signature date", "Hard Decline"],
+    "913": ["Recurring mandate already exists", "Hard Decline"],
+    "914": ["Recurring mandate was not found", "Hard Decline"],
+    "915": ["Final recurring was already received using this mandate", "Hard Decline"],
+    "916": ["IBAN did not match one on file for mandate", "Hard Decline"],
+    "917": ["Invalid Billing Country", "Hard Decline"],
+    "922": ["Expiration date required for Interac transaction", "Hard Decline"],
+    "923": ["Transaction type is not supported with this Method of Payment", "Hard Decline"],
+    "924": ["Unreferenced (orphan) refunds are not allowed", "Hard Decline"],
+    "939": ["Unable to void a transaction with a Held state", "Hard Decline"],
+    "940": ["This Funding Instruction results in a negative account balance", "Soft Decline"],
+    "941": ["Account balance information unavailable at this time.", "Soft Decline"],
+    "942": ["The submitted card is not eligible for Fast Access Funding.", "Hard Decline"],
+    "943": [
+      "Transaction cannot use both ccdPaymentInformation and ctxPaymentInformation",
+      "Hard Decline",
+    ],
+    "944": ["Processing Error", "Soft Decline"],
+    "945": ["This Funding Instruction type is invalid for Canadian merchants", "Hard Decline"],
+    "946": ["CTX and CCD records are not allowed for Canadian merchants", "Hard Decline"],
+    "947": ["Canadian account number cannot exceed 12 digits", "Hard Decline"],
+    "948": ["This funding instruction type is invalid", "Hard Decline"],
+    "950": ["Decline - Negative Information on File", "Hard Decline"],
+    "951": ["Absolute Decline", "Hard Decline"],
+    "952": ["The Merchant Profile does not allow the requested operation", "Hard Decline"],
+    "953": ["The account cannot accept ACH transactions", "Hard Decline"],
+    "954": ["The account cannot accept ACH transactions or site drafts", "Hard Decline"],
+    "955": ["Amount greater than limit specified in the Merchant Profile", "Hard Decline"],
+    "956": [
+      "Merchant is not authorized to perform eCheck Verification transactions",
+      "Hard Decline",
+    ],
+    "957": ["First Name and Last Name required for eCheck Verifications", "Hard Decline"],
+    "958": ["Company Name required for corporate account for eCheck Verifications", "Hard Decline"],
+    "959": ["Phone number required for eCheck Verifications", "Hard Decline"],
+    "961": ["Card Brand token not supported", "Hard Decline"],
+    "962": ["Private Label Card not supported", "Hard Decline"],
+    "965": ["Allowed daily Direct Debit capture (eCheckSale) limit exceeded.", "Hard Decline"],
+    "966": ["Allowed daily Direct Debit credit (eCheckCredit) limit exceeded.", "Hard Decline"],
+    "973": ["Account not Eligible for RTP", "Hard Decline"],
+    "977": ["Invalid address for RTP", "Hard Decline"],
+    "978": ["RTP instructions cannot contain CTX records", "Hard Decline"],
+    "979": ["Insufficient Balance for this Real-Time Payment Funding Instruction", "Hard Decline"],
+    "980": ["Soft Decline - Customer Authentication Required", "Soft Decline"],
+    "981": ["Transaction Not Reversed - Void Workflow need to be invoked", "Hard Decline"],
+    "982": ["Transaction Reversal not supported for the Core Merchants", "Hard Decline"],
+    "983": ["No valid Parent Deposit or Parent Refund found", "Hard Decline"],
+    "984": ["Transaction Reversal not enabled for Visa", "Hard Decline"],
+    "985": ["Transaction Reversal not enabled for Mastercard", "Hard Decline"],
+    "986": ["Transaction Reversal not enabled for AmEx", "Hard Decline"],
+    "987": ["Transaction Reversal not enabled for Discover", "Hard Decline"],
+    "988": ["Transaction Reversal not supported", "Hard Decline"],
+    "990": ["Funding Instruction held. Please contact your Relationship Manager.", "Advise"],
+    "991": ["Missing address information", "Soft Decline"],
+    "992": ["Cryptographic failure", "Soft Decline"],
+    "993": ["Invalid Region Code", "Hard Decline"],
+    "994": ["Invalid Country Code", "Hard Decline"],
+    "995": ["Invalid Credit Account", "Soft Decline"],
+    "996": ["Invalid Checking Account", "Soft Decline"],
+    "997": ["Invalid Savings Account", "Soft Decline"],
+    "998": ["Invalid use of MCC - Correct and reattempt", "Hard Decline"],
+    "999": ["Exceeds RTP transaction limit.", "Hard Decline"],
+  };
+
+/**
+ * PandaPayLens categories for cnpAPI codes whose documented message names the
+ * reason directly. All other codes keep the category "unknown"; their retry
+ * guidance follows the Response Type.
+ */
+export const CNP_CATEGORIES: Record<string, ErrorCategory> = {
+  "100": "provider_unavailable",
+  "101": "provider_unavailable",
+  "108": "provider_unavailable",
+  "110": "insufficient_funds",
+  "112": "insufficient_funds",
+  "113": "insufficient_funds",
+  "114": "insufficient_funds",
+  "115": "insufficient_funds",
+  "116": "insufficient_funds",
+  "117": "insufficient_funds",
+  "118": "insufficient_funds",
+  "120": "card_declined",
+  "209": "invalid_amount",
+  "251": "duplicate_request",
+  "305": "card_declined",
+  "340": "invalid_amount",
+  "349": "card_declined",
+  "350": "card_declined",
+  "555": "fraud_or_risk",
+  "712": "duplicate_request",
+  "980": "authentication_required",
+};
+
+/** Retry guidance for the XML APIs, which have no Payment Queries. */
+export const XML_RETRY_TEXT: Record<RetryGuidance, string> = {
+  do_not_retry: "Do not retry with the same details; the result will not change.",
+  customer_action_required:
+    "A new attempt needs the customer to act first (contact their issuer, correct their details, or use another card).",
+  retry_conditionally:
+    "A later attempt may succeed. Check the order's current status first so that a new request does not duplicate an operation that took effect.",
+  safe_to_retry_technical_request: "The request can be repeated as a technical retry with backoff.",
+  manual_review: "Review the order manually before deciding on a new attempt.",
+  unknown: "Retry safety cannot be assessed from the supplied data.",
+};
+
+export const XML_NEXT_ACTION: Record<ErrorCategory, string> = {
+  ...NEXT_ACTION,
+  provider_unavailable:
+    "Check the order's current status (an order inquiry or the order notifications) before sending a new request.",
+  network_or_timeout:
+    "Check the order's current status (an order inquiry or the order notifications) before sending a new request.",
+  configuration:
+    "Check the merchant code, credentials, registered IP addresses and account configuration, or ask your Worldpay Implementation Manager.",
+  unknown: "Contact Worldpay support with the order code or transaction id.",
 };
