@@ -8,6 +8,18 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.9.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "Provider list grouped by support level, and an Analyze as <provider> button for records that resemble a provider.",
+      "Official documentation links are shown for every provider's decoded errors.",
+      "Events without their own timestamp stay where they occurred in the timeline.",
+      "Redaction covers the sensitive fields of the newer providers, including Flutterwave's verif-hash header, provider keys and UPI ids.",
+      "Text redaction and the PayU India scrubber run in linear time on any input.",
+    ],
+  },
+  {
     version: "0.8.0",
     date: "2026-10-25",
     status: "released",
