@@ -1,0 +1,149 @@
+[
+  {
+    "entity": "event",
+    "account_id": "acc_PPLsynth-Merch01",
+    "event": "payment.failed",
+    "contains": ["payment"],
+    "payload": {
+      "payment": {
+        "entity": {
+          "id": "pay_PPLsynth-Late01",
+          "entity": "payment",
+          "amount": 49900,
+          "currency": "INR",
+          "status": "failed",
+          "order_id": "order_PPLsynth-Late01",
+          "invoice_id": null,
+          "international": false,
+          "method": "upi",
+          "amount_refunded": 0,
+          "refund_status": null,
+          "captured": false,
+          "description": null,
+          "card_id": null,
+          "bank": null,
+          "wallet": null,
+          "vpa": "pplsynth.payer@okpplsynth",
+          "upi": {
+            "payer_account_type": "bank_account",
+            "vpa": "pplsynth.payer@okpplsynth",
+            "flow": "intent"
+          },
+          "email": "pplsynth.buyer@example.com",
+          "contact": "+919000000001",
+          "notes": [],
+          "fee": null,
+          "tax": null,
+          "error_code": "BAD_REQUEST_ERROR",
+          "error_description": "Payment was not completed on time (synthetic text).",
+          "error_source": "customer",
+          "error_step": "payment_authentication",
+          "error_reason": "payment_timed_out",
+          "acquirer_data": {
+            "rrn": null
+          },
+          "created_at": 1792836000
+        }
+      }
+    },
+    "created_at": 1792836600
+  },
+  {
+    "entity": "event",
+    "account_id": "acc_PPLsynth-Merch01",
+    "event": "payment.authorized",
+    "contains": ["payment"],
+    "payload": {
+      "payment": {
+        "entity": {
+          "id": "pay_PPLsynth-Late01",
+          "entity": "payment",
+          "amount": 49900,
+          "currency": "INR",
+          "status": "authorized",
+          "order_id": "order_PPLsynth-Late01",
+          "invoice_id": null,
+          "international": false,
+          "method": "upi",
+          "amount_refunded": 0,
+          "refund_status": null,
+          "captured": false,
+          "description": null,
+          "card_id": null,
+          "bank": null,
+          "wallet": null,
+          "vpa": "pplsynth.payer@okpplsynth",
+          "upi": {
+            "payer_account_type": "bank_account",
+            "vpa": "pplsynth.payer@okpplsynth",
+            "flow": "intent"
+          },
+          "email": "pplsynth.buyer@example.com",
+          "contact": "+919000000001",
+          "notes": [],
+          "fee": null,
+          "tax": null,
+          "error_code": null,
+          "error_description": null,
+          "error_source": null,
+          "error_step": null,
+          "error_reason": null,
+          "acquirer_data": {
+            "rrn": "PPLSYNTHRRN0002"
+          },
+          "created_at": 1792836000
+        }
+      }
+    },
+    "created_at": 1792840200
+  },
+  {
+    "entity": "event",
+    "account_id": "acc_PPLsynth-Merch01",
+    "event": "payment.captured",
+    "contains": ["payment"],
+    "payload": {
+      "payment": {
+        "entity": {
+          "id": "pay_PPLsynth-Late01",
+          "entity": "payment",
+          "amount": 49900,
+          "currency": "INR",
+          "status": "captured",
+          "order_id": "order_PPLsynth-Late01",
+          "invoice_id": null,
+          "international": false,
+          "method": "upi",
+          "amount_refunded": 0,
+          "refund_status": null,
+          "captured": true,
+          "description": null,
+          "card_id": null,
+          "bank": null,
+          "wallet": null,
+          "vpa": "pplsynth.payer@okpplsynth",
+          "upi": {
+            "payer_account_type": "bank_account",
+            "vpa": "pplsynth.payer@okpplsynth",
+            "flow": "intent"
+          },
+          "email": "pplsynth.buyer@example.com",
+          "contact": "+919000000001",
+          "notes": [],
+          "fee": 1180,
+          "tax": 180,
+          "error_code": null,
+          "error_description": null,
+          "error_source": null,
+          "error_step": null,
+          "error_reason": null,
+          "acquirer_data": {
+            "rrn": "PPLSYNTHRRN0002"
+          },
+          "created_at": 1792836000
+        }
+      }
+    },
+    "created_at": 1792840205
+  }
+]

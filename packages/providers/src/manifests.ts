@@ -11,6 +11,11 @@ import { checkoutManifest } from "@pandapaylens/checkout/manifest";
 import { paypalManifest } from "@pandapaylens/paypal/manifest";
 import { mollieManifest } from "@pandapaylens/mollie/manifest";
 import { squareManifest } from "@pandapaylens/square/manifest";
+import { flutterwaveManifest } from "@pandapaylens/flutterwave/manifest";
+import { paystackManifest } from "@pandapaylens/paystack/manifest";
+import { razorpayManifest } from "@pandapaylens/razorpay/manifest";
+import { payuIndiaManifest } from "@pandapaylens/payu-india/manifest";
+import { bluesnapManifest } from "@pandapaylens/bluesnap/manifest";
 import { ebanxManifest } from "@pandapaylens/ebanx/manifest";
 import { dlocalManifest } from "@pandapaylens/dlocal/manifest";
 import { rapydManifest } from "@pandapaylens/rapyd/manifest";
@@ -48,6 +53,11 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   paypalManifest,
   mollieManifest,
   squareManifest,
+  flutterwaveManifest,
+  paystackManifest,
+  razorpayManifest,
+  payuIndiaManifest,
+  bluesnapManifest,
   ebanxManifest,
   dlocalManifest,
   rapydManifest,
@@ -210,14 +220,14 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     id: "bluesnap",
     displayName: "BlueSnap",
     wave: 3,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general", "gateway_acquiring"],
   },
   {
     id: "payu_india",
     displayName: "PayU India",
     wave: 3,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general"],
     note: "PayU India only; other PayU regional platforms are separate integrations.",
   },
@@ -225,21 +235,21 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     id: "razorpay",
     displayName: "Razorpay",
     wave: 3,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general"],
   },
   {
     id: "paystack",
     displayName: "Paystack",
     wave: 3,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general"],
   },
   {
     id: "flutterwave",
     displayName: "Flutterwave",
     wave: 3,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general"],
   },
   // High-risk expansion. Research candidates until the

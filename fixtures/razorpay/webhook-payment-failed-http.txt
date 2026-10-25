@@ -1,0 +1,52 @@
+POST /hooks/payments HTTP/1.1
+Host: merchant.example
+Content-Type: application/json
+X-Razorpay-Signature: pplsynth00000000000000000000000000000000000000000000000000000000
+x-razorpay-event-id: PPLsynthEvt0001
+
+{
+  "entity": "event",
+  "account_id": "acc_PPLsynth-Merch01",
+  "event": "payment.failed",
+  "contains": [
+    "payment"
+  ],
+  "payload": {
+    "payment": {
+      "entity": {
+        "id": "pay_PPLsynth-Nb01",
+        "entity": "payment",
+        "amount": 50000,
+        "currency": "INR",
+        "status": "failed",
+        "order_id": "order_PPLsynth-Nb01",
+        "invoice_id": null,
+        "international": false,
+        "method": "netbanking",
+        "amount_refunded": 0,
+        "refund_status": null,
+        "captured": false,
+        "description": null,
+        "card_id": null,
+        "bank": "HDFC",
+        "wallet": null,
+        "vpa": null,
+        "email": "pplsynth.buyer@example.com",
+        "contact": "+919000000001",
+        "notes": [],
+        "fee": null,
+        "tax": null,
+        "error_code": "BAD_REQUEST_ERROR",
+        "error_description": "Payment failed (synthetic text).",
+        "error_source": "bank",
+        "error_step": "payment_authorization",
+        "error_reason": "payment_failed",
+        "acquirer_data": {
+          "bank_transaction_id": null
+        },
+        "created_at": 1792836000
+      }
+    }
+  },
+  "created_at": 1792836005
+}

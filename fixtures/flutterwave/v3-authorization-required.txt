@@ -1,0 +1,8 @@
+HTTP/1.1 401 Unauthorized
+content-type: application/json
+
+{
+  "status": "error",
+  "message": "Authorization required",
+  "data": null
+}

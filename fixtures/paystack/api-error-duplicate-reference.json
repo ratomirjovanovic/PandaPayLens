@@ -1,0 +1,9 @@
+{
+  "status": false,
+  "message": "Duplicate Transaction Reference",
+  "meta": {
+    "nextStep": "Ensure you are passing a unique reference for PPLsynth-ref-0801"
+  },
+  "type": "validation_error",
+  "code": "duplicate_reference"
+}

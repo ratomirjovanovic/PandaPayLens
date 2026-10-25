@@ -1,0 +1,21 @@
+{
+  "entity": "event",
+  "account_id": "acc_PPLsynth-Merch01",
+  "event": "settlement.processed",
+  "contains": ["settlement"],
+  "payload": {
+    "settlement": {
+      "entity": {
+        "id": "setl_PPLsynth-Setl01",
+        "entity": "settlement",
+        "amount": 9870000,
+        "status": "processed",
+        "fees": 23600,
+        "tax": 3600,
+        "utr": "PPLSYNTHUTR0002",
+        "created_at": 1793008800
+      }
+    }
+  },
+  "created_at": 1793008810
+}

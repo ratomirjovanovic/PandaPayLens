@@ -1,0 +1,79 @@
+[
+  {
+    "event": "charge.success",
+    "data": {
+      "id": 900001101,
+      "domain": "live",
+      "status": "success",
+      "reference": "PPLsynth-ref-1101",
+      "amount": 5000,
+      "message": null,
+      "gateway_response": "Approved",
+      "paid_at": "2026-10-18T11:00:05.000Z",
+      "created_at": "2026-10-18T10:59:40.000Z",
+      "channel": "card",
+      "currency": "NGN",
+      "authorization": {
+        "authorization_code": "AUTH_PPLsynth1101",
+        "channel": "card",
+        "brand": "mastercard",
+        "reusable": true,
+        "signature": "SIG_PPLsynth1101"
+      }
+    }
+  },
+  {
+    "event": "refund.pending",
+    "data": {
+      "status": "pending",
+      "transaction_reference": "PPLsynth-ref-1101",
+      "refund_reference": null,
+      "amount": "5000",
+      "currency": "NGN",
+      "processor": "mpgs_zen",
+      "customer": {
+        "first_name": "PPLsynthFirst",
+        "last_name": "PPLsynthLast",
+        "email": "pplsynth.refund@example.com"
+      },
+      "integration": 900000001,
+      "domain": "live"
+    }
+  },
+  {
+    "event": "refund.processing",
+    "data": {
+      "status": "processing",
+      "transaction_reference": "PPLsynth-ref-1101",
+      "refund_reference": null,
+      "amount": "5000",
+      "currency": "NGN",
+      "processor": "mpgs_zen",
+      "customer": {
+        "first_name": "PPLsynthFirst",
+        "last_name": "PPLsynthLast",
+        "email": "pplsynth.refund@example.com"
+      },
+      "integration": 900000001,
+      "domain": "live"
+    }
+  },
+  {
+    "event": "refund.processed",
+    "data": {
+      "status": "processed",
+      "transaction_reference": "PPLsynth-ref-1101",
+      "refund_reference": "PPLsynth1101RRN",
+      "amount": "5000",
+      "currency": "NGN",
+      "processor": "mpgs_zen",
+      "customer": {
+        "first_name": "PPLsynthFirst",
+        "last_name": "PPLsynthLast",
+        "email": "pplsynth.refund@example.com"
+      },
+      "integration": 900000001,
+      "domain": "live"
+    }
+  }
+]

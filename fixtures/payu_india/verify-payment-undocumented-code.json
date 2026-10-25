@@ -1,0 +1,30 @@
+{
+  "status": 1,
+  "msg": "1 out of 1 Transactions Fetched Successfully",
+  "transaction_details": {
+    "PPLsynth-order-1009": {
+      "mihpayid": "PPLsynth70000000007",
+      "request_id": "",
+      "bank_ref_num": "PPLsynth-bankref-1009",
+      "amt": "15000.00",
+      "transaction_amount": "15000.00",
+      "txnid": "PPLsynth-order-1009",
+      "additional_charges": "0.00",
+      "productinfo": "PPLsynth product",
+      "firstname": "PPLsynth",
+      "bankcode": "VISA",
+      "field9": "Card load limit reached",
+      "error_code": "E4936",
+      "error_Message": "Bank was unable to authenticate.",
+      "addedon": "2026-10-24 12:00:41",
+      "payment_source": "payu",
+      "card_type": "VISA",
+      "net_amount_debit": "0",
+      "mode": "DC",
+      "PG_TYPE": "DC-PG",
+      "card_no": "XXXXXXXXXXXX4242",
+      "status": "failure",
+      "unmappedstatus": "failed"
+    }
+  }
+}

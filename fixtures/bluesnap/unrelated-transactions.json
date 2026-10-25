@@ -1,0 +1,22 @@
+[
+  {
+    "cardTransactionType": "AUTH_CAPTURE",
+    "transactionId": "PPLsynth1000000025",
+    "merchantTransactionId": "PPLsynth-order-shared",
+    "amount": 10,
+    "currency": "USD",
+    "processingInfo": {
+      "processingStatus": "SUCCESS"
+    }
+  },
+  {
+    "cardTransactionType": "AUTH_CAPTURE",
+    "transactionId": "PPLsynth1000000026",
+    "merchantTransactionId": "PPLsynth-order-shared",
+    "amount": 10,
+    "currency": "USD",
+    "processingInfo": {
+      "processingStatus": "SUCCESS"
+    }
+  }
+]

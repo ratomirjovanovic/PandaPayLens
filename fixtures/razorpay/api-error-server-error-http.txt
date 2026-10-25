@@ -1,0 +1,13 @@
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+
+{
+  "error": {
+    "code": "SERVER_ERROR",
+    "description": "PPLsynth synthetic server error description.",
+    "source": "NA",
+    "step": "NA",
+    "reason": "NA",
+    "metadata": {}
+  }
+}

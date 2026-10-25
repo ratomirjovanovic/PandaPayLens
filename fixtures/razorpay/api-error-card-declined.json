@@ -1,0 +1,14 @@
+{
+  "error": {
+    "code": "BAD_REQUEST_ERROR",
+    "description": "Payment declined by the issuing bank (synthetic text).",
+    "field": null,
+    "source": "issuer_bank",
+    "step": "payment_authorization",
+    "reason": "card_declined",
+    "metadata": {
+      "payment_id": "pay_PPLsynth-Decl01",
+      "order_id": "order_PPLsynth-Decl01"
+    }
+  }
+}

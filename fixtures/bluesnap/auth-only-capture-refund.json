@@ -1,0 +1,58 @@
+[
+  {
+    "cardTransactionType": "AUTH_ONLY",
+    "transactionId": "PPLsynth1000000002",
+    "merchantTransactionId": "PPLsynth-order-0002",
+    "amount": 25.5,
+    "usdAmount": 27.1,
+    "currency": "EUR",
+    "openToCapture": 25.5,
+    "transactionApprovalDate": "10/24/2026",
+    "transactionApprovalTime": "09:15:02",
+    "creditCard": {
+      "cardType": "MASTERCARD",
+      "cardSubType": "DEBIT"
+    },
+    "processingInfo": {
+      "processingStatus": "SUCCESS",
+      "cvvResponseCode": "MA",
+      "authorizationCode": "PPL222",
+      "transactionRegion": "EU",
+      "supportsMultiPartialCapture": false
+    }
+  },
+  {
+    "cardTransactionType": "CAPTURE",
+    "transactionId": "PPLsynth1000000002",
+    "merchantTransactionId": "PPLsynth-order-0002",
+    "amount": 25.5,
+    "currency": "EUR",
+    "openToCapture": 0,
+    "transactionApprovalDate": "10/24/2026",
+    "transactionApprovalTime": "09:40:11",
+    "processingInfo": {
+      "processingStatus": "SUCCESS"
+    }
+  },
+  {
+    "cardTransactionType": "REFUND",
+    "transactionId": "PPLsynth1000000002",
+    "merchantTransactionId": "PPLsynth-order-0002",
+    "amount": 25.5,
+    "currency": "EUR",
+    "processingInfo": {
+      "processingStatus": "SUCCESS"
+    },
+    "refunds": {
+      "balanceAmount": 15.5,
+      "refund": [
+        {
+          "refundTransactionId": "PPLsynthR000000002",
+          "amount": 10,
+          "currency": "EUR",
+          "date": "2026-10-24"
+        }
+      ]
+    }
+  }
+]

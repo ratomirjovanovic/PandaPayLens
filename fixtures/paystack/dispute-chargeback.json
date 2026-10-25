@@ -1,0 +1,65 @@
+[
+  {
+    "event": "charge.success",
+    "data": {
+      "id": 900001201,
+      "domain": "live",
+      "status": "success",
+      "reference": "PPLsynth-ref-1201",
+      "amount": 1200000,
+      "message": null,
+      "gateway_response": "Approved",
+      "paid_at": "2026-10-01T15:30:00.000Z",
+      "created_at": "2026-10-01T15:29:10.000Z",
+      "channel": "card",
+      "currency": "NGN"
+    }
+  },
+  {
+    "event": "charge.dispute.create",
+    "data": {
+      "id": 900002201,
+      "refund_amount": 1200000,
+      "status": "awaiting-merchant-feedback",
+      "resolution": null,
+      "domain": "live",
+      "transaction": {
+        "id": 900001201,
+        "domain": "live",
+        "status": "success",
+        "reference": "PPLsynth-ref-1201",
+        "amount": 1200000,
+        "gateway_response": "Approved",
+        "channel": "card",
+        "currency": "NGN"
+      },
+      "transaction_reference": null,
+      "category": "chargeback",
+      "customer": {
+        "first_name": "PPLsynthFirst",
+        "last_name": "PPLsynthLast",
+        "email": "pplsynth.dispute@example.com"
+      },
+      "bin": "539983",
+      "last4": "1201",
+      "dueAt": "2026-10-26T12:00:00.000Z",
+      "resolvedAt": null,
+      "evidence": null,
+      "attachments": "[]",
+      "history": [
+        {
+          "status": "pending",
+          "by": "pplsynth.agent@example.com",
+          "createdAt": "2026-10-24T12:00:00.000Z"
+        }
+      ],
+      "messages": [
+        {
+          "sender": "pplsynth.agent@example.com",
+          "body": "PPLsynth planted dispute message 1201",
+          "createdAt": "2026-10-24T12:00:00.000Z"
+        }
+      ]
+    }
+  }
+]

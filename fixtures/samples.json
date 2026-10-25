@@ -607,5 +607,75 @@
     "provider": "ebanx",
     "file": "ebanx/card-declined-insufficient-funds.json",
     "description": "A decline inside a successful envelope, with ISO and Mastercard advice codes."
+  },
+  {
+    "id": "bluesnap-webhook-lifecycle",
+    "title": "BlueSnap: charge, refund and chargeback webhooks",
+    "provider": "bluesnap",
+    "file": "bluesnap/webhook-lifecycle.txt",
+    "description": "Form-encoded webhooks linked into one transaction by the reference number."
+  },
+  {
+    "id": "bluesnap-do-not-honor",
+    "title": "BlueSnap: declined, do not honor",
+    "provider": "bluesnap",
+    "file": "bluesnap/decline-do-not-honor.txt",
+    "description": "An HTTP 400 decline decoded by error name, although many card errors share one numeric code."
+  },
+  {
+    "id": "payu-india-card-declined",
+    "title": "PayU India: card declined webhook",
+    "provider": "payu_india",
+    "file": "payu_india/webhook-card-failed-declined.txt",
+    "description": "A declined card payment with the failure stage and the bank's own reason."
+  },
+  {
+    "id": "payu-india-upi-pending",
+    "title": "PayU India: UPI payment pending",
+    "provider": "payu_india",
+    "file": "payu_india/payment-upi-pending.txt",
+    "description": "A UPI payment that is still pending at redirect."
+  },
+  {
+    "id": "razorpay-card-lifecycle",
+    "title": "Razorpay: card payment webhooks",
+    "provider": "razorpay",
+    "file": "razorpay/webhook-card-lifecycle.json",
+    "description": "Authorized, captured, order paid and a partial refund in one timeline."
+  },
+  {
+    "id": "razorpay-late-authorisation",
+    "title": "Razorpay: late authorisation",
+    "provider": "razorpay",
+    "file": "razorpay/webhook-late-authorisation.json",
+    "description": "A UPI payment that fails on timeout and is later authorized and captured."
+  },
+  {
+    "id": "paystack-card-lifecycle",
+    "title": "Paystack: card payment with PIN and OTP",
+    "provider": "paystack",
+    "file": "paystack/card-payment-lifecycle.json",
+    "description": "Initialize, Charge API steps, the charge.success webhook and verify in one payment."
+  },
+  {
+    "id": "paystack-do-not-honour",
+    "title": "Paystack: declined, do not honour",
+    "provider": "paystack",
+    "file": "paystack/verify-failed-do-not-honour.json",
+    "description": "A failed verify response decoded from Paystack's documented bank messages."
+  },
+  {
+    "id": "flutterwave-refund-pending",
+    "title": "Flutterwave: refund initiated, then completed",
+    "provider": "flutterwave",
+    "file": "flutterwave/v3-refund-initiated-then-completed.json",
+    "description": "A refund reported as completed that is only initiated until the refund webhook confirms it."
+  },
+  {
+    "id": "flutterwave-preauth-void",
+    "title": "Flutterwave: preauthorization voided",
+    "provider": "flutterwave",
+    "file": "flutterwave/v3-preauth-then-void.json",
+    "description": "A held payment that is voided; the void is not shown as a payment success."
   }
 ]

@@ -1,0 +1,5 @@
+POST /PPLsynth/payu-webhook HTTP/1.1
+Host: shop.example.com
+Content-Type: application/x-www-form-urlencoded
+
+mihpayid=PPLsynth70000000006&mode=NB&status=success&unmappedstatus=captured&key=PPLsynthKey01&txnid=PPLsynth-order-1008&amount=899.00&net_amount_debit=899&addedon=2026-10-24+10%3A12%3A09&productinfo=PPLsynth+product&firstname=PPLsynth&email=pplsynth.buyer%40example.com&phone=9000000001&field7=TXNPOSITIVE&field9=Transaction+Completed+Successfully&payment_source=payu&PG_TYPE=NB-PG&bank_ref_num=PPLsynth-bankref-1008&bank_ref_no=PPLsynth-bankref-1008&error=E000&error_Message=No+Error&hash=c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7c7

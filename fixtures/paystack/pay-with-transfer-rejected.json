@@ -1,0 +1,20 @@
+[
+  {
+    "status": true,
+    "message": "Charge attempted",
+    "data": {
+      "reference": "PPLsynth-ref-1801",
+      "status": "pending_bank_transfer",
+      "display_text": "Please make a transfer to the account specified",
+      "account_name": "PPLsynth Checkout Account",
+      "account_number": "0000001801"
+    }
+  },
+  {
+    "event": "bank.transfer.rejected",
+    "data": {
+      "message_type": "INCORRECT_AMOUNT",
+      "message": "incorrect amount sent"
+    }
+  }
+]

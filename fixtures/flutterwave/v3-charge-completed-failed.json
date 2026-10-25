@@ -1,0 +1,39 @@
+{
+  "event": "charge.completed",
+  "data": {
+    "id": 900100202,
+    "tx_ref": "PPLsynth-order-0202",
+    "flw_ref": "PPLsynth/FLW900100202",
+    "device_fingerprint": "PPLsynth-device-fingerprint",
+    "amount": 2500,
+    "currency": "NGN",
+    "charged_amount": 2500,
+    "app_fee": 35,
+    "merchant_fee": 0,
+    "processor_response": "invalid token supplied",
+    "auth_model": "PIN",
+    "ip": "203.0.113.10",
+    "narration": "CARD Transaction ",
+    "status": "failed",
+    "payment_type": "card",
+    "created_at": "2026-10-20T10:00:00.000Z",
+    "account_id": 900001,
+    "card": {
+      "first_6digits": "400000",
+      "last_4digits": "0002",
+      "issuer": "PPLSYNTH ISSUER",
+      "country": "NG",
+      "type": "VERVE",
+      "token": "flw-t1nf-PPLsynthTOKEN0000000000000-m03k",
+      "expiry": "09/31"
+    },
+    "customer": {
+      "id": 7002,
+      "name": "PPLsynth Customer",
+      "phone_number": "08000000099",
+      "email": "pplsynth.customer@example.com",
+      "created_at": "2026-10-20T09:00:00.000Z"
+    }
+  },
+  "event.type": "CARD_TRANSACTION"
+}

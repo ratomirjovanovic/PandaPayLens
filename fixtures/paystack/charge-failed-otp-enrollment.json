@@ -1,0 +1,9 @@
+{
+  "status": true,
+  "message": "Charge attempted",
+  "data": {
+    "reference": "PPLsynth-ref-0501",
+    "status": "failed",
+    "message": "Error occured while enrolling you for OTP!"
+  }
+}

@@ -11,6 +11,11 @@ import { checkoutAdapter } from "@pandapaylens/checkout";
 import { paypalAdapter } from "@pandapaylens/paypal";
 import { mollieAdapter } from "@pandapaylens/mollie";
 import { squareAdapter } from "@pandapaylens/square";
+import { flutterwaveAdapter } from "@pandapaylens/flutterwave";
+import { paystackAdapter } from "@pandapaylens/paystack";
+import { razorpayAdapter } from "@pandapaylens/razorpay";
+import { payuIndiaAdapter } from "@pandapaylens/payu-india";
+import { bluesnapAdapter } from "@pandapaylens/bluesnap";
 import { ebanxAdapter } from "@pandapaylens/ebanx";
 import { dlocalAdapter } from "@pandapaylens/dlocal";
 import { rapydAdapter } from "@pandapaylens/rapyd";
@@ -48,6 +53,11 @@ export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   paypalAdapter,
   mollieAdapter,
   squareAdapter,
+  flutterwaveAdapter,
+  paystackAdapter,
+  razorpayAdapter,
+  payuIndiaAdapter,
+  bluesnapAdapter,
   ebanxAdapter,
   dlocalAdapter,
   rapydAdapter,

@@ -1,0 +1,15 @@
+{
+  "status": "success",
+  "message": "Charge initiated",
+  "meta": {
+    "authorization": {
+      "transfer_reference": "PPLsynth-FLW-1515",
+      "transfer_account": "0000001515",
+      "transfer_bank": "PPLSYNTH BANK",
+      "account_expiration": "2026-10-21 10:00:00 AM",
+      "transfer_note": "Mock note",
+      "transfer_amount": "1500.00",
+      "mode": "banktransfer"
+    }
+  }
+}

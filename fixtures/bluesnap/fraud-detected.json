@@ -1,0 +1,25 @@
+{
+  "message": [
+    {
+      "errorName": "FRAUD_DETECTED",
+      "code": 15011,
+      "description": "The request cannot be fulfilled for the current shopper. Please contact BlueSnap support for further details.",
+      "fraudEvents": {
+        "fraudReferenceId": "PPLsynthFRAUD0001",
+        "fraudTransactionId": "PPLSYNTHKOUNT01",
+        "fraudEvent": [
+          {
+            "fraudEventCode": "blacklistshippingcountrydecline",
+            "fraudEventDecision": "D",
+            "fraudEventExpression": "Planted expression PPLSYNTHEXPR01"
+          },
+          {
+            "fraudEventCode": "AVS_ZIP_MISMATCH",
+            "fraudEventDecision": "R",
+            "fraudEventExpression": "Planted expression PPLSYNTHEXPR02"
+          }
+        ]
+      }
+    }
+  ]
+}

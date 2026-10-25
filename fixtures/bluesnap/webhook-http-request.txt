@@ -1,0 +1,7 @@
+POST /PPLsynth/bluesnap-webhook HTTP/1.1
+Host: merchant.example
+Content-Type: application/x-www-form-urlencoded
+Bls-Ipn-Timestamp: 2026-10-24 07:34:00.000
+Bls-Signature: PPLSYNTHSIGNATURE0001
+
+transactionType=CHARGE&referenceNumber=PPLsynth1000000023&contractId=PPLsynth2269035&contractOwner=PPLSYNTHOWNER01&firstName=Planted&lastName=Synthetic+Holder&email=planted.synthetic%40example.com&address1=77+Planted+Synthetic+Road&city=Plantedton&zipCode=PL4+7NT&homePhone=%2B15550100777&remoteAddress=203.0.113.77&username=PPLSYNTHUSER01&accountId=PPLSYNTHACCOUNT01&creditCardLastFourDigits=9071&binNumber=457173&creditCardExpDate=12%2F2030&issuerAuthCode=PPL771&invoiceURL=https%3A%2F%2Fsandbox.bluesnap.com%2Fjsp%2Fshow_invoice.jsp%3Fref%3DPPLSYNTHREF01%26acd%3DPPLSYNTHACD0001&invoiceAmount=42.00&invoiceAmountUSD=42.00&currency=USD&invoiceChargeAmount=42.00&invoiceChargeCurrency=USD&paymentMethod=CC&creditCardType=VISA&authKey=a1b2c3d4e5f60718293a4b5c6d7e8f90&Color=Green&bluesnapNode=99&plimusNode=99&testMode=Y&targetBalance=BLUESNAP_ACCOUNT&transactionDate=10%2F24%2F2026+07%3A34+AM

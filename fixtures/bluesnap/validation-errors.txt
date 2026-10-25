@@ -1,0 +1,21 @@
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "message": [
+    {
+      "errorName": "VALIDATION_GENERAL_FAILURE",
+      "code": "10001",
+      "description": "Synthetic description: a field is not valid.",
+      "invalidProperty": {
+        "name": "cardHolderInfo.zip",
+        "messageValue": "PLANTEDZIP99"
+      }
+    },
+    {
+      "errorName": "INVALID_MERCHANT_TRANSACTION_ID",
+      "code": "10001",
+      "description": "Synthetic description: the merchant transaction ID is too long."
+    }
+  ]
+}

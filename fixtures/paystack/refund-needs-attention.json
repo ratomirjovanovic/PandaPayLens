@@ -1,0 +1,28 @@
+[
+  {
+    "event": "refund.pending",
+    "data": {
+      "status": "pending",
+      "transaction_reference": "PPLsynth-ref-2201",
+      "refund_reference": null,
+      "amount": 30000,
+      "currency": "NGN",
+      "processor": "instant-transfer",
+      "integration": 900000001,
+      "domain": "test"
+    }
+  },
+  {
+    "event": "refund.needs-attention",
+    "data": {
+      "status": "needs-attention",
+      "transaction_reference": "PPLsynth-ref-2201",
+      "refund_reference": null,
+      "amount": 30000,
+      "currency": "NGN",
+      "processor": "instant-transfer",
+      "integration": 900000001,
+      "domain": "test"
+    }
+  }
+]

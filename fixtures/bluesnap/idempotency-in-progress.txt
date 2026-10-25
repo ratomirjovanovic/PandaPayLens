@@ -1,0 +1,12 @@
+HTTP/1.1 409 Conflict
+Content-Type: application/json
+
+{
+  "message": [
+    {
+      "errorName": "REQUEST_WITH_SAME_IDEMPOTENCY_KEY_ALREADY_IN_PROGRESS",
+      "code": 60102,
+      "description": "Synthetic description: a request with the same idempotency key is in progress."
+    }
+  ]
+}

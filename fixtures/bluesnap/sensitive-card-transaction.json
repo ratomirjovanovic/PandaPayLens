@@ -1,0 +1,36 @@
+{
+  "cardTransactionType": "AUTH_CAPTURE",
+  "transactionId": "PPLsynth1000000024",
+  "amount": 42,
+  "currency": "USD",
+  "vaultedShopperId": "PPLSYNTHSHOPPER01",
+  "cardHolderInfo": {
+    "firstName": "Planted",
+    "lastName": "Synthetic Holder",
+    "email": "planted.synthetic@example.com",
+    "zip": "PL47NT"
+  },
+  "creditCard": {
+    "cardLastFourDigits": "9071",
+    "binNumber": "457173",
+    "expirationMonth": "12",
+    "expirationYear": "2030",
+    "cardType": "VISA",
+    "issuingBank": "Planted Synthetic Bank",
+    "issuingCountryCode": "gb"
+  },
+  "processingInfo": {
+    "processingStatus": "SUCCESS",
+    "authorizationCode": "PPL771",
+    "networkTransactionId": "PPLSYNTHNETWORK0001",
+    "cvvResponseCode": "NM"
+  },
+  "threeDSecure": {
+    "authenticationResult": "AUTHENTICATION_SUCCEEDED",
+    "threeDSecureReferenceId": "PPLSYNTH3DSREF01"
+  },
+  "transactionFraudInfo": {
+    "shopperIpAddress": "203.0.113.77",
+    "fraudSessionId": "PPLSYNTHSESSION01"
+  }
+}

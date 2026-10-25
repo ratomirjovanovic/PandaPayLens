@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "message": "Charge fetched",
+  "data": {
+    "id": "chg_PPLsynth2000",
+    "amount": 250,
+    "currency": "NGN",
+    "next_action": {
+      "type": "requires_requery"
+    },
+    "payment_method_details": {
+      "type": "bank_account",
+      "bank_account": {},
+      "id": "pmd_PPLsynth2000",
+      "meta": {}
+    },
+    "reference": "PPLsynth-order-2000",
+    "status": "pending",
+    "processor_response": {
+      "type": "pending",
+      "code": "02"
+    },
+    "created_datetime": "2026-10-23T15:00:00.000Z"
+  }
+}

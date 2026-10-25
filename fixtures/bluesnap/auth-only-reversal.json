@@ -1,0 +1,21 @@
+[
+  {
+    "cardTransactionType": "AUTH_ONLY",
+    "transactionId": "PPLsynth1000000003",
+    "amount": 40,
+    "currency": "USD",
+    "openToCapture": 40,
+    "processingInfo": {
+      "processingStatus": "SUCCESS"
+    }
+  },
+  {
+    "cardTransactionType": "AUTH_REVERSAL",
+    "transactionId": "PPLsynth1000000003",
+    "amount": 40,
+    "currency": "USD",
+    "processingInfo": {
+      "processingStatus": "SUCCESS"
+    }
+  }
+]

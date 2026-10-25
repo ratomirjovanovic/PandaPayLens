@@ -1,0 +1,82 @@
+{
+  "status": true,
+  "message": "Verification successful",
+  "data": {
+    "id": 900000101,
+    "domain": "test",
+    "status": "success",
+    "reference": "PPLsynth-ref-0101",
+    "receipt_number": null,
+    "amount": 40333,
+    "message": null,
+    "gateway_response": "Successful",
+    "paid_at": "2026-10-20T09:15:02.000Z",
+    "created_at": "2026-10-20T09:14:24.000Z",
+    "channel": "card",
+    "currency": "NGN",
+    "ip_address": "198.51.100.23",
+    "metadata": {
+      "custom_fields": [
+        {
+          "display_name": "Customer note",
+          "variable_name": "customer_note",
+          "value": "PPLsynth planted note 0101"
+        }
+      ]
+    },
+    "log": {
+      "start_time": 1760951658,
+      "time_spent": 4,
+      "attempts": 1,
+      "errors": 0,
+      "success": true,
+      "mobile": false,
+      "input": [],
+      "history": [
+        { "type": "action", "message": "Attempted to pay with card", "time": 3 },
+        { "type": "success", "message": "Successfully paid with card", "time": 4 }
+      ]
+    },
+    "fees": 10283,
+    "fees_split": null,
+    "authorization": {
+      "authorization_code": "AUTH_PPLsynth0101",
+      "bin": "408408",
+      "last4": "4081",
+      "exp_month": "12",
+      "exp_year": "2030",
+      "channel": "card",
+      "card_type": "visa ",
+      "bank": "TEST BANK",
+      "country_code": "NG",
+      "brand": "visa",
+      "reusable": true,
+      "signature": "SIG_PPLsynth0101",
+      "account_name": "PPLsynth Cardholder Name"
+    },
+    "customer": {
+      "id": 900000901,
+      "first_name": "PPLsynthFirst",
+      "last_name": "PPLsynthLast",
+      "email": "pplsynth.customer@example.com",
+      "customer_code": "CUS_PPLsynth0101",
+      "phone": "+2348000000101",
+      "metadata": null,
+      "risk_action": "default",
+      "international_format_phone": "+2348000000101"
+    },
+    "plan": null,
+    "split": {},
+    "order_id": null,
+    "paidAt": "2026-10-20T09:15:02.000Z",
+    "createdAt": "2026-10-20T09:14:24.000Z",
+    "requested_amount": 30050,
+    "pos_transaction_data": null,
+    "source": null,
+    "fees_breakdown": null,
+    "connect": null,
+    "transaction_date": "2026-10-20T09:14:24.000Z",
+    "plan_object": {},
+    "subaccount": {}
+  }
+}

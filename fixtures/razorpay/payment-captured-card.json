@@ -1,0 +1,51 @@
+{
+  "id": "pay_PPLsynth-Card01",
+  "entity": "payment",
+  "amount": 125000,
+  "currency": "INR",
+  "status": "captured",
+  "order_id": "order_PPLsynth-Card01",
+  "invoice_id": null,
+  "international": false,
+  "method": "card",
+  "amount_refunded": 0,
+  "refund_status": null,
+  "captured": true,
+  "description": "PPLsynth free text description",
+  "card_id": "card_PPLsynth-Card01",
+  "card": {
+    "id": "card_PPLsynth-Card01",
+    "entity": "card",
+    "name": "PPLsynth Cardholder",
+    "last4": "9473",
+    "network": "Visa",
+    "type": "credit",
+    "issuer": "PPLS",
+    "international": false,
+    "emi": false,
+    "iin": "512345",
+    "token_iin": null
+  },
+  "bank": null,
+  "wallet": null,
+  "vpa": null,
+  "email": "pplsynth.buyer@example.com",
+  "contact": "+919000000001",
+  "customer_id": "cust_PPLsynth-Cust01",
+  "token_id": "token_PPLsynth-Tok01",
+  "notes": {
+    "customer_name": "PPLsynth Notes Name"
+  },
+  "fee": 2950,
+  "tax": 450,
+  "error_code": null,
+  "error_description": null,
+  "error_source": null,
+  "error_step": null,
+  "error_reason": null,
+  "acquirer_data": {
+    "auth_code": "PPLAUTH1",
+    "rrn": "PPLSYNTHRRN0001"
+  },
+  "created_at": 1792836000
+}
