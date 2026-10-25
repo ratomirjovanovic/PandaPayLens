@@ -133,6 +133,23 @@ const BLOCKED_KEYS = new Set([
   "secureacceptanceurl",
   "transhash",
   "transhashsha2",
+  // Nuvei checksums, session tokens, card, 3-D Secure and payer fields
+  "advanceresponsechecksum",
+  "responsechecksum",
+  "checksum",
+  "sessiontoken",
+  "usertokenid",
+  "cccardnumber",
+  "last4digits",
+  "maskedcardnumber",
+  "cavv",
+  "acsurl",
+  "creq",
+  "arn",
+  "authcode",
+  "clientname",
+  "externalemail",
+  "apmpayerinfo",
 ]);
 
 const PATTERNS: { name: string; re: RegExp }[] = [

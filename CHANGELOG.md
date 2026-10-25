@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Security
+
+- Redaction now covers Nuvei checksums, session tokens, card, 3-D Secure and payer fields (`advanceResponseChecksum`, `responsechecksum`, `checksum`, `sessionToken`, `userTokenId`, `ccCardNumber`, `last4Digits`, `MaskedCardNumber`, `cavv`, `acsUrl`, `cReq`, `ARN`, `AuthCode`, `ClientName`, `externalEmail`, `apmPayerInfo`).
+
 ## [0.6.0] - 2026-10-25
 
 Wave 2 general providers.
