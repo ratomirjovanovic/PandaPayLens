@@ -84,7 +84,11 @@ export type ParsedInput = {
   /** Parallel to `records`. */
   meta: RecordMeta[];
   removedKeys: { recordIndex: number; path: string }[];
+  /** Non-standard JSON syntax that was removed before parsing (see `relaxJson`). */
+  jsonRepairs: JsonRepair[];
 };
+
+export type JsonRepair = "trailing_commas" | "comments";
 
 type Parsed = { ok: true; value: ParsedInput } | { ok: false; error: ParseError };
 
@@ -153,7 +157,9 @@ const FORM_LIKE = /^[^=&\s{}[\]"]+=[^&\r\n]*(?:&[^=&\s]+=[^&\r\n]*)*$/;
 
 function parseJsonText(body: string, lim: InputLimits, meta: RecordMeta): Parsed {
   const whole = parseDocument(body, lim, 0);
+  const repairs = new Set<JsonRepair>();
   if (whole.ok) {
+    for (const r of whole.repairs) repairs.add(r);
     const records = Array.isArray(whole.value) ? whole.value : [whole.value];
     if (records.length > lim.maxRecords) {
       return fail(
@@ -161,7 +167,7 @@ function parseJsonText(body: string, lim: InputLimits, meta: RecordMeta): Parsed
         `Input contains ${records.length} records; the limit is ${lim.maxRecords}.`,
       );
     }
-    return finish(meta.format === "http" ? "http" : "json", records, meta);
+    return finish(meta.format === "http" ? "http" : "json", records, meta, [...repairs]);
   }
 
   // Not a single document: try JSON Lines, but only if there is more than one
@@ -192,20 +198,25 @@ function parseJsonText(body: string, lim: InputLimits, meta: RecordMeta): Parsed
       };
     }
     records.push(parsed.value);
+    for (const r of parsed.repairs) repairs.add(r);
   }
   return meta.format === "http"
-    ? finish("http", records, meta)
-    : finish("jsonl", records, { format: "jsonl" });
+    ? finish("http", records, meta, [...repairs])
+    : finish("jsonl", records, { format: "jsonl" }, [...repairs]);
 }
 
 function finish(
   format: InputFormat,
   raw: unknown[],
   meta: RecordMeta,
+  jsonRepairs: JsonRepair[] = [],
 ): { ok: true; value: ParsedInput } {
   const removedKeys: ParsedInput["removedKeys"] = [];
   const records = raw.map((r, i) => sanitize(r, i, "", removedKeys));
-  return { ok: true, value: { format, records, meta: records.map(() => meta), removedKeys } };
+  return {
+    ok: true,
+    value: { format, records, meta: records.map(() => meta), removedKeys, jsonRepairs },
+  };
 }
 
 const MAX_FORM_FIELDS = 1000;
@@ -312,7 +323,7 @@ function parseDocument(
   text: string,
   lim: InputLimits,
   lineOffset: number,
-): { ok: true; value: unknown } | { ok: false; error: ParseError } {
+): { ok: true; value: unknown; repairs: JsonRepair[] } | { ok: false; error: ParseError } {
   const scan = scanStructure(text, lim);
   if (scan) {
     const pos = positionToLineColumn(text, scan.offset);
@@ -327,8 +338,18 @@ function parseDocument(
     };
   }
   try {
-    return { ok: true, value: JSON.parse(text) as unknown };
+    return { ok: true, value: JSON.parse(text) as unknown, repairs: [] };
   } catch (e) {
+    // Provider documentation often shows JSON with trailing commas or
+    // comments. Remove only those, and only if the result then parses.
+    const relaxed = relaxJson(text);
+    if (relaxed.repairs.length > 0) {
+      try {
+        return { ok: true, value: JSON.parse(relaxed.text) as unknown, repairs: relaxed.repairs };
+      } catch {
+        // Fall through and report the error of the original text.
+      }
+    }
     const message = e instanceof Error ? e.message : String(e);
     const pos = extractPosition(text, message);
     return {
@@ -423,6 +444,59 @@ function extractPosition(text: string, message: string): { line: number; column:
   // Some engines omit the position; find it ourselves.
   const offset = locateSyntaxError(text);
   return offset === null ? null : positionToLineColumn(text, offset);
+}
+
+/**
+ * Removes `//` and `/* *\/` comments outside strings and commas directly
+ * before `}` or `]`. Nothing else is changed. Linear in the input length.
+ */
+export function relaxJson(text: string): { text: string; repairs: JsonRepair[] } {
+  const parts: string[] = [];
+  const repairs = new Set<JsonRepair>();
+  // Index in `parts` of a comma that may turn out to be a trailing comma.
+  let pendingComma = -1;
+  let i = 0;
+  while (i < text.length) {
+    const c = text[i]!;
+    if (c === '"') {
+      let j = i + 1;
+      while (j < text.length && text[j] !== '"') j += text[j] === "\\" ? 2 : 1;
+      parts.push(text.slice(i, j + 1));
+      pendingComma = -1;
+      i = j + 1;
+      continue;
+    }
+    if (c === "/" && text[i + 1] === "/") {
+      const nl = text.indexOf("\n", i);
+      i = nl === -1 ? text.length : nl;
+      repairs.add("comments");
+      continue;
+    }
+    if (c === "/" && text[i + 1] === "*") {
+      const end = text.indexOf("*/", i + 2);
+      if (end === -1) return { text, repairs: [] };
+      i = end + 2;
+      repairs.add("comments");
+      continue;
+    }
+    if (c === ",") {
+      pendingComma = parts.length;
+      parts.push(c);
+    } else if (c === "}" || c === "]") {
+      if (pendingComma >= 0) {
+        parts[pendingComma] = "";
+        repairs.add("trailing_commas");
+      }
+      pendingComma = -1;
+      parts.push(c);
+    } else {
+      if (c !== " " && c !== "\t" && c !== "\n" && c !== "\r") pendingComma = -1;
+      parts.push(c);
+    }
+    i++;
+  }
+  const order: JsonRepair[] = ["trailing_commas", "comments"];
+  return { text: parts.join(""), repairs: order.filter((r) => repairs.has(r)) };
 }
 
 /**

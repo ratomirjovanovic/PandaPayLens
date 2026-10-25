@@ -7,6 +7,7 @@ import {
   type InputFormat,
   type RecordMeta,
   type InputLimits,
+  type JsonRepair,
   type ParseError,
 } from "./parse.js";
 import { findSensitivePaths } from "./redact.js";
@@ -78,6 +79,8 @@ export function analyzeText(
         recordIndex: r.recordIndex,
       });
     }
+    const lenient = lenientWarning(parsed.value.jsonRepairs);
+    if (lenient) result.result.warnings.unshift(lenient);
   }
   return result;
 }
@@ -124,6 +127,7 @@ export function analyzeSources(
   const metas: RecordMeta[] = [];
   const summaries: SourceSummary[] = [];
   const removed: { recordIndex: number; path: string }[] = [];
+  const lenientSources: AnalysisWarning[] = [];
   for (const s of sources) {
     const parsed = parseInput(s.text, options.limits);
     if (!parsed.ok) return { ok: false, error: { ...parsed.error, source: s.name } };
@@ -135,6 +139,8 @@ export function analyzeSources(
     });
     for (const r of parsed.value.removedKeys)
       removed.push({ ...r, recordIndex: r.recordIndex + records.length });
+    const lenient = lenientWarning(parsed.value.jsonRepairs, s.name);
+    if (lenient) lenientSources.push(lenient);
     records.push(...parsed.value.records);
     metas.push(...parsed.value.meta);
   }
@@ -157,6 +163,7 @@ export function analyzeSources(
       recordIndex: k.recordIndex,
     });
   }
+  r.result.warnings.unshift(...lenientSources);
   return { ok: true, result: r.result, sources: summaries, records };
 }
 
@@ -519,4 +526,15 @@ export function toIsoTimestamp(value: unknown): string | undefined {
     return Number.isNaN(d.getTime()) ? undefined : d.toISOString();
   }
   return undefined;
+}
+
+function lenientWarning(repairs: readonly JsonRepair[], source?: string): AnalysisWarning | null {
+  if (repairs.length === 0) return null;
+  const what = repairs
+    .map((r) => (r === "trailing_commas" ? "trailing commas" : "comments"))
+    .join(" and ");
+  return {
+    code: "LENIENT_JSON",
+    message: `${source ? `${source}: ` : ""}The input is not strict JSON. Removed ${what} before parsing.`,
+  };
 }

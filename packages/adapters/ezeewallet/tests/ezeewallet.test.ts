@@ -359,10 +359,16 @@ describe("ezeewallet parsing", () => {
     expect(p.ok).toBe(true);
   });
 
-  it("fails cleanly on malformed input, including the trailing commas of the docs examples", () => {
+  it("accepts the trailing commas of the docs examples with a warning", () => {
     const docs = analyzeText(fixture("ezeewallet/docs-trailing-comma-error.txt"), options);
-    expect(docs.ok).toBe(false);
-    expect(!docs.ok && docs.error.code).toBe("INVALID_JSON");
+    expect(docs.ok).toBe(true);
+    if (docs.ok) {
+      expect(docs.result.warnings.map((w) => w.code)).toContain("LENIENT_JSON");
+      expect(docs.result.errors.map((e) => e.code)).toContain("407");
+    }
+  });
+
+  it("fails cleanly on malformed input", () => {
     const cut = analyzeText('{"transfer": {"status": "approved", ', options);
     expect(!cut.ok && cut.error.code).toBe("INVALID_JSON");
   });

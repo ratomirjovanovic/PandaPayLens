@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { locateSyntaxError, parseInput, positionToLineColumn } from "@pandapaylens/core";
+import { locateSyntaxError, parseInput, positionToLineColumn, relaxJson } from "@pandapaylens/core";
 
 describe("parseInput", () => {
   it("parses a single object as one record", () => {
@@ -9,6 +9,7 @@ describe("parseInput", () => {
       records: [{ a: 1 }],
       meta: [{ format: "json" }],
       removedKeys: [],
+      jsonRepairs: [],
     });
   });
 
@@ -309,5 +310,66 @@ describe("documentation-style inputs", () => {
       ok: false,
       error: { code: "UNSUPPORTED_FORMAT" },
     });
+  });
+});
+
+describe("documentation-style JSON", () => {
+  it("removes trailing commas and reports the repair", () => {
+    const r = parseInput(
+      '{\n  "error": {\n    "code": 407,\n    "message": "Currency mismatch",\n  }\n}',
+    );
+    expect(r.ok && r.value.records).toEqual([
+      { error: { code: 407, message: "Currency mismatch" } },
+    ]);
+    expect(r.ok && r.value.jsonRepairs).toEqual(["trailing_commas"]);
+  });
+
+  it("removes line and block comments, also next to a trailing comma", () => {
+    const r = parseInput('{\n  "a": 1, // first\n  /* note */ "b": [1, 2,], // last\n}');
+    expect(r.ok && r.value.records).toEqual([{ a: 1, b: [1, 2] }]);
+    expect(r.ok && r.value.jsonRepairs).toEqual(["trailing_commas", "comments"]);
+  });
+
+  it("never changes commas or comment markers inside strings", () => {
+    const r = parseInput('{"url": "https://x.test/a,]", "c": "/* keep */", "d": "a\\",}",}');
+    expect(r.ok && r.value.records).toEqual([
+      { url: "https://x.test/a,]", c: "/* keep */", d: 'a",}' },
+    ]);
+  });
+
+  it("repairs each line of JSON Lines", () => {
+    const r = parseInput('{"a": 1,}\n{"b": 2}');
+    expect(r.ok && r.value.format).toBe("jsonl");
+    expect(r.ok && r.value.records).toEqual([{ a: 1 }, { b: 2 }]);
+    expect(r.ok && r.value.jsonRepairs).toEqual(["trailing_commas"]);
+  });
+
+  it("reports the original error when the input is still invalid", () => {
+    const r = parseInput('{"a": 1,, }');
+    expect(r).toMatchObject({ ok: false, error: { code: "INVALID_JSON" } });
+    expect(parseInput("{'a': 1}")).toMatchObject({ ok: false, error: { code: "INVALID_JSON" } });
+    expect(parseInput('{"a": 1 /* open')).toMatchObject({
+      ok: false,
+      error: { code: "INVALID_JSON" },
+    });
+  });
+
+  it("still removes prototype-pollution keys after a repair", () => {
+    const r = parseInput('{"__proto__": {"x": 1}, "a": 1,}');
+    expect(r.ok && r.value.records).toEqual([{ a: 1 }]);
+    expect(r.ok && r.value.removedKeys.map((k) => k.path)).toEqual(["__proto__"]);
+  });
+
+  it("leaves strict JSON untouched", async () => {
+    const fc = (await import("fast-check")).default;
+    fc.assert(
+      fc.property(fc.jsonValue({ maxDepth: 4 }), (v) => {
+        const text = JSON.stringify(v, null, 2);
+        expect(relaxJson(text)).toEqual({ text, repairs: [] });
+        const r = parseInput(text);
+        if (r.ok) expect(r.value.jsonRepairs).toEqual([]);
+      }),
+      { numRuns: 300 },
+    );
   });
 });
