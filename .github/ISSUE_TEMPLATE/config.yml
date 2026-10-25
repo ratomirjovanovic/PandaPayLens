@@ -1,5 +1,11 @@
-blank_issues_enabled: true
+blank_issues_enabled: false
 contact_links:
   - name: Report a security vulnerability
     url: https://github.com/ratomirjovanovic/PandaPayLens/security/advisories/new
     about: Please report vulnerabilities privately.
+  - name: Ask a question
+    url: https://github.com/ratomirjovanovic/PandaPayLens/discussions
+    about: Usage questions and ideas that are not yet concrete proposals.
+  - name: Documentation
+    url: https://github.com/ratomirjovanovic/PandaPayLens/wiki
+    about: How analysis works, input formats, providers and the CLI.
