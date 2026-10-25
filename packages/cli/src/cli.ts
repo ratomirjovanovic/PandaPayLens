@@ -22,7 +22,7 @@ import {
 import { ADAPTERS, ROADMAP } from "@pandapaylens/providers";
 import { defaultRules, RULE_CATALOG_VERSION } from "@pandapaylens/rules";
 
-export const CLI_VERSION = "0.1.0";
+export const CLI_VERSION = "0.3.0";
 
 export const EXIT = { OK: 0, FINDINGS: 1, INVALID_INPUT: 2, UNSUPPORTED: 3, INTERNAL: 4 } as const;
 
@@ -48,7 +48,7 @@ Usage:
   pandapaylens version             Version information
 
 Options:
-  -p, --provider <stripe|adyen>    Skip auto-detection
+  -p, --provider <id>              Skip auto-detection (ids: pandapaylens providers)
   -f, --format <text|json|markdown> Output format (default: text)
       --fail-on <severity>         Exit 1 if a finding is at or above this
                                    severity: critical|high|medium|low|info|none
@@ -57,7 +57,8 @@ Options:
       --no-color                   Disable colored output
   -h, --help                       Show this help
 
-Input may be JSON, a JSON array of records, or JSON Lines. Use "-" for stdin.
+Input may be JSON, a JSON array, JSON Lines, URL-encoded form data, a raw HTTP
+request or response, or a callback URL. Use "-" for stdin.
 Nothing is sent over the network.
 
 Exit codes: 0 ok, 1 findings at/above --fail-on, 2 invalid input,
