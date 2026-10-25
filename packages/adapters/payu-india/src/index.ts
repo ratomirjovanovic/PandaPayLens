@@ -133,8 +133,12 @@ const IDENTIFIER_LIKE = /[0-9Xx*#](?:[0-9Xx*# -]){6,}[0-9Xx*#]/g;
  */
 function scrub(v: unknown, max: number): string | undefined {
   if (typeof v !== "string") return undefined;
+  // Bounded input and a token pass (not /\S*@\S*/) keep the cost linear.
   const t = v
-    .replace(/\S*@\S*/g, "[redacted]")
+    .slice(0, max * 4)
+    .split(/(\s+)/)
+    .map((token) => (token.includes("@") ? "[redacted]" : token))
+    .join("")
     .replace(IDENTIFIER_LIKE, (m) => ((m.match(/[0-9Xx*#]/g)?.length ?? 0) >= 6 ? "[redacted]" : m))
     .replace(/\s+/g, " ")
     .trim();
