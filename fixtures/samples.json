@@ -425,5 +425,61 @@
     "provider": "astropay",
     "file": "astropay/gateway-timeout.txt",
     "description": "An HTTP 408 timeout: the outcome is unknown, so the payment must be checked before any retry."
+  },
+  {
+    "id": "finrax-underpaid",
+    "title": "Finrax: underpaid crypto payment",
+    "provider": "finrax",
+    "file": "finrax/underpaid-payment.json",
+    "description": "A deposited payment where only part of the expected amount arrived; shown as an unknown outcome, not a success."
+  },
+  {
+    "id": "finrax-blocked-deposit",
+    "title": "Finrax: blocked deposit and pending refund",
+    "provider": "finrax",
+    "file": "finrax/blocked-deposit.json",
+    "description": "A blocked deposit whose refund still waits for an address."
+  },
+  {
+    "id": "inpay-payout-rejected",
+    "title": "Inpay: payout rejected",
+    "provider": "inpay",
+    "file": "inpay/payout-rejected-webhook.txt",
+    "description": "A payout webhook rejected for a wrong account number, with the request id used to detect repeated deliveries."
+  },
+  {
+    "id": "inpay-order-cancelled",
+    "title": "Inpay: pay-by-bank order cancelled",
+    "provider": "inpay",
+    "file": "inpay/order-cancelled-webhook.txt",
+    "description": "An open banking payment cancelled by the payer."
+  },
+  {
+    "id": "decta-two-step",
+    "title": "DECTA: hold, capture and refund",
+    "provider": "decta",
+    "file": "decta/two-step-flow.json",
+    "description": "One order moving from a hold to a capture and a refund."
+  },
+  {
+    "id": "decta-declined",
+    "title": "DECTA: payment failure webhook",
+    "provider": "decta",
+    "file": "decta/order-declined-webhook.txt",
+    "description": "An order.payment_failure webhook with a raw acquirer code decoded as insufficient funds."
+  },
+  {
+    "id": "trustly-payout-failed",
+    "title": "Trustly: payout failed",
+    "provider": "trustly",
+    "file": "trustly/eu-payout-failed.json",
+    "description": "A payout accepted, then reported as failed, then the amount credited back."
+  },
+  {
+    "id": "trustly-amer-declined",
+    "title": "Trustly: North America payment failed",
+    "provider": "trustly",
+    "file": "trustly/amer-failed-insufficient-funds.txt",
+    "description": "A Failed event posted as an HTTP request and decoded as insufficient funds."
   }
 ]

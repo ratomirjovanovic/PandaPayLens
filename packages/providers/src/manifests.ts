@@ -11,6 +11,10 @@ import { checkoutManifest } from "@pandapaylens/checkout/manifest";
 import { paypalManifest } from "@pandapaylens/paypal/manifest";
 import { mollieManifest } from "@pandapaylens/mollie/manifest";
 import { squareManifest } from "@pandapaylens/square/manifest";
+import { trustlyManifest } from "@pandapaylens/trustly/manifest";
+import { dectaManifest } from "@pandapaylens/decta/manifest";
+import { inpayManifest } from "@pandapaylens/inpay/manifest";
+import { finraxManifest } from "@pandapaylens/finrax/manifest";
 import { astropayManifest } from "@pandapaylens/astropay/manifest";
 import { ezeewalletManifest } from "@pandapaylens/ezeewallet/manifest";
 import { skrillManifest } from "@pandapaylens/skrill/manifest";
@@ -35,6 +39,10 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   paypalManifest,
   mollieManifest,
   squareManifest,
+  trustlyManifest,
+  dectaManifest,
+  inpayManifest,
+  finraxManifest,
   astropayManifest,
   ezeewalletManifest,
   skrillManifest,
@@ -320,28 +328,28 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     id: "finrax",
     displayName: "Finrax",
     wave: "HR-3",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "crypto"],
   },
   {
     id: "inpay",
     displayName: "Inpay",
     wave: "HR-3",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "gaming", "pay_by_bank"],
   },
   {
     id: "decta",
     displayName: "DECTA",
     wave: "HR-3",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "gateway_acquiring"],
   },
   {
     id: "trustly",
     displayName: "Trustly",
     wave: "HR-3",
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["high_risk", "pay_by_bank"],
   },
   {

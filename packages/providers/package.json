@@ -36,9 +36,12 @@
     "@pandapaylens/ccbill": "workspace:*",
     "@pandapaylens/checkout": "workspace:*",
     "@pandapaylens/core": "workspace:*",
+    "@pandapaylens/decta": "workspace:*",
     "@pandapaylens/ecommpay": "workspace:*",
     "@pandapaylens/emerchantpay": "workspace:*",
     "@pandapaylens/ezeewallet": "workspace:*",
+    "@pandapaylens/finrax": "workspace:*",
+    "@pandapaylens/inpay": "workspace:*",
     "@pandapaylens/mifinity": "workspace:*",
     "@pandapaylens/mollie": "workspace:*",
     "@pandapaylens/netbilling": "workspace:*",
@@ -52,6 +55,7 @@
     "@pandapaylens/square": "workspace:*",
     "@pandapaylens/stripe": "workspace:*",
     "@pandapaylens/trust-payments": "workspace:*",
+    "@pandapaylens/trustly": "workspace:*",
     "@pandapaylens/verotel": "workspace:*"
   }
 }

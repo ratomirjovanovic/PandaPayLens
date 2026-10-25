@@ -1,0 +1,17 @@
+{
+  "result": {
+    "signature": "PLANTEDSIGNATUREWITHDRAW0001+abc/def==",
+    "uuid": "8e9f0a1b-2c3d-4e45-f6a7-b8c9d0e1f201",
+    "method": "GetWithdrawals",
+    "data": [
+      {
+        "orderid": "PPLsynth9100001",
+        "transferstate": "EXECUTED",
+        "reference": "PPLsynth01",
+        "amount": "75.00",
+        "currency": "EUR"
+      }
+    ]
+  },
+  "version": "1.1"
+}

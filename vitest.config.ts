@@ -165,6 +165,38 @@ export default defineConfig({
         replacement: src("./packages/adapters/astropay/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/finrax\/manifest$/,
+        replacement: src("./packages/adapters/finrax/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/finrax$/,
+        replacement: src("./packages/adapters/finrax/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/inpay\/manifest$/,
+        replacement: src("./packages/adapters/inpay/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/inpay$/,
+        replacement: src("./packages/adapters/inpay/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/decta\/manifest$/,
+        replacement: src("./packages/adapters/decta/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/decta$/,
+        replacement: src("./packages/adapters/decta/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/trustly\/manifest$/,
+        replacement: src("./packages/adapters/trustly/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/trustly$/,
+        replacement: src("./packages/adapters/trustly/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/skrill\/manifest$/,
         replacement: src("./packages/adapters/skrill/src/manifest.ts"),
       },

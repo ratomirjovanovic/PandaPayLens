@@ -1,0 +1,1 @@
+merchantId=PPLsynth1002463580&merchantReference=PPLsynth-ref-c001&paymentType=2&transactionType=1&eventId=PPLsynthE3001&eventType=Cancel&objectId=PPLsynthT3001&objectType=Transaction&message=&timeZone=Etc%2FUTC&createdAt=1792497600000&paymentProviderTransaction.status=UC08&paymentProviderTransaction.statusMessage=UC08&status=7&statusMessage=Canceled

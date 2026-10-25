@@ -1,0 +1,38 @@
+[
+  {
+    "method": "credit",
+    "params": {
+      "signature": "PLANTEDSIGNATURECREDIT0002+abc/def==",
+      "uuid": "7a2b3c4d-1e2f-4a5b-8c6d-0e1f2a3b4c01",
+      "data": {
+        "amount": "250.00",
+        "currency": "SEK",
+        "messageid": "PPLsynth-msg-2001",
+        "orderid": "PPLsynth2000001",
+        "enduserid": "PPLSYNTH-ENDUSER-PLANTED",
+        "notificationid": "PPLsynthN0000101",
+        "timestamp": "2026-10-20 09:15:00.000000+02",
+        "attributes": {}
+      }
+    },
+    "version": "1.1"
+  },
+  {
+    "method": "debit",
+    "params": {
+      "signature": "PLANTEDSIGNATUREDEBIT0001+abc/def==",
+      "uuid": "7a2b3c4d-1e2f-4a5b-8c6d-0e1f2a3b4c02",
+      "data": {
+        "amount": "250.00",
+        "currency": "SEK",
+        "messageid": "PPLsynth-msg-2001",
+        "orderid": "PPLsynth2000001",
+        "enduserid": "PPLSYNTH-ENDUSER-PLANTED",
+        "notificationid": "PPLsynthN0000102",
+        "timestamp": "2026-10-24 08:00:00.000000+02",
+        "attributes": {}
+      }
+    },
+    "version": "1.1"
+  }
+]

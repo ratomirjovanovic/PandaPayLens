@@ -1,0 +1,27 @@
+[
+  {
+    "debtor_account": { "id": "PPLSYNTH-VACCOUNT-PLANTED", "scheme_name": "VirtualAccount" },
+    "end_to_end_id": "PPLsynth-e2e-0005",
+    "inpay_unique_reference": "PPLsynthPO0005",
+    "amount": "5000.00",
+    "currency": "EUR",
+    "timestamp": "2026-10-22 08:00:00",
+    "state": "action_required",
+    "reasons": [
+      {
+        "category": "action_required",
+        "code": "insufficient_funds",
+        "details": { "general": ["Insufficient funds on the virtual account"] }
+      }
+    ]
+  },
+  {
+    "debtor_account": { "id": "PPLSYNTH-VACCOUNT-PLANTED", "scheme_name": "VirtualAccount" },
+    "end_to_end_id": "PPLsynth-e2e-0005",
+    "inpay_unique_reference": "PPLsynthPO0005",
+    "amount": "5000.00",
+    "currency": "EUR",
+    "timestamp": "2026-10-22 13:40:00",
+    "state": "processing"
+  }
+]

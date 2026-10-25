@@ -1,0 +1,66 @@
+[
+  {
+    "business_unit": "default",
+    "amount": "60.00",
+    "amount_cents": 6000,
+    "currency": "EUR",
+    "language": "en",
+    "uuid": "0b1c2d3e-4f50-4a61-8b72-c3d4e5f60004",
+    "back_to_merchant_url": "https://merchant.example.test/welcome_back",
+    "reference": "PPLsynth-order-0004",
+    "status": "processing_refund",
+    "status_reasons": [],
+    "refund": {
+      "uuid": "2b3c4d5e-6f70-4a81-9c92-a3b4c5d60004",
+      "amount": "60.00",
+      "currency_iso": "EUR",
+      "status": "created",
+      "creditor_full_name": "Planted Refund Creditor",
+      "creditor_account_number": "DE89PPLS00000000000001"
+    },
+    "payments": [
+      {
+        "uuid": "1a2b3c4d-5e6f-4a70-8b81-92a3b4c50004",
+        "status": "completed",
+        "type": "bank_transfer",
+        "inpay_unique_reference": "PPLSYNTH4",
+        "debtor_full_name": "Planted Synthetic Payer",
+        "debtor_account_number": "NL02PPLS0123456789",
+        "debtor_paid_amount": "60.00"
+      }
+    ],
+    "primary_payment": "PPLSYNTH4"
+  },
+  {
+    "business_unit": "default",
+    "amount": "60.00",
+    "amount_cents": 6000,
+    "currency": "EUR",
+    "language": "en",
+    "uuid": "0b1c2d3e-4f50-4a61-8b72-c3d4e5f60004",
+    "back_to_merchant_url": "https://merchant.example.test/welcome_back",
+    "reference": "PPLsynth-order-0004",
+    "status": "refunded",
+    "status_reasons": [],
+    "refund": {
+      "uuid": "2b3c4d5e-6f70-4a81-9c92-a3b4c5d60004",
+      "amount": "60.00",
+      "currency_iso": "EUR",
+      "status": "completed",
+      "creditor_full_name": "Planted Refund Creditor",
+      "creditor_account_number": "DE89PPLS00000000000001"
+    },
+    "payments": [
+      {
+        "uuid": "1a2b3c4d-5e6f-4a70-8b81-92a3b4c50004",
+        "status": "completed",
+        "type": "bank_transfer",
+        "inpay_unique_reference": "PPLSYNTH4",
+        "debtor_full_name": "Planted Synthetic Payer",
+        "debtor_account_number": "NL02PPLS0123456789",
+        "debtor_paid_amount": "60.00"
+      }
+    ],
+    "primary_payment": "PPLSYNTH4"
+  }
+]

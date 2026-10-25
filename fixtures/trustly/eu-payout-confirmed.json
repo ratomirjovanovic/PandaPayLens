@@ -1,0 +1,48 @@
+[
+  {
+    "result": {
+      "signature": "PLANTEDSIGNATUREPAYOUT0011+abc/def==",
+      "uuid": "3f4a5b6c-7d8e-4f90-a1b2-c3d4e5f6a701",
+      "method": "AccountPayout",
+      "data": {
+        "orderid": "PPLsynth6000001",
+        "result": "1"
+      }
+    },
+    "version": "1.1"
+  },
+  {
+    "method": "payoutdowngraded",
+    "params": {
+      "signature": "PLANTEDSIGNATUREPAYOUT0012+abc/def==",
+      "uuid": "3f4a5b6c-7d8e-4f90-a1b2-c3d4e5f6a702",
+      "data": {
+        "notificationid": "PPLsynthN0000501",
+        "messageid": "PPLsynth-msg-6001",
+        "orderid": "PPLsynth6000001",
+        "amount": 120.0,
+        "currency": "EUR",
+        "timestamp": "2026-10-23 12:00:00.000000+01",
+        "errorcode": "sepa_instant_downgrade"
+      }
+    },
+    "version": "1.1"
+  },
+  {
+    "method": "payoutconfirmation",
+    "params": {
+      "signature": "PLANTEDSIGNATUREPAYOUT0013+abc/def==",
+      "uuid": "3f4a5b6c-7d8e-4f90-a1b2-c3d4e5f6a703",
+      "data": {
+        "notificationid": "PPLsynthN0000502",
+        "messageid": "PPLsynth-msg-6001",
+        "orderid": "PPLsynth6000001",
+        "amount": "120.00",
+        "currency": "EUR",
+        "timestamp": "2026-10-24 09:00:00.000000+01",
+        "attributes": {}
+      }
+    },
+    "version": "1.1"
+  }
+]

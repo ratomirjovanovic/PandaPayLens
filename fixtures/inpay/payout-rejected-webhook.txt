@@ -1,0 +1,24 @@
+POST /webhooks/inpay/payouts HTTP/1.1
+Host: merchant.example.test
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IlBQTHN5bnRoIn0.PLANTEDJWTPAYLOAD.PLANTEDJWTSIGNATURE
+X-Request-ID: PPLsynth-req-0002
+
+{
+  "debtor_account": { "id": "PPLSYNTH-VACCOUNT-PLANTED", "scheme_name": "VirtualAccount" },
+  "end_to_end_id": "PPLsynth-e2e-0002",
+  "inpay_unique_reference": "PPLsynthPO0002",
+  "amount": "75.50",
+  "currency": "EUR",
+  "timestamp": "2026-10-20 11:00:00",
+  "state": "rejected",
+  "reasons": [
+    {
+      "category": "invalid_data",
+      "code": "invalid_data_incorrect_account_number",
+      "details": { "creditor_account.iban": ["GB33PPLS00000000000002 is not a valid IBAN"] }
+    },
+    { "category": "vop_info", "code": "no_match", "details": {} }
+  ]
+}

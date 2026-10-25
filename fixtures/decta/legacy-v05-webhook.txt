@@ -1,0 +1,18 @@
+POST /PPLsynth/webhooks/decta HTTP/1.1
+Host: merchant.example
+Content-Type: application/json
+X-Webhook-Event: payment.paid
+X-Webhook-Version: v0.5
+
+{
+  "type": "order",
+  "id": "PPLsynth-order-0012",
+  "status": "paid",
+  "status_changes": [
+    {
+      "new_status": "paid",
+      "currency": "EUR",
+      "operation_amount": "25.00"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "paymentId": "PPLsynth-pay-0004",
+  "clientPaymentId": "PPLSYNTH-ORDER-0004",
+  "status": "BLOCKED",
+  "type": "ONE_TIME",
+  "rateType": "FIXED",
+  "displayCurrency": "EUR",
+  "expectedDisplayAmount": "120.00",
+  "actualDisplayAmount": "120.00",
+  "depositCurrency": "BTC",
+  "expectedNetwork": "BITCOIN",
+  "expectedDepositAmount": "0.00190000",
+  "overpaymentPolicy": "PROCESS",
+  "processorType": "BLOCKCHAIN",
+  "expirationMinutes": 30,
+  "paymentRequestedAt": 1792730000,
+  "deposits": [
+    {
+      "id": "PPLsynth-dep-0004",
+      "transactionId": "PLANTEDTXHASH0004",
+      "status": "BLOCKED",
+      "fromAddress": "PLANTEDFROMADDRESS0004",
+      "toAddress": "PLANTEDWALLETADDRESS0004",
+      "riskScore": 0.97,
+      "addressRiskAssessment": {
+        "addressOwner": { "name": "PLANTEDOWNERNAME0004", "category": "Darknet" },
+        "sourceRiskEntities": [],
+        "destinationRiskEntities": []
+      },
+      "depositCurrency": "BTC",
+      "network": "BITCOIN",
+      "depositAmount": "0.00190000",
+      "depositReceivedAt": 1792730700,
+      "refund": {
+        "type": "FULL",
+        "status": "AWAITING_ADDRESS_INPUT",
+        "reason": "ILLICIT_DEPOSIT",
+        "destinationAddress": "",
+        "amount": "0.00190000",
+        "createdAt": 1792730710
+      }
+    }
+  ]
+}

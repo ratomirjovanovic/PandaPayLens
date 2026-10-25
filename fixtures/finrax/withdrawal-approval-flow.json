@@ -1,0 +1,28 @@
+[
+  {
+    "withdrawalId": "PPLsynth-wd-0002",
+    "clientLabel": "PPLSYNTH-PAYOUT-0002"
+  },
+  {
+    "withdrawalId": "PPLsynth-wd-0002",
+    "clientWithdrawalId": "PPLSYNTH-PAYOUT-0002",
+    "status": "APPROVED"
+  },
+  {
+    "status": "COMPLETED",
+    "clientWithdrawalId": "PPLSYNTH-PAYOUT-0002",
+    "withdrawalId": "PPLsynth-wd-0002",
+    "displayCurrency": "EUR",
+    "withdrawCurrency": "BTC",
+    "settlementCurrency": "EUR",
+    "expectedDisplayAmount": "500.00",
+    "actualDisplayAmount": "500.00",
+    "estimatedWithdrawAmount": "0.00790000",
+    "actualWithdrawAmount": "0.00790000",
+    "deducedSettlementAmount": "505.00",
+    "withdrawFee": "0.00002000",
+    "displayFee": "1.27",
+    "toTxAddress": "PLANTEDRECIPIENTADDRESS0002",
+    "transactionId": "PLANTEDWDTXHASH0002"
+  }
+]

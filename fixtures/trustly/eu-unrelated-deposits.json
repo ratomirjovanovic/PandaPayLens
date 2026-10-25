@@ -1,0 +1,36 @@
+[
+  {
+    "method": "credit",
+    "params": {
+      "signature": "PLANTEDSIGNATUREUNREL0001+abc/def==",
+      "uuid": "9f0a1b2c-3d4e-4f56-a7b8-c9d0e1f2a301",
+      "data": {
+        "amount": "15.00",
+        "currency": "EUR",
+        "messageid": "PPLsynth-msg-shared",
+        "orderid": "PPLsynth9200001",
+        "enduserid": "PPLSYNTH-ENDUSER-PLANTED",
+        "notificationid": "PPLsynthN0000801",
+        "timestamp": "2026-10-20 10:00:00.000000+01",
+        "attributes": {}
+      }
+    },
+    "version": "1.1"
+  },
+  {
+    "method": "cancel",
+    "params": {
+      "signature": "PLANTEDSIGNATUREUNREL0002+abc/def==",
+      "uuid": "9f0a1b2c-3d4e-4f56-a7b8-c9d0e1f2a302",
+      "data": {
+        "messageid": "PPLsynth-msg-shared",
+        "orderid": "PPLsynth9200002",
+        "enduserid": "PPLSYNTH-ENDUSER-PLANTED",
+        "notificationid": "PPLsynthN0000802",
+        "timestamp": "2026-10-20 10:05:00.000000+01",
+        "attributes": {}
+      }
+    },
+    "version": "1.1"
+  }
+]
