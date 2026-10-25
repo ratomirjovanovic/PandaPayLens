@@ -1,0 +1,10 @@
+{
+  "clientReferenceInformation": { "code": "PPLsynth-order-0501" },
+  "errorInformation": {
+    "reason": "CONSUMER_AUTHENTICATION_REQUIRED",
+    "message": "The cardholder is enrolled in Payer Authentication. Please authenticate the cardholder before continuing with the transaction."
+  },
+  "id": "PPLsynth00000000000501",
+  "status": "PENDING_AUTHENTICATION",
+  "submitTimeUtc": "2026-10-20T09:30:00Z"
+}

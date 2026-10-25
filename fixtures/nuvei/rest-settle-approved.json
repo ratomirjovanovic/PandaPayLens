@@ -1,0 +1,19 @@
+{
+  "merchantId": "PPLsynth427583496191624621",
+  "merchantSiteId": "PPLsynth142033",
+  "internalRequestId": 45,
+  "transactionId": "PPLsynth8498764859",
+  "externalTransactionId": "",
+  "status": "SUCCESS",
+  "isAFT": "True",
+  "transactionStatus": "APPROVED",
+  "errCode": 0,
+  "reason": "",
+  "paymentMethodErrorCode": 0,
+  "paymentMethodErrorReason": "",
+  "gwErrorCode": 0,
+  "gwErrorReason": "",
+  "gwExtendedErrorCode": 0,
+  "customData": "",
+  "version": "1"
+}

@@ -1,0 +1,43 @@
+[
+  {
+    "receivedAt": "2026-10-20T10:00:02Z",
+    "payload": {
+      "eventType": "payments.authorization.status.accepted",
+      "webhookId": "PPLsynth-webhook-0001",
+      "productId": "payments",
+      "organizationId": "PPLsynth_org_0001",
+      "eventDate": "2026-10-20T10:00:01",
+      "transactionTraceId": "PPLsynth-trace-1201",
+      "retryNumber": 0,
+      "payload": "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2R0NNIn0.PPLsynthEncryptedKey1201.PPLsynthIv1201.PPLsynthCiphertext1201.PPLsynthTag1201",
+      "requestType": "NEW"
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T10:01:02Z",
+    "payload": {
+      "eventType": "payments.authorization.status.accepted",
+      "webhookId": "PPLsynth-webhook-0001",
+      "productId": "payments",
+      "organizationId": "PPLsynth_org_0001",
+      "eventDate": "2026-10-20T10:00:01",
+      "transactionTraceId": "PPLsynth-trace-1202",
+      "retryNumber": 1,
+      "payload": "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2R0NNIn0.PPLsynthEncryptedKey1201.PPLsynthIv1201.PPLsynthCiphertext1201.PPLsynthTag1201"
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T10:01:03Z",
+    "payload": {
+      "eventType": "payments.authorization.status.accepted",
+      "webhookId": "PPLsynth-webhook-0001",
+      "productId": "payments",
+      "organizationId": "PPLsynth_org_0001",
+      "eventDate": "2026-10-20T10:00:01",
+      "transactionTraceId": "PPLsynth-trace-1203",
+      "retryNumber": 0,
+      "payload": "eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2R0NNIn0.PPLsynthEncryptedKey1203.PPLsynthIv1203.PPLsynthCiphertext1203.PPLsynthTag1203",
+      "requestType": "NEW"
+    }
+  }
+]

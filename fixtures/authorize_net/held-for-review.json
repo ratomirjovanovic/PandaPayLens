@@ -1,0 +1,19 @@
+{
+  "transactionResponse": {
+    "responseCode": "4",
+    "authCode": "PPL7H1",
+    "avsResultCode": "Y",
+    "cvvResultCode": "M",
+    "cavvResultCode": "",
+    "transId": "80000000501",
+    "refTransID": "",
+    "accountNumber": "XXXX1111",
+    "accountType": "Visa",
+    "messages": [
+      {
+        "code": "253"
+      }
+    ]
+  },
+  "refId": "PPLsynth-ref-0501"
+}

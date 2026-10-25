@@ -1,0 +1,25 @@
+[
+  {
+    "_links": {
+      "void": { "method": "POST", "href": "/pts/v2/payments/PPLsynth00000000000801/voids" },
+      "self": { "method": "GET", "href": "/pts/v2/payments/PPLsynth00000000000801" }
+    },
+    "clientReferenceInformation": { "code": "PPLsynth-order-0801" },
+    "id": "PPLsynth00000000000801",
+    "orderInformation": {
+      "amountDetails": { "totalAmount": "12.00", "authorizedAmount": "12.00", "currency": "USD" }
+    },
+    "processorInformation": { "responseCode": "00", "approvalCode": "PPL801" },
+    "status": "AUTHORIZED",
+    "submitTimeUtc": "2026-10-20T12:00:00Z"
+  },
+  {
+    "_links": { "self": { "method": "GET", "href": "/pts/v2/voids/PPLsynth00000000000802" } },
+    "clientReferenceInformation": { "code": "PPLsynth-order-0801" },
+    "id": "PPLsynth00000000000802",
+    "orderInformation": { "amountDetails": { "currency": "USD" } },
+    "voidAmountDetails": { "voidAmount": "12.00" },
+    "status": "VOIDED",
+    "submitTimeUtc": "2026-10-20T12:10:00Z"
+  }
+]

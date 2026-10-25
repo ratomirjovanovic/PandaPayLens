@@ -1,0 +1,40 @@
+{
+  "outcome": "authorized",
+  "paymentId": "payPPLsynthAuthorized04",
+  "commandId": "cmdPPLsynthAuthorized04",
+  "transactionReference": "PPLsynth-txn-0004",
+  "schemeReference": "PPLSYNTHSCHEMEREF04",
+  "issuer": {
+    "authorizationCode": "PPL004"
+  },
+  "riskFactors": [
+    {
+      "risk": "notChecked",
+      "type": "cvc"
+    }
+  ],
+  "fraud": {
+    "outcome": "lowRisk",
+    "score": 12.5
+  },
+  "threeDS": {
+    "outcome": "authenticated",
+    "issuerResponse": "frictionless",
+    "version": "2.2.0"
+  },
+  "paymentInstrument": {
+    "type": "card/plain+masked",
+    "cardBrand": "mastercard",
+    "fundingType": "debit"
+  },
+  "_actions": {
+    "settlePayment": {
+      "href": "https://try.access.worldpay.com/api/payments/PPLsynthLinkData0004/settlements",
+      "method": "POST"
+    },
+    "cancelPayment": {
+      "href": "https://try.access.worldpay.com/api/payments/PPLsynthLinkData0004/cancellations",
+      "method": "POST"
+    }
+  }
+}

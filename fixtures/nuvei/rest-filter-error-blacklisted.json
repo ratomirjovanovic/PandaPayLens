@@ -1,0 +1,17 @@
+{
+  "orderId": "PPLsynth271308092",
+  "transactionStatus": "ERROR",
+  "gwErrorCode": -1100,
+  "gwErrorReason": "",
+  "gwExtendedErrorCode": 1114,
+  "transactionType": "Sale",
+  "transactionId": "PPLsynth1110000000010304192",
+  "clientUniqueId": "PPLsynth-order-1006",
+  "internalRequestId": 222320402,
+  "status": "SUCCESS",
+  "errCode": 0,
+  "reason": "",
+  "merchantId": "PPLsynth427583496191624621",
+  "merchantSiteId": "PPLsynth142033",
+  "version": "1.0"
+}

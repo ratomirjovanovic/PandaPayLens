@@ -1,0 +1,16 @@
+{
+  "EventId": "PPLsynth-2a4c6e8f-0b1d-4f3a-8c5e-7a9b1d3f5e7a",
+  "EventType": "Pre-Chargeback Alert",
+  "ProcessingEntityType": "client",
+  "AttemptNumber": 1,
+  "ClientId": 151999723,
+  "EventDateUTC": "2026-10-24T09:00:00.000Z",
+  "EventCorrelationId": "PPLsynth-6f0773be-755b-4540-971b-0bd473cb093b",
+  "Alert": {
+    "Decision": "Refund",
+    "Refunded": true
+  },
+  "TransactionDetails": {
+    "TransactionId": "PPLsynth1110000000020000002"
+  }
+}

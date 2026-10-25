@@ -481,5 +481,61 @@
     "provider": "trustly",
     "file": "trustly/amer-failed-insufficient-funds.txt",
     "description": "A Failed event posted as an HTTP request and decoded as insufficient funds."
+  },
+  {
+    "id": "worldpay-card-lifecycle",
+    "title": "Worldpay: card payment webhooks",
+    "provider": "worldpay",
+    "file": "worldpay/card-lifecycle-webhooks.json",
+    "description": "Access Worldpay events from authorization to settlement in one timeline."
+  },
+  {
+    "id": "worldpay-raw-refusal",
+    "title": "Worldpay: refusal with a raw scheme code",
+    "provider": "worldpay",
+    "file": "worldpay/refused-card-payments-v7-raw-code.json",
+    "description": "A Card Payments v7 refusal where the raw scheme code and the Worldpay code are shown side by side."
+  },
+  {
+    "id": "cybersource-capture-refund",
+    "title": "Cybersource: authorization, capture and refund",
+    "provider": "cybersource",
+    "file": "cybersource/capture-and-refund-flow.json",
+    "description": "Three operations linked into one timeline through the Transaction Details root id."
+  },
+  {
+    "id": "cybersource-insufficient-funds",
+    "title": "Cybersource: declined, insufficient funds",
+    "provider": "cybersource",
+    "file": "cybersource/declined-insufficient-funds.txt",
+    "description": "An HTTP 201 decline decoded with Cybersource's retry advice."
+  },
+  {
+    "id": "authorize-net-capture-refund",
+    "title": "Authorize.net: capture and refund",
+    "provider": "authorize_net",
+    "file": "authorize_net/auth-capture-refund-flow.json",
+    "description": "Authorization and capture webhooks, the refund response and the refund webhook in one transaction."
+  },
+  {
+    "id": "authorize-net-declined",
+    "title": "Authorize.net: card declined",
+    "provider": "authorize_net",
+    "file": "authorize_net/declined-general.json",
+    "description": "The transaction reason code decoded separately from the response code, with AVS and card code results."
+  },
+  {
+    "id": "nuvei-apm-pending-approved",
+    "title": "Nuvei: APM payment pending, then approved",
+    "provider": "nuvei",
+    "file": "nuvei/dmn-apm-pending-then-approved.txt",
+    "description": "Two payment DMNs for one transaction, shown as one timeline."
+  },
+  {
+    "id": "nuvei-declined",
+    "title": "Nuvei: declined, do not honor",
+    "provider": "nuvei",
+    "file": "nuvei/rest-payment-declined-http.txt",
+    "description": "A REST decline where the Mastercard advice code tightens the retry advice."
   }
 ]

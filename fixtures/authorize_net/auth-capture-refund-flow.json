@@ -1,0 +1,74 @@
+[
+  {
+    "notificationId": "PPLsynth-notif-0901",
+    "eventType": "net.authorize.payment.authorization.created",
+    "eventDate": "2026-10-20T09:00:01.1000000Z",
+    "webhookId": "PPLsynth-webhook-01",
+    "payload": {
+      "responseCode": 1,
+      "merchantReferenceId": "PPLsynth-ref-0901",
+      "authCode": "PPL7W2",
+      "avsResponse": "Y",
+      "authAmount": 120.0,
+      "entityName": "transaction",
+      "id": "80000000901"
+    }
+  },
+  {
+    "notificationId": "PPLsynth-notif-0902",
+    "eventType": "net.authorize.payment.priorAuthCapture.created",
+    "eventDate": "2026-10-20T15:30:12.2000000Z",
+    "webhookId": "PPLsynth-webhook-01",
+    "payload": {
+      "responseCode": 1,
+      "authCode": "PPL7W2",
+      "avsResponse": "P",
+      "authAmount": 120.0,
+      "entityName": "transaction",
+      "id": "80000000901"
+    }
+  },
+  {
+    "transactionResponse": {
+      "responseCode": "1",
+      "authCode": "",
+      "avsResultCode": "P",
+      "cvvResultCode": "",
+      "cavvResultCode": "",
+      "transId": "80000000951",
+      "refTransID": "80000000901",
+      "testRequest": "0",
+      "accountNumber": "XXXX1111",
+      "accountType": "Visa",
+      "messages": [
+        {
+          "code": "1",
+          "description": "This transaction has been approved."
+        }
+      ]
+    },
+    "refId": "PPLsynth-ref-0951",
+    "messages": {
+      "resultCode": "Ok",
+      "message": [
+        {
+          "code": "I00001",
+          "text": "Successful."
+        }
+      ]
+    }
+  },
+  {
+    "notificationId": "PPLsynth-notif-0951",
+    "eventType": "net.authorize.payment.refund.created",
+    "eventDate": "2026-10-22T10:05:44.3000000Z",
+    "webhookId": "PPLsynth-webhook-01",
+    "payload": {
+      "responseCode": 1,
+      "avsResponse": "P",
+      "authAmount": 40.0,
+      "entityName": "transaction",
+      "id": "80000000951"
+    }
+  }
+]

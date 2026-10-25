@@ -1,0 +1,67 @@
+[
+  {
+    "_links": {
+      "authReversal": {
+        "method": "POST",
+        "href": "/pts/v2/payments/PPLsynth00000000000601/reversals"
+      },
+      "self": { "method": "GET", "href": "/pts/v2/payments/PPLsynth00000000000601" },
+      "capture": { "method": "POST", "href": "/pts/v2/payments/PPLsynth00000000000601/captures" }
+    },
+    "clientReferenceInformation": { "code": "PPLsynth-order-0601" },
+    "id": "PPLsynth00000000000601",
+    "orderInformation": { "amountDetails": { "authorizedAmount": "100.00", "currency": "EUR" } },
+    "processorInformation": { "responseCode": "00", "avs": { "code": "Y", "codeRaw": "Y" } },
+    "reconciliationId": "PPLsynth00000000000601",
+    "status": "AUTHORIZED",
+    "submitTimeUtc": "2026-10-20T10:00:00Z"
+  },
+  {
+    "_links": {
+      "void": { "method": "POST", "href": "/pts/v2/captures/PPLsynth00000000000602/voids" },
+      "self": { "method": "GET", "href": "/pts/v2/captures/PPLsynth00000000000602" }
+    },
+    "clientReferenceInformation": { "code": "PPLsynth-order-0601" },
+    "id": "PPLsynth00000000000602",
+    "orderInformation": { "amountDetails": { "totalAmount": "100.00", "currency": "EUR" } },
+    "reconciliationId": "PPLsynthRECON0602",
+    "status": "PENDING",
+    "submitTimeUtc": "2026-10-20T10:05:00Z"
+  },
+  {
+    "id": "PPLsynth00000000000602",
+    "rootId": "PPLsynth00000000000601",
+    "submitTimeUTC": "2026-10-20T10:05:00Z",
+    "clientReferenceInformation": { "code": "PPLsynth-order-0601" },
+    "applicationInformation": {
+      "reasonCode": 100,
+      "rCode": 1,
+      "applications": [{ "name": "ics_bill", "reasonCode": "100", "rCode": "1" }]
+    },
+    "_links": { "self": { "href": "/tss/v2/transactions/PPLsynth00000000000602", "method": "GET" } }
+  },
+  {
+    "_links": {
+      "void": { "method": "POST", "href": "/pts/v2/credits/PPLsynth00000000000603/voids" },
+      "self": { "method": "GET", "href": "/pts/v2/credits/PPLsynth00000000000603" }
+    },
+    "clientReferenceInformation": { "code": "PPLsynth-order-0601" },
+    "id": "PPLsynth00000000000603",
+    "orderInformation": { "amountDetails": { "currency": "EUR" } },
+    "creditAmountDetails": { "creditAmount": "40.00" },
+    "reconciliationId": "PPLsynthRECON0603",
+    "status": "PENDING",
+    "submitTimeUtc": "2026-10-21T08:00:00Z"
+  },
+  {
+    "id": "PPLsynth00000000000603",
+    "rootId": "PPLsynth00000000000601",
+    "submitTimeUTC": "2026-10-21T08:00:00Z",
+    "applicationInformation": {
+      "reasonCode": "100",
+      "rCode": "1",
+      "applications": [{ "name": "ics_credit", "reasonCode": "100", "rCode": "1" }]
+    },
+    "_links": { "self": { "href": "/tss/v2/transactions/PPLsynth00000000000603", "method": "GET" } }
+  }
+]

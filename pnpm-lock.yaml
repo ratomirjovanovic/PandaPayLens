@@ -178,6 +178,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/authorize-net:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/braintree:
     dependencies:
       '@pandapaylens/core':
@@ -197,6 +206,15 @@ importers:
         version: 4.6.7
 
   packages/adapters/checkout:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/cybersource:
     dependencies:
       '@pandapaylens/core':
         specifier: workspace:*
@@ -287,6 +305,15 @@ importers:
         version: 4.6.7
 
   packages/adapters/nmi:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/nuvei:
     dependencies:
       '@pandapaylens/core':
         specifier: workspace:*
@@ -394,6 +421,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/worldpay:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/cli:
     dependencies:
       '@pandapaylens/adyen':
@@ -426,6 +462,9 @@ importers:
       '@pandapaylens/astropay':
         specifier: workspace:*
         version: link:../adapters/astropay
+      '@pandapaylens/authorize-net':
+        specifier: workspace:*
+        version: link:../adapters/authorize-net
       '@pandapaylens/braintree':
         specifier: workspace:*
         version: link:../adapters/braintree
@@ -438,6 +477,9 @@ importers:
       '@pandapaylens/core':
         specifier: workspace:*
         version: link:../core
+      '@pandapaylens/cybersource':
+        specifier: workspace:*
+        version: link:../adapters/cybersource
       '@pandapaylens/decta':
         specifier: workspace:*
         version: link:../adapters/decta
@@ -468,6 +510,9 @@ importers:
       '@pandapaylens/nmi':
         specifier: workspace:*
         version: link:../adapters/nmi
+      '@pandapaylens/nuvei':
+        specifier: workspace:*
+        version: link:../adapters/nuvei
       '@pandapaylens/payabl':
         specifier: workspace:*
         version: link:../adapters/payabl
@@ -501,6 +546,9 @@ importers:
       '@pandapaylens/verotel':
         specifier: workspace:*
         version: link:../adapters/verotel
+      '@pandapaylens/worldpay':
+        specifier: workspace:*
+        version: link:../adapters/worldpay
 
   packages/rules:
     dependencies:

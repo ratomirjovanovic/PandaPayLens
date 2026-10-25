@@ -1,0 +1,1 @@
+https://merchant.example.com/PPLsynth/dmn/receiveNotification?ppp_status=OK&ppp_TransactionID=PPLsynth547&TransactionId=PPLsynth45402&userid=&merchant_unique_id=PPLsynth-order-2040&customData=&productId=PPLsynth-product-2&totalAmount=47.25&currency=USD&Status=APPROVED

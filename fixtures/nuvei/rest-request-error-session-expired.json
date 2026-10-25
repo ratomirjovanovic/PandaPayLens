@@ -1,0 +1,11 @@
+{
+  "sessionToken": "PPLsynth-session-expired-0001",
+  "internalRequestId": 222320400,
+  "status": "ERROR",
+  "errCode": 1069,
+  "reason": "Session has expired",
+  "merchantId": "PPLsynth427583496191624621",
+  "merchantSiteId": "PPLsynth142033",
+  "version": "1.0",
+  "clientRequestId": "PPLsynth-request-1004"
+}

@@ -1,0 +1,44 @@
+{
+  "orderId": "PPLsynth271308078",
+  "userTokenId": "PPLsynth-user-230811147",
+  "isAFT": "True",
+  "isAFTOverridden": "True",
+  "paymentOption": {
+    "userPaymentOptionId": "PPLsynth53959588",
+    "card": {
+      "ccCardNumber": "4****1111",
+      "bin": "400000",
+      "last4Digits": "1111",
+      "ccExpMonth": "12",
+      "ccExpYear": "29",
+      "acquirerId": "19",
+      "cvv2Reply": "M",
+      "avsCode": "Y",
+      "cardType": "Credit",
+      "cardBrand": "VISA",
+      "threeD": {}
+    }
+  },
+  "transactionStatus": "APPROVED",
+  "gwErrorCode": 0,
+  "gwExtendedErrorCode": 0,
+  "transactionType": "Sale",
+  "transactionId": "PPLsynth1110000000010304183",
+  "externalTransactionId": "",
+  "authCode": "PPLsynth-auth-1",
+  "customData": "",
+  "fraudDetails": {
+    "finalDecision": "Accept"
+  },
+  "sessionToken": "PPLsynth-session-cedbd6c0-52cf-4716-83b1",
+  "clientUniqueId": "PPLsynth-order-1001",
+  "internalRequestId": 222320318,
+  "status": "SUCCESS",
+  "errCode": 0,
+  "reason": "",
+  "merchantId": "PPLsynth427583496191624621",
+  "merchantSiteId": "PPLsynth142033",
+  "version": "1.0",
+  "clientRequestId": "PPLsynth-request-1001",
+  "merchantAdviceCode": "02"
+}

@@ -1,0 +1,19 @@
+{
+  "transaction": {
+    "transId": "80000001401",
+    "submitTimeUTC": "2026-10-24T13:00:00Z",
+    "transactionType": "authCaptureTransaction",
+    "transactionStatus": "settledSuccessfully",
+    "AVSResponse": "Y",
+    "cardCodeResponse": "M"
+  },
+  "messages": {
+    "resultCode": "Ok",
+    "message": [
+      {
+        "code": "I00001",
+        "text": "Successful."
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "orderId": "PPLsynth271308097",
+  "transactionStatus": "DECLINED",
+  "gwErrorCode": -1,
+  "gwErrorReason": "Payment not authorized by user",
+  "gwExtendedErrorCode": 0,
+  "paymentMethodErrorCode": "PPLSYNTH-APM-17",
+  "paymentMethodErrorReason": "Synthetic APM decline text",
+  "transactionType": "Sale",
+  "transactionId": "PPLsynth1110000000010304197",
+  "clientUniqueId": "PPLsynth-order-1010",
+  "internalRequestId": 222320407,
+  "status": "SUCCESS",
+  "errCode": 0,
+  "reason": "",
+  "merchantId": "PPLsynth427583496191624621",
+  "merchantSiteId": "PPLsynth142033",
+  "version": "1.0"
+}

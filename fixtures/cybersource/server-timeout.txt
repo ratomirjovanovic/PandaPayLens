@@ -1,0 +1,4 @@
+HTTP/1.1 502 Bad Gateway
+Content-Type: application/json;charset=utf-8
+
+{"id":"PPLsynth00000000000901","submitTimeUtc":"2026-10-20T14:00:00Z","status":"SERVER_ERROR","reason":"SERVER_TIMEOUT","message":"Error - The request was received but there was a server timeout. This error does not include timeouts between the client and the server."}

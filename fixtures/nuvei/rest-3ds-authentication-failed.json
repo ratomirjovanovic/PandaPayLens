@@ -1,0 +1,27 @@
+{
+  "orderId": "PPLsynth271308095",
+  "paymentOption": {
+    "card": {
+      "threeD": {
+        "result": "N",
+        "eci": "-1",
+        "threeDReasonId": "01",
+        "threeDReason": "Card authentication failed"
+      }
+    }
+  },
+  "transactionStatus": "ERROR",
+  "gwErrorCode": -1100,
+  "gwErrorReason": "",
+  "gwExtendedErrorCode": 1282,
+  "transactionType": "Sale",
+  "transactionId": "PPLsynth1110000000010304195",
+  "clientUniqueId": "PPLsynth-order-1009",
+  "internalRequestId": 222320405,
+  "status": "SUCCESS",
+  "errCode": 0,
+  "reason": "",
+  "merchantId": "PPLsynth427583496191624621",
+  "merchantSiteId": "PPLsynth142033",
+  "version": "1.0"
+}

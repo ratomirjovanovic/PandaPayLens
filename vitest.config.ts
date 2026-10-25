@@ -197,6 +197,38 @@ export default defineConfig({
         replacement: src("./packages/adapters/trustly/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/worldpay\/manifest$/,
+        replacement: src("./packages/adapters/worldpay/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/worldpay$/,
+        replacement: src("./packages/adapters/worldpay/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/cybersource\/manifest$/,
+        replacement: src("./packages/adapters/cybersource/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/cybersource$/,
+        replacement: src("./packages/adapters/cybersource/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/authorize-net\/manifest$/,
+        replacement: src("./packages/adapters/authorize-net/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/authorize-net$/,
+        replacement: src("./packages/adapters/authorize-net/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/nuvei\/manifest$/,
+        replacement: src("./packages/adapters/nuvei/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/nuvei$/,
+        replacement: src("./packages/adapters/nuvei/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/skrill\/manifest$/,
         replacement: src("./packages/adapters/skrill/src/manifest.ts"),
       },

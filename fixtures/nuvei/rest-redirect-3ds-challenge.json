@@ -1,0 +1,27 @@
+{
+  "orderId": "PPLsynth271308094",
+  "paymentOption": {
+    "card": {
+      "ccCardNumber": "4****1111",
+      "threeD": {
+        "acsUrl": "https://acs.example.com/PPLsynth/challenge",
+        "cReq": "PPLsynthCReqValue",
+        "version": "2.1.0",
+        "v2supported": "true"
+      }
+    }
+  },
+  "transactionStatus": "REDIRECT",
+  "gwErrorCode": 0,
+  "gwExtendedErrorCode": 0,
+  "transactionType": "Auth3D",
+  "transactionId": "PPLsynth1110000000010304194",
+  "clientUniqueId": "PPLsynth-order-1008",
+  "internalRequestId": 222320404,
+  "status": "SUCCESS",
+  "errCode": 0,
+  "reason": "",
+  "merchantId": "PPLsynth427583496191624621",
+  "merchantSiteId": "PPLsynth142033",
+  "version": "1.0"
+}

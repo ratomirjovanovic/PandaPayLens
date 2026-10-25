@@ -1,0 +1,8 @@
+{
+  "outcome": "fraudHighRisk",
+  "paymentId": "payPPLsynthFraudHigh0012",
+  "commandId": "cmdPPLsynthFraudHigh0012",
+  "transactionReference": "PPLsynth-txn-0012",
+  "score": 98.5,
+  "reason": ["PPLsynthReasonVelocity"]
+}

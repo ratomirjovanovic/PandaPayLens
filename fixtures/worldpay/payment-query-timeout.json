@@ -1,0 +1,17 @@
+{
+  "paymentId": "payPPLsynthQueryTimeo006",
+  "transactionReference": "PPLsynth-txn-0006",
+  "lastEvent": "authorizationTimedOut",
+  "events": [
+    {
+      "eventName": "authorizationRequested",
+      "timestamp": "2026-10-22T08:00:01.000Z",
+      "commandId": "cmdPPLsynthQueryTimeo006"
+    },
+    {
+      "eventName": "authorizationTimedOut",
+      "timestamp": "2026-10-22T08:00:31.000Z",
+      "commandId": "cmdPPLsynthQueryTimeo006"
+    }
+  ]
+}

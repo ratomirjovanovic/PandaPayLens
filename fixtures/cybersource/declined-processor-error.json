@@ -1,0 +1,14 @@
+{
+  "clientReferenceInformation": { "code": "PPLsynth-order-0202" },
+  "errorInformation": { "reason": "PROCESSOR_ERROR", "message": "Invalid account" },
+  "id": "PPLsynth00000000000202",
+  "paymentInsightsInformation": {
+    "responseInsights": { "categoryCode": "01", "category": "ISSUER_WILL_NEVER_APPROVE" }
+  },
+  "processorInformation": {
+    "systemTraceAuditNumber": "004545",
+    "responseCode": "111",
+    "avs": { "code": "Y", "codeRaw": "Y" }
+  },
+  "status": "DECLINED"
+}

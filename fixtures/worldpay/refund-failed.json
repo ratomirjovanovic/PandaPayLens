@@ -1,0 +1,54 @@
+[
+  {
+    "eventId": "PPLsynth-evt-0007-a",
+    "eventTimestamp": "2026-10-23T10:00:00.000",
+    "eventDetails": {
+      "classification": "payment",
+      "downstreamReference": "PPLsynth-ds-0007",
+      "transactionReference": "PPLsynth-txn-0007",
+      "paymentId": "payPPLsynthRefundFail007",
+      "commandId": "cmdPPLsynthRefundReq0007",
+      "type": "sentForRefund",
+      "date": "2026-10-20",
+      "reference": "PPLsynth-refund-0007",
+      "amount": {
+        "value": 1500,
+        "currencyCode": "GBP"
+      },
+      "_links": {
+        "payment": {
+          "href": ""
+        }
+      }
+    }
+  },
+  {
+    "eventId": "PPLsynth-evt-0007-b",
+    "eventTimestamp": "2026-10-23T10:00:05.000",
+    "eventDetails": {
+      "classification": "payment",
+      "downstreamReference": "PPLsynth-ds-0007",
+      "transactionReference": "PPLsynth-txn-0007",
+      "paymentId": "payPPLsynthRefundFail007",
+      "commandId": "cmdPPLsynthRefundReq0007",
+      "type": "refundFailed",
+      "date": "2026-10-20",
+      "reference": "PPLsynth-refund-0007",
+      "refund": {
+        "refusal": {
+          "code": "5",
+          "description": "Do not honor"
+        }
+      },
+      "amount": {
+        "value": 1500,
+        "currencyCode": "GBP"
+      },
+      "_links": {
+        "payment": {
+          "href": ""
+        }
+      }
+    }
+  }
+]

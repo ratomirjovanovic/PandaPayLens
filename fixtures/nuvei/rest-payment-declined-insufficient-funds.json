@@ -1,0 +1,31 @@
+{
+  "orderId": "PPLsynth271308090",
+  "paymentOption": {
+    "card": {
+      "ccCardNumber": "4****1111",
+      "cvv2Reply": "M",
+      "avsCode": "",
+      "cardType": "Debit",
+      "cardBrand": "VISA",
+      "threeD": {}
+    }
+  },
+  "transactionStatus": "DECLINED",
+  "gwErrorCode": -1,
+  "gwErrorReason": "Insufficient funds",
+  "gwExtendedErrorCode": 0,
+  "transactionType": "Sale",
+  "transactionId": "PPLsynth1110000000010304190",
+  "externalTransactionId": "",
+  "authCode": "",
+  "clientUniqueId": "PPLsynth-order-1002",
+  "internalRequestId": 222320330,
+  "status": "SUCCESS",
+  "errCode": 0,
+  "reason": "",
+  "merchantId": "PPLsynth427583496191624621",
+  "merchantSiteId": "PPLsynth142033",
+  "version": "1.0",
+  "clientRequestId": "PPLsynth-request-1002",
+  "merchantAdviceCode": "24"
+}

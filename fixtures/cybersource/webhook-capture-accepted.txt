@@ -1,0 +1,13 @@
+POST /PPLsynth/notifications HTTP/1.1
+Host: merchant.pplsynth.example
+Content-Type: application/json
+v-c-event-type: payments.capture.status.accepted
+v-c-organization-id: PPLsynth_org_0001
+v-c-product-name: payments
+v-c-request-type: NEW
+v-c-retry-count: 0
+v-c-signature: t=1792490400;keyId=PPLsynth-key-0001;sig=PPLSYNTHSIGNATUREVALUE0001
+v-c-transaction-trace-id: PPLsynth-trace-1101
+v-c-webhook-id: PPLsynth-webhook-0001
+
+{"eventType":"payments.capture.status.accepted","webhookId":"PPLsynth-webhook-0001","productId":"payments","organizationId":"PPLsynth_org_0001","eventDate":"2026-10-20T10:05:01","transactionTraceId":"PPLsynth-trace-1101","retryNumber":0,"payload":"eyJhbGciOiJSU0EtT0FFUC0yNTYiLCJlbmMiOiJBMjU2R0NNIn0.PPLsynthEncryptedKey1101.PPLsynthIv1101.PPLsynthCiphertext1101.PPLsynthTag1101","requestType":"NEW"}

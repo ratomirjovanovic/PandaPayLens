@@ -1,0 +1,5 @@
+HTTP/1.1 400 Bad Request
+Content-Type: application/json;charset=utf-8
+v-c-correlation-id: PPLsynth-correlation-0901
+
+{"submitTimeUtc":"2026-10-20T13:00:00Z","status":"INVALID_REQUEST","reason":"MISSING_FIELD","message":"Declined - The request is missing one or more fields","details":[{"field":"orderInformation.amountDetails.totalAmount","reason":"MISSING_FIELD"},{"field":"paymentInformation.card.expirationYear","reason":"MISSING_FIELD"}]}

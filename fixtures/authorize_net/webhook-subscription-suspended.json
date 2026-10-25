@@ -1,0 +1,10 @@
+{
+  "notificationId": "PPLsynth-notif-1201",
+  "eventType": "net.authorize.customer.subscription.suspended",
+  "eventDate": "2026-10-24T10:02:00.0000000Z",
+  "webhookId": "PPLsynth-webhook-02",
+  "payload": {
+    "entityName": "subscription",
+    "id": "PPLsynth-sub-1201"
+  }
+}

@@ -1,0 +1,62 @@
+POST /PPLsynth/worldpay/events HTTP/1.1
+Host: merchant.example
+Content-Type: application/vnd.worldpay.events-v1.hal+json
+Event-Signature: 1/SHA256/PPLSYNTHSIGNATURE0001
+Authorization: Basic PPLSYNTHBASICAUTH0001
+
+{
+  "eventId": "PPLsynth-evt-0013",
+  "eventTimestamp": "2026-10-24T15:00:00.000",
+  "eventDetails": {
+    "classification": "payment",
+    "downstreamReference": "PPLsynth-ds-0013",
+    "orderReference": "PPLsynth-order-0013",
+    "transactionReference": "PPLsynth-txn-0013",
+    "paymentId": "payPPLsynthWebhookReq0013",
+    "commandId": "cmdPPLsynthWebhookReq0013",
+    "type": "authorized",
+    "date": "2026-10-24",
+    "merchant": {
+      "entity": "PPLSYNTHENTITY01"
+    },
+    "amount": {
+      "value": 3100,
+      "currencyCode": "EUR"
+    },
+    "riskFactors": [
+      {
+        "type": "avs",
+        "risk": "notMatched",
+        "detail": "postcode"
+      }
+    ],
+    "issuer": {
+      "authorizationCode": "PPL771"
+    },
+    "scheme": {
+      "reference": "PPLSYNTHSCHEMEREF01"
+    },
+    "updatedPaymentInstrument": {
+      "appliedNetworkToken": true
+    },
+    "paymentInstrument": {
+      "cardBin": "457173",
+      "lastFour": "9071",
+      "category": "consumer",
+      "countryCode": "GB",
+      "expiryDate": {
+        "month": "11",
+        "year": "2031"
+      },
+      "cardBrand": "visa",
+      "fundingType": "credit",
+      "issuerName": "Planted Synthetic Bank",
+      "paymentAccountReference": "PPLSYNTHPAR0001"
+    },
+    "_links": {
+      "payment": {
+        "href": ""
+      }
+    }
+  }
+}

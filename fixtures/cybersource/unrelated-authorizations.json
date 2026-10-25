@@ -1,0 +1,20 @@
+[
+  {
+    "_links": {
+      "self": { "method": "GET", "href": "/pts/v2/payments/PPLsynth00000000001001" },
+      "capture": { "method": "POST", "href": "/pts/v2/payments/PPLsynth00000000001001/captures" }
+    },
+    "clientReferenceInformation": { "code": "PPLsynth-order-shared" },
+    "id": "PPLsynth00000000001001",
+    "orderInformation": { "amountDetails": { "authorizedAmount": "20.00", "currency": "EUR" } },
+    "status": "AUTHORIZED",
+    "submitTimeUtc": "2026-10-20T15:00:00Z"
+  },
+  {
+    "clientReferenceInformation": { "code": "PPLsynth-order-shared" },
+    "errorInformation": { "reason": "EXPIRED_CARD", "message": "Expired card." },
+    "id": "PPLsynth00000000001002",
+    "status": "DECLINED",
+    "submitTimeUtc": "2026-10-20T15:01:00Z"
+  }
+]

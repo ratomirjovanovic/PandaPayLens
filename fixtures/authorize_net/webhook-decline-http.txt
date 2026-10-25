@@ -1,0 +1,6 @@
+POST /webhooks/anet HTTP/1.1
+Host: merchant.example
+Content-Type: application/json
+X-ANET-Signature: PPLSYNTHSIGNATURE0000000000000000000000000000000000000000000000
+
+{"notificationId":"PPLsynth-notif-1301","eventType":"net.authorize.payment.authorization.created","eventDate":"2026-10-24T12:00:00.1234567Z","webhookId":"PPLsynth-webhook-01","payload":{"responseCode":2,"merchantReferenceId":"PPLsynth-ref-1301","avsResponse":"N","authAmount":19.99,"entityName":"transaction","id":"80000001301"}}
