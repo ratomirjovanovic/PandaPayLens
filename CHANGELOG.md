@@ -16,6 +16,10 @@ High-risk wave HR-3.
 - All high-risk candidates with public documentation are now implemented. Pavilion Payments and Epoch remain blocked.
 - 26 of 42 roadmap providers can now be analyzed.
 
+### Analyzer
+
+- JSON with trailing commas or comments, as in several providers' documentation examples, is accepted. Only those two things are removed, and a `LENIENT_JSON` warning says so; any other syntax error is still reported with its position.
+
 ## [0.3.0] - 2026-10-25
 
 High-risk wave HR-2.
