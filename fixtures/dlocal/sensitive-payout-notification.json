@@ -1,0 +1,53 @@
+{
+  "id": "PO-4-PPLsynth-0019",
+  "external_id": "PPLsynth-payout-0019",
+  "status": "PAID",
+  "status_code": "200",
+  "status_detail": "The payout was paid.",
+  "on_hold": false,
+  "flow_type": "B2C",
+  "currency_to_pay": "MXN",
+  "purpose": "PPLSYNTH",
+  "statement_descriptor": "PPLSYNTH",
+  "last_updated": "2026-10-20T21:00:00.00Z",
+  "beneficiary": {
+    "first_name": "PlantedBeneficiaryFirst",
+    "last_name": "PlantedBeneficiaryLast",
+    "email": "planted.beneficiary@example.com",
+    "phone": {
+      "number": "PLANTEDBENPHONE"
+    },
+    "document": {
+      "type": "CPF",
+      "id": "PLANTEDBENDOC"
+    },
+    "bank_account": {
+      "type": "SAVINGS",
+      "account": "PLANTEDBENACCOUNT",
+      "bank_code": "PLANTEDBANKCODE",
+      "branch": "PLANTEDBRANCH"
+    },
+    "instant_payment": {
+      "id": "PLANTEDPIXKEY"
+    },
+    "address": {
+      "street": "PLANTEDBENSTREET"
+    }
+  },
+  "remitter": {
+    "first_name": "PlantedRemitterFirst",
+    "document": {
+      "id": "PLANTEDREMDOC"
+    },
+    "birth_info": {
+      "date": "PLANTEDREMBIRTH"
+    }
+  },
+  "notification_url": "https://merchant.example.com/PLANTEDPAYOUTURL",
+  "amount_details": {
+    "debit": {
+      "amount": 100.0,
+      "currency": "USD"
+    }
+  }
+}

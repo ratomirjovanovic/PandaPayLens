@@ -1,0 +1,48 @@
+{
+  "status": {
+    "error_code": "",
+    "status": "SUCCESS",
+    "message": "",
+    "response_code": "",
+    "operation_id": "PPLsynth-0000-4000-a000-000000000306"
+  },
+  "data": {
+    "token": "wh_PPLsynth00000000000000000006",
+    "type": "PAYMENT_REFUND_UPDATED",
+    "data": {
+      "id": "refund_PPLsynth00000000000000000111",
+      "amount": 15,
+      "payment": "payment_PPLsynth00000000000000000305",
+      "currency": "EUR",
+      "failure_reason": "lost_or_stolen_card",
+      "metadata": {},
+      "status": "Rejected",
+      "receipt_number": 0,
+      "created_at": 1792000100,
+      "updated_at": 1792000100,
+      "merchant_ewallet": null,
+      "merchant_reference_id": "PPLsynth-refund-111",
+      "payment_created_at": 1792000000,
+      "payment_method_type": "gb_visa_card",
+      "ewallets": [
+        {
+          "ewallet": "ewallet_PPLsynth00000000000000000001",
+          "amount": 15
+        }
+      ],
+      "proportional_refund": true
+    },
+    "trigger_operation_id": "PPLsynth-0000-4000-a000-000000000307",
+    "status": "CLO",
+    "created_at": 1792000060,
+    "extended_timestamp": 1792000060000,
+    "attempts": [
+      {
+        "error": "",
+        "http_status_code": 200
+      }
+    ],
+    "last_attempt_at": 1792000061,
+    "next_attempt_at": 0
+  }
+}

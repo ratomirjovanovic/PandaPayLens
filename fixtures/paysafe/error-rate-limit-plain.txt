@@ -1,0 +1,6 @@
+HTTP/1.1 429 Too Many Requests
+Content-Type: text/plain
+X-Application-Status-Code: 1200
+X-INTERNAL-CORRELATION-ID: PPLsynth-corr-5001
+
+Call rate limit exceeded

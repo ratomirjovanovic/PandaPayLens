@@ -1,0 +1,32 @@
+{
+  "status": {
+    "error_code": "",
+    "status": "SUCCESS",
+    "message": "",
+    "response_code": "",
+    "operation_id": "PPLsynth-0000-4000-a000-000000000109"
+  },
+  "data": {
+    "id": "refund_PPLsynth00000000000000000109",
+    "amount": 40.11,
+    "payment": "payment_PPLsynth00000000000000000101",
+    "currency": "EUR",
+    "failure_reason": "",
+    "metadata": {},
+    "status": "Completed",
+    "receipt_number": 0,
+    "created_at": 1792000100,
+    "updated_at": 1792000100,
+    "merchant_ewallet": null,
+    "merchant_reference_id": "PPLsynth-refund-109",
+    "payment_created_at": 1792000000,
+    "payment_method_type": "gb_visa_card",
+    "ewallets": [
+      {
+        "ewallet": "ewallet_PPLsynth00000000000000000001",
+        "amount": 15
+      }
+    ],
+    "proportional_refund": true
+  }
+}

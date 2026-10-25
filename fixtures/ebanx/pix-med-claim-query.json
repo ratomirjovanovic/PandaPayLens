@@ -1,0 +1,26 @@
+{
+  "payment": {
+    "hash": "PPLsynth4e07408562bedb8b60ce05c1decfe3ad16b72230",
+    "merchant_payment_code": "PPLsynth-pix-9001",
+    "country": "br",
+    "status": "CO",
+    "status_date": "2026-10-10 13:00:00",
+    "open_date": "2026-10-10 12:59:00",
+    "confirm_date": "2026-10-10 13:00:00",
+    "amount_br": "30.00",
+    "amount_ext": "30.00",
+    "amount_iof": "0.00",
+    "currency_ext": "BRL",
+    "payment_type_code": "pix",
+    "claims": {
+      "return_request_id": "PPLsynth-med-0001",
+      "status": "Returned",
+      "reason": "fraud",
+      "rejection_reason": null,
+      "claims_type": "med",
+      "date_paid_to_customer": "2026-10-24 12:00:00",
+      "amount_paid_to_customer": "30.00"
+    }
+  },
+  "status": "SUCCESS"
+}

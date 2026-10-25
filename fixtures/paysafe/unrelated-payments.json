@@ -1,0 +1,27 @@
+[
+  {
+    "id": "PPLsynth-pay-9701",
+    "merchantRefNum": "PPLsynth-order-9701",
+    "paymentType": "CARD",
+    "currencyCode": "EUR",
+    "settleWithAuth": true,
+    "status": "COMPLETED",
+    "amount": 1200,
+    "availableToSettle": 0,
+    "txnTime": "2026-10-24T10:00:00Z"
+  },
+  {
+    "id": "PPLsynth-pay-9702",
+    "merchantRefNum": "PPLsynth-order-9702",
+    "paymentType": "CARD",
+    "currencyCode": "EUR",
+    "settleWithAuth": true,
+    "status": "FAILED",
+    "amount": 800,
+    "txnTime": "2026-10-24T10:05:00Z",
+    "error": {
+      "code": "3022",
+      "message": "The card has been declined due to insufficient funds."
+    }
+  }
+]

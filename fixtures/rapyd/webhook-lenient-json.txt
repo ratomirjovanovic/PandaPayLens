@@ -1,0 +1,19 @@
+// Several webhook samples in the documentation are not strict JSON.
+{
+  "id": "wh_PPLsynth00000000000000000019",
+  "type": "PAYOUT_COMPLETED",
+  "data": {
+    "id": "payout_PPLsynth00000000000000000114",
+    "payout_method_type": "gb_general_bank",
+    "payout_amount": 250,
+    "payout_currency": "GBP",
+    "status": "Completed",
+    "paid_amount": 250,
+    "created_at": 1792000300,
+    "merchant_reference_id": "PPLsynth-payout-114",
+  },
+  "trigger_operation_id": "PPLsynth-0000-4000-a000-000000000314",
+  "status": "NEW",
+  "created_at": 1792000310,
+  "extended_timestamp": 1792000310000,
+}

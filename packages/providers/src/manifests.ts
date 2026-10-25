@@ -11,6 +11,11 @@ import { checkoutManifest } from "@pandapaylens/checkout/manifest";
 import { paypalManifest } from "@pandapaylens/paypal/manifest";
 import { mollieManifest } from "@pandapaylens/mollie/manifest";
 import { squareManifest } from "@pandapaylens/square/manifest";
+import { ebanxManifest } from "@pandapaylens/ebanx/manifest";
+import { dlocalManifest } from "@pandapaylens/dlocal/manifest";
+import { rapydManifest } from "@pandapaylens/rapyd/manifest";
+import { airwallexManifest } from "@pandapaylens/airwallex/manifest";
+import { paysafeManifest } from "@pandapaylens/paysafe/manifest";
 import { nuveiManifest } from "@pandapaylens/nuvei/manifest";
 import { authorizeNetManifest } from "@pandapaylens/authorize-net/manifest";
 import { cybersourceManifest } from "@pandapaylens/cybersource/manifest";
@@ -43,6 +48,11 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   paypalManifest,
   mollieManifest,
   squareManifest,
+  ebanxManifest,
+  dlocalManifest,
+  rapydManifest,
+  airwallexManifest,
+  paysafeManifest,
   nuveiManifest,
   authorizeNetManifest,
   cybersourceManifest,
@@ -165,35 +175,35 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     id: "paysafe",
     displayName: "Paysafe",
     wave: 2,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general", "wallet"],
   },
   {
     id: "airwallex",
     displayName: "Airwallex",
     wave: 2,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general"],
   },
   {
     id: "rapyd",
     displayName: "Rapyd",
     wave: 2,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general"],
   },
   {
     id: "dlocal",
     displayName: "dLocal",
     wave: 3,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general"],
   },
   {
     id: "ebanx",
     displayName: "EBANX",
     wave: 3,
-    researchStatus: "documentation_verified",
+    researchStatus: "tested",
     focus: ["general"],
   },
   {

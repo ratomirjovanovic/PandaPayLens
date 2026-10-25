@@ -1,0 +1,21 @@
+{
+  "id": "evt_PPLsynth_legacy_dispute_0070",
+  "name": "payment_dispute.requires_response",
+  "accountId": "acct_PPLsynthAccount01",
+  "data": {
+    "object": {
+      "dispute_id": "dst_PPLsynthLegacy0070",
+      "card_scheme": "mastercard",
+      "dispute_reason_type": "PRODUCT_NOT_RECEIVED",
+      "dispute_original_reason_code": "4855",
+      "status": "EVIDENCE_REQUIRED",
+      "stage": "DISPUTE",
+      "dispute_amount": 42,
+      "dispute_currency": "SGD",
+      "updated_by": "PPLsynth system",
+      "merchant_account": "PPLsynth-merchant-account"
+    }
+  },
+  "created_at": "2026-10-15T08:17:27.659+0000",
+  "version": "2023-10-01"
+}

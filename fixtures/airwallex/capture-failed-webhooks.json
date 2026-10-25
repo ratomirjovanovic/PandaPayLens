@@ -1,0 +1,41 @@
+[
+  {
+    "id": "evt_PPLsynth_capture_0041",
+    "name": "payment_attempt.authorized",
+    "account_id": "acct_PPLsynthAccount01",
+    "data": {
+      "object": {
+        "id": "att_PPLsynthCapture0040",
+        "payment_intent_id": "int_PPLsynthCapture0040",
+        "status": "AUTHORIZED",
+        "amount": 300,
+        "currency": "USD",
+        "captured_amount": 0,
+        "payment_method": { "type": "card", "card": { "brand": "mastercard", "last4": "0040" } },
+        "updated_at": "2026-10-17T15:00:00+0000"
+      }
+    },
+    "created_at": "2026-10-17T15:00:00+0000",
+    "version": "2026-08-21"
+  },
+  {
+    "id": "evt_PPLsynth_capture_0042",
+    "name": "payment_attempt.capture_failed",
+    "account_id": "acct_PPLsynthAccount01",
+    "data": {
+      "object": {
+        "id": "att_PPLsynthCapture0040",
+        "payment_intent_id": "int_PPLsynthCapture0040",
+        "status": "FAILED",
+        "amount": 300,
+        "currency": "USD",
+        "captured_amount": 0,
+        "failure_code": "capture_failed",
+        "payment_method": { "type": "card", "card": { "brand": "mastercard", "last4": "0040" } },
+        "updated_at": "2026-10-24T15:00:00+0000"
+      }
+    },
+    "created_at": "2026-10-24T15:00:00+0000",
+    "version": "2026-08-21"
+  }
+]

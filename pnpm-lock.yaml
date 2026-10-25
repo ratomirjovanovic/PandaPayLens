@@ -169,6 +169,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/airwallex:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/astropay:
     dependencies:
       '@pandapaylens/core':
@@ -224,6 +233,24 @@ importers:
         version: 4.6.7
 
   packages/adapters/decta:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/dlocal:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/ebanx:
     dependencies:
       '@pandapaylens/core':
         specifier: workspace:*
@@ -349,7 +376,25 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/paysafe:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/pxp:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/rapyd:
     dependencies:
       '@pandapaylens/core':
         specifier: workspace:*
@@ -459,6 +504,9 @@ importers:
       '@pandapaylens/adyen':
         specifier: workspace:*
         version: link:../adapters/adyen
+      '@pandapaylens/airwallex':
+        specifier: workspace:*
+        version: link:../adapters/airwallex
       '@pandapaylens/astropay':
         specifier: workspace:*
         version: link:../adapters/astropay
@@ -483,6 +531,12 @@ importers:
       '@pandapaylens/decta':
         specifier: workspace:*
         version: link:../adapters/decta
+      '@pandapaylens/dlocal':
+        specifier: workspace:*
+        version: link:../adapters/dlocal
+      '@pandapaylens/ebanx':
+        specifier: workspace:*
+        version: link:../adapters/ebanx
       '@pandapaylens/ecommpay':
         specifier: workspace:*
         version: link:../adapters/ecommpay
@@ -522,9 +576,15 @@ importers:
       '@pandapaylens/paypal':
         specifier: workspace:*
         version: link:../adapters/paypal
+      '@pandapaylens/paysafe':
+        specifier: workspace:*
+        version: link:../adapters/paysafe
       '@pandapaylens/pxp':
         specifier: workspace:*
         version: link:../adapters/pxp
+      '@pandapaylens/rapyd':
+        specifier: workspace:*
+        version: link:../adapters/rapyd
       '@pandapaylens/segpay':
         specifier: workspace:*
         version: link:../adapters/segpay

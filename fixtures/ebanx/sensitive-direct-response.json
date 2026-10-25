@@ -1,0 +1,64 @@
+{
+  "redirect_url": "https://sandbox.ebanxpay.com/ws/redirect?hash=PLANTEDREDIRECTHASH",
+  "payment": {
+    "hash": "PPLsynth6b86b273ff34fce19d6b804eff5a3f5747ada4ea",
+    "merchant_payment_code": "planted.mpc@example.com",
+    "status": "CA",
+    "status_date": "2026-10-20 17:00:00",
+    "amount_br": "20.07",
+    "amount_ext": "20.00",
+    "amount_iof": "0.07",
+    "currency_ext": "BRL",
+    "payment_type_code": "creditcard",
+    "masked_card_number": "PLANTEDMASKEDPAN",
+    "token": "PLANTEDTOKENVALUE",
+    "creditcard_token": "PLANTEDCCTOKEN",
+    "boleto_barcode": "PLANTEDBARCODE",
+    "pix": { "qr_code_value": "PLANTEDQRCODE" },
+    "notification_url": "https://merchant.example/PLANTEDNOTIFYPATH",
+    "details": { "billing_descriptor": "PLANTEDDESCRIPTOR" },
+    "sub_account": {
+      "name": "PLANTEDSUBACCOUNT",
+      "image_url": "https://merchant.example/PLANTEDIMAGE"
+    },
+    "metadata": { "upi_vpa": "PLANTEDVPA" },
+    "customer": {
+      "document": "PLANTEDCUSTOMERDOC",
+      "email": "planted.customer@example.com",
+      "name": "Planted Customer Name",
+      "birth_date": "PLANTEDBIRTHDATE",
+      "phone_number": "PLANTEDPHONE",
+      "address": "Planted Street 1",
+      "zipcode": "PLANTEDZIP"
+    },
+    "transaction_status": {
+      "acquirer": "EBANX",
+      "code": "NOK",
+      "description": "Card holder planted.holder@example.com is not accepted",
+      "description_code": "ISSUER_DECLINE",
+      "authcode": "PLANTEDAUTHCODE"
+    },
+    "threedsecure": {
+      "has_threeds": true,
+      "status": "AUTHENTICATION_DONE",
+      "threeds_redirect_url": "https://sandbox.ebanxpay.com/PLANTEDTHREEDSURL",
+      "threeds_result": {
+        "eci": "PLANTEDECI",
+        "liability": "ISSUER_BANK",
+        "threeds_reference": "PLANTEDTHREEDSREF"
+      }
+    },
+    "refunds": [
+      {
+        "id": "PPLsynth-refund-9101",
+        "status": "PE",
+        "request_date": "2026-10-20 17:30:00",
+        "amount_ext": "5.00",
+        "description": "PLANTEDREFUNDNOTE",
+        "fill_bank_data_url": "https://sandbox.ebanxpay.com/PLANTEDFILLURL",
+        "bank_info_customer_filled": { "bank_account": "PLANTEDBANKACCOUNT" }
+      }
+    ]
+  },
+  "status": "SUCCESS"
+}

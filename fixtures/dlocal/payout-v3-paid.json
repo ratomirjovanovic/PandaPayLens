@@ -1,0 +1,28 @@
+[
+  {
+    "id": "PO-4-PPLsynth-0017",
+    "external_id": "PPLsynth-payout-0017",
+    "status": "PENDING",
+    "status_code": "100",
+    "status_detail": "The payout is pending.",
+    "on_hold": false,
+    "flow_type": "B2C",
+    "currency_to_pay": "MXN",
+    "purpose": "PPLSYNTH",
+    "statement_descriptor": "PPLSYNTH",
+    "last_updated": "2026-10-20T19:00:00.00Z"
+  },
+  {
+    "id": "PO-4-PPLsynth-0017",
+    "external_id": "PPLsynth-payout-0017",
+    "status": "PAID",
+    "status_code": "200",
+    "status_detail": "The payout was paid.",
+    "on_hold": false,
+    "flow_type": "B2C",
+    "currency_to_pay": "MXN",
+    "purpose": "PPLSYNTH",
+    "statement_descriptor": "PPLSYNTH",
+    "last_updated": "2026-10-20T19:10:00.00Z"
+  }
+]

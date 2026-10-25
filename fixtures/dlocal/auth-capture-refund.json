@@ -1,0 +1,51 @@
+[
+  {
+    "id": "T-4-PPLsynth-auth-0005",
+    "amount": 120.5,
+    "currency": "BRL",
+    "payment_method_id": "CARD",
+    "payment_method_type": "CARD",
+    "payment_method_flow": "DIRECT",
+    "country": "BR",
+    "card": {
+      "brand": "VI"
+    },
+    "created_date": "2026-10-20T10:00:00.000+0000",
+    "status": "AUTHORIZED",
+    "status_detail": "The payment was authorized.",
+    "status_code": "600",
+    "order_id": "PPLsynth-order-0005",
+    "approved_date": "2026-10-20T11:00:01.000+0000"
+  },
+  {
+    "id": "T-4-PPLsynth-cap-0005",
+    "amount": 120.5,
+    "currency": "BRL",
+    "payment_method_id": "CARD",
+    "payment_method_type": "CARD",
+    "payment_method_flow": "DIRECT",
+    "country": "BR",
+    "card": {
+      "brand": "VI"
+    },
+    "created_date": "2026-10-21T09:00:00.000+0000",
+    "status": "PAID",
+    "status_detail": "The payment was paid.",
+    "status_code": "200",
+    "order_id": "PPLsynth-order-0005-capture",
+    "authorization_id": "T-4-PPLsynth-auth-0005",
+    "approved_date": "2026-10-21T09:00:01.000+0000"
+  },
+  {
+    "id": "REF-4-PPLsynth-0005",
+    "payment_id": "T-4-PPLsynth-cap-0005",
+    "status": "SUCCESS",
+    "currency": "BRL",
+    "created_date": "2026-10-22T08:00:00.000+0000",
+    "amount": 40.0,
+    "status_code": 200,
+    "status_detail": "The refund was paid.",
+    "order_refund_id": "PPLsynth-refund-0005",
+    "amount_refunded": 40.0
+  }
+]

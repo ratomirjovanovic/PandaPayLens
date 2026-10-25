@@ -1,0 +1,34 @@
+{
+  "id": "PPLsynth-pay-1001",
+  "paymentType": "CARD",
+  "merchantRefNum": "PPLsynth-order-1001",
+  "currencyCode": "USD",
+  "settleWithAuth": true,
+  "txnTime": "2026-10-20T10:15:29Z",
+  "status": "COMPLETED",
+  "amount": 500,
+  "preAuth": false,
+  "availableToSettle": 0,
+  "gatewayResponse": {
+    "code": "VPS",
+    "responseCode": "00",
+    "responseCodeDescription": "Approved and completed",
+    "avsResponse": "MATCH",
+    "cvvVerification": "MATCH"
+  },
+  "settlements": [
+    {
+      "merchantRefNum": "PPLsynth-order-1001",
+      "amount": 500,
+      "id": "PPLsynth-pay-1001",
+      "availableToRefund": 500,
+      "txnTime": 1792491329000,
+      "status": "PENDING"
+    }
+  ],
+  "card": {
+    "cardType": "VI",
+    "cardCategory": "CREDIT"
+  },
+  "liveMode": false
+}

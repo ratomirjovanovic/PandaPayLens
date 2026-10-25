@@ -1,0 +1,31 @@
+HTTP/1.1 402 Payment Required
+Content-Type: application/json
+X-Application-Status-Code: 3009
+X-INTERNAL-CORRELATION-ID: PPLsynth-corr-2001
+
+{
+  "error": {
+    "code": "3009",
+    "message": "Your request has been declined by the issuing bank.",
+    "additionalDetails": [
+      {
+        "type": "ADVICE",
+        "code": "ADVICE-03",
+        "message": "Revalidate payment information. Please do not retry more than 10 times over 30 days."
+      },
+      {
+        "type": "ISO_RESPONSE",
+        "code": "05",
+        "message": "Do not honour"
+      }
+    ]
+  },
+  "id": "PPLsynth-pay-2001",
+  "merchantRefNum": "PPLsynth-order-2001",
+  "settleWithAuth": true,
+  "gatewayResponse": {
+    "code": "VPS",
+    "responseCode": "05",
+    "responseCodeDescription": "Do not honor"
+  }
+}

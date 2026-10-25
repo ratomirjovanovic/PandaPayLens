@@ -1,0 +1,40 @@
+[
+  {
+    "id": "D-4-PPLsynth-pay-0004",
+    "amount": 120.5,
+    "currency": "BRL",
+    "payment_method_id": "CARD",
+    "payment_method_type": "CARD",
+    "payment_method_flow": "DIRECT",
+    "country": "BR",
+    "card": {
+      "brand": "VI"
+    },
+    "created_date": "2026-10-20T10:00:00.000+0000",
+    "status": "PENDING",
+    "status_detail": "The payment is pending 3ds.",
+    "status_code": "101",
+    "order_id": "PPLsynth-order-0004",
+    "three_dsecure": {
+      "redirect_url": "https://pay.example.com/PPLsynth/3ds/0004"
+    }
+  },
+  {
+    "id": "D-4-PPLsynth-pay-0004",
+    "amount": 120.5,
+    "currency": "BRL",
+    "payment_method_id": "CARD",
+    "payment_method_type": "CARD",
+    "payment_method_flow": "DIRECT",
+    "country": "BR",
+    "card": {
+      "brand": "VI"
+    },
+    "created_date": "2026-10-20T10:00:00.000+0000",
+    "status": "PAID",
+    "status_detail": "The payment was paid.",
+    "status_code": "200",
+    "order_id": "PPLsynth-order-0004",
+    "approved_date": "2026-10-20T10:01:30.000+0000"
+  }
+]

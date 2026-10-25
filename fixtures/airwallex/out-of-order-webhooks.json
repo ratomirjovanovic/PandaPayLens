@@ -1,0 +1,68 @@
+[
+  {
+    "receivedAt": "2026-10-22T08:00:05.000Z",
+    "payload": {
+      "id": "evt_PPLsynth_order_0033",
+      "name": "payment_intent.succeeded",
+      "account_id": "acct_PPLsynthAccount01",
+      "data": {
+        "object": {
+          "id": "int_PPLsynthOrder0030",
+          "amount": 12.5,
+          "currency": "CAD",
+          "status": "SUCCEEDED",
+          "captured_amount": 12.5,
+          "latest_payment_attempt": {
+            "id": "att_PPLsynthOrder0030",
+            "payment_intent_id": "int_PPLsynthOrder0030",
+            "status": "CAPTURE_REQUESTED"
+          },
+          "updated_at": "2026-10-22T08:00:03+0000"
+        }
+      },
+      "created_at": "2026-10-22T08:00:03+0000",
+      "version": "2026-08-21"
+    }
+  },
+  {
+    "receivedAt": "2026-10-22T08:00:09.000Z",
+    "payload": {
+      "id": "evt_PPLsynth_order_0031",
+      "name": "payment_attempt.authorized",
+      "account_id": "acct_PPLsynthAccount01",
+      "data": {
+        "object": {
+          "id": "att_PPLsynthOrder0030",
+          "payment_intent_id": "int_PPLsynthOrder0030",
+          "status": "AUTHORIZED",
+          "amount": 12.5,
+          "currency": "CAD",
+          "updated_at": "2026-10-22T08:00:01+0000"
+        }
+      },
+      "created_at": "2026-10-22T08:00:01+0000",
+      "version": "2026-08-21"
+    }
+  },
+  {
+    "receivedAt": "2026-10-22T08:00:12.000Z",
+    "payload": {
+      "id": "evt_PPLsynth_order_0032",
+      "name": "payment_attempt.capture_requested",
+      "account_id": "acct_PPLsynthAccount01",
+      "data": {
+        "object": {
+          "id": "att_PPLsynthOrder0030",
+          "payment_intent_id": "int_PPLsynthOrder0030",
+          "status": "CAPTURE_REQUESTED",
+          "amount": 12.5,
+          "currency": "CAD",
+          "captured_amount": 12.5,
+          "updated_at": "2026-10-22T08:00:02+0000"
+        }
+      },
+      "created_at": "2026-10-22T08:00:02+0000",
+      "version": "2026-08-21"
+    }
+  }
+]

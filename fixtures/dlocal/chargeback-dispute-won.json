@@ -1,0 +1,68 @@
+[
+  {
+    "id": "D-4-PPLsynth-pay-0009",
+    "amount": 120.5,
+    "currency": "BRL",
+    "payment_method_id": "CARD",
+    "payment_method_type": "CARD",
+    "payment_method_flow": "DIRECT",
+    "country": "BR",
+    "card": {
+      "brand": "VI"
+    },
+    "created_date": "2026-10-20T10:00:00.000+0000",
+    "status": "PAID",
+    "status_detail": "The payment was paid.",
+    "status_code": "200",
+    "order_id": "PPLsynth-order-0009",
+    "approved_date": "2026-10-20T10:00:02.000+0000"
+  },
+  {
+    "id": "CBK-4-PPLsynth-0009",
+    "payment_id": "D-4-PPLsynth-pay-0009",
+    "created_date": "2026-10-24T09:00:00.000+0000",
+    "currency": "BRL",
+    "amount": 120.5,
+    "status": "PENDING",
+    "status_code": 100,
+    "status_detail": "The chargeback is pending.",
+    "order_id": "PPLsynth-order-0009",
+    "chargeback_date": "2026-10-24T09:00:00.000+0000",
+    "chargeback_stage": "OTHER",
+    "processor_id": "156",
+    "reason_code": "10.4",
+    "reason_description": "Other Fraud: Card-absent Environment/Condition."
+  },
+  {
+    "id": "CBK-4-PPLsynth-0009",
+    "payment_id": "D-4-PPLsynth-pay-0009",
+    "created_date": "2026-10-24T09:00:00.000+0000",
+    "currency": "BRL",
+    "amount": 120.5,
+    "status": "DISPUTE_RECEIVED",
+    "status_code": 101,
+    "status_detail": "The dispute was received.",
+    "order_id": "PPLsynth-order-0009",
+    "chargeback_date": "2026-10-24T09:00:00.000+0000",
+    "chargeback_stage": "OTHER",
+    "processor_id": "156",
+    "reason_code": "10.4",
+    "reason_description": "Other Fraud: Card-absent Environment/Condition."
+  },
+  {
+    "id": "CBK-4-PPLsynth-0009",
+    "payment_id": "D-4-PPLsynth-pay-0009",
+    "created_date": "2026-10-24T09:00:00.000+0000",
+    "currency": "BRL",
+    "amount": 120.5,
+    "status": "REVERSAL",
+    "status_code": 700,
+    "status_detail": "The chargeback was reversed.",
+    "order_id": "PPLsynth-order-0009",
+    "chargeback_date": "2026-10-24T09:00:00.000+0000",
+    "chargeback_stage": "OTHER",
+    "processor_id": "156",
+    "reason_code": "10.4",
+    "reason_description": "Other Fraud: Card-absent Environment/Condition."
+  }
+]

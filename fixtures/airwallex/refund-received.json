@@ -1,0 +1,12 @@
+{
+  "id": "rfd_PPLsynthRefund0005",
+  "request_id": "PPLsynth-request-0005",
+  "payment_intent_id": "int_PPLsynthRefund0005",
+  "payment_attempt_id": "att_PPLsynthRefund0005",
+  "amount": 10,
+  "currency": "USD",
+  "reason": "PPLsynth return",
+  "status": "RECEIVED",
+  "created_at": "2026-10-23T06:57:10+00:00",
+  "updated_at": "2026-10-23T07:01:10+00:00"
+}

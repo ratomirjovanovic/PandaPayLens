@@ -1,0 +1,63 @@
+{
+  "id": "D-4-PPLsynth-pay-0018",
+  "amount": 75.0,
+  "currency": "BRL",
+  "payment_method_id": "CARD",
+  "payment_method_type": "CARD",
+  "payment_method_flow": "DIRECT",
+  "country": "BR",
+  "payer": {
+    "name": "Planted Payer Name",
+    "email": "planted.payer@example.com",
+    "document": "PLANTEDCPF0001",
+    "document2": "PLANTEDDOC2",
+    "user_reference": "PLANTEDUSERREF",
+    "phone": "PLANTEDPHONE",
+    "birth_date": "PLANTEDBIRTH",
+    "ip": "PLANTEDIP",
+    "device_id": "PLANTEDDEVICE",
+    "address": {
+      "street": "PLANTEDSTREET",
+      "city": "PLANTEDCITY",
+      "zip_code": "PLANTEDZIP"
+    }
+  },
+  "card": {
+    "holder_name": "Planted Holder Name",
+    "number": "4111111111111111",
+    "cvv": "PLANTEDCVV",
+    "expiration_month": 12,
+    "expiration_year": 2031,
+    "brand": "VI",
+    "last4": "PLANTEDLAST4",
+    "card_id": "CID-PLANTEDCARDID",
+    "token": "CV-PLANTEDTOKEN",
+    "network_tx_reference": "PLANTEDNTXREF",
+    "network_payment_reference": "PLANTEDNPREF",
+    "transaction_link_id": "PLANTEDTLID"
+  },
+  "three_dsecure": {
+    "cavv": "PLANTEDCAVV",
+    "xid": "PLANTEDXID",
+    "ds_transaction_id": "PLANTEDDSTRANS",
+    "eci": "05",
+    "redirect_url": "https://pay.example.com/PLANTEDREDIRECT"
+  },
+  "result_info": {
+    "payer": {
+      "document": "PLANTEDRESULTDOC",
+      "account": {
+        "number": "PLANTEDACCOUNT"
+      }
+    }
+  },
+  "notification_url": "https://merchant.example.com/PLANTEDNOTIFYURL",
+  "callback_url": "https://merchant.example.com/PLANTEDCALLBACKURL",
+  "arn": "PLANTEDARN",
+  "created_date": "2026-10-20T20:00:00.000+0000",
+  "approved_date": "2026-10-20T20:00:01.000+0000",
+  "status": "PAID",
+  "status_detail": "The payment was paid.",
+  "status_code": "200",
+  "order_id": "PPLsynth-order-0018"
+}

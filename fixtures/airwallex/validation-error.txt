@@ -1,0 +1,10 @@
+HTTP/1.1 400 Bad Request
+Content-Type: application/json
+
+{
+  "code": "validation_error",
+  "source": "merchant_order_id",
+  "message": "merchant_order_id must be provided.",
+  "trace_id": "PPLsynthtrace000000000000000003",
+  "details": {}
+}

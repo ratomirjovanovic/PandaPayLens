@@ -1,0 +1,48 @@
+[
+  {
+    "type": "success",
+    "payout": {
+      "uid": "PPLsynthf0e1d2c3b4a5968778695a4b3c2d1e0f1",
+      "external_reference": "PPLsynth-po-5001",
+      "status": "OP",
+      "request_date": "2026-10-21 10:00:00",
+      "status_date": "2026-10-21 10:00:00",
+      "paid_date": null,
+      "cancel_date": null,
+      "payee": {
+        "name": "PPLsynth Payee",
+        "email": "payee.pplsynth@example.com",
+        "document": "PPLSYNTHDOC0001",
+        "document_type": "CPF",
+        "bank_info": {
+          "bank_name": "PPLsynth Bank",
+          "bank_branch": "PPLSYNTH01",
+          "bank_account": "PPLSYNTHACCT01",
+          "account_type": "C"
+        }
+      },
+      "request_amount": "100.00",
+      "request_currency": "USD",
+      "debit_amount_total": "101.50",
+      "debit_currency": "USD",
+      "local_currency": "BRL"
+    }
+  },
+  {
+    "type": "success",
+    "payout": {
+      "uid": "PPLsynthf0e1d2c3b4a5968778695a4b3c2d1e0f1",
+      "external_reference": "PPLsynth-po-5001",
+      "status": "PA",
+      "request_date": "2026-10-21 10:00:00",
+      "status_date": "2026-10-22 08:00:00",
+      "paid_date": "2026-10-22 08:00:00",
+      "cancel_date": null,
+      "request_amount": "100.00",
+      "request_currency": "USD",
+      "debit_amount_total": "101.50",
+      "debit_currency": "USD",
+      "local_currency": "BRL"
+    }
+  }
+]

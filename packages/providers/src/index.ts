@@ -11,6 +11,11 @@ import { checkoutAdapter } from "@pandapaylens/checkout";
 import { paypalAdapter } from "@pandapaylens/paypal";
 import { mollieAdapter } from "@pandapaylens/mollie";
 import { squareAdapter } from "@pandapaylens/square";
+import { ebanxAdapter } from "@pandapaylens/ebanx";
+import { dlocalAdapter } from "@pandapaylens/dlocal";
+import { rapydAdapter } from "@pandapaylens/rapyd";
+import { airwallexAdapter } from "@pandapaylens/airwallex";
+import { paysafeAdapter } from "@pandapaylens/paysafe";
 import { nuveiAdapter } from "@pandapaylens/nuvei";
 import { authorizeNetAdapter } from "@pandapaylens/authorize-net";
 import { cybersourceAdapter } from "@pandapaylens/cybersource";
@@ -43,6 +48,11 @@ export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   paypalAdapter,
   mollieAdapter,
   squareAdapter,
+  ebanxAdapter,
+  dlocalAdapter,
+  rapydAdapter,
+  airwallexAdapter,
+  paysafeAdapter,
   nuveiAdapter,
   authorizeNetAdapter,
   cybersourceAdapter,

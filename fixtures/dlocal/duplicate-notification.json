@@ -1,0 +1,44 @@
+[
+  {
+    "receivedAt": "2026-10-20T14:00:05.000Z",
+    "payload": {
+      "id": "D-4-PPLsynth-pay-0008",
+      "amount": 120.5,
+      "currency": "BRL",
+      "payment_method_id": "CARD",
+      "payment_method_type": "CARD",
+      "payment_method_flow": "DIRECT",
+      "country": "BR",
+      "card": {
+        "brand": "VI"
+      },
+      "created_date": "2026-10-20T10:00:00.000+0000",
+      "status": "PAID",
+      "status_detail": "The payment was paid.",
+      "status_code": "200",
+      "order_id": "PPLsynth-order-0008",
+      "approved_date": "2026-10-20T14:00:02.000+0000"
+    }
+  },
+  {
+    "receivedAt": "2026-10-20T15:00:05.000Z",
+    "payload": {
+      "id": "D-4-PPLsynth-pay-0008",
+      "amount": 120.5,
+      "currency": "BRL",
+      "payment_method_id": "CARD",
+      "payment_method_type": "CARD",
+      "payment_method_flow": "DIRECT",
+      "country": "BR",
+      "card": {
+        "brand": "VI"
+      },
+      "created_date": "2026-10-20T10:00:00.000+0000",
+      "status": "PAID",
+      "status_detail": "The payment was paid.",
+      "status_code": "200",
+      "order_id": "PPLsynth-order-0008",
+      "approved_date": "2026-10-20T14:00:02.000+0000"
+    }
+  }
+]

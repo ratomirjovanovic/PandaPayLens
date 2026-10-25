@@ -1,0 +1,22 @@
+{
+  "redirect_url": "https://sandbox.ebanxpay.com/print/?hash=PPLsynth9f86d081884c7d659a2feaa0c55ad015a3bf4f1b",
+  "payment": {
+    "hash": "PPLsynth9f86d081884c7d659a2feaa0c55ad015a3bf4f1b",
+    "merchant_payment_code": "PPLsynth-boleto-6001",
+    "status": "PE",
+    "status_date": "2026-10-19 11:00:00",
+    "open_date": "2026-10-19 11:00:00",
+    "amount_br": "150.00",
+    "amount_ext": "150.00",
+    "amount_iof": "0.00",
+    "currency_ext": "BRL",
+    "due_date": "2026-10-22",
+    "instalments": "1",
+    "payment_type_code": "boleto",
+    "boleto_url": "https://sandbox.ebanxpay.com/print/?hash=PPLsynth9f86d081884c7d659a2feaa0c55ad015a3bf4f1b",
+    "boleto_barcode": "PPLSYNTH3419109000000000000000000000000000000000",
+    "pre_approved": false,
+    "capture_available": null
+  },
+  "status": "SUCCESS"
+}

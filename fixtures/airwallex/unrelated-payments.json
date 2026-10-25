@@ -1,0 +1,33 @@
+[
+  {
+    "id": "int_PPLsynthUnrelatedA0006",
+    "amount": 20,
+    "currency": "SGD",
+    "merchant_order_id": "PPLsynth-order-shared-0006",
+    "status": "SUCCEEDED",
+    "captured_amount": 20,
+    "latest_payment_attempt": {
+      "id": "att_PPLsynthUnrelatedA0006",
+      "payment_intent_id": "int_PPLsynthUnrelatedA0006",
+      "status": "CAPTURE_REQUESTED"
+    },
+    "created_at": "2026-10-23T08:00:00+0000",
+    "updated_at": "2026-10-23T08:00:03+0000"
+  },
+  {
+    "id": "int_PPLsynthUnrelatedB0006",
+    "amount": 20,
+    "currency": "SGD",
+    "merchant_order_id": "PPLsynth-order-shared-0006",
+    "status": "CANCELLED",
+    "captured_amount": 0,
+    "latest_payment_attempt": {
+      "id": "att_PPLsynthUnrelatedB0006",
+      "payment_intent_id": "int_PPLsynthUnrelatedB0006",
+      "status": "CANCELLED"
+    },
+    "created_at": "2026-10-23T08:05:00+0000",
+    "updated_at": "2026-10-23T08:06:00+0000",
+    "cancelled_at": "2026-10-23T08:06:00+0000"
+  }
+]

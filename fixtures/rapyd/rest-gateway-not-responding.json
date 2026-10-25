@@ -1,0 +1,9 @@
+{
+  "status": {
+    "error_code": "ERROR_CREATE_PAYMENT_GATEWAY_NOT_RESPONDING",
+    "status": "ERROR",
+    "message": "The request attempted an operation, but the gateway did not respond. Corrective action: Try again later.",
+    "response_code": "ERROR_CREATE_PAYMENT_GATEWAY_NOT_RESPONDING",
+    "operation_id": "PPLsynth-0000-4000-a000-000000000108"
+  }
+}

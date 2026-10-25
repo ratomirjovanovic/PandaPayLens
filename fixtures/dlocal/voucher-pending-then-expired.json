@@ -1,0 +1,44 @@
+[
+  {
+    "id": "D-4-PPLsynth-pay-0006",
+    "amount": 350.0,
+    "currency": "MXN",
+    "payment_method_id": "OX",
+    "payment_method_type": "TICKET",
+    "payment_method_flow": "DIRECT",
+    "country": "MX",
+    "ticket": {
+      "type": "BARCODE",
+      "number": "PPLSYNTH0006",
+      "expiration_date": "2026-10-23T23:59:59.000+0000",
+      "provider_name": "OXXO",
+      "barcode": "PPLSYNTH000600060006"
+    },
+    "created_date": "2026-10-20T12:00:00.000+0000",
+    "status": "PENDING",
+    "status_detail": "The payment is pending.",
+    "status_code": "100",
+    "order_id": "PPLsynth-order-0006"
+  },
+  {
+    "id": "D-4-PPLsynth-pay-0006",
+    "amount": 350.0,
+    "currency": "MXN",
+    "payment_method_id": "OX",
+    "payment_method_type": "TICKET",
+    "payment_method_flow": "DIRECT",
+    "country": "MX",
+    "ticket": {
+      "type": "BARCODE",
+      "number": "PPLSYNTH0006",
+      "expiration_date": "2026-10-23T23:59:59.000+0000",
+      "provider_name": "OXXO",
+      "barcode": "PPLSYNTH000600060006"
+    },
+    "created_date": "2026-10-20T12:00:00.000+0000",
+    "status": "REJECTED",
+    "status_detail": "The payment expired.",
+    "status_code": "340",
+    "order_id": "PPLsynth-order-0006"
+  }
+]

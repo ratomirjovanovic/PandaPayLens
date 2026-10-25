@@ -1,0 +1,52 @@
+[
+  {
+    "id": "evt_PPLsynth_risk_0081",
+    "name": "payment_attempt.risk_declined",
+    "account_id": "acct_PPLsynthAccount01",
+    "data": {
+      "object": {
+        "id": "att_PPLsynthRiskFirst0080",
+        "payment_intent_id": "int_PPLsynthRisk0080",
+        "status": "FAILED",
+        "amount": 999,
+        "currency": "USD",
+        "failure_code": "fraud_rejected",
+        "failure_details": {
+          "code": "risk_declined",
+          "message": "Synthetic risk decline.",
+          "trace_id": "PPLsynthtrace000000000000000081",
+          "details": {}
+        },
+        "payment_method": { "type": "card", "card": { "brand": "visa", "last4": "4644" } },
+        "updated_at": "2026-10-23T18:00:00+0000"
+      }
+    },
+    "created_at": "2026-10-23T18:00:00+0000",
+    "version": "2026-08-21"
+  },
+  {
+    "id": "evt_PPLsynth_risk_0082",
+    "name": "payment_attempt.risk_declined",
+    "account_id": "acct_PPLsynthAccount01",
+    "data": {
+      "object": {
+        "id": "att_PPLsynthRiskSecond0080",
+        "payment_intent_id": "int_PPLsynthRisk0080",
+        "status": "FAILED",
+        "amount": 999,
+        "currency": "USD",
+        "failure_code": "fraud_rejected",
+        "failure_details": {
+          "code": "risk_declined",
+          "message": "Synthetic risk decline.",
+          "trace_id": "PPLsynthtrace000000000000000082",
+          "details": {}
+        },
+        "payment_method": { "type": "card", "card": { "brand": "visa", "last4": "4644" } },
+        "updated_at": "2026-10-23T18:01:00+0000"
+      }
+    },
+    "created_at": "2026-10-23T18:01:00+0000",
+    "version": "2026-08-21"
+  }
+]

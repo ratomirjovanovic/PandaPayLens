@@ -1,0 +1,6 @@
+POST /PPLsynth/dlocal/payouts HTTP/1.1
+Host: merchant.example.com
+Content-Type: application/x-www-form-urlencoded
+X-PPL-Fixture: synthetic; built from the documented Payouts v2 notification parameters, not an official dLocal example
+
+external_id=PPLsynth-cashout-0020&cashout_id=PPLsynth0020&date=2026-10-20%2022%3A00%3A00&bank_reference_id=PPLsynth-bankref-0020&comments=PPLsynth&status_reason=ERROR_ACCOUNT_INCORRECT&control=EFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEFEF

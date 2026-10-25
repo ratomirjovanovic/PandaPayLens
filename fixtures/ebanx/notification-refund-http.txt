@@ -1,0 +1,8 @@
+POST /ebanx/notifications HTTP/1.1
+Host: merchant.example
+Content-Type: application/x-www-form-urlencoded
+X-Signature-Type: rsa,sha1
+X-Signature-Fingerprint: PPLSYNTH00000000000000000000000000000000
+X-Signature-Content: PPLsynthU2lnbmF0dXJlUGxhbnRlZEZvclRlc3Rz
+
+operation=payment_status_change&notification_type=refund&hash_codes=PPLsynth8c1f0e2d3b4a59687766554433221100aabbccdd

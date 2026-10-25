@@ -1,0 +1,79 @@
+[
+  {
+    "id": "evt_PPLsynth_dispute_0061",
+    "name": "payment_attempt.capture_requested",
+    "account_id": "acct_PPLsynthAccount01",
+    "data": {
+      "object": {
+        "id": "att_PPLsynthDispute0060",
+        "payment_intent_id": "int_PPLsynthDispute0060",
+        "status": "CAPTURE_REQUESTED",
+        "amount": 10,
+        "currency": "AUD",
+        "captured_amount": 10,
+        "updated_at": "2026-10-01T06:00:00+0000"
+      }
+    },
+    "created_at": "2026-10-01T06:00:00+0000",
+    "version": "2026-08-21"
+  },
+  {
+    "id": "PPLsynth0dispute0000000000000062",
+    "name": "payment_dispute.requires_response",
+    "account_id": "acct_PPLsynthAccount01",
+    "accountId": "acct_PPLsynthAccount01",
+    "data": {
+      "object": {
+        "accept_details": [],
+        "acquirer_reference_number": "PPLsynthARN00000000000060",
+        "amount": 10,
+        "card_brand": "visa",
+        "challenge_details": [],
+        "created_at": "2026-10-08T06:04:00+0000",
+        "currency": "AUD",
+        "due_at": "2026-10-30T20:00:00+0000",
+        "id": "dst_PPLsynthDispute0060",
+        "issuer_comment": "PPLsynth issuer comment",
+        "merchant_order_id": "PPLsynth-order-0060",
+        "mode": "ALLOCATION",
+        "payment_attempt_id": "att_PPLsynthDispute0060",
+        "payment_intent_id": "int_PPLsynthDispute0060",
+        "payment_method_type": "VISA",
+        "reason": {
+          "description": "Other Fraud-Card Absent Environment",
+          "original_code": "10.4",
+          "type": "FRAUDULENT"
+        },
+        "stage": "CHARGEBACK",
+        "status": "REQUIRES_RESPONSE",
+        "updated_at": "2026-10-08T06:04:00+0000"
+      }
+    },
+    "created_at": "2026-10-08T06:04:01+0000",
+    "createdAt": "2026-10-08T06:04:01+0000",
+    "version": "2026-08-21",
+    "sourceId": "int_PPLsynthDispute0060"
+  },
+  {
+    "id": "PPLsynth0dispute0000000000000063",
+    "name": "payment_dispute.challenged",
+    "account_id": "acct_PPLsynthAccount01",
+    "data": {
+      "object": {
+        "amount": 10,
+        "card_brand": "visa",
+        "currency": "AUD",
+        "id": "dst_PPLsynthDispute0060",
+        "mode": "ALLOCATION",
+        "payment_attempt_id": "att_PPLsynthDispute0060",
+        "payment_intent_id": "int_PPLsynthDispute0060",
+        "reason": { "original_code": "10.4", "type": "FRAUDULENT" },
+        "stage": "CHARGEBACK",
+        "status": "CHALLENGED",
+        "updated_at": "2026-10-12T09:00:00+0000"
+      }
+    },
+    "created_at": "2026-10-12T09:00:00+0000",
+    "version": "2026-08-21"
+  }
+]

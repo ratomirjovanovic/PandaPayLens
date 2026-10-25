@@ -1,0 +1,5 @@
+{
+  "status": "ERROR",
+  "status_code": "BP-DR-23",
+  "status_message": "Parameter document 111.444.777-35 is invalid for planted.error@example.com"
+}

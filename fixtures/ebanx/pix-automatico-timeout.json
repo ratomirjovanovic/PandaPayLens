@@ -1,0 +1,22 @@
+{
+  "payment": {
+    "hash": "PPLsynth59acc5f00945fa382ab051651440826da7701533",
+    "merchant_payment_code": "PPLsynth-pixauto-0007",
+    "country": "BR",
+    "status": "CA",
+    "status_date": "2026-10-20 09:30:00",
+    "open_date": "2026-10-18 09:00:00",
+    "amount_br": "29.90",
+    "amount_ext": "29.90",
+    "amount_iof": "0.00",
+    "currency_ext": "BRL",
+    "payment_type_code": "pix-automatico",
+    "transaction_status": {
+      "acquirer": "EBANX IP",
+      "code": "NOK",
+      "description": "External service not available, try again",
+      "description_code": "TIMEOUT"
+    }
+  },
+  "status": "SUCCESS"
+}

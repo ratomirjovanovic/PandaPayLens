@@ -537,5 +537,75 @@
     "provider": "nuvei",
     "file": "nuvei/rest-payment-declined-http.txt",
     "description": "A REST decline where the Mastercard advice code tightens the retry advice."
+  },
+  {
+    "id": "paysafe-declined-advice",
+    "title": "Paysafe: card declined with merchant advice",
+    "provider": "paysafe",
+    "file": "paysafe/payment-card-declined-advice.txt",
+    "description": "An HTTP 402 decline with a merchant advice code, an ISO response code and a raw processor code."
+  },
+  {
+    "id": "paysafe-eps-lifecycle",
+    "title": "Paysafe: EPS payment webhooks",
+    "provider": "paysafe",
+    "file": "paysafe/webhook-eps-lifecycle.json",
+    "description": "A payment handle and its payment linked into one timeline."
+  },
+  {
+    "id": "airwallex-card-lifecycle",
+    "title": "Airwallex: card payment webhooks",
+    "provider": "airwallex",
+    "file": "airwallex/card-lifecycle-webhooks.json",
+    "description": "From creation through authorization, capture and settlement to a partial refund."
+  },
+  {
+    "id": "airwallex-declined",
+    "title": "Airwallex: payment declined by the issuer",
+    "provider": "airwallex",
+    "file": "airwallex/payment-intent-declined.json",
+    "description": "A PaymentIntent whose latest attempt failed, decoded with the card brand, AVS and CVC results."
+  },
+  {
+    "id": "rapyd-payment-failed",
+    "title": "Rapyd: payment failed webhook",
+    "provider": "rapyd",
+    "file": "rapyd/webhook-payment-failed.json",
+    "description": "A card decline that requires 3DS, with a merchant advice code."
+  },
+  {
+    "id": "rapyd-payout-lifecycle",
+    "title": "Rapyd: payout returned",
+    "provider": "rapyd",
+    "file": "rapyd/payout-lifecycle.json",
+    "description": "A payout created, completed and then returned, kept separate from payments."
+  },
+  {
+    "id": "dlocal-status-700",
+    "title": "dLocal: one code, three meanings",
+    "provider": "dlocal",
+    "file": "dlocal/status-code-700-three-objects.json",
+    "description": "The same status_code read for a payment, a chargeback and a payout."
+  },
+  {
+    "id": "dlocal-voucher-expired",
+    "title": "dLocal: cash voucher expired",
+    "provider": "dlocal",
+    "file": "dlocal/voucher-pending-then-expired.json",
+    "description": "An OXXO voucher that stays pending until it expires."
+  },
+  {
+    "id": "ebanx-auth-capture-refund",
+    "title": "EBANX: authorization, capture and refund",
+    "provider": "ebanx",
+    "file": "ebanx/card-auth-capture-refund.json",
+    "description": "A card payment authorized, captured and partially refunded in one timeline."
+  },
+  {
+    "id": "ebanx-insufficient-funds",
+    "title": "EBANX: card declined, insufficient funds",
+    "provider": "ebanx",
+    "file": "ebanx/card-declined-insufficient-funds.json",
+    "description": "A decline inside a successful envelope, with ISO and Mastercard advice codes."
   }
 ]
