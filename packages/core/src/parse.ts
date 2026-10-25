@@ -71,6 +71,12 @@ export type RecordMeta = {
     status?: number;
     /** Reason phrase of a response status line, length-limited and scrubbed. */
     reason?: string;
+    /**
+     * Plain-text body of an error response (status 400 or higher), with
+     * whitespace collapsed, at most 500 characters and scrubbed. The record
+     * itself is empty, like a status-only response.
+     */
+    bodyText?: string;
     contentType?: string;
     /** Lowercased names; sensitive values replaced with "[redacted]". */
     headers: Record<string, string>;
@@ -310,11 +316,21 @@ function parseHttp(text: string, lim: InputLimits): Parsed {
     if (http.kind === "response" && (http.status ?? 0) >= 400) return finish("http", [{}], meta);
     return fail("INVALID_HTTP", "The HTTP message has no body to analyze.");
   }
+  const errorResponse = http.kind === "response" && (http.status ?? 0) >= 400;
+  // HTML error pages (for example from a proxy) are not analyzed; the status is.
+  if (errorResponse && ct === "text/html" && trimmed.startsWith("<")) {
+    return finish("http", [{}], meta);
+  }
   if (trimmed.startsWith("<") || (ct && /xml/.test(ct))) return xmlNotSupported();
   // Some providers label form-encoded bodies as text/plain or text/html.
   const textLike = !ct || ct === "text/plain" || ct === "text/html";
   if (ct === "application/x-www-form-urlencoded" || (textLike && FORM_LIKE.test(trimmed))) {
     return parseFormText(trimmed, lim, meta);
+  }
+  // Some APIs answer errors with a short sentence instead of JSON.
+  if (errorResponse && textLike && !/^[[{"]/.test(trimmed)) {
+    http.bodyText = redactText(trimmed.slice(0, 2000).replace(/\s+/g, " ").slice(0, 500)).text;
+    return finish("http", [{}], meta);
   }
   return parseJsonText(trimmed, lim, meta);
 }

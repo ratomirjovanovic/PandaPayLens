@@ -62,6 +62,12 @@ export const dectaManifest: ProviderManifest = {
       status: "limited",
     },
     {
+      id: "decta.text_error",
+      description:
+        "HTTP error response with a plain-text body that matches a documented DECTA error text; decoded when DECTA is selected as the provider",
+      status: "limited",
+    },
+    {
       id: "decta.card_webhook",
       description: "card.* webhooks (saved card object); recognized, not analyzed",
       status: "unsupported",

@@ -4,6 +4,11 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Analyzer
+
+- HTTP error responses with a plain-text body keep the text (scrubbed, at most 500 characters) for adapters instead of failing as invalid JSON. HTML error pages keep their status code.
+- DECTA decodes its documented plain-text error texts when DECTA is selected as the provider.
+
 ### Fixed
 
 - `POSSIBLE_RETRY_RISK` no longer gives card-only advice for payouts and non-card payments. Card network penalties are mentioned only for card declines, and payouts get recipient-focused advice (rule catalog 2026.10.3).

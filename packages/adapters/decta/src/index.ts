@@ -6,6 +6,8 @@
  *                             order.* / oct.* webhook (event name in X-Webhook-Event)
  * - `decta.host2host`         Host2Host, wallet and manual 3-D Secure step responses
  * - `decta.validation_error`  API validation error object { <field>: [{ message, code }] }
+ * - `decta.text_error`        HTTP error response whose plain-text body is a
+ *                             documented DECTA error text
  *
  * Recognized but not supported: `decta.card_webhook` (card.* events, saved card
  * object) and `decta.webhook_v05` (deprecated v0.5 events, body not documented).
@@ -122,6 +124,8 @@ const HostToHost = z.looseObject({
 
 const ValidationItem = z.looseObject({ message: z.string().max(2000), code: z.string().max(64) });
 const ValidationError = z.record(z.string().max(128), z.array(ValidationItem).min(1).max(100));
+/** The record is empty; the text travels in the HTTP metadata. */
+const TextError = z.object({}).strict();
 
 type OrderValue = z.infer<typeof Order>;
 type HostToHostValue = z.infer<typeof HostToHost>;
@@ -130,12 +134,14 @@ type ValidationValue = z.infer<typeof ValidationError>;
 export type DectaParsed =
   | { kind: "order"; value: OrderValue }
   | { kind: "host2host"; value: HostToHostValue }
-  | { kind: "validation_error"; value: ValidationValue };
+  | { kind: "validation_error"; value: ValidationValue }
+  | { kind: "text_error"; value: Record<string, never> };
 
 const FORMATS = {
   "decta.order": ["order", Order],
   "decta.host2host": ["host2host", HostToHost],
   "decta.validation_error": ["validation_error", ValidationError],
+  "decta.text_error": ["text_error", TextError],
 } as const;
 
 function isObj(v: unknown): v is Record<string, unknown> {
@@ -215,6 +221,24 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
   if (!isObj(input)) return none;
   // Stripe payloads carry `object`; DECTA payloads never do.
   if ("object" in input) return none;
+
+  // An HTTP error response with a plain-text body. The texts are short and
+  // generic, so this stays below the automatic detection threshold and is
+  // used when DECTA is selected as the provider.
+  const bodyText = meta?.http?.bodyText;
+  if (Object.keys(input).length === 0 && bodyText) {
+    if (!lookup(DOCUMENTED_MESSAGES, bodyText.trim().toLowerCase())) return none;
+    return {
+      ...base,
+      format: "decta.text_error",
+      confidence: 0.4,
+      supported: true,
+      reasons: [
+        `HTTP ${meta?.http?.status ?? "error"} response whose text matches a documented DECTA error text`,
+        "Select DECTA as the provider to decode it; the text alone does not identify the provider.",
+      ],
+    };
+  }
   // DECTA requests, responses and webhooks are JSON only.
   if (meta?.format === "form" || meta?.http?.contentType === "application/x-www-form-urlencoded")
     return none;
@@ -778,7 +802,24 @@ function normalize(parsed: DectaParsed, ctx: NormalizeContext): NormalizedEventD
       return [hostToHostEvent(parsed.value, ctx)];
     case "validation_error":
       return [validationEvent(parsed.value, ctx)];
+    case "text_error":
+      return [textErrorEvent(ctx)];
   }
+}
+
+function textErrorEvent(ctx: NormalizeContext): NormalizedEventDraft {
+  const http = ctx.meta?.http?.status;
+  return clean({
+    sourceFormat: ctx.format,
+    eventType: "error_response",
+    eventTypeKnown: true,
+    stage: "error",
+    providerStatus: http ? `HTTP ${http}` : "error_response",
+    outcome: "failure",
+    attributes: attrs([["httpStatus", http]]),
+    source: { recordIndex: ctx.recordIndex, path: "" },
+    ...observedOf(ctx),
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -1084,7 +1125,25 @@ function decodeErrors(parsed: DectaParsed, ctx: NormalizeContext): DecodedErrorD
       return hostToHostErrors(parsed.value, ctx);
     case "validation_error":
       return validationErrors(parsed.value, ctx);
+    case "text_error":
+      return textErrors(ctx);
   }
+}
+
+function textErrors(ctx: NormalizeContext): DecodedErrorDraft[] {
+  const text = ctx.meta?.http?.bodyText;
+  const dec = documentedMessage(text);
+  if (!text || !dec) return [];
+  const http = ctx.meta?.http?.status;
+  return [
+    draft(
+      { sourceFormat: ctx.format, source: { recordIndex: ctx.recordIndex, path: "" } },
+      http ? `HTTP ${http}` : "error_response",
+      dec,
+      http !== undefined ? { http_status: String(http) } : {},
+      safeText(text, 200),
+    ),
+  ];
 }
 
 export const dectaAdapter: ProviderAdapter<DectaParsed> = {
@@ -1106,6 +1165,10 @@ export const dectaAdapter: ProviderAdapter<DectaParsed> = {
     {
       id: "decta.validation_error",
       description: "API validation error object ({ <field>: [{ message, code }] })",
+    },
+    {
+      id: "decta.text_error",
+      description: "HTTP error response with a documented plain-text error body",
     },
   ],
   detect,
