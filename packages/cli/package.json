@@ -1,6 +1,6 @@
 {
   "name": "@pandapaylens/cli",
-  "version": "0.11.0",
+  "version": "0.12.0",
   "description": "Offline command-line payment error decoder and event timeline for Stripe and Adyen.",
   "license": "Apache-2.0",
   "author": "Ratomir Jovanovic (https://github.com/ratomirjovanovic)",
