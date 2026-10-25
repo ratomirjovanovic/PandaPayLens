@@ -877,3 +877,14 @@ describe("payu_india catalog and manifest", () => {
     }
   });
 });
+
+describe("payu_india free-text scrubbing", () => {
+  it("removes UPI ids and stays fast on long text without whitespace", () => {
+    const started = Date.now();
+    const r = analyze(
+      form({ error_Message: `Declined for pplsynth.payer@okpplbank ${"!".repeat(3000)}` }),
+    );
+    expect(Date.now() - started).toBeLessThan(2000);
+    expect(json(r)).not.toContain("pplsynth.payer@okpplbank");
+  });
+});
