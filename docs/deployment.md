@@ -28,15 +28,17 @@ Run this in the Neon SQL editor after the first deployment has created the table
 
 ## 3. Environment variables
 
-| Variable                 | Environments                           | Value                                                                                           |
-| ------------------------ | -------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `DATABASE_MIGRATION_URL` | Production, Preview                    | Neon owner connection string. Used only during the build to apply migrations.                   |
-| `DATABASE_URL`           | Production, Preview                    | Connection string of the restricted `ppl_app` role (or the owner string until the role exists). |
-| `BETTER_AUTH_SECRET`     | Production, Preview (different values) | At least 32 random characters.                                                                  |
-| `BETTER_AUTH_URL`        | Production                             | The production URL. Previews use their own deployment URL automatically.                        |
-| `RESEND_API_KEY`         | Production, Preview                    | Resend API key with send permission.                                                            |
-| `EMAIL_FROM`             | Production, Preview                    | Verified sender, for example `PandaPayLens <admin@your-domain>`.                                |
-| `SUPERADMIN_EMAIL`       | Production                             | Email of the first superadmin.                                                                  |
+| Variable                 | Environments                           | Value                                                                               |
+| ------------------------ | -------------------------------------- | ----------------------------------------------------------------------------------- |
+| `DATABASE_URL`           | set by the Neon integration            | Owner connection (pooled). Used at runtime only if `ADMIN_DATABASE_URL` is missing. |
+| `DATABASE_URL_UNPOOLED`  | set by the Neon integration            | Owner connection. Used only during the build to apply migrations.                   |
+| `ADMIN_DATABASE_URL`     | Production, Preview                    | Connection string of the restricted `ppl_app` role. Recommended.                    |
+| `DATABASE_MIGRATION_URL` | optional                               | Overrides `DATABASE_URL_UNPOOLED` for migrations.                                   |
+| `BETTER_AUTH_SECRET`     | Production, Preview (different values) | At least 32 random characters.                                                      |
+| `BETTER_AUTH_URL`        | Production                             | The production URL. Previews use their own deployment URL automatically.            |
+| `RESEND_API_KEY`         | Production, Preview                    | Resend API key with send permission.                                                |
+| `EMAIL_FROM`             | Production, Preview                    | Verified sender, for example `PandaPayLens <admin@your-domain>`.                    |
+| `SUPERADMIN_EMAIL`       | Production                             | Email of the first superadmin.                                                      |
 
 Never put production secrets in Preview or Development.
 

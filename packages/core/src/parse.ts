@@ -42,7 +42,8 @@ export type ParseErrorCode =
   | "STRING_TOO_LONG"
   | "TOO_MANY_RECORDS"
   | "INVALID_FORM"
-  | "INVALID_HTTP";
+  | "INVALID_HTTP"
+  | "UNSUPPORTED_FORMAT";
 
 export type ParseError = {
   code: ParseErrorCode;
@@ -110,7 +111,10 @@ export function parseInput(text: string, limits: Partial<InputLimits> = {}): Par
     return fail("EMPTY_INPUT", "The input is empty.");
   }
 
-  const start = body.trimStart();
+  // Documentation often wraps form examples with continuation lines that
+  // start with "&"; join them back into one record.
+  const start = body.trimStart().replace(/\r?\n\s*&/g, "&");
+  if (start.startsWith("<")) return xmlNotSupported();
   if (/^HTTP\/\d(?:\.\d)? \d{3}/.test(start) || /^[A-Z]{3,7} \S+ HTTP\/\d/.test(start)) {
     return parseHttp(start, lim);
   }
@@ -295,7 +299,10 @@ function parseHttp(text: string, lim: InputLimits): Parsed {
     if (http.kind === "response" && (http.status ?? 0) >= 400) return finish("http", [{}], meta);
     return fail("INVALID_HTTP", "The HTTP message has no body to analyze.");
   }
-  if (ct === "application/x-www-form-urlencoded" || (!ct && FORM_LIKE.test(trimmed))) {
+  if (trimmed.startsWith("<") || (ct && /xml/.test(ct))) return xmlNotSupported();
+  // Some providers label form-encoded bodies as text/plain or text/html.
+  const textLike = !ct || ct === "text/plain" || ct === "text/html";
+  if (ct === "application/x-www-form-urlencoded" || (textLike && FORM_LIKE.test(trimmed))) {
     return parseFormText(trimmed, lim, meta);
   }
   return parseJsonText(trimmed, lim, meta);
@@ -546,4 +553,11 @@ export function formatBytes(n: number): string {
   if (n >= 1024 * 1024) return `${(n / (1024 * 1024)).toFixed(n % (1024 * 1024) === 0 ? 0 : 1)} MB`;
   if (n >= 1024) return `${Math.round(n / 1024)} KB`;
   return `${n} B`;
+}
+
+function xmlNotSupported(): { ok: false; error: ParseError } {
+  return fail(
+    "UNSUPPORTED_FORMAT",
+    "XML input is not supported yet. Paste the JSON or form-encoded version of the payload if the provider offers one.",
+  );
 }

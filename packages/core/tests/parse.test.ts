@@ -278,3 +278,36 @@ describe("request query metadata and spaced form values", () => {
     });
   });
 });
+
+describe("documentation-style inputs", () => {
+  it("joins form continuation lines that start with &", () => {
+    const r = parseInput("unique_id=PPLsynth1\n&status=approved\n&amount=100");
+    expect(r.ok && r.value.records).toEqual([
+      { unique_id: "PPLsynth1", status: "approved", amount: "100" },
+    ]);
+  });
+
+  it("parses form bodies labelled text/plain", () => {
+    const r = parseInput(
+      "HTTP/1.1 200 OK\nContent-Type: text/plain\n\nresponse=1&responsetext=SUCCESS&response_code=100",
+    );
+    expect(r.ok && r.value.records[0]).toEqual({
+      response: "1",
+      responsetext: "SUCCESS",
+      response_code: "100",
+    });
+  });
+
+  it("reports XML as an unsupported format", () => {
+    expect(
+      parseInput("<payment_response><status>approved</status></payment_response>"),
+    ).toMatchObject({
+      ok: false,
+      error: { code: "UNSUPPORTED_FORMAT" },
+    });
+    expect(parseInput("HTTP/1.1 200 OK\nContent-Type: text/xml\n\n<a/>")).toMatchObject({
+      ok: false,
+      error: { code: "UNSUPPORTED_FORMAT" },
+    });
+  });
+});
