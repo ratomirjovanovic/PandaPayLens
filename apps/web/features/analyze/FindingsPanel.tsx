@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { AnalysisResult, Severity } from "@pandapaylens/core";
 import { CONFIDENCE_LABEL, SEVERITY_CLASS, SEVERITY_LABEL } from "./labels";
+import { isOfficialDocUrl } from "@/lib/doc-links";
 
 const SEVERITIES: Severity[] = ["critical", "high", "medium", "low", "info"];
 
@@ -118,17 +119,16 @@ export function FindingsPanel({
                 Show {f.evidenceEventIds.length} event(s)
               </button>
             )}
-            {f.documentationUrl &&
-              /^https:\/\/docs\.(stripe|adyen)\.com\//.test(f.documentationUrl) && (
-                <a
-                  href={f.documentationUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-accent underline underline-offset-2"
-                >
-                  Docs ↗
-                </a>
-              )}
+            {isOfficialDocUrl(f.documentationUrl) && (
+              <a
+                href={f.documentationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-accent underline underline-offset-2"
+              >
+                Docs ↗
+              </a>
+            )}
           </footer>
         </article>
       ))}

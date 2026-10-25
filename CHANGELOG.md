@@ -9,6 +9,11 @@ All notable changes to this project are documented here. The format follows [Kee
 - Event and arrival times are used only when they are ISO 8601 with a time zone; anything else is removed from the event and reported once (`TIMESTAMP_IGNORED`), so ordering never depends on the time zone of the computer running the analysis.
 - Times that a provider documents without a time zone and that are read as UTC (CCBill, Trust Payments) are marked "UTC assumed" in the timeline and the Markdown report, and a `TIME_ZONE_ASSUMED` warning appears when they are analyzed together with another provider's times.
 
+### Web app
+
+- Findings show their documentation link for every provider, not only Stripe and Adyen. Links are shown only for https hosts that a provider manifest cites as official documentation, the same check the error decoder uses.
+- The unsafe retry finding links the idempotency documentation of PayPal, Square, Mollie and Checkout.com as well.
+
 ### Providers
 
 - Worldpay XML is analyzed:

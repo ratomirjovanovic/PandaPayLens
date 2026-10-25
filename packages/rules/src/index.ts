@@ -33,6 +33,10 @@ const STRIPE_IDEMPOTENCY = "https://docs.stripe.com/api/idempotent_requests";
 const IDEMPOTENCY_DOCS: Record<string, string> = {
   stripe: STRIPE_IDEMPOTENCY,
   adyen: "https://docs.adyen.com/development-resources/api-idempotency",
+  paypal: "https://developer.paypal.com/api/rest/reference/idempotency/",
+  square: "https://developer.squareup.com/docs/build-basics/common-api-patterns/idempotency",
+  mollie: "https://docs.mollie.com/reference/api-idempotency",
+  checkout: "https://www.checkout.com/docs/developer-resources/api/idempotency",
 };
 
 const time = (e: NormalizedEvent) => (e.eventTimestamp ? Date.parse(e.eventTimestamp) : undefined);

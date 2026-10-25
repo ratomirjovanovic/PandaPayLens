@@ -1,30 +1,7 @@
 import { maskIdentifier, type AnalysisResult } from "@pandapaylens/core";
-import { MANIFESTS } from "@pandapaylens/providers/manifests";
 import { CATEGORY_LABEL, CONFIDENCE_LABEL, RETRY_CLASS, RETRY_LABEL } from "./labels";
 import { CopyButton } from "./CopyButton";
-
-const hostOf = (url: string) => {
-  try {
-    const u = new URL(url);
-    return u.protocol === "https:" ? u.hostname : null;
-  } catch {
-    return null;
-  }
-};
-
-/**
- * Documentation links are shown only for https hosts that the provider
- * manifests themselves cite as official documentation.
- */
-const DOC_HOSTS = new Set(
-  MANIFESTS.flatMap((m) => m.documentation.map((d) => hostOf(d.url))).filter(
-    (h): h is string => h !== null,
-  ),
-);
-const safeDoc = (url: string) => {
-  const host = hostOf(url);
-  return host !== null && DOC_HOSTS.has(host);
-};
+import { isOfficialDocUrl as safeDoc } from "@/lib/doc-links";
 
 export function DecoderView({ result, showIds }: { result: AnalysisResult; showIds: boolean }) {
   if (!result.errors.length) {
