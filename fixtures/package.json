@@ -1,0 +1,9 @@
+{
+  "name": "@pandapaylens/fixtures",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Synthetic Stripe and Adyen fixtures used by tests, examples and the CLI. No real data.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": { "./*": "./*" }
+}

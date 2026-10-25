@@ -1,0 +1,5 @@
+{
+  "status": "error",
+  "message": "Payment could not be processed",
+  "code": "E_GENERIC_500"
+}

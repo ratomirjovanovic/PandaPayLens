@@ -1,0 +1,99 @@
+[
+  {
+    "id": "evt_1PPLsynthOK000001",
+    "object": "event",
+    "api_version": "2025-09-30.clover",
+    "created": 1761379200,
+    "livemode": false,
+    "pending_webhooks": 1,
+    "type": "payment_intent.created",
+    "data": {
+      "object": {
+        "id": "pi_3PPLsynthOK000001",
+        "object": "payment_intent",
+        "amount": 4999,
+        "currency": "eur",
+        "status": "requires_payment_method",
+        "created": 1761379200,
+        "livemode": false,
+        "capture_method": "automatic",
+        "payment_method_types": [
+          "card"
+        ]
+      }
+    },
+    "request": {
+      "id": "req_PPLsynth0001",
+      "idempotency_key": "ppl-synthetic-key-0001"
+    }
+  },
+  {
+    "id": "evt_1PPLsynthOK000002",
+    "object": "event",
+    "api_version": "2025-09-30.clover",
+    "created": 1761379214,
+    "livemode": false,
+    "pending_webhooks": 1,
+    "type": "charge.succeeded",
+    "data": {
+      "object": {
+        "id": "ch_3PPLsynthOK000001",
+        "object": "charge",
+        "amount": 4999,
+        "currency": "eur",
+        "status": "succeeded",
+        "paid": true,
+        "captured": true,
+        "payment_intent": "pi_3PPLsynthOK000001",
+        "billing_details": {
+          "email": "synthetic.customer@example.com",
+          "name": "Synthetic Customer"
+        },
+        "payment_method_details": {
+          "card": {
+            "brand": "visa",
+            "last4": "4242",
+            "exp_month": 12,
+            "exp_year": 2030
+          }
+        },
+        "livemode": false
+      }
+    },
+    "request": {
+      "id": "req_PPLsynth0002",
+      "idempotency_key": null
+    }
+  },
+  {
+    "id": "evt_1PPLsynthOK000003",
+    "object": "event",
+    "api_version": "2025-09-30.clover",
+    "created": 1761379214,
+    "livemode": false,
+    "pending_webhooks": 1,
+    "type": "payment_intent.succeeded",
+    "data": {
+      "object": {
+        "id": "pi_3PPLsynthOK000001",
+        "object": "payment_intent",
+        "amount": 4999,
+        "currency": "eur",
+        "status": "succeeded",
+        "created": 1761379200,
+        "livemode": false,
+        "amount_received": 4999,
+        "capture_method": "automatic",
+        "client_secret": "pi_3PPLsynthOK000001_secret_PPLsyntheticSecret",
+        "latest_charge": "ch_3PPLsynthOK000001",
+        "payment_method_types": [
+          "card"
+        ]
+      }
+    },
+    "request": {
+      "id": "req_PPLsynth0002",
+      "idempotency_key": null
+    }
+  }
+]

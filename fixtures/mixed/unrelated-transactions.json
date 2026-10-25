@@ -1,0 +1,83 @@
+[
+  {
+    "id": "evt_1PPLsynthMIX00001",
+    "object": "event",
+    "api_version": "2025-09-30.clover",
+    "created": 1761399200,
+    "livemode": false,
+    "pending_webhooks": 1,
+    "type": "payment_intent.succeeded",
+    "data": {
+      "object": {
+        "id": "pi_3PPLsynthMIXA0001",
+        "object": "payment_intent",
+        "amount": 1000,
+        "currency": "usd",
+        "status": "succeeded",
+        "created": 1761379200,
+        "livemode": false
+      }
+    }
+  },
+  {
+    "id": "evt_1PPLsynthMIX00002",
+    "object": "event",
+    "api_version": "2025-09-30.clover",
+    "created": 1761399300,
+    "livemode": false,
+    "pending_webhooks": 1,
+    "type": "payment_intent.payment_failed",
+    "data": {
+      "object": {
+        "id": "pi_3PPLsynthMIXB0001",
+        "object": "payment_intent",
+        "amount": 3000,
+        "currency": "usd",
+        "status": "requires_payment_method",
+        "created": 1761379200,
+        "livemode": false,
+        "last_payment_error": {
+          "type": "card_error",
+          "code": "card_declined",
+          "decline_code": "generic_decline",
+          "message": "Your card was declined."
+        }
+      }
+    }
+  },
+  {
+    "id": "evt_1PPLsynthMIX00003",
+    "object": "event",
+    "api_version": "2025-09-30.clover",
+    "created": 1761399400,
+    "livemode": false,
+    "pending_webhooks": 1,
+    "type": "invoice.paid",
+    "data": {
+      "object": {
+        "id": "in_PPLsynthMIX0001",
+        "object": "invoice",
+        "status": "paid"
+      }
+    }
+  },
+  {
+    "live": "false",
+    "notificationItems": [
+      {
+        "NotificationRequestItem": {
+          "merchantAccountCode": "PandaPayLensSyntheticECOM",
+          "amount": {
+            "currency": "EUR",
+            "value": 500
+          },
+          "eventCode": "AUTHORISATION",
+          "eventDate": "2026-10-25T13:00:00+00:00",
+          "merchantReference": "PPL-ORDER-0006",
+          "pspReference": "PPLSYNTH0000MIX1",
+          "success": "true"
+        }
+      }
+    ]
+  }
+]

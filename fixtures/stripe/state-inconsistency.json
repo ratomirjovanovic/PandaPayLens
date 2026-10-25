@@ -1,0 +1,42 @@
+[
+  {
+    "id": "evt_1PPLsynthINC00001",
+    "object": "event",
+    "api_version": "2025-09-30.clover",
+    "created": 1761379300,
+    "livemode": false,
+    "pending_webhooks": 1,
+    "type": "payment_intent.succeeded",
+    "data": {
+      "object": {
+        "id": "pi_3PPLsynthINC00001",
+        "object": "payment_intent",
+        "amount": 4999,
+        "currency": "eur",
+        "status": "succeeded",
+        "created": 1761379200,
+        "livemode": false
+      }
+    }
+  },
+  {
+    "id": "evt_1PPLsynthINC00002",
+    "object": "event",
+    "api_version": "2025-09-30.clover",
+    "created": 1761379360,
+    "livemode": false,
+    "pending_webhooks": 1,
+    "type": "payment_intent.processing",
+    "data": {
+      "object": {
+        "id": "pi_3PPLsynthINC00001",
+        "object": "payment_intent",
+        "amount": 4999,
+        "currency": "eur",
+        "status": "processing",
+        "created": 1761379200,
+        "livemode": false
+      }
+    }
+  }
+]

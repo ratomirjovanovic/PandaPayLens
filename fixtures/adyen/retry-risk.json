@@ -1,0 +1,26 @@
+[
+  {
+    "pspReference": "PPLSYNTH0000RTY1",
+    "resultCode": "Authorised",
+    "merchantReference": "PPL-ORDER-0005",
+    "amount": {
+      "currency": "EUR",
+      "value": 4200
+    }
+  },
+  {
+    "status": 500,
+    "errorCode": "000",
+    "message": "An unknown error occurred.",
+    "errorType": "internal"
+  },
+  {
+    "pspReference": "PPLSYNTH0000RTY2",
+    "resultCode": "Authorised",
+    "merchantReference": "PPL-ORDER-0005",
+    "amount": {
+      "currency": "EUR",
+      "value": 4200
+    }
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "receivedAt": "2025-10-25T08:00:03.000Z",
+    "payload": {
+      "id": "evt_1PPLsynthDUP00001",
+      "object": "event",
+      "api_version": "2025-09-30.clover",
+      "created": 1761379200,
+      "livemode": false,
+      "pending_webhooks": 1,
+      "type": "payment_intent.succeeded",
+      "data": {
+        "object": {
+          "id": "pi_3PPLsynthDUP00001",
+          "object": "payment_intent",
+          "amount": 1500,
+          "currency": "gbp",
+          "status": "succeeded",
+          "created": 1761379200,
+          "livemode": false,
+          "latest_charge": "ch_3PPLsynthDUP00001"
+        }
+      }
+    }
+  },
+  {
+    "receivedAt": "2025-10-25T08:01:15.000Z",
+    "payload": {
+      "id": "evt_1PPLsynthDUP00001",
+      "object": "event",
+      "api_version": "2025-09-30.clover",
+      "created": 1761379200,
+      "livemode": false,
+      "pending_webhooks": 1,
+      "type": "payment_intent.succeeded",
+      "data": {
+        "object": {
+          "id": "pi_3PPLsynthDUP00001",
+          "object": "payment_intent",
+          "amount": 1500,
+          "currency": "gbp",
+          "status": "succeeded",
+          "created": 1761379200,
+          "livemode": false,
+          "latest_charge": "ch_3PPLsynthDUP00001"
+        }
+      }
+    }
+  }
+]

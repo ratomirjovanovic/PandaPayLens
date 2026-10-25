@@ -1,0 +1,15 @@
+{
+  "__proto__": {
+    "polluted": "yes"
+  },
+  "constructor": {
+    "prototype": {
+      "polluted": "yes"
+    }
+  },
+  "error": {
+    "type": "card_error",
+    "code": "card_declined",
+    "decline_code": "generic_decline"
+  }
+}

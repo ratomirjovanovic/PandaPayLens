@@ -1,0 +1,13 @@
+{
+  "error": {
+    "type": "card_error",
+    "code": "<img src=x onerror=alert(1)>",
+    "decline_code": "<script>alert('decline')</script>",
+    "message": "<b onmouseover=alert(2)>hover</b> [click](javascript:alert(3))",
+    "payment_intent": {
+      "id": "pi_PPLsynthXSS<svg/onload=alert(4)>",
+      "object": "payment_intent",
+      "status": "requires_payment_method"
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "live": "false",
+  "notificationItems": [
+    {
+      "NotificationRequestItem": {
+        "merchantAccountCode": "PandaPayLensSyntheticECOM",
+        "amount": {
+          "currency": "EUR",
+          "value": 7500
+        },
+        "eventCode": "AUTHORISATION",
+        "eventDate": "2026-10-25T08:00:00+00:00",
+        "merchantReference": "PPL-ORDER-0003",
+        "operations": [
+          "CANCEL",
+          "CAPTURE",
+          "REFUND"
+        ],
+        "paymentMethod": "visa",
+        "pspReference": "PPLSYNTH0000AUT3",
+        "success": "true"
+      }
+    },
+    {
+      "NotificationRequestItem": {
+        "merchantAccountCode": "PandaPayLensSyntheticECOM",
+        "amount": {
+          "currency": "EUR",
+          "value": 7500
+        },
+        "eventCode": "CAPTURE",
+        "eventDate": "2026-10-25T08:30:00+00:00",
+        "merchantReference": "PPL-ORDER-0003",
+        "originalReference": "PPLSYNTH0000AUT3",
+        "paymentMethod": "visa",
+        "pspReference": "PPLSYNTH0000CAP3",
+        "success": "true"
+      }
+    },
+    {
+      "NotificationRequestItem": {
+        "merchantAccountCode": "PandaPayLensSyntheticECOM",
+        "amount": {
+          "currency": "EUR",
+          "value": 2500
+        },
+        "eventCode": "REFUND",
+        "eventDate": "2026-10-26T10:00:00+00:00",
+        "merchantReference": "PPL-ORDER-0003",
+        "originalReference": "PPLSYNTH0000AUT3",
+        "paymentMethod": "visa",
+        "pspReference": "PPLSYNTH0000REF3",
+        "success": "true"
+      }
+    }
+  ]
+}

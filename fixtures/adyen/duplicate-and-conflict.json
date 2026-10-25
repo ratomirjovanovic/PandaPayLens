@@ -1,0 +1,93 @@
+[
+  {
+    "receivedAt": "2026-10-25T08:00:05Z",
+    "payload": {
+      "live": "false",
+      "notificationItems": [
+        {
+          "NotificationRequestItem": {
+            "merchantAccountCode": "PandaPayLensSyntheticECOM",
+            "amount": {
+              "currency": "EUR",
+              "value": 990
+            },
+            "merchantReference": "PPL-ORDER-0004",
+            "eventCode": "AUTHORISATION",
+            "eventDate": "2026-10-25T08:00:00+00:00",
+            "pspReference": "PPLSYNTH0000AUT4",
+            "success": "true"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-10-25T08:05:05Z",
+    "payload": {
+      "live": "false",
+      "notificationItems": [
+        {
+          "NotificationRequestItem": {
+            "merchantAccountCode": "PandaPayLensSyntheticECOM",
+            "amount": {
+              "currency": "EUR",
+              "value": 990
+            },
+            "merchantReference": "PPL-ORDER-0004",
+            "eventCode": "AUTHORISATION",
+            "eventDate": "2026-10-25T08:00:00+00:00",
+            "pspReference": "PPLSYNTH0000AUT4",
+            "success": "true"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-10-25T09:00:00Z",
+    "payload": {
+      "live": "false",
+      "notificationItems": [
+        {
+          "NotificationRequestItem": {
+            "merchantAccountCode": "PandaPayLensSyntheticECOM",
+            "amount": {
+              "currency": "EUR",
+              "value": 990
+            },
+            "merchantReference": "PPL-ORDER-0004",
+            "eventCode": "CAPTURE",
+            "eventDate": "2026-10-25T08:55:00+00:00",
+            "originalReference": "PPLSYNTH0000AUT4",
+            "pspReference": "PPLSYNTH0000CAP4",
+            "success": "false",
+            "reason": "Insufficient balance on payment"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "receivedAt": "2026-10-25T09:10:00Z",
+    "payload": {
+      "live": "false",
+      "notificationItems": [
+        {
+          "NotificationRequestItem": {
+            "merchantAccountCode": "PandaPayLensSyntheticECOM",
+            "amount": {
+              "currency": "EUR",
+              "value": 990
+            },
+            "merchantReference": "PPL-ORDER-0004",
+            "eventCode": "CAPTURE",
+            "eventDate": "2026-10-25T08:55:00+00:00",
+            "originalReference": "PPLSYNTH0000AUT4",
+            "pspReference": "PPLSYNTH0000CAP4",
+            "success": "true"
+          }
+        }
+      ]
+    }
+  }
+]

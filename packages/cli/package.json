@@ -1,0 +1,29 @@
+{
+  "name": "@pandapaylens/cli",
+  "version": "0.1.0",
+  "description": "Offline command-line payment error decoder and event timeline for Stripe and Adyen.",
+  "license": "Apache-2.0",
+  "author": "Ratomir Jovanovic (https://github.com/ratomirjovanovic)",
+  "homepage": "https://github.com/ratomirjovanovic/PandaPayLens#readme",
+  "repository": { "type": "git", "url": "https://github.com/ratomirjovanovic/PandaPayLens.git", "directory": "packages/cli" },
+  "bugs": "https://github.com/ratomirjovanovic/PandaPayLens/issues",
+  "type": "module",
+  "bin": { "pandapaylens": "./dist/bin.js" },
+  "exports": { ".": { "types": "./dist/index.d.ts", "default": "./dist/index.js" } },
+  "files": ["dist", "README.md"],
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/copy-samples.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@pandapaylens/adyen": "workspace:*",
+    "@pandapaylens/core": "workspace:*",
+    "@pandapaylens/rules": "workspace:*",
+    "@pandapaylens/stripe": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5"
+  }
+}

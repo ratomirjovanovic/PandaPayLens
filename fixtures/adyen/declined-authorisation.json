@@ -1,0 +1,34 @@
+[
+  {
+    "pspReference": "PPLSYNTH0000DEC1",
+    "resultCode": "Refused",
+    "refusalReason": "Not enough balance",
+    "refusalReasonCode": "12",
+    "merchantReference": "PPL-ORDER-0002",
+    "amount": {
+      "currency": "EUR",
+      "value": 25000
+    }
+  },
+  {
+    "live": "false",
+    "notificationItems": [
+      {
+        "NotificationRequestItem": {
+          "merchantAccountCode": "PandaPayLensSyntheticECOM",
+          "amount": {
+            "currency": "EUR",
+            "value": 25000
+          },
+          "eventCode": "AUTHORISATION",
+          "eventDate": "2026-10-25T09:10:00+02:00",
+          "merchantReference": "PPL-ORDER-0002",
+          "paymentMethod": "mc",
+          "pspReference": "PPLSYNTH0000DEC1",
+          "reason": "Not enough balance",
+          "success": "false"
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,37 @@
+{
+  "name": "pandapaylens-monorepo",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Decode payment errors. Visualize transaction events. Understand what went wrong.",
+  "license": "Apache-2.0",
+  "author": "Ratomir Jovanovic (https://github.com/ratomirjovanovic)",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ratomirjovanovic/PandaPayLens.git"
+  },
+  "type": "module",
+  "packageManager": "pnpm@10.29.3",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build:packages": "pnpm -r --filter \"./packages/**\" run build",
+    "build": "pnpm build:packages && pnpm --filter @pandapaylens/web run build",
+    "dev": "pnpm build:packages && pnpm --filter @pandapaylens/web run dev",
+    "typecheck": "pnpm build:packages && pnpm -r run typecheck",
+    "lint": "pnpm -r run lint",
+    "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:e2e": "pnpm --filter @pandapaylens/web run test:e2e",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@types/node": "26.6.5",
+    "@vitest/coverage-v8": "5.0.5",
+    "fast-check": "4.10.2",
+    "prettier": "3.9.10",
+    "typescript": "6.0.3",
+    "vitest": "5.0.5"
+  }
+}

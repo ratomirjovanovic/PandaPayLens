@@ -1,0 +1,58 @@
+[
+  {
+    "id": "evt_1PPLsynth3DS00001",
+    "object": "event",
+    "api_version": "2025-09-30.clover",
+    "created": 1761382800,
+    "livemode": false,
+    "pending_webhooks": 1,
+    "type": "payment_intent.created",
+    "data": {
+      "object": {
+        "id": "pi_3PPLsynth3DS00001",
+        "object": "payment_intent",
+        "amount": 2500,
+        "currency": "eur",
+        "status": "requires_payment_method",
+        "created": 1761379200,
+        "livemode": false
+      }
+    }
+  },
+  {
+    "id": "evt_1PPLsynth3DS00002",
+    "object": "event",
+    "api_version": "2025-09-30.clover",
+    "created": 1761382805,
+    "livemode": false,
+    "pending_webhooks": 1,
+    "type": "payment_intent.requires_action",
+    "data": {
+      "object": {
+        "id": "pi_3PPLsynth3DS00001",
+        "object": "payment_intent",
+        "amount": 2500,
+        "currency": "eur",
+        "status": "requires_action",
+        "created": 1761379200,
+        "livemode": false,
+        "next_action": {
+          "type": "use_stripe_sdk"
+        }
+      }
+    }
+  },
+  {
+    "error": {
+      "type": "card_error",
+      "code": "authentication_required",
+      "decline_code": "authentication_required",
+      "message": "Your card was declined. This transaction requires authentication.",
+      "payment_intent": {
+        "id": "pi_3PPLsynth3DS00001",
+        "object": "payment_intent",
+        "status": "requires_action"
+      }
+    }
+  }
+]
