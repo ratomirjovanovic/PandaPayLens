@@ -9,7 +9,7 @@ import {
   type SourceText,
 } from "@pandapaylens/core";
 import type { AnalyzeResponse } from "@/lib/analyzer";
-import { MANIFESTS } from "@pandapaylens/providers/manifests";
+import { MANIFESTS, ROADMAP } from "@pandapaylens/providers/manifests";
 import { loadSample, SAMPLES } from "@/lib/samples";
 import { DetectionSummary } from "./DetectionSummary";
 import { analyzeInBrowser } from "./run";
@@ -23,6 +23,20 @@ type View = "decoder" | "timeline" | "inspector";
 type ImportedFile = { name: string; text: string; size: number };
 
 const PASTE_SOURCE = "Pasted JSON";
+
+/**
+ * Example groups. "High-risk payments" is a context for recurring billing,
+ * deposits, payouts and disputes; it is chosen by provider roadmap focus,
+ * never inferred from a transaction.
+ */
+const HIGH_RISK = new Set(ROADMAP.filter((r) => r.focus.includes("high_risk")).map((r) => r.id));
+const EXAMPLE_GROUPS = [
+  { label: "General", samples: SAMPLES.filter((s) => !s.provider || !HIGH_RISK.has(s.provider)) },
+  {
+    label: "High-risk payments",
+    samples: SAMPLES.filter((s) => s.provider && HIGH_RISK.has(s.provider)),
+  },
+];
 
 export function Workspace() {
   const params = useSearchParams();
@@ -205,10 +219,14 @@ export function Workspace() {
               className="rounded-md border border-border bg-bg px-2 py-1.5 text-sm"
             >
               <option value="">Load an example…</option>
-              {SAMPLES.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.title}
-                </option>
+              {EXAMPLE_GROUPS.map((g) => (
+                <optgroup key={g.label} label={g.label}>
+                  {g.samples.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.title}
+                    </option>
+                  ))}
+                </optgroup>
               ))}
             </select>
           </label>

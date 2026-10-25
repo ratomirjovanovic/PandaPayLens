@@ -11,10 +11,29 @@ import { OUTCOME_CLASS, OUTCOME_DOT } from "./labels";
 
 type Order = "event" | "receipt";
 
+/** Operation filter: normalized stages plus recurring charges (rebills). */
+const OPERATIONS: [string, string][] = [
+  ["payment", "Payment / deposit"],
+  ["recurring", "Recurring charge (rebill)"],
+  ["authorization", "Authorization"],
+  ["authentication", "Authentication"],
+  ["capture", "Capture"],
+  ["refund", "Refund"],
+  ["dispute", "Dispute / chargeback"],
+  ["payout", "Payout / withdrawal"],
+  ["subscription", "Subscription change"],
+  ["cancellation", "Cancellation"],
+  ["void", "Void"],
+  ["reversal", "Reversal"],
+  ["settlement", "Settlement"],
+  ["error", "Error"],
+];
+
 export type TimelineFilters = {
   provider: string;
   eventType: string;
   outcome: string;
+  operation: string;
   reference: string;
   from: string;
   to: string;
@@ -24,6 +43,7 @@ export const EMPTY_FILTERS: TimelineFilters = {
   provider: "",
   eventType: "",
   outcome: "",
+  operation: "",
   reference: "",
   from: "",
   to: "",
@@ -41,6 +61,9 @@ export function filterEvents(
     if (f.provider && e.provider !== f.provider) return false;
     if (f.eventType && e.eventType !== f.eventType) return false;
     if (f.outcome && e.outcome !== f.outcome) return false;
+    if (f.operation) {
+      if (f.operation === "recurring" ? !e.isRecurring : e.stage !== f.operation) return false;
+    }
     if (
       ref &&
       ![e.paymentReference, e.relatedReference, e.eventReference, e.merchantReference].some((r) =>
@@ -156,6 +179,17 @@ export function TimelineView({
             <option value="">All</option>
             {(["success", "failure", "pending", "unknown"] as Outcome[]).map((o) => (
               <option key={o}>{o}</option>
+            ))}
+          </select>
+        </label>
+        <label className="flex flex-col gap-0.5 text-[11px] font-medium text-fg-muted">
+          Operation
+          <select value={filters.operation} onChange={set("operation")} className={field}>
+            <option value="">All</option>
+            {OPERATIONS.map(([value, label]) => (
+              <option key={value} value={value}>
+                {label}
+              </option>
             ))}
           </select>
         </label>

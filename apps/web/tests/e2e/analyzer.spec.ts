@@ -200,3 +200,14 @@ test("analyzes a form-encoded payabl. example", async ({ page }) => {
     ignoreCase: true,
   });
 });
+
+test("high-risk context: grouped examples and the operation filter", async ({ page }) => {
+  await page.goto("/examples");
+  await expect(page.getByRole("heading", { name: "High-risk payments" })).toBeVisible();
+  await page.goto("/analyze?sample=verotel-subscription-log");
+  const panel = page.getByRole("tabpanel");
+  await expect(panel).toContainText("rebill");
+  await panel.getByLabel("Operation").selectOption("recurring");
+  await expect(panel.getByRole("button", { name: /rebill/ }).first()).toBeVisible();
+  await expect(panel.getByRole("button", { name: /^.*initial/ })).toHaveCount(0);
+});
