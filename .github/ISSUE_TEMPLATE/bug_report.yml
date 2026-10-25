@@ -1,0 +1,71 @@
+name: Bug report
+description: Something is analyzed, decoded or displayed incorrectly
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the report. Please never paste real payment, card or customer data. Use the masked Markdown export or a synthetic sample instead.
+        Security vulnerabilities must be reported privately: https://github.com/ratomirjovanovic/PandaPayLens/security/advisories/new
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What did PandaPayLens show?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: Link the provider documentation if the expected meaning comes from it.
+    validations:
+      required: true
+  - type: dropdown
+    id: surface
+    attributes:
+      label: Where
+      options:
+        - Online demo (GitHub Pages)
+        - Self-hosted web app
+        - CLI
+    validations:
+      required: true
+  - type: dropdown
+    id: format
+    attributes:
+      label: Input format
+      options:
+        - JSON object or array
+        - JSON Lines
+        - URL-encoded form
+        - Raw HTTP request or response
+        - Callback URL
+        - Other or not sure
+    validations:
+      required: true
+  - type: input
+    id: provider
+    attributes:
+      label: Provider
+      placeholder: stripe, adyen, ccbill, ...
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Shown in the site footer, or run `pandapaylens version`.
+      placeholder: "0.3.0"
+    validations:
+      required: true
+  - type: textarea
+    id: input
+    attributes:
+      label: Minimal synthetic input or masked export
+      render: text
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Data check
+      options:
+        - label: The input above contains no real card numbers, customer data, secrets or merchant credentials.
+          required: true

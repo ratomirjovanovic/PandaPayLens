@@ -1,0 +1,50 @@
+name: New provider adapter
+description: Propose support for another payment provider
+labels: [new-provider]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        PandaPayLens only supports providers whose formats are documented publicly by the provider itself. Please link first-party documentation only.
+  - type: input
+    id: provider
+    attributes:
+      label: Provider
+    validations:
+      required: true
+  - type: textarea
+    id: docs
+    attributes:
+      label: Official developer documentation
+      description: Links to the API reference, error codes and webhook or postback documentation.
+    validations:
+      required: true
+  - type: checkboxes
+    id: families
+    attributes:
+      label: Input families to support
+      options:
+        - label: API error responses
+        - label: Payment responses
+        - label: Webhooks, notifications or postbacks
+        - label: Payouts or withdrawals
+        - label: Subscriptions or rebills
+  - type: textarea
+    id: identifiers
+    attributes:
+      label: Identifiers for correlation and duplicate detection
+      description: Which documented fields link events of one payment, and is there an event id?
+  - type: textarea
+    id: examples
+    attributes:
+      label: Synthetic example payloads
+      render: text
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Checks
+      options:
+        - label: The documentation is publicly accessible without a merchant login, or I noted which parts need one.
+          required: true
+        - label: The examples contain no real payment, customer or merchant data.
+          required: true
