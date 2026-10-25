@@ -346,6 +346,41 @@ function runAnalysis(
   // Event ids follow source order so that they are stable for a given input.
   events.forEach((e, i) => (e.id = `ev-${i + 1}`));
 
+  // Times must carry a zone; anything else would be read in the local zone of
+  // the machine and could order events differently on different computers.
+  let ignoredTimes = 0;
+  for (const e of events) {
+    if (e.eventTimestamp !== undefined && !isZonedIso(e.eventTimestamp)) {
+      delete e.eventTimestamp;
+      delete e.eventTimeZoneAssumed;
+      ignoredTimes++;
+    }
+    if (e.observedTimestamp !== undefined && !isZonedIso(e.observedTimestamp)) {
+      delete e.observedTimestamp;
+      ignoredTimes++;
+    }
+    if (!e.eventTimestamp) delete e.eventTimeZoneAssumed;
+  }
+  if (ignoredTimes > 0) {
+    warnings.push({
+      code: "TIMESTAMP_IGNORED",
+      message: `${ignoredTimes} time value(s) without a time zone or in an unknown format were not used for ordering.`,
+    });
+  }
+  const assumedZone = [
+    ...new Set(events.filter((e) => e.eventTimeZoneAssumed).map((e) => e.provider)),
+  ];
+  const timedProviders = new Set(events.filter((e) => e.eventTimestamp).map((e) => e.provider));
+  if (assumedZone.length > 0 && timedProviders.size > 1) {
+    const names = assumedZone.map(
+      (id) => options.adapters.find((a) => a.id === id)?.displayName ?? id,
+    );
+    warnings.push({
+      code: "TIME_ZONE_ASSUMED",
+      message: `${names.join(", ")} ${names.length === 1 ? "documents" : "document"} no time zone for event times; they were read as UTC. Ordering against other providers' events may be off by hours.`,
+    });
+  }
+
   for (const e of events) {
     if (e.amountMinor !== undefined && !/^-?\d+$/.test(e.amountMinor)) {
       warnings.push({
@@ -534,6 +569,13 @@ export function correlate(
 
 export function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+const ZONED_ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:?\d{2})$/i;
+
+/** An ISO 8601 date-time with `Z` or an offset that Date.parse accepts. */
+function isZonedIso(value: string): boolean {
+  return value.length <= 40 && ZONED_ISO.test(value) && Number.isFinite(Date.parse(value));
 }
 
 /** Accepts ISO strings and Unix seconds; returns ISO 8601 UTC or undefined. */

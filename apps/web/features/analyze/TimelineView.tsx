@@ -314,6 +314,13 @@ export function TimelineView({
                           {order === "receipt" && e.observedTimestamp
                             ? `received ${fmtTime(e.observedTimestamp)}`
                             : fmtTime(e.eventTimestamp)}
+                          {e.eventTimeZoneAssumed &&
+                          !(order === "receipt" && e.observedTimestamp) ? (
+                            <span title="The provider documents no time zone for this time; it was read as UTC.">
+                              {" "}
+                              (UTC assumed)
+                            </span>
+                          ) : null}
                         </span>
                         <span className="break-all font-mono text-sm font-medium">
                           {e.eventType}
@@ -353,7 +360,15 @@ export function TimelineView({
                           <Row k="Payment reference" v={id(e.paymentReference) ?? "missing"} mono />
                           <Row k="Related reference" v={id(e.relatedReference)} mono />
                           <Row k="Merchant reference" v={id(e.merchantReference)} mono />
-                          <Row k="Event time" v={e.eventTimestamp ?? "not provided"} mono />
+                          <Row
+                            k="Event time"
+                            v={
+                              e.eventTimestamp
+                                ? `${e.eventTimestamp}${e.eventTimeZoneAssumed ? " (no documented time zone, read as UTC)" : ""}`
+                                : "not provided"
+                            }
+                            mono
+                          />
                           <Row k="Receipt time" v={e.observedTimestamp ?? "not provided"} mono />
                           <Row k="Format" v={e.sourceFormat} mono />
                           <Row

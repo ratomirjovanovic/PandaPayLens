@@ -223,7 +223,7 @@ export function toMarkdownReport(result: AnalysisResult, options?: ReportOptions
     for (const e of r.events) {
       const amount = e.amountMinor ? `${e.amountMinor} ${e.currency ?? ""} (minor)` : "";
       lines.push(
-        `| ${esc(e.id)} | ${esc(e.eventTimestamp ?? "unknown")} | ${esc(e.provider)} | ${esc(e.eventType)} | ${esc(e.providerStatus ?? "")} | ${esc(e.outcome)} | ${esc(e.paymentReference ?? "missing")} | ${esc(amount)} |`,
+        `| ${esc(e.id)} | ${esc(e.eventTimestamp ? `${e.eventTimestamp}${e.eventTimeZoneAssumed ? " (UTC assumed)" : ""}` : "unknown")} | ${esc(e.provider)} | ${esc(e.eventType)} | ${esc(e.providerStatus ?? "")} | ${esc(e.outcome)} | ${esc(e.paymentReference ?? "missing")} | ${esc(amount)} |`,
       );
     }
     lines.push("");

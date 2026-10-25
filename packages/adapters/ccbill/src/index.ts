@@ -1099,6 +1099,7 @@ function normalizeWebhook(
     subscriptionReference: sub.id,
     isRecurring: sem.isRecurring,
     eventTimestamp: ts,
+    ...(ts ? { eventTimeZoneAssumed: true } : {}),
     amountMinor: m.amountMinor,
     currency: m.currency,
     outcome: sem.outcome,

@@ -111,6 +111,11 @@ export type NormalizedEvent = {
 
   /** When the provider says the event happened (ISO 8601, UTC). */
   eventTimestamp?: string;
+  /**
+   * The provider documents no time zone for this time and the adapter read it
+   * as UTC so events can be ordered. The absolute time may be offset.
+   */
+  eventTimeZoneAssumed?: boolean;
   /** When the receiver observed it, only if the input says so (ISO 8601, UTC). */
   observedTimestamp?: string;
 
@@ -350,6 +355,8 @@ export type WarningCode =
   | "INVALID_RECORD"
   | "RULE_FAILED"
   | "UNSAFE_INTEGER"
+  | "TIMESTAMP_IGNORED"
+  | "TIME_ZONE_ASSUMED"
   | "NO_ANALYZABLE_RECORDS";
 
 export type AnalysisWarning = {

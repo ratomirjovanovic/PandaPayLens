@@ -241,6 +241,7 @@ describe("Trust Payments Webservices responses", () => {
       issuerCountry: "US",
       timestampTimeZone: "not_documented_read_as_utc",
     });
+    expect(r.events[0]!.eventTimeZoneAssumed).toBe(true);
     expect(r.errors).toEqual([]);
     expect(r.findings).toEqual([]);
   });
