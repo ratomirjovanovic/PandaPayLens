@@ -300,11 +300,11 @@ describe("cybersource parsing", () => {
     expect(r.events[0]).toMatchObject({ outcome: "success", stage: "authorization" });
   });
 
-  it("fails cleanly on malformed input and XML", () => {
+  it("fails cleanly on malformed input and reports XML as an unsupported record", () => {
     expect(analyzeText("{not json", options)).toMatchObject({ ok: false });
     expect(analyzeText('<?xml version="1.0"?><requestMessage/>', options)).toMatchObject({
-      ok: false,
-      error: { code: "UNSUPPORTED_FORMAT" },
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
     });
     const truncated = analyzeText('{"status":"AUTHORIZED","id":"PPLsynth1"', options);
     expect(truncated.ok).toBe(false);

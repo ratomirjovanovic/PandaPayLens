@@ -299,16 +299,16 @@ describe("documentation-style inputs", () => {
     });
   });
 
-  it("reports XML as an unsupported format", () => {
+  it("parses XML documents and XML HTTP bodies into records", () => {
     expect(
       parseInput("<payment_response><status>approved</status></payment_response>"),
     ).toMatchObject({
-      ok: false,
-      error: { code: "UNSUPPORTED_FORMAT" },
+      ok: true,
+      value: { format: "xml", records: [{ payment_response: { status: "approved" } }] },
     });
     expect(parseInput("HTTP/1.1 200 OK\nContent-Type: text/xml\n\n<a/>")).toMatchObject({
-      ok: false,
-      error: { code: "UNSUPPORTED_FORMAT" },
+      ok: true,
+      value: { format: "http", records: [{ a: "" }] },
     });
   });
 });

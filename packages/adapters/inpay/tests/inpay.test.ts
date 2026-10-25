@@ -246,10 +246,12 @@ describe("inpay parsing", () => {
     expect(analyzeText(fixture("malformed/invalid-json.txt"), options).ok).toBe(false);
   });
 
-  it("does not analyze ISO 20022 XML status reports", () => {
+  it("reports ISO 20022 XML status reports as unsupported records", () => {
     const r = analyzeText(fixture("inpay/iso20022-rejected-status.xml"), options);
-    expect(r.ok).toBe(false);
-    expect(!r.ok && r.error.code).toBe("UNSUPPORTED_FORMAT");
+    expect(r).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
   });
 });
 

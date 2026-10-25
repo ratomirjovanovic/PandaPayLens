@@ -322,13 +322,15 @@ describe("payu_india parsing", () => {
     expect(r.records[0]!.reasons.join(" ")).toMatch(/mihpayid: number too large/);
   });
 
-  it("fails cleanly on malformed input and XML", () => {
+  it("fails cleanly on malformed input and reports XML as an unsupported record", () => {
     const bad = analyzeText('{"status": 1, "msg": "1 out of 1 Transactions Fetched', options);
     expect(bad.ok).toBe(false);
     if (!bad.ok) expect(bad.error.code).toBe("INVALID_JSON");
     const xml = analyzeText("<response><status>failure</status></response>", options);
-    expect(xml.ok).toBe(false);
-    if (!xml.ok) expect(xml.error.code).toBe("UNSUPPORTED_FORMAT");
+    expect(xml).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
   });
 
   it("tolerates unknown fields, nulls and lenient JSON", () => {

@@ -340,13 +340,15 @@ describe("nuvei parsing", () => {
     expect(lenient.warnings.map((w) => w.code)).toContain("LENIENT_JSON");
   });
 
-  it("fails cleanly on malformed input and XML", () => {
+  it("fails cleanly on malformed input and reports XML as an unsupported record", () => {
     const bad = analyzeText('{"internalRequestId": 1, "status": "ERROR", "errCode": ', options);
     expect(bad.ok).toBe(false);
     if (!bad.ok) expect(bad.error.code).toBe("INVALID_JSON");
     const xml = analyzeText("<response><status>ERROR</status></response>", options);
-    expect(xml.ok).toBe(false);
-    if (!xml.ok) expect(xml.error.code).toBe("UNSUPPORTED_FORMAT");
+    expect(xml).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
     expect(
       analyze(
         json({

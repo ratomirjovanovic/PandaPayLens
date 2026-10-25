@@ -644,12 +644,15 @@ describe("authorize.net createTransactionResponse", () => {
     expect(r.errors[0]!.code).toBe("2");
   });
 
-  it("rejects XML before analysis", () => {
+  it("reports XML as an unsupported record", () => {
     const r = analyzeText(
       '<createTransactionResponse xmlns="AnetApi/xml/v1/schema/AnetApiSchema.xsd"></createTransactionResponse>',
       options,
     );
-    expect(r.ok).toBe(false);
+    expect(r).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
   });
 });
 

@@ -12,6 +12,7 @@
  */
 
 import { isBlockedKey, redactText } from "./redact.js";
+import { parseXml } from "./xml.js";
 
 export type InputLimits = {
   /** Maximum size of one input text, in bytes (UTF-8). */
@@ -43,6 +44,7 @@ export type ParseErrorCode =
   | "TOO_MANY_RECORDS"
   | "INVALID_FORM"
   | "INVALID_HTTP"
+  | "INVALID_XML"
   | "UNSUPPORTED_FORMAT";
 
 export type ParseError = {
@@ -52,7 +54,7 @@ export type ParseError = {
   column?: number;
 };
 
-export type InputFormat = "json" | "jsonl" | "form" | "http";
+export type InputFormat = "json" | "jsonl" | "form" | "http" | "xml";
 
 /** How a record arrived. HTTP metadata is untrusted and already redacted. */
 export type RecordMeta = {
@@ -81,6 +83,8 @@ export type RecordMeta = {
     /** Lowercased names; sensitive values replaced with "[redacted]". */
     headers: Record<string, string>;
   };
+  /** Root element of an XML document (local name and namespace URI). */
+  xml?: { root: string; namespace?: string };
 };
 
 export type ParsedInput = {
@@ -124,7 +128,8 @@ export function parseInput(text: string, limits: Partial<InputLimits> = {}): Par
   // Documentation often wraps form examples with continuation lines that
   // start with "&"; join them back into one record.
   const start = body.trimStart().replace(/\r?\n\s*&/g, "&");
-  if (start.startsWith("<")) return xmlNotSupported();
+  if (start.startsWith("<") || start.startsWith("\uFEFF<"))
+    return parseXmlText(start, lim, { format: "xml" });
   if (/^HTTP\/\d(?:\.\d)? \d{3}/.test(start) || /^[A-Z]{3,7} \S+ HTTP\/\d/.test(start)) {
     return parseHttp(start, lim);
   }
@@ -321,7 +326,7 @@ function parseHttp(text: string, lim: InputLimits): Parsed {
   if (errorResponse && ct === "text/html" && trimmed.startsWith("<")) {
     return finish("http", [{}], meta);
   }
-  if (trimmed.startsWith("<") || (ct && /xml/.test(ct))) return xmlNotSupported();
+  if (trimmed.startsWith("<") || (ct && /xml/.test(ct))) return parseXmlText(trimmed, lim, meta);
   // Some providers label form-encoded bodies as text/plain or text/html.
   const textLike = !ct || ct === "text/plain" || ct === "text/html";
   if (ct === "application/x-www-form-urlencoded" || (textLike && FORM_LIKE.test(trimmed))) {
@@ -645,9 +650,26 @@ export function formatBytes(n: number): string {
   return `${n} B`;
 }
 
-function xmlNotSupported(): { ok: false; error: ParseError } {
-  return fail(
-    "UNSUPPORTED_FORMAT",
-    "XML input is not supported yet. Paste the JSON or form-encoded version of the payload if the provider offers one.",
-  );
+/** Upper bound on XML elements in one document. */
+const MAX_XML_ELEMENTS = 50_000;
+
+/** Parses one XML document into one record (see xml.ts for the shape). */
+function parseXmlText(text: string, lim: InputLimits, meta: RecordMeta): Parsed {
+  const r = parseXml(text, {
+    maxDepth: lim.maxDepth,
+    maxElements: MAX_XML_ELEMENTS,
+    maxStringLength: lim.maxStringLength,
+  });
+  if (!r.ok) {
+    const pos = positionToLineColumn(text, r.offset);
+    return {
+      ok: false,
+      error: { code: "INVALID_XML", message: r.message, line: pos.line, column: pos.column },
+    };
+  }
+  const xml = {
+    root: r.value.root,
+    ...(r.value.namespace ? { namespace: r.value.namespace } : {}),
+  };
+  return finish(meta.format === "http" ? "http" : "xml", [r.value.record], { ...meta, xml });
 }

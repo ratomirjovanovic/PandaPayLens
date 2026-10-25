@@ -30,7 +30,7 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 
 ### Analyzer
 
-- XML input for providers that answer in XML (parts of emerchantpay, Skrill and payabl.). Today XML is reported as an unsupported format.
+- XML responses analyzed by the adapters of providers that answer in XML (Skrill, Authorize.net, BlueSnap, Worldpay WPG, Inpay ISO 20022). The core reads XML safely since 0.11.0; adapters follow one by one.
 - Plain `key: value` text responses used by some legacy APIs.
 - Keyboard navigation between timeline events ([#3](https://github.com/ratomirjovanovic/PandaPayLens/issues/3)).
 

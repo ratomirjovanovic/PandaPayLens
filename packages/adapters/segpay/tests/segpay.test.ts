@@ -622,11 +622,14 @@ describe("segpay invalid and unsupported input", () => {
     expect(r.warnings.find((w) => w.code === "UNSUPPORTED_RECORD")?.message).toContain("renamed");
   });
 
-  it("fails cleanly on malformed input and XML", () => {
+  it("fails cleanly on malformed input and reports XML as an unsupported record", () => {
     expect(analyzeText("{not json", options).ok).toBe(false);
     expect(
-      analyzeText('<data><authresponse EventCode="S" ResponseCode="100"/></data>', options).ok,
-    ).toBe(false);
+      analyzeText('<data><authresponse EventCode="S" ResponseCode="100"/></data>', options),
+    ).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
     const r = analyze(
       JSON.stringify({ purchaseid: "PPLsynth1", trantype: "Sale", stage: { x: 1 } }),
     );

@@ -725,12 +725,15 @@ describe("emerchantpay unsupported and malformed input", () => {
     expect(r.events).toEqual([]);
   });
 
-  it("fails cleanly on raw XML text, which core cannot parse", () => {
+  it("reports raw Genesis XML text as an unsupported record", () => {
     const r = analyzeText(
       "<payment_response><status>error</status><unique_id>PPLsynth-x</unique_id></payment_response>",
       options,
     );
-    expect(r.ok).toBe(false);
+    expect(r).toMatchObject({
+      ok: true,
+      result: { records: [{ status: "unsupported" }], events: [] },
+    });
   });
 
   it("recognizes an APM external event notification as unsupported", () => {
