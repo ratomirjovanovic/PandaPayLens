@@ -8,6 +8,16 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.13.0",
+    date: "2026-10-25",
+    status: "released",
+    changes: [
+      "Plain text with one name: value pair per line is read, pasted alone or as a text/plain response body.",
+      "Verotel FlexPay status pages are analyzed as a snapshot of the sale.",
+      "Billing and shipping address groups are hidden, and form fields named like built-in object members are read correctly.",
+    ],
+  },
+  {
     version: "0.12.0",
     date: "2026-10-25",
     status: "released",
