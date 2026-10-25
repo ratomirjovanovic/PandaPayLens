@@ -9,6 +9,8 @@
  * - `verotel.api.transaction`   Control Center API transaction object
  * - `verotel.api.sale`          Control Center API sale object
  * - `verotel.api.action`        Control Center API action responses (HTTP 200 bodies)
+ * - `verotel.flexpay.status`    FlexPay status page (plain text `name: value` lines,
+ *                               response FOUND, NOTFOUND or ERROR)
  *
  * Recognized but not supported: `verotel.flexpay.request`, request URLs the
  * merchant builds (startorder, cancel-subscription, status request).
@@ -43,10 +45,13 @@ import {
   API_ERRORS,
   API_PAYMENT_METHODS,
   API_STATUS_FALLBACK,
+  BTC_TRANSACTION_STATUSES,
   CANCELLED_BY,
   DECLINE_REASONS,
   FLEXPAY_PAYMENT_METHODS,
+  FLEXPAY_PURCHASE_URL,
   FLEXPAY_REQUEST_PATHS,
+  FLEXPAY_SUBSCRIPTION_URL,
   FLEXPAY_VERSIONS,
   IN_BODY_MESSAGES,
   INSTRUMENT_TYPES,
@@ -56,6 +61,12 @@ import {
   REVERSAL_TYPES,
   RUM_COMMANDS,
   SALE_TYPES,
+  STATUS_ERRORS,
+  STATUS_PAGE_FIELD_PREFIX,
+  STATUS_PAGE_FIELDS,
+  STATUS_PAYMENT_METHOD_LABELS,
+  STATUS_RESPONSES,
+  STATUS_SALE_RESULTS,
   SUBSCRIPTION_PHASES,
   SUBSCRIPTION_TYPES,
   TRANSACTION_SUBTYPES,
@@ -76,6 +87,7 @@ export const VEROTEL_FORMATS = {
   apiSale: "verotel.api.sale",
   apiAction: "verotel.api.action",
   flexpayRequest: "verotel.flexpay.request",
+  status: "verotel.flexpay.status",
 } as const;
 
 // ---------------------------------------------------------------------------
@@ -151,6 +163,13 @@ function idOf(v: unknown): string | undefined {
 
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const date = (v: unknown) => (typeof v === "string" && DATE.test(v) ? v : undefined);
+/**
+ * Status page dates: v3 `dd-mmm-yyyy hh:mm:ss` (or a date only), v4 "ISO8601"
+ * whose exact shape is not published. Kept as attributes only.
+ */
+const STATUS_DATE =
+  /^(?:\d{2}-[A-Za-z]{3}-\d{4}(?: \d{2}:\d{2}:\d{2})?|\d{4}-\d{2}-\d{2}(?:[T ]\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:?\d{2})?)?)$/;
+const statusDate = (v: unknown) => (typeof v === "string" && STATUS_DATE.test(v) ? v : undefined);
 const period = (v: unknown) =>
   typeof v === "string" && /^P[0-9A-Z]{1,12}$/.test(v) ? v : undefined;
 const documented = (list: readonly string[], v: unknown) =>
@@ -390,6 +409,92 @@ function detectForm(input: Obj): DetectionResult | null {
   return null;
 }
 
+const STATUS_FIELD_SET = new Set<string>(STATUS_PAGE_FIELDS);
+const isStatusField = (k: string) =>
+  STATUS_FIELD_SET.has(k) || k.startsWith(STATUS_PAGE_FIELD_PREFIX);
+
+/**
+ * The status page is plain text, read by the core as `name: value` lines or
+ * as the text body of a raw HTTP response. JSON and form records never match.
+ */
+function textTransport(meta: RecordMeta | undefined): boolean {
+  if (meta?.format === "text") return true;
+  if (meta?.format !== "http") return false;
+  const ct = meta.http?.contentType;
+  return ct === undefined || ct.startsWith("text/");
+}
+
+const nonEmpty = (v: unknown) => typeof v === "string" && v !== "";
+
+function detectStatus(input: Obj, meta: RecordMeta | undefined): DetectionResult | null {
+  // Postbacks, requests and API objects never carry a `response` line.
+  if (!has(input, "response") || !isFlatStrings(input)) return null;
+  const base = { provider: "verotel", format: VEROTEL_FORMATS.status, supported: true };
+  const response = str(input.response);
+  const keys = Object.keys(input).filter((k) => k !== "response");
+  const known = keys.filter(isStatusField).length;
+  const unknown = keys.length - known;
+  if (!oneOf(STATUS_RESPONSES, response)) {
+    // A status-page shape with an undocumented answer stays below the
+    // analysis threshold instead of falling through to postback detection.
+    if (!has(input, "saleID")) return null;
+    return {
+      ...base,
+      confidence: 0.3,
+      reasons: ["response line with saleID, but the response value is not documented"],
+    };
+  }
+  let c = 0.35;
+  const reasons = [`response "${response}" is a documented FlexPay status page value`];
+  if (response === "FOUND") {
+    if (nonEmpty(input.saleID)) {
+      c += 0.2;
+      reasons.push("has saleID");
+    }
+    if (nonEmpty(input.shopID)) c += 0.1;
+    if (oneOf(STATUS_SALE_RESULTS, input.saleResult)) {
+      c += 0.15;
+      reasons.push("saleResult is the documented value APPROVED");
+    } else if (has(input, "saleResult")) c += 0.05;
+    if (oneOf(POSTBACK_TYPES, input.type)) c += 0.05;
+    if (nonEmpty(input.priceAmount) && upperCurrency(input.priceCurrency)) c += 0.05;
+    const markers = [
+      oneOf(SUBSCRIPTION_TYPES, input.subscriptionType),
+      oneOf(SUBSCRIPTION_PHASES, input.subscriptionPhase),
+      oneOf(CANCELLED_BY, input.cancelledBy),
+      boolish(input.expired) !== undefined,
+      boolish(input.cancelled) !== undefined,
+      statusDate(input.createdOn) !== undefined,
+      nonEmpty(input.paymentMethod),
+      keys.some((k) => k.startsWith(STATUS_PAGE_FIELD_PREFIX)),
+    ].filter(Boolean).length;
+    if (markers) reasons.push(`${markers} further documented status page field(s)`);
+    c += Math.min(markers * 0.03, 0.1);
+  } else if (response === "NOTFOUND") {
+    if (nonEmpty(input.saleID) || nonEmpty(input.referenceID)) {
+      c += 0.2;
+      reasons.push("has the saleID or referenceID that was looked up");
+    }
+    if (nonEmpty(input.shopID)) c += 0.05;
+  } else {
+    // ERROR: only the free-text `error` line is documented.
+    if (nonEmpty(input.error)) {
+      c += 0.15;
+      reasons.push("has the error line");
+    }
+    if (nonEmpty(input.saleID) || nonEmpty(input.referenceID)) c += 0.05;
+  }
+  if (meta?.http?.contentType === "text/plain") {
+    c += 0.05;
+    reasons.push("text/plain body like the documented status page");
+  }
+  if (keys.length > 0 && unknown > known) {
+    c -= 0.2;
+    reasons.push("most other lines are not documented status page fields");
+  }
+  return { ...base, confidence: round(Math.max(c, 0)), reasons };
+}
+
 function detect(input: unknown, meta?: RecordMeta): DetectionResult {
   const none: DetectionResult = {
     provider: "verotel",
@@ -399,6 +504,10 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
     reasons: [],
   };
   if (!isObj(input)) return none;
+  if (textTransport(meta)) {
+    const s = detectStatus(input, meta);
+    if (s) return s;
+  }
   if (jsonTransport(meta)) {
     const j = detectJson(input, meta);
     if (j) return j;
@@ -519,6 +628,35 @@ const Sale = z.looseObject({
     .optional(),
 });
 
+/** Buyer lines (name, email, country, billingAddr_*) and oneClickToken are never read. */
+const StatusPage = z.looseObject({
+  response: z.string().min(1).max(16),
+  error: opt(2000),
+  saleID: opt(64),
+  shopID: opt(64),
+  referenceID: opt(256),
+  saleResult: opt(32),
+  paymentMethod: opt(64),
+  priceAmount: opt(32),
+  priceCurrency: opt(8),
+  trialAmount: opt(32),
+  trialPeriod: opt(16),
+  discountAmount: opt(32),
+  discountPrice: opt(32),
+  period: opt(16),
+  type: opt(32),
+  subscriptionType: opt(32),
+  subscriptionPhase: opt(32),
+  nextChargeOn: opt(64),
+  expired: opt(8),
+  expiresOn: opt(64),
+  cancelled: opt(8),
+  cancelledOn: opt(64),
+  cancelledBy: opt(32),
+  createdOn: opt(64),
+  btc_transaction_status: opt(16),
+});
+
 const Message = z.looseObject({ message: z.string().max(2000) });
 
 const Action = z.looseObject({
@@ -536,7 +674,8 @@ export type VerotelParsed =
   | { kind: "api_error"; value: z.infer<typeof ApiError> }
   | { kind: "transaction"; value: z.infer<typeof Transaction> }
   | { kind: "sale"; value: z.infer<typeof Sale> }
-  | { kind: "action"; value: z.infer<typeof Action> };
+  | { kind: "action"; value: z.infer<typeof Action> }
+  | { kind: "status"; value: z.infer<typeof StatusPage> };
 
 function issuesOf(error: z.ZodError): string[] {
   return error.issues.map((i) => `${i.path.join(".") || "(root)"}: ${i.message}`);
@@ -549,6 +688,7 @@ const SCHEMAS = {
   [VEROTEL_FORMATS.apiTransaction]: ["transaction", Transaction],
   [VEROTEL_FORMATS.apiSale]: ["sale", Sale],
   [VEROTEL_FORMATS.apiAction]: ["action", Action],
+  [VEROTEL_FORMATS.status]: ["status", StatusPage],
 } as const;
 
 function parse(
@@ -850,6 +990,112 @@ function apiErrorEvent(e: z.infer<typeof ApiError>, ctx: NormalizeContext): Norm
   });
 }
 
+type StatusPageValue = z.infer<typeof StatusPage>;
+
+/** Undocumented saleResult values are shown only when they look like a code. */
+const saleResultOf = (v: unknown) =>
+  typeof v === "string" && /^[A-Z][A-Z_]{0,31}$/.test(v) ? v : undefined;
+
+/** Payment method labels are short words; anything else is dropped. */
+const paymentLabel = (v: unknown) =>
+  typeof v === "string" && /^[A-Za-z][A-Za-z0-9 _-]{0,31}$/.test(v) ? v : undefined;
+
+function statusAmounts(p: StatusPageValue, saleType: string | undefined) {
+  const cur = upperCurrency(p.priceCurrency);
+  const minor = (v: unknown) => (cur ? decimalToMinor(v, cur) : undefined);
+  const price = minor(p.priceAmount);
+  const extra = {
+    trialAmountMinor: minor(p.trialAmount),
+    discountAmountMinor: minor(p.discountAmount ?? p.discountPrice),
+  };
+  // A purchase's price is the one charge of the sale. For a subscription the
+  // page shows the current recurring price, not what was charged (a trial or
+  // discount may have been charged instead, and rebills are not listed), so
+  // it is kept as an attribute and never compared with refunds.
+  if (saleType === "purchase" && price !== undefined)
+    return { amountMinor: price, currency: cur, extra };
+  return {
+    amountMinor: undefined,
+    currency: undefined,
+    extra: {
+      priceAmountMinor: price,
+      priceCurrency: price !== undefined ? cur : undefined,
+      ...extra,
+    },
+  };
+}
+
+/**
+ * One status page is one snapshot of a sale as Verotel sees it when asked.
+ * It is not a notification: it has no delivery key (repeated lookups are not
+ * repeated deliveries) and no event time. createdOn is when the sale was
+ * created, not when the snapshot was taken, so using it would place the
+ * current subscription state (cancelled, expired) at the purchase time and
+ * mislead ordering against timed records; it is kept as an attribute, like
+ * the v3 dates that have no time zone at all.
+ */
+function normalizeStatus(p: StatusPageValue, ctx: NormalizeContext): NormalizedEventDraft {
+  const response = documented(STATUS_RESPONSES, p.response) ?? "unknown";
+  const found = response === "FOUND";
+  const saleId = safeId(p.saleID, 64);
+  const saleType = documented(POSTBACK_TYPES, p.type);
+  const saleResult = found ? saleResultOf(p.saleResult) : undefined;
+  const approved = saleResult !== undefined && oneOf(STATUS_SALE_RESULTS, saleResult);
+  const label = paymentLabel(p.paymentMethod);
+  const { amountMinor, currency, extra } = found
+    ? statusAmounts(p, saleType)
+    : { amountMinor: undefined, currency: undefined, extra: {} };
+  return clean({
+    ...base(ctx),
+    eventType: `status.${response}`,
+    eventTypeKnown: response !== "unknown",
+    stage: found ? "payment" : "error",
+    providerStatus: [`response=${response}`, saleResult ? `saleResult=${saleResult}` : undefined]
+      .filter(Boolean)
+      .join("; "),
+    paymentReference: saleId,
+    merchantReference: safeId(p.referenceID, 256),
+    subscriptionReference: saleType === "subscription" ? saleId : undefined,
+    amountMinor,
+    currency,
+    // Only APPROVED is documented; any other or missing saleResult stays open.
+    outcome: approved ? "success" : "unknown",
+    attributes: attrs({
+      observation: "snapshot",
+      response,
+      saleResult,
+      saleResultDocumented: saleResult !== undefined && !approved ? false : undefined,
+      saleId,
+      shopId: safeId(p.shopID, 64),
+      type: saleType,
+      subscriptionType: documented(SUBSCRIPTION_TYPES, p.subscriptionType),
+      subscriptionPhase: documented(SUBSCRIPTION_PHASES, p.subscriptionPhase),
+      period: period(p.period),
+      trialPeriod: period(p.trialPeriod),
+      expired: boolish(p.expired),
+      expiresOn: statusDate(p.expiresOn),
+      nextChargeOn: statusDate(p.nextChargeOn),
+      cancelled: boolish(p.cancelled),
+      cancelledOn: statusDate(p.cancelledOn),
+      cancelledBy: documented(CANCELLED_BY, p.cancelledBy),
+      saleCreatedOn: statusDate(p.createdOn),
+      paymentMethod: label,
+      paymentMethodDocumented:
+        label !== undefined &&
+        !oneOf(STATUS_PAYMENT_METHOD_LABELS, label) &&
+        !oneOf(FLEXPAY_PAYMENT_METHODS, label)
+          ? false
+          : undefined,
+      btcTransactionStatus: documented(BTC_TRANSACTION_STATUSES, p.btc_transaction_status),
+      oneClickTokenIssued:
+        typeof p.oneClickToken === "string" && p.oneClickToken !== "" ? true : undefined,
+      errorTextPresent: response === "ERROR" && nonEmpty(p.error) ? true : undefined,
+      httpStatus: ctx.meta?.http?.status,
+      ...extra,
+    }),
+  });
+}
+
 function normalize(parsed: VerotelParsed, ctx: NormalizeContext): NormalizedEventDraft[] {
   switch (parsed.kind) {
     case "postback":
@@ -864,6 +1110,8 @@ function normalize(parsed: VerotelParsed, ctx: NormalizeContext): NormalizedEven
       return [normalizeAction(parsed.value, ctx)];
     case "api_error":
       return [apiErrorEvent(parsed.value, ctx)];
+    case "status":
+      return [normalizeStatus(parsed.value, ctx)];
   }
 }
 
@@ -871,6 +1119,10 @@ function normalize(parsed: VerotelParsed, ctx: NormalizeContext): NormalizedEven
 // Error decoding
 
 const API_DOCS: DocumentationLink[] = [{ title: "Verotel Control Center API", url: API_DOC_URL }];
+const STATUS_DOCS: DocumentationLink[] = [
+  { title: "FlexPay purchase (status page)", url: FLEXPAY_PURCHASE_URL },
+  { title: "FlexPay subscription (status page)", url: FLEXPAY_SUBSCRIPTION_URL },
+];
 
 const UNKNOWN_API_ENTRY: CatalogEntry = {
   meaning: "Undocumented HTTP status",
@@ -1112,6 +1364,35 @@ function decodeErrors(parsed: VerotelParsed, ctx: NormalizeContext): DecodedErro
     }
     return out;
   }
+  if (parsed.kind === "status") {
+    const p = parsed.value;
+    const response = documented(STATUS_RESPONSES, p.response);
+    if (response !== "NOTFOUND" && response !== "ERROR") return [];
+    const entry = STATUS_ERRORS[response];
+    const saleId = safeId(p.saleID, 64);
+    const missing: string[] = [];
+    if (response === "ERROR") {
+      missing.push("Verotel does not document the values of the status page error line.");
+      if (!nonEmpty(p.error)) missing.push("The page has no error text.");
+    }
+    const httpStatus = ctx.meta?.http?.status;
+    if (httpStatus !== undefined && httpStatus !== 200)
+      missing.push(
+        `The status page arrived with HTTP ${httpStatus}; Verotel documents only the text body.`,
+      );
+    return [
+      draft(ctx, response, entry, entry.confidence, {
+        subCodes: { field: "response", response },
+        // Provider free text: scrubbed and cut to 200 characters.
+        ...(response === "ERROR" && nonEmpty(p.error) ? { message: safeText(p.error, 200) } : {}),
+        missing,
+        docs: STATUS_DOCS,
+        ...(saleId ? { paymentReference: saleId } : {}),
+        // A lookup changes nothing; NOTFOUND is a definite answer.
+        ...(response === "NOTFOUND" ? { outcomeKnown: true } : {}),
+      }),
+    ];
+  }
   return [];
 }
 
@@ -1157,6 +1438,11 @@ export const verotelAdapter: ProviderAdapter<VerotelParsed> = {
     { id: VEROTEL_FORMATS.apiTransaction, description: "Control Center API transaction object" },
     { id: VEROTEL_FORMATS.apiSale, description: "Control Center API sale object" },
     { id: VEROTEL_FORMATS.apiAction, description: "Control Center API action response" },
+    {
+      id: VEROTEL_FORMATS.status,
+      description:
+        "FlexPay status page (plain text name: value lines, response FOUND, NOTFOUND or ERROR)",
+    },
   ],
   detect,
   parse,

@@ -33,6 +33,9 @@ export default function DocsPage() {
           with the data in its query string.
         </li>
         <li>
+          Plain text with one <code>name: value</code> pair per line, as some legacy APIs answer.
+        </li>
+        <li>
           An XML document. Documents with a DOCTYPE or entity declarations are rejected for safety.
         </li>
       </ul>

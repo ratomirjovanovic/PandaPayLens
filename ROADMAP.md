@@ -30,7 +30,6 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 
 ### Analyzer
 
-- Plain `key: value` text responses used by some legacy APIs.
 - Keyboard navigation between timeline events ([#3](https://github.com/ratomirjovanovic/PandaPayLens/issues/3)).
 
 ### CLI and packages

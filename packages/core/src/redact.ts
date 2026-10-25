@@ -383,8 +383,12 @@ export function normalizeKey(key: string): string {
   return key.toLowerCase().replace(/[^a-z0-9]/g, "");
 }
 
+/** Address groups that providers flatten into prefixed keys (Verotel `billingAddr_fullName`). */
+const BLOCKED_PREFIXES = ["billingaddr", "shippingaddr"];
+
 export function isBlockedKey(key: string): boolean {
-  return BLOCKED_KEYS.has(normalizeKey(key));
+  const n = normalizeKey(key);
+  return BLOCKED_KEYS.has(n) || BLOCKED_PREFIXES.some((p) => n.startsWith(p));
 }
 
 export function luhnValid(digits: string): boolean {

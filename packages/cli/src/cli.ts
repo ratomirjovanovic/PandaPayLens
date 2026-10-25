@@ -57,8 +57,9 @@ Options:
       --no-color                   Disable colored output
   -h, --help                       Show this help
 
-Input may be JSON, a JSON array, JSON Lines, URL-encoded form data, XML, a raw
-HTTP request or response, or a callback URL. Use "-" for stdin.
+Input may be JSON, a JSON array, JSON Lines, URL-encoded form data, XML,
+name: value text, a raw HTTP request or response, or a callback URL.
+Use "-" for stdin.
 Nothing is sent over the network.
 
 Exit codes: 0 ok, 1 findings at/above --fail-on, 2 invalid input,

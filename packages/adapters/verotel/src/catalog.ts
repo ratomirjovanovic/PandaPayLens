@@ -630,3 +630,84 @@ export const FLEXPAY_REQUEST_PATHS = [
   "/status/order",
   "/salestatus",
 ] as const;
+
+// ---------------------------------------------------------------------------
+// FlexPay status page (research sections 3.4, 4.4 and note 12)
+
+/** Documented values of the status page `response` line. */
+export const STATUS_RESPONSES = ["FOUND", "NOTFOUND", "ERROR"] as const;
+
+/** Only APPROVED is documented for `saleResult`. */
+export const STATUS_SALE_RESULTS = ["APPROVED"] as const;
+
+/** The status page shows payment method labels, not the request codes. */
+export const STATUS_PAYMENT_METHOD_LABELS = ["Credit Card", "Direct Debit EU", "Bitcoin"] as const;
+
+/** v3 only, for Bitcoin sales. */
+export const BTC_TRANSACTION_STATUSES = ["paid", "complete", "invalid"] as const;
+
+/** Field names documented for the status page (v4 and v3). */
+export const STATUS_PAGE_FIELDS = [
+  "response",
+  "error",
+  "saleID",
+  "shopID",
+  "paymentMethod",
+  "priceAmount",
+  "priceCurrency",
+  "trialAmount",
+  "trialPeriod",
+  "discountAmount",
+  "discountPrice",
+  "period",
+  "description",
+  "type",
+  "subscriptionType",
+  "subscriptionPhase",
+  "nextChargeOn",
+  "expired",
+  "expiresOn",
+  "referenceID",
+  "name",
+  "email",
+  "country",
+  "oneClickToken",
+  "cancelled",
+  "cancelledOn",
+  "cancelledBy",
+  "createdOn",
+  "saleResult",
+  "btc_transaction_status",
+] as const;
+
+/** Billing address lines are flattened into `billingAddr_*` names. */
+export const STATUS_PAGE_FIELD_PREFIX = "billingAddr_";
+
+const STATUS_LOOKUP =
+  "This is the answer to a status request (GET /status/order, or /salestatus in the official clients), not a notification. Nothing was charged or changed by the request itself.";
+
+/** Status page answers that carry no sale. Mappings are PandaPayLens suggestions. */
+export const STATUS_ERRORS: Readonly<Record<"NOTFOUND" | "ERROR", CatalogEntry>> = {
+  NOTFOUND: {
+    meaning: "No sale found for the saleID or referenceID of the status request",
+    category: "invalid_request",
+    retry: "do_not_retry",
+    explanation: `Verotel found no sale for the saleID or referenceID in the status request. ${STATUS_LOOKUP}`,
+    nextAction:
+      "Check the saleID or referenceID and the shopID used in the status request against the postback or redirect that reported the sale.",
+    retryExplanation:
+      "Repeating the same status request returns the same answer until the identifiers are corrected.",
+    confidence: "strong",
+  },
+  ERROR: {
+    meaning: "The status request failed; the reason is in the free-text error line",
+    category: "unknown",
+    retry: "unknown",
+    explanation: `Verotel answered the status request with response ERROR. The values of the error line are not documented. ${STATUS_LOOKUP}`,
+    nextAction:
+      "Read the error text and check the status request parameters (version, shopID, saleID or referenceID, signature).",
+    retryExplanation:
+      "Verotel documents no error values for the status page, so PandaPayLens cannot say whether repeating the request could succeed.",
+    confidence: "possible",
+  },
+};

@@ -2,6 +2,18 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Analyzer
+
+- Plain text with one `name: value` pair per line is read as one record, pasted alone (at least two lines, so a sentence such as "Error: not found" is not read as data) or as a `text/plain` HTTP response body (one line is enough there when the status is below 400). Repeated names become lists.
+- Form fields named like built-in object members (for example `toString`) are no longer merged with them.
+- Keys of flattened billing and shipping address groups (`billingAddr_*`, `shippingAddr_*`) are hidden in the inspector and exports.
+
+### Providers
+
+- Verotel: the FlexPay status page (`response: FOUND|NOTFOUND|ERROR`) is analyzed as a snapshot of the sale, linked by `saleID`. `saleResult: APPROVED` is the only documented success; subscription facts are shown as attributes; NOTFOUND is decoded as an invalid request and ERROR as unknown with the scrubbed error text. Buyer name, email, address and one-click token are never copied.
+
 ## [0.12.0] - 2026-10-25
 
 ### Analyzer

@@ -1,0 +1,30 @@
+response: FOUND
+shopID: PPLsynth64233
+paymentMethod: Credit Card
+priceAmount: 51.20
+priceCurrency: EUR
+period: P1M
+trialAmount: 2.95
+trialPeriod: P3D
+type: subscription
+subscriptionType: recurring
+saleID: PPLsynth13029033
+referenceID: PPLsynth-order-0033
+createdOn: 27-DEC-2014 03:22:12
+saleResult: APPROVED
+subscriptionPhase: trial
+expired: no
+expiresOn: 30-DEC-2015
+cancelled: yes
+cancelledOn: 28-DEC-2014
+cancelledBy: user
+discountPrice: 3.95
+name: PPLsynth Planted Buyer
+email: planted.buyer@example.com
+country: NL
+oneClickToken: PPLsynthONECLICKTOKEN0002
+billingAddr_fullName: PPLsynth Planted Buyer
+billingAddr_addressLine1: PPLsynth Planted Street 7
+billingAddr_city: PPLsynth Planted City
+billingAddr_zip: PPLsynthZIP1011
+billingAddr_country: NL
