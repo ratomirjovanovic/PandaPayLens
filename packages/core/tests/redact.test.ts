@@ -74,6 +74,10 @@ describe("redactDeep", () => {
   it("matches key names regardless of case and separators", () => {
     expect(isBlockedKey("Client_Secret")).toBe(true);
     expect(isBlockedKey("shopper-email")).toBe(true);
+    expect(isBlockedKey("billingAddr_fullName")).toBe(true);
+    expect(isBlockedKey("billingAddr_zipCode")).toBe(true);
+    expect(isBlockedKey("shippingAddr_city")).toBe(true);
+    expect(isBlockedKey("billing")).toBe(false);
     expect(isBlockedKey("status")).toBe(false);
   });
 });

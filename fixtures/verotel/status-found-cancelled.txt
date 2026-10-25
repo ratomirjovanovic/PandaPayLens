@@ -1,0 +1,20 @@
+response: FOUND
+shopID: PPLsynth64233
+saleID: PPLsynth13029077
+referenceID: PPLsynth-order-0077
+paymentMethod: Direct Debit EU
+priceAmount: 19.95
+priceCurrency: EUR
+period: P30D
+type: subscription
+subscriptionType: recurring
+createdOn: 2026-08-02T10:15:00+00:00
+saleResult: APPROVED
+expired: yes
+expiresOn: 2026-10-01T10:15:00+00:00
+cancelled: yes
+cancelledOn: 2026-09-20T08:00:00+00:00
+cancelledBy: merchant
+name: PPLsynth Planted Buyer
+email: planted.buyer@example.com
+country: DE

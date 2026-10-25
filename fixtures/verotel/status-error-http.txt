@@ -1,0 +1,6 @@
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Date: Sun, 25 Oct 2026 09:00:00 GMT
+
+response: ERROR
+error: Invalid signature

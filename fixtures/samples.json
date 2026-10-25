@@ -238,6 +238,13 @@
     "description": "A FlexPay chargeback postback linked to its sale."
   },
   {
+    "id": "verotel-status-cancelled",
+    "title": "Verotel: cancelled subscription status page",
+    "provider": "verotel",
+    "file": "verotel/status-found-cancelled.txt",
+    "description": "A FlexPay status page in name: value text for a subscription that was cancelled and has expired, read as a snapshot of the sale."
+  },
+  {
     "id": "pxp-card-refused",
     "title": "PXP: card refused",
     "provider": "pxp",

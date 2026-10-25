@@ -10,6 +10,7 @@ import {
   type AnalysisResult,
   type AnalyzeOptions,
 } from "@pandapaylens/core";
+import { ADAPTERS } from "@pandapaylens/providers";
 import { defaultRules } from "@pandapaylens/rules";
 import {
   API_ERRORS,
@@ -821,6 +822,376 @@ describe("verotel Remote User Manager postbacks", () => {
   });
 });
 
+describe("verotel FlexPay status page", () => {
+  const STATUS_FIXTURES = [
+    "status-found-subscription.txt",
+    "status-found-cancelled.txt",
+    "status-found-purchase.txt",
+    "status-notfound.txt",
+    "status-error-http.txt",
+  ];
+
+  it.each([
+    ["status-found-subscription.txt", 0.9, 0.98],
+    ["status-found-cancelled.txt", 0.9, 0.98],
+    ["status-found-purchase.txt", 0.9, 0.98],
+    ["status-notfound.txt", 0.5, 0.7],
+    ["status-error-http.txt", 0.5, 0.6],
+  ])("detects %s by structure", (file, min, max) => {
+    const d = detectText(fixture(`verotel/${file}`));
+    expect(d).toMatchObject({ format: "verotel.flexpay.status", supported: true });
+    expect(d.confidence).toBeGreaterThanOrEqual(min);
+    expect(d.confidence).toBeLessThanOrEqual(max);
+  });
+
+  it("keeps a bare ERROR page modest and weak shapes below the threshold", () => {
+    expect(detectText("response: ERROR\nerror: something went wrong").confidence).toBe(0.5);
+    expect(detectText("response: FOUND\nsaleID: PPLsynth1").confidence).toBeLessThan(0.6);
+    expect(detectText("response: ERROR\nmessage: x").confidence).toBeLessThan(0.5);
+    expect(detectText("response: NOTFOUND\nfoo: x\nbar: y").confidence).toBeLessThan(0.5);
+    expect(detectText("response: FOUND\nresult: x\nfoo: y\nbar: z").confidence).toBeLessThan(0.5);
+    // An undocumented answer is not analyzed, and never read as a postback.
+    const odd = detectText(
+      "response: PENDING\nsaleID: PPLsynth1\nshopID: PPLsynth2\ntype: purchase\nsaleResult: APPROVED",
+    );
+    expect(odd.format).toBe("verotel.flexpay.status");
+    expect(odd.confidence).toBeLessThan(0.5);
+  });
+
+  it("claims only text records, never JSON or form records", () => {
+    const fields = {
+      response: "FOUND",
+      saleID: "PPLsynth1",
+      shopID: "PPLsynth2",
+      saleResult: "APPROVED",
+      type: "purchase",
+    };
+    const d = (meta?: Parameters<typeof verotelAdapter.detect>[1]) =>
+      verotelAdapter.detect(fields, meta);
+    expect(d({ format: "text" }).format).toBe("verotel.flexpay.status");
+    expect(d({ format: "http", http: { kind: "response", status: 200, headers: {} } }).format).toBe(
+      "verotel.flexpay.status",
+    );
+    for (const meta of [
+      undefined,
+      { format: "json" as const },
+      { format: "jsonl" as const },
+      { format: "form" as const },
+      {
+        format: "http" as const,
+        http: {
+          kind: "response" as const,
+          status: 200,
+          contentType: "application/json",
+          headers: {},
+        },
+      },
+    ])
+      expect(d(meta).format, JSON.stringify(meta)).not.toBe("verotel.flexpay.status");
+    expect(detectText(JSON.stringify(fields)).format).not.toBe("verotel.flexpay.status");
+    expect(detectText(form(fields)).format).not.toBe("verotel.flexpay.status");
+  });
+
+  it("reads the v3 subscription page as one snapshot of the sale", () => {
+    const r = analyzeFixture("status-found-subscription.txt");
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "verotel.flexpay.status" });
+    expect(r.events).toHaveLength(1);
+    const e = r.events[0]!;
+    expect(e).toMatchObject({
+      eventType: "status.FOUND",
+      eventTypeKnown: true,
+      stage: "payment",
+      outcome: "success",
+      providerStatus: "response=FOUND; saleResult=APPROVED",
+      paymentReference: "PPLsynth13029033",
+      merchantReference: "PPLsynth-order-0033",
+      subscriptionReference: "PPLsynth13029033",
+    });
+    expect(e.attributes).toEqual({
+      observation: "snapshot",
+      response: "FOUND",
+      saleResult: "APPROVED",
+      saleId: "PPLsynth13029033",
+      shopId: "PPLsynth64233",
+      type: "subscription",
+      subscriptionType: "recurring",
+      subscriptionPhase: "trial",
+      period: "P1M",
+      trialPeriod: "P3D",
+      expired: false,
+      expiresOn: "30-DEC-2015",
+      cancelled: true,
+      cancelledOn: "28-DEC-2014",
+      cancelledBy: "user",
+      saleCreatedOn: "27-DEC-2014 03:22:12",
+      paymentMethod: "Credit Card",
+      oneClickTokenIssued: true,
+      priceAmountMinor: "5120",
+      priceCurrency: "EUR",
+      trialAmountMinor: "295",
+      discountAmountMinor: "395",
+    });
+    // The recurring price is not a charge, and no snapshot time is invented.
+    expect(e.amountMinor).toBeUndefined();
+    expect(e.eventTimestamp).toBeUndefined();
+    expect(e.deliveryKey).toBeUndefined();
+    expect(e.isRecurring).toBeUndefined();
+    expect(r.errors).toEqual([]);
+  });
+
+  it("keeps v4 ISO dates as attributes and subscription facts out of stages", () => {
+    const r = analyzeFixture("status-found-cancelled.txt");
+    const e = r.events[0]!;
+    expect(e).toMatchObject({ stage: "payment", outcome: "success" });
+    expect(e.eventTimestamp).toBeUndefined();
+    expect(e.attributes).toMatchObject({
+      expired: true,
+      cancelled: true,
+      cancelledBy: "merchant",
+      saleCreatedOn: "2026-08-02T10:15:00+00:00",
+      expiresOn: "2026-10-01T10:15:00+00:00",
+      cancelledOn: "2026-09-20T08:00:00+00:00",
+      paymentMethod: "Direct Debit EU",
+      period: "P30D",
+    });
+    expect(r.warnings.map((w) => w.code)).not.toContain("TIMESTAMP_IGNORED");
+  });
+
+  it("shows a purchase price as the amount", () => {
+    const r = analyzeFixture("status-found-purchase.txt");
+    const e = r.events[0]!;
+    expect(e).toMatchObject({
+      eventType: "status.FOUND",
+      outcome: "success",
+      amountMinor: "999",
+      currency: "USD",
+      paymentReference: "PPLsynth13029088",
+    });
+    expect(e.subscriptionReference).toBeUndefined();
+    expect(e.attributes.priceAmountMinor).toBeUndefined();
+    expect(e.attributes.type).toBe("purchase");
+  });
+
+  it("leaves the outcome unknown without saleResult APPROVED", () => {
+    const base = "response: FOUND\nsaleID: PPLsynth5\nshopID: PPLsynth6\ntype: purchase\n";
+    const missing = analyze(base).events[0]!;
+    expect(missing.outcome).toBe("unknown");
+    expect(missing.attributes.saleResult).toBeUndefined();
+    const other = analyze(`${base}saleResult: DECLINED`).events[0]!;
+    expect(other).toMatchObject({
+      outcome: "unknown",
+      providerStatus: "response=FOUND; saleResult=DECLINED",
+    });
+    expect(other.attributes).toMatchObject({ saleResult: "DECLINED", saleResultDocumented: false });
+    const junk = analyze(`${base}saleResult: approved by <b>x</b>`).events[0]!;
+    expect(junk.outcome).toBe("unknown");
+    expect(junk.attributes.saleResult).toBeUndefined();
+    const lower = analyze(`${base}saleResult: approved`).events[0]!;
+    expect(lower.outcome).toBe("unknown");
+  });
+
+  it("drops undocumented enum values and malformed dates", () => {
+    const e = analyze(
+      [
+        "response: FOUND",
+        "saleID: PPLsynth7",
+        "type: lifetime",
+        "subscriptionPhase: frozen",
+        "cancelledBy: someone",
+        "expiresOn: next tuesday",
+        "createdOn: 2026-13",
+        "paymentMethod: <script>",
+        "priceAmount: 1.234",
+        "priceCurrency: EUR",
+      ].join("\n"),
+    ).events[0]!;
+    for (const k of [
+      "type",
+      "subscriptionPhase",
+      "cancelledBy",
+      "expiresOn",
+      "saleCreatedOn",
+      "paymentMethod",
+      "priceAmountMinor",
+    ])
+      expect(e.attributes[k], k).toBeUndefined();
+    expect(e.amountMinor).toBeUndefined();
+    const label = analyze("response: FOUND\nsaleID: PPLsynth8\npaymentMethod: iDEAL Wallet")
+      .events[0]!;
+    expect(label.attributes).toMatchObject({
+      paymentMethod: "iDEAL Wallet",
+      paymentMethodDocumented: false,
+    });
+  });
+
+  it("reads a one-line text/plain NOTFOUND page, below the threshold unless Verotel is selected", () => {
+    const text = fixture("verotel/status-notfound-http-one-line.txt");
+    const auto = analyze(text);
+    expect(auto.records[0]).toMatchObject({ status: "unsupported", provider: "verotel" });
+    expect(auto.records[0]!.confidence).toBeLessThan(0.5);
+    const r = analyzeText(text, { ...options, provider: "verotel" });
+    expect(r.ok).toBe(true);
+    if (!r.ok) return;
+    expect(r.result.events[0]).toMatchObject({ eventType: "status.NOTFOUND", stage: "error" });
+    expect(r.result.errors[0]).toMatchObject({ code: "NOTFOUND", category: "invalid_request" });
+  });
+
+  it("decodes NOTFOUND as an invalid request that should not be retried", () => {
+    const r = analyzeFixture("status-notfound.txt");
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0]).toMatchObject({
+      eventType: "status.NOTFOUND",
+      stage: "error",
+      outcome: "unknown",
+      paymentReference: "PPLsynth13029999",
+    });
+    expect(r.errors).toHaveLength(1);
+    expect(r.errors[0]).toMatchObject({
+      code: "NOTFOUND",
+      category: "invalid_request",
+      retry: "do_not_retry",
+      confidence: "strong",
+      paymentReference: "PPLsynth13029999",
+      outcomeKnown: true,
+      subCodes: { field: "response", response: "NOTFOUND" },
+      missingInformation: [],
+    });
+    expect(r.errors[0]!.documentation[0]!.url).toMatch(/^https:\/\/controlcenter\.verotel\.com\//);
+    expect(r.errors[0]!.providerMessage).toBeUndefined();
+    expect(ruleIds(r)).not.toContain("MISSING_REFERENCE");
+  });
+
+  it("decodes ERROR from a raw HTTP response with the error text scrubbed", () => {
+    const r = analyzeFixture("status-error-http.txt");
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "verotel.flexpay.status" });
+    expect(r.events[0]).toMatchObject({
+      eventType: "status.ERROR",
+      stage: "error",
+      outcome: "unknown",
+    });
+    expect(r.events[0]!.attributes).toMatchObject({
+      response: "ERROR",
+      errorTextPresent: true,
+      httpStatus: 200,
+    });
+    expect(JSON.stringify(r.events)).not.toContain("Invalid signature");
+    expect(r.errors[0]).toMatchObject({
+      code: "ERROR",
+      category: "unknown",
+      retry: "unknown",
+      confidence: "possible",
+      providerMessage: "Invalid signature",
+    });
+    expect(r.errors[0]!.missingInformation.join(" ")).toMatch(/does not document/);
+    expect(r.errors[0]!.outcomeKnown).toBeUndefined();
+    expect(ruleIds(r)).not.toContain("POSSIBLE_RETRY_RISK");
+  });
+
+  it("masks and cuts provider error text", () => {
+    const text = `Lookup failed for planted.buyer@example.com card 4111 1111 1111 1111 ${"x".repeat(400)}`;
+    const r = analyze(`response: ERROR\nerror: ${text}\nsaleID: PPLsynth9`);
+    const msg = r.errors[0]!.providerMessage!;
+    expect(msg.length).toBeLessThanOrEqual(200);
+    expect(msg).not.toContain("planted.buyer@example.com");
+    expect(msg).not.toContain("4111 1111 1111 1111");
+    expect(r.errors[0]!.paymentReference).toBe("PPLsynth9");
+    const http = analyze(
+      "HTTP/1.1 503 Service Unavailable\nContent-Type: text/plain\n\nresponse: ERROR\nerror: busy",
+    );
+    expect(http.errors[0]!.missingInformation.join(" ")).toMatch(/HTTP 503/);
+  });
+
+  it("reports repeated lines as a parse issue", () => {
+    const r = analyze(
+      "response: FOUND\nsaleID: PPLsynth1\nsaleID: PPLsynth2\nsaleResult: APPROVED",
+    );
+    expect(r.records[0]!.status).toBe("invalid");
+    expect(r.records[0]!.reasons.join(" ")).toMatch(/saleID/);
+    expect(verotelAdapter.parse({ saleID: "1" }, "verotel.flexpay.status").ok).toBe(false);
+  });
+
+  it("links the snapshot to postbacks and API objects of the same sale without false findings", () => {
+    const sale = "PPLsynth13029201";
+    const status = [
+      "response: FOUND",
+      "shopID: PPLsynth64233",
+      `saleID: ${sale}`,
+      "priceAmount: 10.00",
+      "priceCurrency: EUR",
+      "type: subscription",
+      "subscriptionType: recurring",
+      "createdOn: 2026-10-01T08:00:00+00:00",
+      "saleResult: APPROVED",
+      "cancelled: yes",
+      "cancelledBy: user",
+    ].join("\n");
+    const r = analyzeMany(
+      postback({ event: "initial", saleID: sale, priceAmount: "10.00", priceCurrency: "EUR" }),
+      postback({ saleID: sale, transactionID: "PPLsynth80829002" }),
+      fixture("verotel/postback-subscription-cancel.txt"),
+      status,
+      status,
+      postback({
+        event: "credit",
+        saleID: sale,
+        transactionID: "PPLsynth80829003",
+        parentID: "PPLsynth80829002",
+        priceAmount: "10.00",
+        priceCurrency: "EUR",
+      }),
+    );
+    expect(r.records.every((x) => x.status === "analyzed")).toBe(true);
+    const snapshots = r.events.filter((e) => e.eventType === "status.FOUND");
+    expect(snapshots).toHaveLength(2);
+    const group = r.groups.find((g) => g.eventIds.includes(snapshots[0]!.id))!;
+    expect(group.eventIds).toHaveLength(r.events.length);
+    const ids = ruleIds(r);
+    for (const rule of [
+      "CONFLICTING_OBSERVATIONS",
+      "OUT_OF_ORDER_ARRIVAL",
+      "AMOUNT_MISMATCH",
+      "RECURRING_PAYMENT_FAILED",
+      "UNRESOLVED_OUTCOME",
+      "MISSING_REFERENCE",
+    ])
+      expect(ids, rule).not.toContain(rule);
+    // Two identical lookups are one observation at most, never a confirmed delivery.
+    for (const f of r.findings.filter((x) => x.ruleId === "DUPLICATE_DELIVERY"))
+      expect(f.confidence).not.toBe("confirmed");
+  });
+
+  it("is attributed only to Verotel by the full provider registry", () => {
+    const registry = { ...options, adapters: ADAPTERS };
+    for (const file of STATUS_FIXTURES) {
+      const parsed = parseInput(fixture(`verotel/${file}`));
+      if (!parsed.ok) throw new Error(parsed.error.message);
+      const record = parsed.value.records[0];
+      const meta = parsed.value.meta[0];
+      for (const adapter of ADAPTERS) {
+        if (adapter.id === "verotel") continue;
+        expect(adapter.detect(record, meta).confidence, `${adapter.id} on ${file}`).toBeLessThan(
+          0.5,
+        );
+      }
+      const r = analyzeText(fixture(`verotel/${file}`), registry);
+      expect(r.ok && r.result.records[0]!.provider, file).toBe("verotel");
+    }
+  });
+
+  it("does not change how existing Verotel inputs are detected", () => {
+    for (const file of readdirSync(fixturePath("verotel"))) {
+      if (file.startsWith("status-")) continue;
+      const parsed = parseInput(fixture(`verotel/${file}`));
+      if (!parsed.ok) continue;
+      parsed.value.records.forEach((record, i) => {
+        expect(verotelAdapter.detect(record, parsed.value.meta[i]).format, file).not.toBe(
+          "verotel.flexpay.status",
+        );
+      });
+    }
+  });
+});
+
 describe("verotel redaction", () => {
   const planted = [
     SIG64,
@@ -836,6 +1207,10 @@ describe("verotel redaction", () => {
     "192.0.2.44",
     "PPLsynth membership",
     "4111111111111111",
+    "PPLsynthONECLICKTOKEN0002",
+    "PPLsynth Planted Street 7",
+    "PPLsynth Planted City",
+    "PPLsynthZIP1011",
   ];
 
   it("keeps signatures, tokens, buyer data and member credentials out of events and reports", () => {
@@ -845,6 +1220,9 @@ describe("verotel redaction", () => {
       fixture("verotel/rum-add.txt"),
       fixture("verotel/api-transaction-declined.json"),
       fixture("verotel/api-sale-subscription.json"),
+      fixture("verotel/status-found-subscription.txt"),
+      fixture("verotel/status-found-cancelled.txt"),
+      fixture("verotel/status-found-purchase.txt"),
       postback({
         email: "planted.buyer@example.com",
         name: "PPLsynth Planted Buyer",

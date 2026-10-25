@@ -1,0 +1,11 @@
+response: FOUND
+shopID: PPLsynth64233
+saleID: PPLsynth13029088
+referenceID: PPLsynth-order-0088
+paymentMethod: Credit Card
+priceAmount: 9.99
+priceCurrency: USD
+description: PPLsynth membership
+type: purchase
+createdOn: 2026-10-24T18:30:05+00:00
+saleResult: APPROVED

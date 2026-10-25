@@ -48,7 +48,7 @@ export const verotelManifest: ProviderManifest = {
     "Verotel states it is licensed by the Dutch Central Bank (Payment Institution 2011, Electronic Money Institution 2019); the merchant agreement is governed by Dutch law. Merchants are accepted worldwide, but Verotel may block high-risk countries at its discretion (which countries is not documented). Sale currencies USD, EUR, GBP, AUD, CAD, CHF, DKK, NOK, SEK; payouts in USD, EUR or GBP. Direct Debit Europe is EUR only and limited to listed countries (the FlexPay docs and the price chart disagree on Slovakia).",
   documentationAccess: "public",
   fixtureProvenance:
-    "Synthetic fixtures with PPLsynth identifiers. Verotel publishes no literal FlexPay postback example, so postback fixtures were built from the documented FlexPay v4 field tables; Control Center API and VerotelRUM fixtures follow the published examples' shapes with synthetic values. None are official provider examples.",
+    "Synthetic fixtures with PPLsynth identifiers. Verotel publishes no literal FlexPay postback example, so postback fixtures were built from the documented FlexPay v4 field tables; Control Center API and VerotelRUM fixtures follow the published examples' shapes with synthetic values. The FOUND subscription status page follows the v3 PDF example (buyer lines replaced with planted synthetic values); the v4 FOUND pages use ISO 8601 dates whose exact shape Verotel does not publish, and the NOTFOUND and ERROR pages are built from the field list because no example of them is published. None are official provider examples.",
   status: "limited",
   apiFamilies: [
     {
@@ -92,12 +92,16 @@ export const verotelManifest: ProviderManifest = {
     },
     {
       id: "verotel.flexpay.status",
-      description: "FlexPay status page (plain text name: value lines)",
-      status: "unsupported",
+      description:
+        "FlexPay status page (plain text name: value lines, also as a text/plain HTTP response): response FOUND, NOTFOUND or ERROR",
+      status: "limited",
     },
   ],
   capabilities: {
     errorDecoding: "limited",
+    // Control Center API objects and the FlexPay status page are read, but
+    // FlexPay has no synchronous payment response, the status page documents
+    // only saleResult APPROVED and its error values are not documented.
     paymentResponses: "limited",
     webhookParsing: "limited",
     timeline: "limited",
@@ -172,8 +176,12 @@ export const verotelManifest: ProviderManifest = {
     "VerotelRUM trn_id is kept in its own namespace: whether it equals the Control Center transaction id, or stays the same across commands of one membership, is not documented.",
     "Signatures (SHA-256 for FlexPay v4, SHA-1 for older versions) are never verified or copied; only their presence and length class are shown. A pasted postback is never treated as authentic.",
     "Control Center API error titles are matched leniently (published typo 'Paramter', optional final period). HTTP 404 and the 5000-record cap have no published title. Published API examples contain '=>' and are not valid JSON; such copies cannot be parsed and must be corrected first.",
-    "The FlexPay status page (plain text name: value lines) is not analyzed: PandaPayLens core does not parse that text format. FlexPay request URLs (startorder, cancel-subscription, status request) are recognized but not analyzed.",
-    "Buyer data (name, email, address, IP, country), custom1..3, description, truncatedPAN, masked identifiers, oneClickToken, usercode and passcode are never copied.",
+    "The FlexPay status page is read as one snapshot of the sale, not as a notification: it has no delivery key, and repeated lookups of the same sale are not reported as separate events. Only saleResult APPROVED is documented; a missing or other saleResult leaves the outcome unknown. Subscription facts (type, phase, expired, cancelled, cancelledBy, period, trialPeriod, dates) are shown as attributes, not as lifecycle stages.",
+    "Status page dates are never used as event times: createdOn is when the sale was created, not when the page was fetched, and v3 dates (dd-mmm-yyyy hh:mm:ss) carry no time zone. They are shown as attributes only.",
+    "On a subscription status page priceAmount is the recurring price, not a charge, so it is shown as an attribute (with trialAmount and discountAmount) and not as the event amount. Only a purchase status page shows priceAmount as the amount.",
+    "Status page NOTFOUND is decoded as an invalid request and ERROR as unknown; Verotel documents no values for the free-text error line, which is shown scrubbed and cut to 200 characters. A page with only the response line is read only as a raw HTTP response with Content-Type text/plain, and because one line does not identify Verotel it is analyzed only when Verotel is selected manually; pasted alone, one line is not read as name: value text.",
+    "FlexPay request URLs (startorder, cancel-subscription, status request) are recognized but not analyzed.",
+    "Buyer data (name, email, address, billingAddr_* lines, IP, country), custom1..3, description, truncatedPAN, masked identifiers, oneClickToken, usercode and passcode are never copied.",
     "An unanswered or non-OK postback acknowledgement leads Verotel to refund a card payment automatically (VerotelRUM: after two more attempts within 20 minutes); the supplied postback alone cannot show whether it was acknowledged.",
   ],
   samples: ["verotel-subscription-log", "verotel-chargeback"],

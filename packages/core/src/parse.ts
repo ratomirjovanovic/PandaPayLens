@@ -54,7 +54,7 @@ export type ParseError = {
   column?: number;
 };
 
-export type InputFormat = "json" | "jsonl" | "form" | "http" | "xml";
+export type InputFormat = "json" | "jsonl" | "form" | "http" | "xml" | "text";
 
 /** How a record arrived. HTTP metadata is untrusted and already redacted. */
 export type RecordMeta = {
@@ -158,7 +158,48 @@ export function parseInput(text: string, limits: Partial<InputLimits> = {}): Par
     }
     return finish("form", records, { format: "form" });
   }
+  if (isKeyValueText(start)) return parseKeyValueText(start, lim, { format: "text" });
   return parseJsonText(body, lim, { format: "json" });
+}
+
+/** One `name: value` line; the name has no spaces, quotes or brackets. */
+const KV_LINE = /^[A-Za-z][A-Za-z0-9_.-]{0,63}:(?:[ \t].*)?$/;
+
+/**
+ * Plain text with one `name: value` pair per line, as some legacy APIs answer
+ * (for example the Verotel FlexPay status page). At least two lines, so a
+ * single sentence such as "Error: not found" is not read as a record, unless
+ * the caller knows the text is a text/plain response body.
+ */
+function isKeyValueText(text: string, minLines = 2): boolean {
+  const lines = text.trim().split(/\r?\n/);
+  let n = 0;
+  for (const line of lines) {
+    const l = line.trim();
+    if (l === "") continue;
+    if (l.length > 200_000 || !KV_LINE.test(l)) return false;
+    n++;
+  }
+  return n >= minLines;
+}
+
+function parseKeyValueText(text: string, lim: InputLimits, meta: RecordMeta): Parsed {
+  const out: Record<string, string | string[]> = {};
+  let n = 0;
+  for (const line of text.trim().split(/\r?\n/)) {
+    const l = line.trim();
+    if (l === "") continue;
+    if (++n > MAX_FORM_FIELDS)
+      return fail("INVALID_FORM", `The text has more than ${MAX_FORM_FIELDS} lines.`);
+    const i = l.indexOf(":");
+    const key = l.slice(0, i);
+    const value = l.slice(i + 1).trim();
+    if (value.length > lim.maxStringLength)
+      return fail("STRING_TOO_LONG", "A value exceeds the length limit.");
+    const prev = Object.hasOwn(out, key) ? out[key] : undefined;
+    out[key] = prev === undefined ? value : Array.isArray(prev) ? [...prev, value] : [prev, value];
+  }
+  return finish(meta.format === "http" ? "http" : "text", [out], meta);
 }
 
 /** key=value pairs joined by &, no whitespace: application/x-www-form-urlencoded. */
@@ -249,7 +290,7 @@ function parseFormText(text: string, lim: InputLimits, meta: RecordMeta): Parsed
       return fail("STRING_TOO_LONG", "A form field exceeds the length limit.");
     }
     if (key === "") continue;
-    const prev = out[key];
+    const prev = Object.hasOwn(out, key) ? out[key] : undefined;
     out[key] = prev === undefined ? value : Array.isArray(prev) ? [...prev, value] : [prev, value];
   }
   if (Object.keys(out).length === 0)
@@ -332,6 +373,10 @@ function parseHttp(text: string, lim: InputLimits): Parsed {
   if (ct === "application/x-www-form-urlencoded" || (textLike && FORM_LIKE.test(trimmed))) {
     return parseFormText(trimmed, lim, meta);
   }
+  // A declared text/plain success body may be a single name: value line; error
+  // bodies keep the sentence handling below.
+  if (textLike && isKeyValueText(trimmed, ct === "text/plain" && !errorResponse ? 1 : 2))
+    return parseKeyValueText(trimmed, lim, meta);
   // Some APIs answer errors with a short sentence instead of JSON.
   if (errorResponse && textLike && !/^[[{"]/.test(trimmed)) {
     http.bodyText = redactText(trimmed.slice(0, 2000).replace(/\s+/g, " ").slice(0, 500)).text;
