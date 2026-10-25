@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Security
+
+- Redaction now covers Authorize.net card, track, credential and verification fields (`cardCode`, `expirationDate`, `track1`, `track2`, `tlvData`, `dataValue`, `cardholderAuthenticationValue`, `transactionKey`, `nameOnAccount`, `customerIP`, `PayerEmail`, `SecureAcceptanceUrl`, `transHash`, `transHashSha2`).
+
 ## [0.5.0] - 2026-10-25
 
 ### Providers

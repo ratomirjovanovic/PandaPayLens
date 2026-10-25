@@ -127,3 +127,33 @@ describe("decimalToMinor", () => {
     expect(decimalToMinor(v, c)).toBe(expected);
   });
 });
+
+describe("Authorize.net sensitive fields", () => {
+  const keys = [
+    "cardCode",
+    "expirationDate",
+    "track1",
+    "track2",
+    "tlvData",
+    "dataValue",
+    "cardholderAuthenticationValue",
+    "transactionKey",
+    "nameOnAccount",
+    "customerIP",
+    "PayerEmail",
+    "SecureAcceptanceUrl",
+    "transHash",
+    "transHashSha2",
+  ];
+
+  it("blocks every documented sensitive key", () => {
+    for (const k of keys) expect(isBlockedKey(k), k).toBe(true);
+  });
+
+  it("redacts planted values wherever they appear", () => {
+    const planted = Object.fromEntries(keys.map((k, i) => [k, `PPLsecret${i}`]));
+    const out = JSON.stringify(redactDeep({ transactionRequest: { payment: planted } }));
+    for (let i = 0; i < keys.length; i++) expect(out).not.toContain(`PPLsecret${i}`);
+    expect(findSensitivePaths({ payment: planted }).length).toBe(keys.length);
+  });
+});
