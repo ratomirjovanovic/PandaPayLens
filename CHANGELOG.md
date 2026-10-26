@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Maintenance
+
+- A monthly workflow requests every official documentation link cited by adapters, catalogs, manifests and rules, and fails when one returns 404 or 410, redirects to a "page not found" page or names a host that does not resolve (`node scripts/check-doc-links.mjs`).
+
 ## [0.13.0] - 2026-10-25
 
 ### Analyzer

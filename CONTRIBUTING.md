@@ -78,6 +78,14 @@ pnpm build:pages && pnpm --filter @pandapaylens/pages run test:e2e   # UI change
 
 CI runs the same checks plus the full app build, end-to-end and privacy tests, and CodeQL.
 
+When you add or change links to provider documentation, check that they resolve:
+
+```bash
+node scripts/check-doc-links.mjs
+```
+
+It fails on 404 and 410 answers, "page not found" redirects and hosts that do not resolve. Sites that block automated requests are listed as unverified. A scheduled workflow runs the same check once a month.
+
 ## Pull requests
 
 - Keep PRs focused: one issue, one concern.
