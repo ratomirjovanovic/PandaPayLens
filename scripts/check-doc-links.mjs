@@ -15,6 +15,11 @@ const HOST_DELAY_MS = 300;
 const UA =
   "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36";
 const NOT_FOUND_PAGE = /page-?not-?found|\/404(?:[/.?#]|$)/i;
+// Hosts that answer 404 for pages that exist, depending on where the request
+// comes from. Razorpay serves its India-only pages (UPI, RazorpayX, industry
+// solutions) to a client in Europe but answers 404 to GitHub-hosted runners.
+// A 404 from these hosts is reported as unverified; check it from a browser.
+const REGIONAL_HOSTS = new Set(["razorpay.com"]);
 
 const files = [];
 const walk = (dir) => {
@@ -77,6 +82,8 @@ async function check(url) {
         signal: AbortSignal.timeout(TIMEOUT_MS),
       });
       await res.body?.cancel();
+      if (res.status === 404 && REGIONAL_HOSTS.has(new URL(url).hostname))
+        return { kind: "unverified", detail: "404, regional host" };
       if (res.status === 404 || res.status === 410)
         return { kind: "broken", detail: `${res.status}` };
       if (res.ok && NOT_FOUND_PAGE.test(new URL(res.url).pathname + new URL(res.url).search))
