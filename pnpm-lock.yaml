@@ -521,10 +521,7 @@ importers:
         version: 4.6.7
 
   packages/cli:
-    dependencies:
-      '@pandapaylens/adyen':
-        specifier: workspace:*
-        version: link:../adapters/adyen
+    devDependencies:
       '@pandapaylens/core':
         specifier: workspace:*
         version: link:../core
@@ -534,13 +531,12 @@ importers:
       '@pandapaylens/rules':
         specifier: workspace:*
         version: link:../rules
-      '@pandapaylens/stripe':
-        specifier: workspace:*
-        version: link:../adapters/stripe
-    devDependencies:
       '@types/node':
         specifier: 26.6.5
         version: 26.6.5
+      esbuild:
+        specifier: 0.28.2
+        version: 0.28.2
 
   packages/core: {}
 

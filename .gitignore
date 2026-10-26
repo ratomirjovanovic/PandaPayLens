@@ -22,3 +22,6 @@ apps/pages/app/apple-icon.png
 
 # Local notes, never published
 .local/
+
+# Copied from the repository root when the npm package is built.
+packages/cli/LICENSE
