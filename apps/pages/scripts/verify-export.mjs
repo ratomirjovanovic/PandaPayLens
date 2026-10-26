@@ -22,6 +22,8 @@ const required = [
   "sitemap.xml",
   "robots.txt",
   "samples/stripe-insufficient-funds.txt",
+  "media/pandapaylens-demo.mp4",
+  "media/pandapaylens-demo.jpg",
 ];
 for (const f of required) if (!existsSync(join(out, f))) errors.push(`missing ${f}`);
 

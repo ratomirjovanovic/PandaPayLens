@@ -5,6 +5,7 @@ Offline payment error decoder and transaction timeline. Paste or pipe an API res
 Nothing is sent over the network. There is no login, telemetry or API key.
 
 - Website and browser version: https://ratomirjovanovic.github.io/PandaPayLens/
+- 60 second demo video: https://ratomirjovanovic.github.io/PandaPayLens/media/pandapaylens-demo.mp4
 - Supported providers and their limits: https://ratomirjovanovic.github.io/PandaPayLens/providers/
 - Source, issues and changelog: https://github.com/ratomirjovanovic/PandaPayLens
 

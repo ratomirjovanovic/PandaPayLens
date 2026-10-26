@@ -9,13 +9,16 @@ An open-source, local-first toolkit for debugging payment integrations across su
 
 <p align="center">
 <a href="https://ratomirjovanovic.github.io/PandaPayLens/"><b>Live demo</b></a> ·
+<a href="https://ratomirjovanovic.github.io/PandaPayLens/media/pandapaylens-demo.mp4">Demo video (1 min)</a> ·
 <a href="https://ratomirjovanovic.github.io/PandaPayLens/docs/">Documentation</a> ·
 <a href="https://github.com/ratomirjovanovic/PandaPayLens/issues/new?template=bug_report.md">Report a bug</a>
 </p>
 
-<p align="center"><img src="docs/media/decoder-light.png" width="860" alt="PandaPayLens decoding a Stripe card_declined error with decline_code insufficient_funds"></p>
+<p align="center"><a href="https://ratomirjovanovic.github.io/PandaPayLens/media/pandapaylens-demo.mp4"><img src="docs/media/pandapaylens-demo-play.jpg" width="860" alt="Play the 60 second PandaPayLens demo video: a synthetic Adyen log with two authorizations for one order is analyzed and a possible double charge is flagged"></a></p>
 
 Paste a payment error, webhook or event log from a supported provider. PandaPayLens detects the provider and format, explains the error, rebuilds the transaction timeline and points out duplicate deliveries, out-of-order events, conflicting states and possible retry risks. Everything runs in your browser.
+
+<p align="center"><img src="docs/media/decoder-light.png" width="860" alt="PandaPayLens decoding a Stripe card_declined error with decline_code insufficient_funds"></p>
 
 ## Features
 
