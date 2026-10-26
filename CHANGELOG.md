@@ -2,11 +2,15 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.14.0] - 2026-10-26
 
 ### Packages
 
-- The CLI and the engine are packaged as one npm package, `pandapaylens`: the `pandapaylens` binary, and a library entry with `analyze(text, options?)`, the engine, every adapter, the default rules and the report helpers. JavaScript is bundled (no runtime dependencies) and type declarations resolve on their own. CI installs the packed tarball into an empty project and checks the binary and a typed import; a workflow publishes to npm with provenance when a GitHub release is published.
+- The CLI and the engine are published to npm as one package, [`pandapaylens`](https://www.npmjs.com/package/pandapaylens): the `pandapaylens` binary, and a library entry with `analyze(text, options?)`, the engine, every adapter, the default rules and the report helpers. JavaScript is bundled (no runtime dependencies) and type declarations resolve on their own. CI installs the packed tarball into an empty project and checks the binary and a typed import; a workflow publishes to npm with provenance when a GitHub release is published.
+
+### Documentation
+
+- The getting-started page, README and roadmap use the npm package (`npx pandapaylens`, `import { analyze } from "pandapaylens"`).
 
 ### Maintenance
 

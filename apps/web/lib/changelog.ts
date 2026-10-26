@@ -8,6 +8,16 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.14.0",
+    date: "2026-10-26",
+    status: "released",
+    changes: [
+      'The CLI and the engine are on npm as one package, pandapaylens: npx pandapaylens analyze events.json, or import { analyze } from "pandapaylens".',
+      "The package has no runtime dependencies and ships its TypeScript types; CI installs the packed package before every release.",
+      "Official documentation links are checked once a month.",
+    ],
+  },
+  {
     version: "0.13.0",
     date: "2026-10-25",
     status: "released",
