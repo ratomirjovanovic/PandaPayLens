@@ -16,6 +16,12 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 | 0.6.0   | Wave 2 adapters: Worldpay, Cybersource, Authorize.net, Nuvei                                             |
 | 0.7.0   | Wave 3 adapters: Paysafe, Airwallex, Rapyd, dLocal, EBANX                                                |
 | 0.8.0   | Wave 4 adapters: BlueSnap, PayU India, Razorpay, Paystack, Flutterwave                                   |
+| 0.9.0   | Analyzer UX and redaction                                                                                |
+| 0.10.0  | Repeated records recognized without delivery ids                                                         |
+| 0.11.0  | XML input; XML for emerchantpay, Skrill, Authorize.net, BlueSnap, Inpay                                  |
+| 0.12.0  | Worldpay XML, time zone handling, documentation links for every provider                                 |
+| 0.13.0  | Plain `name: value` text, Verotel FlexPay status page                                                    |
+| 0.14.0  | npm package `pandapaylens` (CLI and library)                                                             |
 
 ## In progress
 
@@ -35,7 +41,6 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 ### CLI and packages
 
 - `--output <file>` for reports ([#4](https://github.com/ratomirjovanovic/PandaPayLens/issues/4)).
-- Publishing the CLI and core packages to npm.
 
 ### Documentation
 

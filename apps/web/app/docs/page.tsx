@@ -183,11 +183,11 @@ export default function DocsPage() {
 
       <h2>Command line</h2>
       <pre>
-        <code>{`npx @pandapaylens/cli analyze events.json
-pandapaylens decode error.json --format markdown
-pandapaylens timeline - < webhooks.jsonl
-pandapaylens analyze log.json --fail-on medium   # exit 1 on medium+ findings
-pandapaylens examples                            # list bundled samples`}</code>
+        <code>{`npx pandapaylens analyze events.json
+npx pandapaylens decode error.json --format markdown
+npx pandapaylens timeline - < webhooks.jsonl
+npx pandapaylens analyze log.json --fail-on medium   # exit 1 on medium+ findings
+npx pandapaylens examples                            # list bundled samples`}</code>
       </pre>
       <p>
         Exit codes: 0 ok, 1 findings at or above <code>--fail-on</code>, 2 invalid input, 3
@@ -196,19 +196,17 @@ pandapaylens examples                            # list bundled samples`}</code>
 
       <h2>Library</h2>
       <pre>
-        <code>{`import { analyzeText } from "@pandapaylens/core";
-import { stripeAdapter } from "@pandapaylens/stripe";
-import { adyenAdapter } from "@pandapaylens/adyen";
-import { defaultRules, RULE_CATALOG_VERSION } from "@pandapaylens/rules";
+        <code>{`// npm install pandapaylens
+import { analyze, toMarkdownReport } from "pandapaylens";
 
-const r = analyzeText(json, {
-  adapters: [stripeAdapter, adyenAdapter],
-  rules: defaultRules,
-  catalogVersion: RULE_CATALOG_VERSION,
-});
-if (r.ok) console.log(r.result.findings);`}</code>
+const r = analyze(text); // or analyze(text, { provider: "adyen" })
+if (r.ok) console.log(r.result.findings, toMarkdownReport(r.result));
+else console.error(r.error.message);`}</code>
       </pre>
-      <p>Package names are provisional until publication.</p>
+      <p>
+        One package, <code>pandapaylens</code>, holds the command line tool and the library with
+        every adapter. It has no runtime dependencies, runs offline and needs Node.js 22 or later.
+      </p>
     </DocPage>
   );
 }

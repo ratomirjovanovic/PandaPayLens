@@ -98,14 +98,15 @@ pnpm dev:pages        # static analyzer at http://localhost:3200/PandaPayLens/
 ## CLI
 
 ```bash
-pnpm build:packages
-node packages/cli/dist/bin.js analyze fixtures/stripe/out-of-order.json
-node packages/cli/dist/bin.js decode - < error.json
-node packages/cli/dist/bin.js analyze events.jsonl --format markdown
-node packages/cli/dist/bin.js analyze log.json --fail-on medium
-node packages/cli/dist/bin.js providers --supported
-node packages/cli/dist/bin.js examples
+npx pandapaylens analyze events.json
+npx pandapaylens decode - < error.json
+npx pandapaylens analyze events.jsonl --format markdown
+npx pandapaylens analyze log.json --fail-on medium
+npx pandapaylens providers --supported
+npx pandapaylens examples
 ```
+
+The [`pandapaylens`](https://www.npmjs.com/package/pandapaylens) package also works as a library (`import { analyze } from "pandapaylens"`), with TypeScript types and no runtime dependencies. From a clone, run `pnpm build:packages` and use `node packages/cli/dist/bin.js` instead of `npx pandapaylens`.
 
 Exit codes: `0` ok, `1` findings at or above `--fail-on`, `2` invalid input, `3` unsupported provider or format, `4` internal error. A declined payment does not fail the run unless you ask for it.
 
@@ -158,7 +159,7 @@ pnpm test:e2e         # Playwright against the full app (after pnpm build)
 
 ## Roadmap
 
-Released: the analyzer, CLI and demo (0.1.0), high-risk waves HR-1 (0.2.0), HR-2 (0.3.0) and HR-3 (0.4.0), the wave 2 gateways Worldpay, Cybersource, Authorize.net and Nuvei (0.6.0), Paysafe, Airwallex, Rapyd, dLocal and EBANX (0.7.0), and BlueSnap, PayU India, Razorpay, Paystack and Flutterwave (0.8.0). Planned: research for the remaining general providers, XML input and npm packages.
+Released: the analyzer, CLI and demo (0.1.0), high-risk waves HR-1 (0.2.0), HR-2 (0.3.0) and HR-3 (0.4.0), the wave 2 gateways Worldpay, Cybersource, Authorize.net and Nuvei (0.6.0), Paysafe, Airwallex, Rapyd, dLocal and EBANX (0.7.0), BlueSnap, PayU India, Razorpay, Paystack and Flutterwave (0.8.0), repeat detection without delivery ids (0.10.0), XML input (0.11.0), Worldpay XML (0.12.0), plain `name: value` text (0.13.0) and the npm package (0.14.0).
 
 See [ROADMAP.md](ROADMAP.md) for details.
 
