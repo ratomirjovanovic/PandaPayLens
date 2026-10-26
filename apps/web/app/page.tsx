@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MANIFESTS, ROADMAP } from "@pandapaylens/providers/manifests";
 import { PandaMark } from "@/components/PandaMark";
 import { StatusBadge } from "@/features/providers/ProviderDirectory";
-import { REPO_URL, SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
+import { BASE_PATH, REPO_URL, SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: { absolute: `${SITE_NAME} - Open-Source Payment Error Decoder & Flow Visualizer` },
@@ -123,6 +123,29 @@ export default function Home() {
             </p>
           </div>
         </div>
+      </section>
+
+      {/* Demo video */}
+      <section aria-labelledby="demo" className="py-6">
+        <h2 id="demo" className="text-2xl font-semibold">
+          See it in 60 seconds
+        </h2>
+        <p id="demo-summary" className="mt-2 max-w-3xl text-sm text-fg-muted">
+          The analyzer reads a synthetic Adyen log with two authorizations for one order and flags a
+          possible double charge. Then the error decoder, the provider list and the CLI failing a
+          build. The video loads only when you press play.
+        </p>
+        <video
+          className="mt-4 aspect-video w-full rounded-xl border border-border bg-card"
+          controls
+          preload="none"
+          playsInline
+          aria-label="PandaPayLens demo video"
+          aria-describedby="demo-summary"
+          poster={`${BASE_PATH}/media/pandapaylens-demo.jpg`}
+        >
+          <source src={`${BASE_PATH}/media/pandapaylens-demo.mp4`} type="video/mp4" />
+        </video>
       </section>
 
       {/* How it works */}

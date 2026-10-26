@@ -18,6 +18,28 @@ test("home page explains the product and loads assets under the base path @mobil
   expect(overflow).toBeLessThanOrEqual(1);
 });
 
+test("demo video is served from the site and is not downloaded before play", async ({ page }) => {
+  const videos: string[] = [];
+  page.on("request", (r) => r.url().endsWith(".mp4") && videos.push(r.url()));
+  await page.goto("./");
+  const video = page.getByLabel("PandaPayLens demo video");
+  await video.scrollIntoViewIfNeeded();
+  await expect(video).toHaveAttribute("preload", "none");
+  await page.waitForLoadState("networkidle");
+  expect(videos).toEqual([]);
+  const origin = new URL(page.url()).origin;
+  for (const src of [
+    await video.getAttribute("poster"),
+    await video.locator("source").getAttribute("src"),
+  ]) {
+    const url = new URL(src ?? "", page.url());
+    expect(url.origin).toBe(origin);
+    const res = await page.request.get(url.href);
+    expect(res.status(), url.pathname).toBe(200);
+    expect(res.headers()["content-type"]).toMatch(/^(video\/mp4|image\/jpeg)/);
+  }
+});
+
 test("Try a failed payment decodes the error with next steps", async ({ page }) => {
   await page.goto("./");
   await page.getByRole("link", { name: "Try a failed payment" }).click();

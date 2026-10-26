@@ -12,8 +12,10 @@ playwright-report/
 test-results/
 .DS_Store
 apps/web/public/samples/
+apps/web/public/media/
 
 apps/pages/public/samples/
+apps/pages/public/media/
 apps/pages/public/.nojekyll
 apps/pages/app/icon.svg
 apps/pages/out/

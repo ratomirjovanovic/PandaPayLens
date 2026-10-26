@@ -18,6 +18,8 @@ const types = {
   ".txt": "text/plain; charset=utf-8",
   ".xml": "application/xml",
   ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".mp4": "video/mp4",
   ".woff2": "font/woff2",
 };
 

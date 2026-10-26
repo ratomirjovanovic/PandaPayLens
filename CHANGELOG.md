@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Documentation
+
+- A 60 second demo video (synthetic data, served from the site itself) on the home page, in the README and in the npm README. The home page loads it only when play is pressed; the static export check requires the video and its poster.
+
 ## [0.14.0] - 2026-10-26
 
 ### Packages
