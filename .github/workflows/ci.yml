@@ -43,6 +43,8 @@ jobs:
         run: |
           node packages/cli/dist/bin.js version
           node packages/cli/dist/bin.js analyze fixtures/stripe/successful-payment.json --fail-on medium
+      - name: npm package installs, runs and type-checks
+        run: node packages/cli/scripts/smoke-pack.mjs
       - run: pnpm --filter @pandapaylens/web exec playwright install --with-deps chromium
       - name: Static demo build and smoke tests
         run: |

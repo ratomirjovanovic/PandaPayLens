@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Packages
+
+- The CLI and the engine are packaged as one npm package, `pandapaylens`: the `pandapaylens` binary, and a library entry with `analyze(text, options?)`, the engine, every adapter, the default rules and the report helpers. JavaScript is bundled (no runtime dependencies) and type declarations resolve on their own. CI installs the packed tarball into an empty project and checks the binary and a typed import; a workflow publishes to npm with provenance when a GitHub release is published.
+
 ### Maintenance
 
 - A monthly workflow requests every official documentation link cited by adapters, catalogs, manifests and rules, and fails when one returns 404 or 410, redirects to a "page not found" page or names a host that does not resolve (`node scripts/check-doc-links.mjs`).
