@@ -1,6 +1,6 @@
 # Governance
 
-PandaPayLens is a founder-led open-source project maintained by [Ratomir Jovanovic](https://github.com/ratomirjovanovic).
+PandaPayLens is a founder-led, source-available project maintained by [Ratomir Jovanovic](https://github.com/ratomirjovanovic).
 
 - **Decisions** are made by the maintainer after public discussion in issues or GitHub Discussions.
 - **Code review** is public. Every change goes through a pull request with passing CI.

@@ -48,4 +48,4 @@ Results are diagnostics, not proof: pasted webhooks are never treated as verifie
 
 ## License
 
-Apache-2.0
+[Elastic License 2.0](https://github.com/ratomirjovanovic/PandaPayLens/blob/main/LICENSE). Free to use, change and share; offering it as a hosted or managed service, or other commercial terms, need the maintainer's permission. Versions up to and including 0.14.0 were published under Apache-2.0.

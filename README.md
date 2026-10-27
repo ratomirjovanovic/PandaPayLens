@@ -4,7 +4,7 @@
 
 <p align="center">
 Decode payment errors. Visualize transaction events. Understand what went wrong.<br>
-An open-source, local-first toolkit for debugging payment integrations across supported providers.
+A source-available, local-first toolkit for debugging payment integrations across supported providers.
 </p>
 
 <p align="center">
@@ -168,7 +168,11 @@ See [ROADMAP.md](ROADMAP.md) for details.
 
 ## License
 
-[Apache License 2.0](LICENSE).
+PandaPayLens is source available under the [Elastic License 2.0](LICENSE) (ELv2). It is free to use: you can run it, change it and share it, also inside your company and on client projects.
+
+You need permission from the maintainer to offer PandaPayLens to others as a hosted or managed service, or to use it under terms other than ELv2. For a commercial licence, contact [Ratomir Jovanovic](https://github.com/ratomirjovanovic).
+
+Releases up to and including 0.14.0 were published under the Apache License 2.0 and stay available under it.
 
 ## Maintainer
 

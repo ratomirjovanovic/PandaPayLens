@@ -102,4 +102,4 @@ See [SECURITY.md](SECURITY.md). Please don't open public issues for vulnerabilit
 
 ## License
 
-By contributing, you agree that your contributions are licensed under the Apache License 2.0.
+PandaPayLens is licensed under the [Elastic License 2.0](LICENSE). You keep the copyright in your contributions. By contributing, you license your contribution under the Elastic License 2.0 and also grant the maintainer a perpetual, worldwide, royalty-free right to use, change and license it under other terms, including commercial licences. Only contribute work you have the right to license this way.

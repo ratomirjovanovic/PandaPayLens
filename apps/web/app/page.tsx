@@ -6,7 +6,7 @@ import { StatusBadge } from "@/features/providers/ProviderDirectory";
 import { BASE_PATH, REPO_URL, SITE_DESCRIPTION, SITE_NAME } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: { absolute: `${SITE_NAME} - Open-Source Payment Error Decoder & Flow Visualizer` },
+  title: { absolute: `${SITE_NAME} - Payment Error Decoder & Flow Visualizer` },
   description: SITE_DESCRIPTION,
   alternates: { canonical: "/" },
 };
@@ -54,14 +54,14 @@ export default function Home() {
       <section className="grid items-center gap-10 py-14 md:grid-cols-[1.25fr_1fr] md:py-20">
         <div>
           <p className="mb-4 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs text-fg-muted">
-            Open source · Apache-2.0 · {live} providers
+            Source available · ELv2 · {live} providers
           </p>
           <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
             Understand what went wrong with your payments.
           </h1>
           <p className="mt-5 max-w-xl text-lg text-fg-muted">
-            Open-source payment error decoder and transaction flow visualizer. Analyze supported PSP
-            responses, webhooks and payment events directly in your browser.
+            Source-available payment error decoder and transaction flow visualizer. Analyze
+            supported PSP responses, webhooks and payment events directly in your browser.
           </p>
           <p className="mt-3 text-sm font-medium text-fg-muted">
             No signup. No API keys. No payment processing. Local-first analysis.
