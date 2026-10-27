@@ -5,7 +5,7 @@ import { MAINTAINER_URL, REPO_URL } from "@/lib/site";
 export const metadata: Metadata = {
   title: "About",
   description:
-    "PandaPayLens is a free, open-source, local-first developer tool for payment debugging, maintained by Ratomir Jovanovic.",
+    "PandaPayLens is a free, source-available, local-first developer tool for payment debugging, maintained by Ratomir Jovanovic.",
   alternates: { canonical: "/about" },
 };
 
@@ -13,9 +13,9 @@ export default function AboutPage() {
   return (
     <DocPage title="About PandaPayLens">
       <p>
-        PandaPayLens is a free, open-source, local-first developer tool that decodes payment errors,
-        reconstructs observed transaction event timelines, and explains diagnostic findings. The
-        first release supports Stripe and Adyen through independent, versioned adapters.
+        PandaPayLens is a free, source-available, local-first developer tool that decodes payment
+        errors, reconstructs observed transaction event timelines, and explains diagnostic findings.
+        The first release supports Stripe and Adyen through independent, versioned adapters.
       </p>
       <h2>Principles</h2>
       <ul>
@@ -32,8 +32,10 @@ export default function AboutPage() {
       <h2>Maintainer</h2>
       <p>
         PandaPayLens is maintained by <a href={MAINTAINER_URL}>Ratomir Jovanovic</a>. Source code,
-        issues and discussions are on <a href={REPO_URL}>GitHub</a>. The project is licensed under
-        the Apache License 2.0.
+        issues and discussions are on <a href={REPO_URL}>GitHub</a>. The project is source available
+        under the Elastic License 2.0: free to use, change and share. Offering it as a hosted or
+        managed service, or other commercial terms, need the maintainer&apos;s permission. Releases
+        up to and including 0.14.0 were published under the Apache License 2.0.
       </p>
       <h2>Not affiliated</h2>
       <p>

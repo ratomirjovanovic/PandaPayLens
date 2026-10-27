@@ -73,7 +73,7 @@ export function Footer() {
     <footer className="mt-16 border-t border-border">
       <div className="mx-auto flex max-w-[1440px] flex-col gap-3 px-4 py-8 text-sm text-fg-muted md:flex-row md:items-center md:justify-between">
         <p>
-          PandaPayLens is open source under the Apache License 2.0. Maintained by{" "}
+          PandaPayLens is source available under the Elastic License 2.0. Maintained by{" "}
           <a
             href={MAINTAINER_URL}
             className="underline underline-offset-2 hover:text-fg"

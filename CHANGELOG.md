@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### License
+
+- PandaPayLens is now source available under the Elastic License 2.0 instead of the Apache License 2.0. It stays free to use, change and share; offering it as a hosted or managed service, or other commercial terms, need the maintainer's permission. Releases up to and including 0.14.0 stay available under Apache-2.0. Contributors license their contributions under ELv2 and allow the maintainer to offer them under other terms.
+
 ### Documentation
 
 - A 60 second demo video (synthetic data, served from the site itself) on the home page, in the README and in the npm README. The home page loads it only when play is pressed; the static export check requires the video and its poster.

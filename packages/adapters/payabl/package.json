@@ -2,7 +2,7 @@
   "name": "@pandapaylens/payabl",
   "version": "0.1.0",
   "description": "payabl. adapter for PandaPayLens.",
-  "license": "Apache-2.0",
+  "license": "Elastic-2.0",
   "author": "Ratomir Jovanovic (https://github.com/ratomirjovanovic)",
   "homepage": "https://github.com/ratomirjovanovic/PandaPayLens#readme",
   "repository": {

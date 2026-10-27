@@ -82,7 +82,7 @@ export function socialCardHtml({ logo, providers }) {
       <div class="chips">
         <div class="chip"><b>${providers}</b> payment providers</div>
         <div class="chip">No data leaves your browser</div>
-        <div class="chip">Open source</div>
+        <div class="chip">Source available</div>
       </div>
     </div>
     <div class="win">

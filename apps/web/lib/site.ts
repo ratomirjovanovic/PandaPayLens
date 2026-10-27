@@ -10,7 +10,7 @@ export const IS_STATIC_DEMO = process.env.NEXT_PUBLIC_STATIC_DEMO === "1";
 export const PAGES_DEMO_URL = "https://ratomirjovanovic.github.io/PandaPayLens/";
 
 export const SITE_DESCRIPTION =
-  "Debug payment errors, inspect webhook events, and visualize transaction timelines with PandaPayLens. Free, open-source and local-first.";
+  "Debug payment errors, inspect webhook events, and visualize transaction timelines with PandaPayLens. Free to use, source available and local-first.";
 export const REPO_URL = "https://github.com/ratomirjovanovic/PandaPayLens";
 export const MAINTAINER_URL = "https://github.com/ratomirjovanovic";
 

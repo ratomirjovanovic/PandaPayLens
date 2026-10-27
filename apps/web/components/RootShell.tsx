@@ -7,7 +7,7 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 export const rootMetadata: Metadata = {
   metadataBase: new URL(`${SITE_URL}/`),
   title: {
-    default: `${SITE_NAME} - Open-Source Payment Error Decoder & Flow Visualizer`,
+    default: `${SITE_NAME} - Payment Error Decoder & Flow Visualizer`,
     template: `%s - ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
@@ -17,7 +17,7 @@ export const rootMetadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    title: `${SITE_NAME} - Open-Source Payment Error Decoder & Flow Visualizer`,
+    title: `${SITE_NAME} - Payment Error Decoder & Flow Visualizer`,
     description: SITE_DESCRIPTION,
     url: "/",
   },
