@@ -162,7 +162,7 @@ pnpm test:e2e         # Playwright against the full app (after pnpm build)
 
 ## Roadmap
 
-Released: the analyzer, CLI and demo (0.1.0), high-risk waves HR-1 (0.2.0), HR-2 (0.3.0) and HR-3 (0.4.0), the wave 2 gateways Worldpay, Cybersource, Authorize.net and Nuvei (0.6.0), Paysafe, Airwallex, Rapyd, dLocal and EBANX (0.7.0), BlueSnap, PayU India, Razorpay, Paystack and Flutterwave (0.8.0), repeat detection without delivery ids (0.10.0), XML input (0.11.0), Worldpay XML (0.12.0), plain `name: value` text (0.13.0) and the npm package (0.14.0).
+Released: the analyzer, CLI and demo (0.1.0), high-risk waves HR-1 (0.2.0), HR-2 (0.3.0) and HR-3 (0.4.0), the wave 2 gateways Worldpay, Cybersource, Authorize.net and Nuvei (0.6.0), Paysafe, Airwallex, Rapyd, dLocal and EBANX (0.7.0), BlueSnap, PayU India, Razorpay, Paystack and Flutterwave (0.8.0), repeat detection without delivery ids (0.10.0), XML input (0.11.0), Worldpay XML (0.12.0), plain `name: value` text (0.13.0), the npm package (0.14.0) and the Elastic License 2.0 (0.15.0).
 
 See [ROADMAP.md](ROADMAP.md) for details.
 

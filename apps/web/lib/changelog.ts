@@ -8,6 +8,15 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.15.0",
+    date: "2026-10-27",
+    status: "released",
+    changes: [
+      "PandaPayLens is source available under the Elastic License 2.0. It stays free to use, change and share; a hosted or managed offering, or other commercial terms, need the maintainer's permission. Releases up to 0.14.0 stay under Apache-2.0.",
+      "A 60 second demo video on the home page and in the READMEs.",
+    ],
+  },
+  {
     version: "0.14.0",
     date: "2026-10-26",
     status: "released",

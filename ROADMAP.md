@@ -22,6 +22,7 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 | 0.12.0  | Worldpay XML, time zone handling, documentation links for every provider                                 |
 | 0.13.0  | Plain `name: value` text, Verotel FlexPay status page                                                    |
 | 0.14.0  | npm package `pandapaylens` (CLI and library)                                                             |
+| 0.15.0  | Source available under the Elastic License 2.0; demo video                                               |
 
 ## In progress
 
