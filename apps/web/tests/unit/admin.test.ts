@@ -229,6 +229,28 @@ describe("invitations and role management", () => {
     ).rejects.toMatchObject({ code: "LAST_SUPERADMIN" });
   });
 
+  it("two superadmins demoting each other at once leave one superadmin", async () => {
+    const { owner, p } = await superadmin();
+    await svc.inviteAdmin({ db, principal: p }, { email: "r@example.com", role: "admin" });
+    const r = await createUser("r@example.com");
+    await svc.setUserRoles({ db, principal: p }, { userId: r.id, roles: ["superadmin"] });
+    const pr = await sessionFor(r.id);
+    const results = await Promise.allSettled([
+      svc.setUserRoles({ db, principal: p }, { userId: r.id, roles: ["admin"] }),
+      svc.setUserRoles({ db, principal: pr }, { userId: owner.id, roles: ["admin"] }),
+    ]);
+    expect(results.filter((x) => x.status === "fulfilled")).toHaveLength(1);
+    expect(results.find((x) => x.status === "rejected")).toMatchObject({
+      reason: { code: "LAST_SUPERADMIN" },
+    });
+    const supers = await db
+      .select({ id: schema.userRoles.userId })
+      .from(schema.userRoles)
+      .innerJoin(schema.roles, eq(schema.roles.id, schema.userRoles.roleId))
+      .where(sql`${schema.roles.code} = 'superadmin' and ${schema.userRoles.revokedAt} is null`);
+    expect(supers).toHaveLength(1);
+  });
+
   it("role changes and disabling revoke the user's sessions", async () => {
     const { p } = await superadmin();
     await svc.inviteAdmin({ db, principal: p }, { email: "r@example.com", role: "admin" });

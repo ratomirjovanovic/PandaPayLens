@@ -126,8 +126,10 @@ export function parseInput(text: string, limits: Partial<InputLimits> = {}): Par
   }
 
   // Documentation often wraps form examples with continuation lines that
-  // start with "&"; join them back into one record.
-  const start = body.trimStart().replace(/\r?\n\s*&/g, "&");
+  // start with "&"; join them back into one record. Only spaces and tabs may
+  // indent the "&": a pattern that also matched newlines ran in quadratic time
+  // on long runs of blank lines.
+  const start = body.trimStart().replace(/\r?\n[ \t]*&/g, "&");
   if (start.startsWith("<") || start.startsWith("\uFEFF<"))
     return parseXmlText(start, lim, { format: "xml" });
   if (/^HTTP\/\d(?:\.\d)? \d{3}/.test(start) || /^[A-Z]{3,7} \S+ HTTP\/\d/.test(start)) {
