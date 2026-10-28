@@ -56,10 +56,12 @@ The bootstrap works only while no active superadmin exists. After that, the vari
 - Identity: email magic link (Resend). Second factor: passkey (WebAuthn), required for every privileged request.
 - Sessions: 12 hours, HTTP-only, `SameSite=Strict`, secure cookies. Sensitive actions (invitations, role changes, settings, approvals) need a passkey check from the last 10 minutes.
 - An email link alone can enroll the first passkey of an invited account, but can never add or remove passkeys once one exists.
-- The last passkey of an account cannot be removed; register a replacement first.
+- The last passkey of an account cannot be removed; register a replacement first. Removing a passkey signs the account out everywhere else.
+- Magic link emails are limited to 5 requests per client IP in 5 minutes and 3 emails per address in 15 minutes. Rate limits trust the `x-forwarded-for` header, which Vercel sets. When self-hosting, run behind a proxy that overwrites it, or set `advanced.ipAddress` in `apps/web/lib/admin/auth.ts`.
 - Rule drafts can be edited and submitted only by their author.
 - Authorization is checked in the service layer for every operation, never in the browser.
-- The audit log is append-only; a database trigger rejects updates and deletes.
+- The audit log is append-only; a database trigger rejects updates and deletes. It records sign-ins, refused sign-ins of disabled accounts, passkey enrollment, removal and renaming, privilege changes and authorization denials of signed-in users.
+- Events without a known actor (invalid or expired magic links, failed passkey checks, rate-limited requests, unauthenticated admin API calls) are written to the server log as JSON lines with a `security_event` field, so anonymous traffic cannot grow the audit table. Find them in the Vercel runtime logs.
 - The admin database never receives imported payment data.
 
 ## Rollback

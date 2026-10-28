@@ -1,7 +1,7 @@
 import "server-only";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { APIError, createAuthMiddleware, getSessionFromCtx } from "better-auth/api";
+import { APIError, createAuthMiddleware, getSessionFromCtx, isAPIError } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { magicLink } from "better-auth/plugins/magic-link";
 import { passkey } from "@better-auth/passkey";
@@ -12,12 +12,17 @@ import { getDb } from "./db";
 import { sendMagicLinkEmail } from "./email";
 import {
   audit,
+  consumeMagicLinkQuota,
   loadPrincipal,
+  logSecurityEvent,
   markSessionMfa,
   mayReceiveMagicLink,
+  onPasskeyRemoved,
   onUserCreated,
   passkeyChangeDenial,
   recordLogin,
+  sessionAllowed,
+  signInFailure,
 } from "./services";
 
 /** Paths that change a user's passkeys. */
@@ -93,21 +98,19 @@ function createAuth() {
           // failing on a delivery error, would make allowed addresses
           // observable through timing or status.
           if (!(await mayReceiveMagicLink(db, email, cfg.bootstrapEmail))) {
-            after(() =>
-              audit(db, {
-                actorId: null,
-                action: "auth.magic_link_refused",
-                resourceType: "session",
-                outcome: "denied",
-              }),
-            );
+            // No known actor, so the server log rather than the audit table.
+            after(() => logSecurityEvent("auth.magic_link_refused"));
             return;
           }
-          after(() =>
-            sendMagicLinkEmail(cfg, email, url).catch((e) =>
+          after(async () => {
+            if (!(await consumeMagicLinkQuota(db, email))) {
+              logSecurityEvent("auth.magic_link_throttled");
+              return;
+            }
+            await sendMagicLinkEmail(cfg, email, url).catch((e) =>
               console.error(e instanceof Error ? e.message : "Email delivery failed."),
-            ),
-          );
+            );
+          });
         },
       }),
       passkey({
@@ -129,15 +132,29 @@ function createAuth() {
         if (denial) throw new APIError("FORBIDDEN", { message: denial });
       }),
       after: createAuthMiddleware(async (ctx) => {
-        if (ctx.path === "/passkey/verify-registration" && ctx.context.session) {
+        const returned = ctx.context.returned;
+        const failure = signInFailure(ctx.path, returned);
+        if (failure) logSecurityEvent("auth.sign_in_failed", failure);
+        const session = ctx.context.session;
+        if (isAPIError(returned) || !session) return;
+        const actorId = session.user.id;
+        if (ctx.path === "/passkey/verify-registration")
           await audit(db, {
-            actorId: ctx.context.session.user.id,
+            actorId,
             action: "auth.mfa_enrolled",
             resourceType: "passkey",
             outcome: "success",
             metadata: { method: "passkey" },
           });
-        }
+        else if (ctx.path === "/passkey/delete-passkey")
+          await onPasskeyRemoved(db, actorId, session.session.id);
+        else if (ctx.path === "/passkey/update-passkey")
+          await audit(db, {
+            actorId,
+            action: "auth.passkey_renamed",
+            resourceType: "passkey",
+            outcome: "success",
+          });
       }),
     },
     databaseHooks: {
@@ -155,8 +172,8 @@ function createAuth() {
       session: {
         create: {
           before: async (session) => {
-            const p = await loadPrincipal(db, session.id ?? crypto.randomUUID(), session.userId);
-            if (!p || p.status !== "active") return false;
+            if (!(await sessionAllowed(db, session.id ?? crypto.randomUUID(), session.userId)))
+              return false;
           },
           after: async (session, ctx) => {
             const method =
