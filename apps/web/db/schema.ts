@@ -7,6 +7,7 @@
  */
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   boolean,
   index,
   integer,
@@ -121,7 +122,18 @@ export const rateLimits = pgTable("auth_rate_limits", {
   id: text("id").primaryKey(),
   key: text("key").notNull().unique(),
   count: integer("count").notNull(),
-  lastRequest: integer("last_request").notNull(),
+  // Better Auth stores Date.now() in milliseconds, which needs 64 bits.
+  lastRequest: bigint("last_request", { mode: "number" }).notNull(),
+});
+
+/**
+ * Magic link emails sent per address in the current window, keyed by a
+ * SHA-256 of the normalized address. Only allowed addresses are counted.
+ */
+export const magicLinkSends = pgTable("auth_magic_link_sends", {
+  emailHash: text("email_hash").primaryKey(),
+  windowStart: bigint("window_start", { mode: "number" }).notNull(),
+  count: integer("count").notNull(),
 });
 
 /**

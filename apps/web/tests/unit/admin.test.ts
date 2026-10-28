@@ -1,7 +1,8 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
+import { APIError } from "better-auth/api";
 import { eq, sql } from "drizzle-orm";
 import { readFileSync } from "node:fs";
 import { createRequire } from "node:module";
@@ -448,6 +449,94 @@ describe("passkey changes", () => {
       .from(schema.auditLogs)
       .where(eq(schema.auditLogs.action, "auth.passkey_change_denied"));
     expect(denied.map((r) => r.m)).toEqual([{ reason: "LAST_PASSKEY" }]);
+  });
+});
+
+describe("sign-in events and limits", () => {
+  it("stores Better Auth rate limit timestamps in milliseconds", async () => {
+    await db.insert(schema.rateLimits).values({
+      id: "r1",
+      key: "127.0.0.1|/sign-in/magic-link",
+      count: 1,
+      lastRequest: Date.now(),
+    });
+    const [row] = await db.select().from(schema.rateLimits);
+    expect(row!.lastRequest).toBeGreaterThan(2 ** 31);
+  });
+
+  it("caps magic link emails per address and window", async () => {
+    const t0 = new Date("2026-10-28T10:00:00Z");
+    const later = (ms: number) => new Date(t0.getTime() + ms);
+    const sends = [];
+    for (let i = 0; i < 4; i++)
+      sends.push(await svc.consumeMagicLinkQuota(db, " Owner@Example.com ", later(i * 1000)));
+    expect(sends).toEqual([true, true, true, false]);
+    expect(await svc.consumeMagicLinkQuota(db, "other@example.com", later(5000))).toBe(true);
+    expect(await svc.consumeMagicLinkQuota(db, BOOT, later(svc.MAGIC_LINK_WINDOW_MS))).toBe(true);
+    const rows = await db.select().from(schema.magicLinkSends);
+    expect(rows).toHaveLength(2);
+    expect(rows.every((r) => /^[0-9a-f]{64}$/.test(r.emailHash))).toBe(true);
+  });
+
+  it("removing a passkey ends the user's other sessions and is audited", async () => {
+    const owner = await createUser(BOOT);
+    const current = await sessionFor(owner.id);
+    const other = await sessionFor(owner.id);
+    await svc.onPasskeyRemoved(db, owner.id, current.sessionId);
+    const left = await db.select({ id: schema.sessions.id }).from(schema.sessions);
+    expect(left.map((r) => r.id)).toEqual([current.sessionId]);
+    const mfa = await db.select().from(schema.sessionMfa);
+    expect(mfa.map((r) => r.sessionId)).toEqual([current.sessionId]);
+    expect(other.sessionId).not.toBe(current.sessionId);
+    const [entry] = await db
+      .select({ m: schema.auditLogs.safeMetadata })
+      .from(schema.auditLogs)
+      .where(eq(schema.auditLogs.action, "auth.passkey_removed"));
+    expect(entry!.m).toEqual({ revokedSessions: 1 });
+  });
+
+  it("refuses and audits sessions for disabled accounts", async () => {
+    const owner = await createUser(BOOT);
+    expect(await svc.sessionAllowed(db, crypto.randomUUID(), owner.id)).toBe(true);
+    await db.update(schema.users).set({ status: "disabled" }).where(eq(schema.users.id, owner.id));
+    expect(await svc.sessionAllowed(db, crypto.randomUUID(), owner.id)).toBe(false);
+    expect(await svc.sessionAllowed(db, crypto.randomUUID(), crypto.randomUUID())).toBe(false);
+    expect(await auditActions()).toContain("auth.sign_in_refused:denied");
+  });
+
+  it("classifies failed sign-ins from the after-hook value", () => {
+    const redirect = (url: string) =>
+      new APIError("FOUND", undefined, new Headers({ location: url }));
+    expect(
+      svc.signInFailure("/magic-link/verify", redirect("/admin/login?error=INVALID_TOKEN")),
+    ).toEqual({ method: "magic_link", reason: "INVALID_TOKEN" });
+    expect(svc.signInFailure("/magic-link/verify", redirect("/admin"))).toBeNull();
+    expect(
+      svc.signInFailure(
+        "/passkey/verify-authentication",
+        new APIError("UNAUTHORIZED", { code: "AUTHENTICATION_FAILED", message: "x" }),
+      ),
+    ).toEqual({ method: "passkey", reason: "AUTHENTICATION_FAILED" });
+    expect(svc.signInFailure("/passkey/verify-authentication", { session: {} })).toBeNull();
+    expect(svc.signInFailure("/get-session", new APIError("UNAUTHORIZED"))).toBeNull();
+  });
+
+  it("logs anonymous authorization denials without writing the audit table", async () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    try {
+      await expect(
+        svc.dashboard({ db, principal: null, requestId: "req-1" }),
+      ).rejects.toMatchObject({ code: "UNAUTHENTICATED" });
+      expect(warn).toHaveBeenCalledTimes(1);
+      expect(JSON.parse(String(warn.mock.calls[0]![0]))).toMatchObject({
+        security_event: "authorization.denied",
+        reason: "UNAUTHENTICATED",
+        requestId: "req-1",
+      });
+      expect(await db.select().from(schema.auditLogs)).toHaveLength(0);
+    } finally {
+      warn.mockRestore();
+    }
   });
 });
 

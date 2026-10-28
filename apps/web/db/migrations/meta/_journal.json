@@ -15,6 +15,13 @@
       "when": 1792920856501,
       "tag": "0001_audit_and_seed",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793184320145,
+      "tag": "0002_rate_limit_bigint_and_magic_link_sends",
+      "breakpoints": true
     }
   ]
 }

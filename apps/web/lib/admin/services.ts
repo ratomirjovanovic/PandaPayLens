@@ -3,12 +3,14 @@
  * Principal and calls authorize() itself, so authorization does not depend
  * on route middleware.
  */
+import { createHash } from "node:crypto";
 import { and, count, desc, eq, gt, inArray, isNull, lt, ne, sql } from "drizzle-orm";
 import { z } from "zod";
 import {
   adminInvitations,
   auditLogs,
   catalogReleases,
+  magicLinkSends,
   passkeys,
   providerCatalog,
   roles,
@@ -69,6 +71,18 @@ export async function audit(db: Db, e: AuditEntry): Promise<void> {
   });
 }
 
+/**
+ * Security events without a known actor go to the server log as one JSON
+ * line instead of the audit table, so anonymous traffic cannot grow the
+ * append-only log. Fields must be free of payment data, secrets and emails.
+ */
+export function logSecurityEvent(
+  event: string,
+  fields: Record<string, string | number | null> = {},
+): void {
+  console.warn(JSON.stringify({ security_event: event, ...fields }));
+}
+
 /** Authorize and record denials, so privilege probing shows up in the audit log. */
 async function guard(
   c: Ctx,
@@ -86,6 +100,12 @@ async function guard(
         outcome: "denied",
         requestId: c.requestId,
         metadata: { reason: e.code },
+      });
+    } else if (e instanceof AuthzError) {
+      logSecurityEvent("authorization.denied", {
+        action,
+        reason: e.code,
+        requestId: c.requestId ?? null,
       });
     }
     throw e;
@@ -311,6 +331,96 @@ export async function markSessionMfa(
     outcome: "success",
     metadata: { method },
   });
+}
+
+/**
+ * Whether a new session may be created for this user. Refusals of known
+ * accounts (disabled, or without a principal) are audited.
+ */
+export async function sessionAllowed(db: Db, sessionId: string, userId: string) {
+  const p = await loadPrincipal(db, sessionId, userId);
+  if (p?.status === "active") return true;
+  if (p)
+    await audit(db, {
+      actorId: userId,
+      action: "auth.sign_in_refused",
+      resourceType: "session",
+      outcome: "denied",
+      metadata: { reason: "ACCOUNT_DISABLED" },
+    });
+  return false;
+}
+
+/**
+ * The reason a sign-in endpoint failed, from the value Better Auth hands to
+ * after hooks, or null when it succeeded or is not a sign-in endpoint. A
+ * failed magic link is a redirect with an `error` parameter.
+ */
+export function signInFailure(
+  path: string,
+  returned: unknown,
+): { method: "magic_link" | "passkey"; reason: string } | null {
+  if (!(returned instanceof Error) || returned.name !== "APIError") return null;
+  const e = returned as Error & {
+    statusCode?: number;
+    body?: { code?: string };
+    headers?: unknown;
+  };
+  const reason = (r: string | null | undefined) =>
+    (r || String(e.statusCode ?? "error")).slice(0, 64);
+  if (path === "/magic-link/verify") {
+    if (e.statusCode !== 302) return { method: "magic_link", reason: reason(e.body?.code) };
+    const location = e.headers instanceof Headers ? e.headers.get("location") : null;
+    const error = location ? new URL(location, "http://localhost").searchParams.get("error") : null;
+    return error ? { method: "magic_link", reason: reason(error) } : null;
+  }
+  if (path === "/passkey/verify-authentication")
+    return { method: "passkey", reason: reason(e.body?.code) };
+  return null;
+}
+
+/**
+ * After a passkey is removed, end the user's other sessions: one of them may
+ * have been verified with the removed passkey, and sessions do not record
+ * which passkey verified them.
+ */
+export async function onPasskeyRemoved(db: Db, userId: string, currentSessionId: string) {
+  const revoked = await db
+    .delete(sessions)
+    .where(and(eq(sessions.userId, userId), ne(sessions.id, currentSessionId)))
+    .returning({ id: sessions.id });
+  await audit(db, {
+    actorId: userId,
+    action: "auth.passkey_removed",
+    resourceType: "passkey",
+    outcome: "success",
+    metadata: { revokedSessions: revoked.length },
+  });
+}
+
+export const MAGIC_LINK_SENDS_PER_WINDOW = 3;
+export const MAGIC_LINK_WINDOW_MS = 15 * 60 * 1000;
+
+/**
+ * Count one magic link email for this address and say whether it may be
+ * sent. The per-IP limit alone let rotating addresses flood a known inbox.
+ */
+export async function consumeMagicLinkQuota(db: Db, email: string, at = new Date()) {
+  const t = at.getTime();
+  const emailHash = createHash("sha256").update(normEmail(email)).digest("hex");
+  const expired = sql`${magicLinkSends.windowStart} <= ${t - MAGIC_LINK_WINDOW_MS}`;
+  const [row] = await db
+    .insert(magicLinkSends)
+    .values({ emailHash, windowStart: t, count: 1 })
+    .onConflictDoUpdate({
+      target: magicLinkSends.emailHash,
+      set: {
+        windowStart: sql`case when ${expired} then ${t} else ${magicLinkSends.windowStart} end`,
+        count: sql`case when ${expired} then 1 else ${magicLinkSends.count} + 1 end`,
+      },
+    })
+    .returning({ count: magicLinkSends.count });
+  return (row?.count ?? 1) <= MAGIC_LINK_SENDS_PER_WINDOW;
 }
 
 // ---------------------------------------------------------------- dashboard
