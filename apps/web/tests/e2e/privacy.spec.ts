@@ -118,3 +118,17 @@ test("imported data is not persisted in browser storage", async ({ page }) => {
   await page.reload();
   await expect(page.getByLabel("Payment JSON")).toHaveValue("");
 });
+
+test("the analysis worker runs under its own restrictive CSP", async ({ page }) => {
+  const workerUrl = new Promise<string>((resolve) => page.on("worker", (w) => resolve(w.url())));
+  await page.goto("/analyze");
+  await page.getByLabel("Payment JSON").fill(payload);
+  await page.getByRole("button", { name: "Analyze", exact: true }).click();
+  await expect(page.getByRole("tabpanel")).toContainText("payment_intent.payment_failed");
+
+  // A worker ignores the page CSP and follows the one on its script response.
+  const res = await page.request.get((await workerUrl).split("#")[0]!);
+  const csp = res.headers()["content-security-policy"] ?? "";
+  expect(csp).toContain("default-src 'none'");
+  expect(csp).toContain("connect-src 'self'");
+});
