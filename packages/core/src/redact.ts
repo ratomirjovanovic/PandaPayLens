@@ -371,7 +371,6 @@ const PATTERNS: { name: string; re: RegExp }[] = [
   { name: "iban", re: /\b[A-Z]{2}\d{2}(?:\s?[A-Z0-9]{4}){2,7}(?:\s?[A-Z0-9]{1,4})?\b/g },
   { name: "flutterwave-key", re: /\bFLW(?:SECK|PUBK)(?:_TEST)?-[A-Za-z0-9-]{8,}/g },
   { name: "flutterwave-card-token", re: /\bflw-t1nf-[A-Za-z0-9-]{8,}/g },
-  { name: "jwt", re: /\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/g },
   // UPI ids look like name@handle without a dotted domain.
   { name: "upi-id", re: /\b[A-Za-z0-9._-]{2,64}@[A-Za-z][A-Za-z0-9]{1,31}\b(?!\.)/g },
 ];
@@ -407,6 +406,34 @@ export function luhnValid(digits: string): boolean {
   return digits.length >= 13 && sum % 10 === 0;
 }
 
+const JWT_START = /\beyJ/g;
+const JWT_AT = /eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/y;
+const TOKEN_RUN = /[A-Za-z0-9_-]*/y;
+
+/**
+ * Replace JWTs. A single global regex restarted at every "eyJ" inside a long
+ * run of token characters and was quadratic. A candidate that fails here
+ * fails for every later "eyJ" in the same run too, since they share its end
+ * and everything after it, so the search skips to the end of the run.
+ */
+function redactJwts(text: string): { text: string; redacted: boolean } {
+  let out = "";
+  let last = 0;
+  JWT_START.lastIndex = 0;
+  for (let m = JWT_START.exec(text); m; m = JWT_START.exec(text)) {
+    JWT_AT.lastIndex = m.index;
+    if (JWT_AT.exec(text)) {
+      out += text.slice(last, m.index) + REDACTED;
+      last = JWT_START.lastIndex = JWT_AT.lastIndex;
+    } else {
+      TOKEN_RUN.lastIndex = m.index;
+      TOKEN_RUN.exec(text);
+      JWT_START.lastIndex = TOKEN_RUN.lastIndex;
+    }
+  }
+  return { text: out + text.slice(last), redacted: last > 0 };
+}
+
 /** Replace secrets, emails, IBANs and Luhn-valid card numbers inside free text. */
 export function redactText(text: string): { text: string; redacted: boolean } {
   let redacted = false;
@@ -417,6 +444,9 @@ export function redactText(text: string): { text: string; redacted: boolean } {
       return REDACTED;
     });
   }
+  const jwt = redactJwts(out);
+  out = jwt.text;
+  redacted ||= jwt.redacted;
   out = out.replace(PAN_CANDIDATE, (m) => {
     const digits = m.replace(/[ -]/g, "");
     if (digits.length >= 13 && digits.length <= 19 && luhnValid(digits)) {
@@ -474,7 +504,19 @@ export function redactDeep(
     if (r.redacted) report.paths.push(path);
     return r.text;
   }
+  if (typeof value === "number" && isCardNumber(value)) {
+    report.paths.push(path);
+    return REDACTED;
+  }
   return value;
+}
+
+/**
+ * A card number sent as a JSON number. 13-digit values are left alone:
+ * millisecond timestamps have 13 digits and would often pass Luhn.
+ */
+function isCardNumber(n: number): boolean {
+  return Number.isSafeInteger(n) && n >= 1e13 && luhnValid(String(n));
 }
 
 /** Find sensitive fields without producing a copy. */

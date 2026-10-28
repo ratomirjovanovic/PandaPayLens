@@ -570,6 +570,11 @@ describe("verotel Control Center API errors", () => {
     });
     expect(r.errors[0]!.subCodes.title).toBe("parameter_required");
     expect(decodeApiError(412, "Parameter amount is required").id).toBe("parameter_required");
+    expect(decodeApiError(412, "Paramter  sale ID   is required.").id).toBe("parameter_required");
+    // Overlapping whitespace quantifiers made a long title quadratic.
+    const start = performance.now();
+    decodeApiError(412, "Parameter x" + " ".repeat(100_000) + "y");
+    expect(performance.now() - start).toBeLessThan(1000);
     expect(decodeApiError(412, "Failed to refund the transaction").id).toBe("refund_failed");
     expect(decodeApiError(412, "Failed to refund the transaction.").entry.retry).toBe(
       "manual_review",
