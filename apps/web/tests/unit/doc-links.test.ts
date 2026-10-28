@@ -34,23 +34,30 @@ describe("isOfficialDocUrl", () => {
   });
 });
 
+const root = fileURLToPath(new URL("../../../../fixtures/", import.meta.url));
+const fixtures = readdirSync(root)
+  .filter((d) => statSync(join(root, d)).isDirectory())
+  .flatMap((d) => readdirSync(join(root, d)).map((f) => [d, f] as const));
+
 describe("finding documentation links", () => {
-  it("every link a rule produces for the fixtures is on an official host", () => {
-    const root = fileURLToPath(new URL("../../../../fixtures/", import.meta.url));
-    const links = new Set<string>();
-    for (const d of readdirSync(root)) {
-      if (!statSync(join(root, d)).isDirectory()) continue;
-      for (const f of readdirSync(join(root, d))) {
-        const r = analyzeText(readFileSync(join(root, d, f), "utf8"), {
-          adapters: ADAPTERS,
-          rules: defaultRules,
-          catalogVersion: "test",
-        });
-        if (!r.ok) continue;
-        for (const x of r.result.findings) if (x.documentationUrl) links.add(x.documentationUrl);
-      }
+  // Filled by the per-fixture tests, which run in order before the final check.
+  const links = new Set<string>();
+
+  it.each(fixtures)("%s/%s links only to official hosts", (dir, file) => {
+    const r = analyzeText(readFileSync(join(root, dir, file), "utf8"), {
+      adapters: ADAPTERS,
+      rules: defaultRules,
+      catalogVersion: "test",
+    });
+    if (!r.ok) return;
+    for (const x of r.result.findings) {
+      if (!x.documentationUrl) continue;
+      expect(isOfficialDocUrl(x.documentationUrl), x.documentationUrl).toBe(true);
+      links.add(x.documentationUrl);
     }
+  });
+
+  it("the fixtures exercise many distinct documentation links", () => {
     expect(links.size).toBeGreaterThan(20);
-    for (const url of links) expect(isOfficialDocUrl(url), url).toBe(true);
   });
 });

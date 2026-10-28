@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
@@ -13,13 +13,19 @@ const BOOT = "owner@example.com";
 const migrationsFolder = fileURLToPath(new URL("../../db/migrations", import.meta.url));
 
 let db: Db;
+let template: PGlite;
+let client: PGlite | null = null;
 
-async function freshDb() {
-  const client = new PGlite();
-  const d = drizzle({ client, schema });
-  await migrate(d, { migrationsFolder });
-  return d as unknown as Db;
-}
+// Migrations run once; every test gets a clone of the migrated database.
+beforeAll(async () => {
+  template = new PGlite();
+  await migrate(drizzle({ client: template, schema }), { migrationsFolder });
+}, 60_000);
+
+afterAll(async () => {
+  await client?.close();
+  await template.close();
+});
 
 async function createUser(email: string) {
   const [u] = await db.insert(schema.users).values({ email }).returning();
@@ -58,7 +64,10 @@ async function auditActions() {
 }
 
 beforeEach(async () => {
-  db = await freshDb();
+  await client?.close();
+  // clone() is typed as PGliteInterface but returns a PGlite instance.
+  client = (await template.clone()) as PGlite;
+  db = drizzle({ client, schema }) as unknown as Db;
 });
 
 describe("authorize()", () => {
@@ -354,6 +363,74 @@ describe("rule drafts", () => {
     await expect(svc.submitDraft({ db, principal: p }, draft.id)).rejects.toMatchObject({
       code: "CONFLICT",
     });
+  });
+  it("only the author can edit or submit a draft", async () => {
+    const owner = await createUser(BOOT);
+    const sp = await sessionFor(owner.id);
+    await svc.inviteAdmin({ db, principal: sp }, { email: "a@example.com", role: "admin" });
+    await svc.inviteAdmin({ db, principal: sp }, { email: "b@example.com", role: "admin" });
+    const ap = await sessionFor((await createUser("a@example.com")).id);
+    const bp = await sessionFor((await createUser("b@example.com")).id);
+    const input = {
+      providerCode: "stripe",
+      ruleCode: "MINE",
+      proposedVersion: "1.0.0",
+      content: {
+        title: "Mine",
+        description: "A description long enough.",
+        category: "x",
+        severity: "info",
+      },
+    };
+    const draft = await svc.createDraft({ db, principal: ap }, input);
+    await expect(
+      svc.updateDraft({ db, principal: bp }, draft.id, { ...input, ruleCode: "THEIRS" }),
+    ).rejects.toMatchObject({ code: "NOT_FOUND" });
+    await expect(svc.submitDraft({ db, principal: bp }, draft.id)).rejects.toMatchObject({
+      code: "CONFLICT",
+    });
+    await expect(svc.submitDraft({ db, principal: sp }, draft.id)).rejects.toMatchObject({
+      code: "CONFLICT",
+    });
+    const [row] = await db.select().from(schema.ruleDrafts);
+    expect(row).toMatchObject({ ruleCode: "MINE", reviewStatus: "draft" });
+    await svc.updateDraft({ db, principal: ap }, draft.id, { ...input, proposedVersion: "1.0.1" });
+    await svc.submitDraft({ db, principal: ap }, draft.id);
+    const [after] = await db.select().from(schema.ruleDrafts);
+    expect(after).toMatchObject({ proposedVersion: "1.0.1", reviewStatus: "submitted" });
+  });
+});
+
+describe("passkey changes", () => {
+  const STALE = () => new Date(Date.now() - FRESH_MAX_AGE_MS - 1000);
+
+  it("an email session can enroll the first passkey but not change existing ones", async () => {
+    const owner = await createUser(BOOT);
+    const fresh = await sessionFor(owner.id, { passkey: false, mfa: null });
+    expect(await svc.passkeyChangeDenial(db, fresh, "/passkey/verify-registration")).toBeNull();
+    const enrolled = await sessionFor(owner.id, { mfa: null });
+    expect(await svc.passkeyChangeDenial(db, enrolled, "/passkey/verify-registration")).toMatch(
+      /existing passkey/,
+    );
+    const stale = await sessionFor(owner.id, { mfa: STALE() });
+    expect(await svc.passkeyChangeDenial(db, stale, "/passkey/update-passkey")).toMatch(
+      /existing passkey/,
+    );
+  });
+
+  it("the last passkey cannot be deleted", async () => {
+    const owner = await createUser(BOOT);
+    const p = await sessionFor(owner.id);
+    expect(await svc.passkeyChangeDenial(db, p, "/passkey/delete-passkey")).toMatch(
+      /another passkey/,
+    );
+    await sessionFor(owner.id, { mfa: null });
+    expect(await svc.passkeyChangeDenial(db, p, "/passkey/delete-passkey")).toBeNull();
+    const denied = await db
+      .select({ m: schema.auditLogs.safeMetadata })
+      .from(schema.auditLogs)
+      .where(eq(schema.auditLogs.action, "auth.passkey_change_denied"));
+    expect(denied.map((r) => r.m)).toEqual([{ reason: "LAST_PASSKEY" }]);
   });
 });
 
