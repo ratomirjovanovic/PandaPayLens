@@ -16,9 +16,9 @@ import {
   markSessionMfa,
   mayReceiveMagicLink,
   onUserCreated,
+  passkeyChangeDenial,
   recordLogin,
 } from "./services";
-import { FRESH_MAX_AGE_MS } from "./authz";
 
 /** Paths that change a user's passkeys. */
 const PASSKEY_MUTATIONS = [
@@ -121,28 +121,12 @@ function createAuth() {
     hooks: {
       before: createAuthMiddleware(async (ctx) => {
         if (!PASSKEY_MUTATIONS.includes(ctx.path)) return;
-        // Enrolling the first passkey only needs the email session. Changing
-        // passkeys after that requires a fresh passkey challenge, so control of
-        // the mailbox alone can never add a new second factor.
         const session = await getSessionFromCtx(ctx);
         if (!session) throw new APIError("UNAUTHORIZED");
         const p = await loadPrincipal(db, session.session.id, session.user.id);
         if (!p || p.status !== "active") throw new APIError("FORBIDDEN");
-        if (
-          !p.hasPasskey &&
-          ctx.path !== "/passkey/delete-passkey" &&
-          ctx.path !== "/passkey/update-passkey"
-        )
-          return;
-        if (!p.mfaVerifiedAt || Date.now() - p.mfaVerifiedAt.getTime() > FRESH_MAX_AGE_MS) {
-          await audit(db, {
-            actorId: p.userId,
-            action: "auth.passkey_change_denied",
-            resourceType: "passkey",
-            outcome: "denied",
-          });
-          throw new APIError("FORBIDDEN", { message: "Verify with an existing passkey first." });
-        }
+        const denial = await passkeyChangeDenial(db, p, ctx.path);
+        if (denial) throw new APIError("FORBIDDEN", { message: denial });
       }),
       after: createAuthMiddleware(async (ctx) => {
         if (ctx.path === "/passkey/verify-registration" && ctx.context.session) {

@@ -37,7 +37,8 @@ export default async function RulesPage() {
           d.reviewStatus + (d.reviewNote ? ` (${d.reviewNote})` : ""),
           fmt(d.updatedAt),
           <div key="a" className="flex flex-wrap gap-1">
-            {(d.reviewStatus === "draft" || d.reviewStatus === "rejected") &&
+            {d.createdBy === ctx.principal!.userId &&
+              (d.reviewStatus === "draft" || d.reviewStatus === "rejected") &&
               d.validationStatus === "valid" && (
                 <ActionButton path={`rules/drafts/${d.id}/submit`} label="Submit" />
               )}

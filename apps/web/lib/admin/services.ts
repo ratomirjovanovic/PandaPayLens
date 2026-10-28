@@ -19,7 +19,7 @@ import {
   userRoles,
   users,
 } from "@/db/schema";
-import { authorize, AuthzError } from "./authz";
+import { authorize, AuthzError, FRESH_MAX_AGE_MS } from "./authz";
 import type { Db, Principal, RoleCode } from "./types";
 
 export class ServiceError extends Error {
@@ -125,6 +125,47 @@ export async function loadPrincipal(
     mfaVerifiedAt: mfa?.verifiedAt ?? null,
     hasPasskey: (pk?.n ?? 0) > 0,
   };
+}
+
+/**
+ * Policy for passkey changes made through the auth endpoints. Enrolling the
+ * first passkey only needs the email session. Any change after that needs a
+ * fresh passkey challenge, so control of the mailbox alone can never add or
+ * remove a second factor, and the last passkey can never be deleted.
+ * Returns the reason for a denial, or null when the change may proceed.
+ */
+export async function passkeyChangeDenial(
+  db: Db,
+  p: Principal,
+  path: string,
+  at = new Date(),
+): Promise<string | null> {
+  const enrolling =
+    path === "/passkey/generate-register-options" || path === "/passkey/verify-registration";
+  if (!p.hasPasskey && enrolling) return null;
+  let reason: { code: string; message: string } | null = null;
+  if (!p.mfaVerifiedAt || at.getTime() - p.mfaVerifiedAt.getTime() > FRESH_MAX_AGE_MS) {
+    reason = { code: "MFA_NOT_FRESH", message: "Verify with an existing passkey first." };
+  } else if (path === "/passkey/delete-passkey") {
+    const [pk] = await db
+      .select({ n: count() })
+      .from(passkeys)
+      .where(eq(passkeys.userId, p.userId));
+    if ((pk?.n ?? 0) <= 1)
+      reason = {
+        code: "LAST_PASSKEY",
+        message: "Register another passkey before removing the last one.",
+      };
+  }
+  if (!reason) return null;
+  await audit(db, {
+    actorId: p.userId,
+    action: "auth.passkey_change_denied",
+    resourceType: "passkey",
+    outcome: "denied",
+    metadata: { reason: reason.code },
+  });
+  return reason.message;
 }
 
 // ---------------------------------------------------------------- sign-in policy
@@ -751,8 +792,14 @@ export async function updateDraft(c: Ctx, id: string, input: unknown) {
       validationStatus: validateDraft(parsed.data),
       updatedAt: now(c),
     })
-    // Only drafts that are not under review can be edited.
-    .where(and(eq(ruleDrafts.id, id), inArray(ruleDrafts.reviewStatus, ["draft", "rejected"])))
+    // Only the author can edit a draft, and only while it is not under review.
+    .where(
+      and(
+        eq(ruleDrafts.id, id),
+        eq(ruleDrafts.createdBy, p.userId),
+        inArray(ruleDrafts.reviewStatus, ["draft", "rejected"]),
+      ),
+    )
     .returning({ id: ruleDrafts.id });
   if (!res.length) throw new ServiceError("NOT_FOUND", "No editable draft with that id.", 404);
   await audit(c.db, {
@@ -773,6 +820,7 @@ export async function submitDraft(c: Ctx, id: string) {
     .where(
       and(
         eq(ruleDrafts.id, id),
+        eq(ruleDrafts.createdBy, p.userId),
         eq(ruleDrafts.validationStatus, "valid"),
         inArray(ruleDrafts.reviewStatus, ["draft", "rejected"]),
       ),
@@ -781,7 +829,7 @@ export async function submitDraft(c: Ctx, id: string) {
   if (!res.length)
     throw new ServiceError(
       "CONFLICT",
-      "Only valid drafts that are not already under review can be submitted.",
+      "Only the author can submit a draft, and only a valid one that is not already under review.",
       409,
     );
   await audit(c.db, {

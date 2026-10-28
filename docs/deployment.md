@@ -56,6 +56,8 @@ The bootstrap works only while no active superadmin exists. After that, the vari
 - Identity: email magic link (Resend). Second factor: passkey (WebAuthn), required for every privileged request.
 - Sessions: 12 hours, HTTP-only, `SameSite=Strict`, secure cookies. Sensitive actions (invitations, role changes, settings, approvals) need a passkey check from the last 10 minutes.
 - An email link alone can enroll the first passkey of an invited account, but can never add or remove passkeys once one exists.
+- The last passkey of an account cannot be removed; register a replacement first.
+- Rule drafts can be edited and submitted only by their author.
 - Authorization is checked in the service layer for every operation, never in the browser.
 - The audit log is append-only; a database trigger rejects updates and deletes.
 - The admin database never receives imported payment data.
