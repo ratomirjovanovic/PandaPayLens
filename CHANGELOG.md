@@ -2,6 +2,25 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [0.15.1] - 2026-10-28
+
+### Security
+
+- Crafted input can no longer stall the analysis: JWT redaction and the Verotel "Parameter ... is required" title pattern run in linear time. A long run of `eyJ-` used to take about 16 s, which stalled the analysis worker and hung the CLI.
+- Joining form continuation lines no longer takes quadratic time on long runs of blank lines.
+- Card numbers sent as JSON numbers (14 to 19 digits that pass Luhn) are redacted in the inspector and exports and raise the sensitive data warning, like card numbers in strings.
+- The analysis worker that handles pasted data runs under its own restrictive Content-Security-Policy.
+- Admin console:
+  - Fixed the type of the rate limit timestamp column (migration `0002`). It made auth requests fail with a server error.
+  - Superadmin role and status changes run in one serialized transaction, so the last superadmin cannot be removed by concurrent changes.
+  - Magic link responses do not reveal allowed addresses through timing or delivery errors, and emails are limited to 3 per address in 15 minutes.
+  - Removing a passkey signs the account out everywhere else; the last passkey cannot be removed.
+  - Passkey removal and rename and refused sign-ins of disabled accounts are audited. Anonymous failures go to the server log.
+
+### Changed
+
+- Rule drafts in the admin console can be edited and submitted only by their author.
+
 ## [0.15.0] - 2026-10-27
 
 ### License

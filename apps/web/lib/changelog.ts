@@ -8,6 +8,16 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.15.1",
+    date: "2026-10-28",
+    status: "released",
+    changes: [
+      "Security: JWT redaction and Verotel title matching run in linear time, so crafted input can no longer stall the analysis.",
+      "Card numbers sent as JSON numbers are redacted and flagged like card numbers in strings.",
+      "Admin console: a fixed rate limit column, sign-out everywhere after removing a passkey, a per-address magic link limit and more audit events.",
+    ],
+  },
+  {
     version: "0.15.0",
     date: "2026-10-27",
     status: "released",

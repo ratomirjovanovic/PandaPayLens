@@ -1,6 +1,6 @@
 {
   "name": "pandapaylens",
-  "version": "0.15.0",
+  "version": "0.15.1",
   "description": "Offline payment error decoder and transaction timeline for Stripe, Adyen, PayPal, Worldpay, Checkout.com and other payment providers. CLI and library.",
   "keywords": [
     "payments",
