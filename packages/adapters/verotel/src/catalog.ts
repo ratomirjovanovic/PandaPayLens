@@ -389,7 +389,9 @@ export const API_ERRORS: readonly ApiErrorEntry[] = [
     status: 412,
     title: "Paramter xxx is required",
     // Published with the typo "Paramter"; also accept the corrected spelling.
-    match: /^Parame?ter\s+\S.*\s+is required\.?$/i,
+    // One \s before "is required" keeps the match linear; .* takes any
+    // further whitespace.
+    match: /^Parame?ter\s+\S.*\sis required\.?$/i,
     meaning: "Missing query parameter",
     category: "invalid_request",
     retry: "do_not_retry",

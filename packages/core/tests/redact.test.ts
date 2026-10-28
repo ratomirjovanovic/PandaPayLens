@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import fc from "fast-check";
 import {
   findSensitivePaths,
   isBlockedKey,
@@ -32,6 +33,7 @@ describe("redactText", () => {
     ["Authorization: Bearer eyJhbGciOi.payload.sig", "Authorization: [redacted]"],
     ["mail jane.doe@example.com now", "mail [redacted] now"],
     ["iban DE89 3704 0044 0532 0130 00", "iban [redacted]"],
+    ["token eyJsynthetic1.payload12.signature1 sent", "token [redacted] sent"],
   ])("redacts %s", (input, expected) => {
     const r = redactText(input);
     expect(r.text).toBe(expected);
@@ -40,6 +42,34 @@ describe("redactText", () => {
 
   it("keeps non-Luhn digit runs such as timestamps and amounts", () => {
     expect(redactText("created 1761379200 amount 1234567890123").redacted).toBe(false);
+  });
+
+  it("finds a JWT after a hyphen and after a failed candidate", () => {
+    expect(redactText("abc-eyJsynthetic1.payload12.signature1").text).toBe("abc-[redacted]");
+    expect(redactText("eyJ-eyJ-eyJ eyJsynthetic1.payload12.signature1").text).toBe(
+      "eyJ-eyJ-eyJ [redacted]",
+    );
+    expect(redactText("x_eyJsynthetic1.payload12.signature1").redacted).toBe(false);
+  });
+
+  it("redacts JWTs exactly like the previous single regex", () => {
+    const old = /\beyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}/g;
+    // Pieces that no other redaction pattern can match, so the outputs compare directly.
+    const piece = fc.constantFrom("eyJ", "eyJabcdefgh", "abcdefgh", "a", "-", "_", ".", " ");
+    fc.assert(
+      fc.property(fc.array(piece, { maxLength: 30 }), (parts) => {
+        const s = parts.join("");
+        expect(redactText(s).text).toBe(s.replace(old, REDACTED));
+      }),
+      { numRuns: 5000 },
+    );
+  });
+
+  it("stays fast on long runs of token characters", () => {
+    // About 16 s with the previous JWT pattern.
+    const start = performance.now();
+    redactText("eyJ-".repeat(25_000));
+    expect(performance.now() - start).toBeLessThan(1000);
   });
 });
 
@@ -65,6 +95,22 @@ describe("redactDeep", () => {
       "billing_address",
       "list[0].email",
     ]);
+  });
+
+  it("redacts card numbers sent as JSON numbers", () => {
+    const report = { paths: [] as string[] };
+    const out = redactDeep(
+      { card: 4111111111111111, amex: 378282246310005, created: 1761379200000, amount: 1999 },
+      report,
+    );
+    expect(out).toEqual({
+      card: REDACTED,
+      amex: REDACTED,
+      created: 1761379200000,
+      amount: 1999,
+    });
+    expect(report.paths).toEqual(["card", "amex"]);
+    expect(findSensitivePaths({ n: 4242424242424241 })).toEqual([]);
   });
 
   it("does not flag empty or null blocked values", () => {

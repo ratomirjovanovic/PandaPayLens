@@ -3,6 +3,9 @@ import { PGlite } from "@electric-sql/pglite";
 import { drizzle } from "drizzle-orm/pglite";
 import { migrate } from "drizzle-orm/pglite/migrator";
 import { eq, sql } from "drizzle-orm";
+import { readFileSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import * as schema from "@/db/schema";
 import { authorize, AuthzError, FRESH_MAX_AGE_MS, MFA_MAX_AGE_MS } from "@/lib/admin/authz";
@@ -13,18 +16,33 @@ const BOOT = "owner@example.com";
 const migrationsFolder = fileURLToPath(new URL("../../db/migrations", import.meta.url));
 
 let db: Db;
-let template: PGlite;
 let client: PGlite | null = null;
+let assets: {
+  pgliteWasmModule: WebAssembly.Module;
+  initdbWasmModule: WebAssembly.Module;
+  fsBundle: Blob;
+};
+let migrated: Blob;
 
-// Migrations run once; every test gets a clone of the migrated database.
+// The WebAssembly modules are compiled and the migrations run once; every
+// test starts a database from the migrated snapshot. Compiling PGlite for
+// each instance used enough memory to crash workers on a loaded machine.
 beforeAll(async () => {
-  template = new PGlite();
+  const dist = dirname(createRequire(import.meta.url).resolve("@electric-sql/pglite"));
+  const file = (name: string) => readFileSync(join(dist, name));
+  assets = {
+    pgliteWasmModule: await WebAssembly.compile(file("pglite.wasm")),
+    initdbWasmModule: await WebAssembly.compile(file("initdb.wasm")),
+    fsBundle: new Blob([file("pglite.data")]),
+  };
+  const template = await PGlite.create(assets);
   await migrate(drizzle({ client: template, schema }), { migrationsFolder });
+  migrated = await template.dumpDataDir("none");
+  await template.close();
 }, 60_000);
 
 afterAll(async () => {
   await client?.close();
-  await template.close();
 });
 
 async function createUser(email: string) {
@@ -65,8 +83,7 @@ async function auditActions() {
 
 beforeEach(async () => {
   await client?.close();
-  // clone() is typed as PGliteInterface but returns a PGlite instance.
-  client = (await template.clone()) as PGlite;
+  client = await PGlite.create({ ...assets, loadDataDir: migrated });
   db = drizzle({ client, schema }) as unknown as Db;
 });
 
