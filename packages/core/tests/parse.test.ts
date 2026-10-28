@@ -144,6 +144,18 @@ describe("format detection", () => {
     expect(r.ok && r.value.meta[0]).toEqual({ format: "form" });
   });
 
+  it("joins form continuation lines indented with spaces or tabs", () => {
+    const r = parseInput("a=1\n  &b=2\r\n\t&c=3");
+    expect(r.ok && r.value.format).toBe("form");
+    expect(r.ok && r.value.records[0]).toEqual({ a: "1", b: "2", c: "3" });
+  });
+
+  it("handles long runs of blank lines in linear time", () => {
+    const started = performance.now();
+    parseInput(`x${"\n".repeat(200_000)}y`);
+    expect(performance.now() - started).toBeLessThan(1000);
+  });
+
   it("does not treat JSON as form data", () => {
     const r = parseInput('{"a=b":1}');
     expect(r.ok && r.value.format).toBe("json");

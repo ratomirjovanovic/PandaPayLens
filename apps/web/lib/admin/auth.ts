@@ -5,6 +5,7 @@ import { APIError, createAuthMiddleware, getSessionFromCtx } from "better-auth/a
 import { nextCookies } from "better-auth/next-js";
 import { magicLink } from "better-auth/plugins/magic-link";
 import { passkey } from "@better-auth/passkey";
+import { after } from "next/server";
 import * as schema from "@/db/schema";
 import { adminConfig } from "./config";
 import { getDb } from "./db";
@@ -87,17 +88,26 @@ function createAuth() {
         storeToken: "hashed",
         sendMagicLink: async ({ email, url }) => {
           // Respond identically whether or not the address is allowed, so the
-          // form can't be used to discover administrators.
+          // form can't be used to discover administrators. Both branches do
+          // their remaining work after the response: waiting for Resend, or
+          // failing on a delivery error, would make allowed addresses
+          // observable through timing or status.
           if (!(await mayReceiveMagicLink(db, email, cfg.bootstrapEmail))) {
-            await audit(db, {
-              actorId: null,
-              action: "auth.magic_link_refused",
-              resourceType: "session",
-              outcome: "denied",
-            });
+            after(() =>
+              audit(db, {
+                actorId: null,
+                action: "auth.magic_link_refused",
+                resourceType: "session",
+                outcome: "denied",
+              }),
+            );
             return;
           }
-          await sendMagicLinkEmail(cfg, email, url);
+          after(() =>
+            sendMagicLinkEmail(cfg, email, url).catch((e) =>
+              console.error(e instanceof Error ? e.message : "Email delivery failed."),
+            ),
+          );
         },
       }),
       passkey({

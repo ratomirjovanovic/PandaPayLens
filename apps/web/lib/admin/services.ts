@@ -421,6 +421,18 @@ async function revokeAllSessions(db: Db, userId: string) {
   await db.delete(sessions).where(eq(sessions.userId, userId));
 }
 
+/**
+ * Runs a change that can remove a superadmin in one transaction, serialized by
+ * an advisory lock, so two concurrent changes can't both pass the
+ * last-superadmin check.
+ */
+async function withSuperadminLock<T>(db: Db, fn: (tx: Db) => Promise<T>): Promise<T> {
+  return db.transaction(async (tx) => {
+    await tx.execute(sql`select pg_advisory_xact_lock(7101)`);
+    return fn(tx as unknown as Db);
+  });
+}
+
 async function activeSuperadminCount(db: Db, excludingUserId?: string) {
   const [r] = await db
     .select({ n: count() })
@@ -449,52 +461,54 @@ export async function setUserRoles(c: Ctx, input: unknown) {
   const parsed = RoleChangeInput.safeParse(input);
   if (!parsed.success) throw new ServiceError("VALIDATION_FAILED", "Invalid role change.");
   const { userId, roles: wanted } = parsed.data;
-  const [target] = await c.db.select({ id: users.id }).from(users).where(eq(users.id, userId));
-  if (!target) throw new ServiceError("NOT_FOUND", "User not found.", 404);
-  if (!wanted.includes("superadmin") && (await activeSuperadminCount(c.db, userId)) === 0) {
-    throw new ServiceError(
-      "LAST_SUPERADMIN",
-      "The last active superadmin cannot lose the role. Use the documented recovery procedure.",
-      409,
-    );
-  }
-  const at = now(c);
-  const current = await c.db
-    .select({ id: userRoles.id, code: roles.code })
-    .from(userRoles)
-    .innerJoin(roles, eq(roles.id, userRoles.roleId))
-    .where(and(eq(userRoles.userId, userId), isNull(userRoles.revokedAt)));
-  const toRevoke = current.filter((r) => !wanted.includes(r.code as RoleCode));
-  const toGrant = wanted.filter((w) => !current.some((r) => r.code === w));
-  if (toRevoke.length)
-    await c.db
-      .update(userRoles)
-      .set({ revokedAt: at })
-      .where(
-        inArray(
-          userRoles.id,
-          toRevoke.map((r) => r.id),
-        ),
+  await withSuperadminLock(c.db, async (db) => {
+    const [target] = await db.select({ id: users.id }).from(users).where(eq(users.id, userId));
+    if (!target) throw new ServiceError("NOT_FOUND", "User not found.", 404);
+    if (!wanted.includes("superadmin") && (await activeSuperadminCount(db, userId)) === 0) {
+      throw new ServiceError(
+        "LAST_SUPERADMIN",
+        "The last active superadmin cannot lose the role. Use the documented recovery procedure.",
+        409,
       );
-  for (const code of toGrant)
-    await c.db
-      .insert(userRoles)
-      .values({ userId, roleId: await roleId(c.db, code), grantedBy: p.userId, grantedAt: at });
-  if (toRevoke.length || toGrant.length) {
-    await revokeAllSessions(c.db, userId);
-    await audit(c.db, {
-      actorId: p.userId,
-      action: "user.roles_change",
-      resourceType: "user",
-      resourceId: userId,
-      outcome: "success",
-      requestId: c.requestId,
-      metadata: {
-        granted: toGrant.join(",") || null,
-        revoked: toRevoke.map((r) => r.code).join(",") || null,
-      },
-    });
-  }
+    }
+    const at = now(c);
+    const current = await db
+      .select({ id: userRoles.id, code: roles.code })
+      .from(userRoles)
+      .innerJoin(roles, eq(roles.id, userRoles.roleId))
+      .where(and(eq(userRoles.userId, userId), isNull(userRoles.revokedAt)));
+    const toRevoke = current.filter((r) => !wanted.includes(r.code as RoleCode));
+    const toGrant = wanted.filter((w) => !current.some((r) => r.code === w));
+    if (toRevoke.length)
+      await db
+        .update(userRoles)
+        .set({ revokedAt: at })
+        .where(
+          inArray(
+            userRoles.id,
+            toRevoke.map((r) => r.id),
+          ),
+        );
+    for (const code of toGrant)
+      await db
+        .insert(userRoles)
+        .values({ userId, roleId: await roleId(db, code), grantedBy: p.userId, grantedAt: at });
+    if (toRevoke.length || toGrant.length) {
+      await revokeAllSessions(db, userId);
+      await audit(db, {
+        actorId: p.userId,
+        action: "user.roles_change",
+        resourceType: "user",
+        resourceId: userId,
+        outcome: "success",
+        requestId: c.requestId,
+        metadata: {
+          granted: toGrant.join(",") || null,
+          revoked: toRevoke.map((r) => r.code).join(",") || null,
+        },
+      });
+    }
+  });
 }
 
 export async function setUserStatus(c: Ctx, input: unknown) {
@@ -504,40 +518,42 @@ export async function setUserStatus(c: Ctx, input: unknown) {
     .safeParse(input);
   if (!parsed.success) throw new ServiceError("VALIDATION_FAILED", "Invalid status change.");
   const { userId, status } = parsed.data;
-  if (status === "disabled" && (await activeSuperadminCount(c.db, userId)) === 0) {
-    const [isSuper] = await c.db
-      .select({ n: count() })
-      .from(userRoles)
-      .innerJoin(roles, eq(roles.id, userRoles.roleId))
-      .where(
-        and(
-          eq(userRoles.userId, userId),
-          eq(roles.code, "superadmin"),
-          isNull(userRoles.revokedAt),
-        ),
-      );
-    if ((isSuper?.n ?? 0) > 0)
-      throw new ServiceError(
-        "LAST_SUPERADMIN",
-        "The last active superadmin cannot be disabled.",
-        409,
-      );
-  }
-  const res = await c.db
-    .update(users)
-    .set({ status, updatedAt: now(c) })
-    .where(eq(users.id, userId))
-    .returning({ id: users.id });
-  if (!res.length) throw new ServiceError("NOT_FOUND", "User not found.", 404);
-  if (status === "disabled") await revokeAllSessions(c.db, userId);
-  await audit(c.db, {
-    actorId: p.userId,
-    action: "user.status_change",
-    resourceType: "user",
-    resourceId: userId,
-    outcome: "success",
-    requestId: c.requestId,
-    metadata: { status },
+  await withSuperadminLock(c.db, async (db) => {
+    if (status === "disabled" && (await activeSuperadminCount(db, userId)) === 0) {
+      const [isSuper] = await db
+        .select({ n: count() })
+        .from(userRoles)
+        .innerJoin(roles, eq(roles.id, userRoles.roleId))
+        .where(
+          and(
+            eq(userRoles.userId, userId),
+            eq(roles.code, "superadmin"),
+            isNull(userRoles.revokedAt),
+          ),
+        );
+      if ((isSuper?.n ?? 0) > 0)
+        throw new ServiceError(
+          "LAST_SUPERADMIN",
+          "The last active superadmin cannot be disabled.",
+          409,
+        );
+    }
+    const res = await db
+      .update(users)
+      .set({ status, updatedAt: now(c) })
+      .where(eq(users.id, userId))
+      .returning({ id: users.id });
+    if (!res.length) throw new ServiceError("NOT_FOUND", "User not found.", 404);
+    if (status === "disabled") await revokeAllSessions(db, userId);
+    await audit(db, {
+      actorId: p.userId,
+      action: "user.status_change",
+      resourceType: "user",
+      resourceId: userId,
+      outcome: "success",
+      requestId: c.requestId,
+      metadata: { status },
+    });
   });
 }
 
