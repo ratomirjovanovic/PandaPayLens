@@ -52,7 +52,7 @@
     "@pandapaylens/core": "workspace:*",
     "@pandapaylens/providers": "workspace:*",
     "@pandapaylens/rules": "workspace:*",
-    "@types/node": "26.6.5",
+    "@types/node": "26.6.6",
     "esbuild": "0.28.2"
   }
 }
