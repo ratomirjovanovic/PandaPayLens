@@ -15,14 +15,14 @@
     "vercel-build": "pnpm -w run build:packages && pnpm run build"
   },
   "dependencies": {
-    "@better-auth/passkey": "1.7.12",
+    "@better-auth/passkey": "1.7.14",
     "@neondatabase/serverless": "1.2.0",
     "@pandapaylens/adyen": "workspace:*",
     "@pandapaylens/core": "workspace:*",
     "@pandapaylens/fixtures": "workspace:*",
     "@pandapaylens/rules": "workspace:*",
     "@pandapaylens/stripe": "workspace:*",
-    "better-auth": "1.7.12",
+    "better-auth": "1.7.14",
     "drizzle-orm": "0.45.4",
     "next": "16.4.3",
     "react": "19.3.1",
