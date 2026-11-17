@@ -457,6 +457,52 @@ describe("xendit normalization", () => {
     const r = analyze(JSON.stringify(webhook("payment.capture", payment({ updated: undefined }))));
     expect(r.events[0]!.eventTimestamp).toBe("2026-11-10T00:01:05.000Z");
   });
+
+  it("reads payment.expiry as an expired authorization, not a capture", () => {
+    const r = analyze(
+      JSON.stringify(
+        webhook("payment.expiry", payment({ status: "EXPIRED", capture_method: "MANUAL" })),
+      ),
+    );
+    expect(r.records[0]!.format).toBe("xendit.webhook");
+    expect(r.events[0]).toMatchObject({
+      eventType: "payment.expiry",
+      eventTypeKnown: true,
+      stage: "cancellation",
+      outcome: "failure",
+      providerStatus: "EXPIRED",
+    });
+  });
+
+  it("reads payment_request.expiry and links it to the payment request", () => {
+    const pr = {
+      payment_request_id: "pr-PPLsynth-T001",
+      reference_id: "PPLsynth-order-T001",
+      type: "PAY",
+      currency: "IDR",
+      request_amount: 10000,
+      capture_method: "AUTOMATIC",
+      channel_code: "DANA",
+      status: "EXPIRED",
+      updated: "2026-11-10T02:00:00Z",
+    };
+    const r = analyze(
+      JSON.stringify([{ ...pr, status: "REQUIRES_ACTION" }, webhook("payment_request.expiry", pr)]),
+    );
+    expect(r.records.map((x) => x.format)).toEqual(["xendit.payment_request", "xendit.webhook"]);
+    expect(r.groups).toHaveLength(1);
+    expect(r.events[1]).toMatchObject({
+      eventType: "payment_request.expiry",
+      eventTypeKnown: true,
+      stage: "cancellation",
+      outcome: "failure",
+    });
+  });
+
+  it("shows a cancelled authorization as a void", () => {
+    const r = analyze(JSON.stringify(payment({ status: "CANCELED", capture_method: "MANUAL" })));
+    expect(r.events[0]).toMatchObject({ stage: "void", outcome: "failure" });
+  });
 });
 
 describe("xendit sensitive data", () => {

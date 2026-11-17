@@ -936,9 +936,10 @@ export const PAYMENT_STATUSES: Record<string, StatusInfo> = {
     explanation: "The payment failed; failure_code gives the reason.",
   },
   CANCELED: {
-    stage: "cancellation",
+    stage: "void",
     outcome: "failure",
-    explanation: "The payment was cancelled before capture.",
+    explanation:
+      "The authorization was cancelled (voided) before capture, releasing the hold on the funds.",
   },
   EXPIRED: {
     stage: "cancellation",

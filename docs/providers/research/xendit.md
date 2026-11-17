@@ -51,6 +51,7 @@ and error responses. The archived reference was downloaded as HTML.
 | X32 | https://archive.developers.xendit.co/api-reference/#disbursements           | Disbursement object, statuses, failure codes, error codes         |
 | X33 | https://archive.developers.xendit.co/api-reference/#disbursement-callback   | Disbursement callback fields and examples                         |
 | X34 | https://archive.developers.xendit.co/api-reference/#payment-status-callback | Legacy eWallet failure code table                                 |
+| X35 | https://docs.xendit.co/docs/cards-cancel-a-payment                          | Cancelling an authorized payment (void)                           |
 
 ---
 
@@ -135,9 +136,14 @@ Payment Request `status` (enum X2, meanings X17, X18):
 Payment `status` (enum X3): `PENDING`, `AUTHORIZED`, `SUCCEEDED`, `FAILED`, `CANCELED`, `EXPIRED`.
 Meanings are taken from the webhook event table (X15): capture = collected and confirmed,
 authorization = reserved on the end user's account, expiry = a successful authorization expired,
-failure = not collected. `CANCELED` on a payment: cancellation before capture (X19 links cancel to
-an uncaptured card payment). Settlement is a separate concept (X26 for invoices); a `SUCCEEDED`
-payment is not shown as settled.
+failure = not collected. `CANCELED` on a payment: the cancel guide (X35) describes cancelling an
+authorized, uncaptured payment as a void that releases the hold on the funds; it is shown as a
+void. Settlement is a separate concept (X26 for invoices); a `SUCCEEDED` payment is not shown as
+settled.
+
+Documentation conflict: the one-off payment guide (X17) describes a Payment Request `PENDING`
+status, but the Payment Request status enum (X2) does not list it (the Payment enum does). It is
+accepted with the guide's meaning.
 
 Payment `failure_code` (enum X2, X3) values are documented **as names only**. The page meant to
 describe them (X22) embeds a table that could not be read without a browser. Meanings used, all at
@@ -199,7 +205,9 @@ enum-only: **NOT DOCUMENTED**.
 Invoice (X30, X31): `id` (Xendit), `external_id` (merchant), `user_id` (business), `status`
 `PENDING`, `PAID`, `SETTLED` (paid amount settled to the cash balance), `EXPIRED`; `amount`,
 `paid_amount` as numbers, optional `currency`, `paid_at`, `payment_method`, `payment_channel`,
-`bank_code`, `ewallet_type`. Callbacks are sent for paid and (when enabled) expired invoices.
+`bank_code`, `ewallet_type`; the invoice object returned by create and get also has
+`invoice_url` (hosted page) and `expiry_date`. Callbacks are sent for paid and (when enabled)
+expired invoices.
 Sensitive fields: `payer_email`, `payment_destination` (virtual account number or payment
 code), `customer`, `items`.
 

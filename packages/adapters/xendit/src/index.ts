@@ -132,7 +132,6 @@ const PaymentRequestObject = z.looseObject({
 const RefundObject = z.looseObject({
   refund_id: str(255),
   payment_id: str(255).optional(),
-  payment_request_id: str(255).optional(),
   reference_id: str(255).optional(),
   status: str(64).optional(),
   amount: amount.optional(),
@@ -550,7 +549,7 @@ function describeRefund(r: Refund): Described {
   const currency = upperCurrency(r.currency);
   return {
     eventType: "refund.snapshot",
-    paymentReference: safeId(r.payment_id) ?? safeId(r.payment_request_id),
+    paymentReference: safeId(r.payment_id),
     relatedReference: safeId(r.refund_id),
     merchantReference: safeId(r.reference_id, 255),
     status: code(r.status),
