@@ -1,0 +1,7 @@
+POST /notifications/pplsynth?data.id=9000000901&type=payment HTTP/1.1
+Host: pplsynth.example.com
+Content-Type: application/json
+x-signature: ts=1762779600,v1=PPLsynthSIGNATURE00000000000000000000000000000000000000000000
+x-request-id: PPLsynth-0000-4000-8000-000000000901
+
+{"id":9100000901,"live_mode":false,"type":"payment","date_created":"2026-11-10T10:00:00.000-03:00","user_id":9000000001,"api_version":"v1","action":"payment.updated","data":{"id":"9000000901"}}
