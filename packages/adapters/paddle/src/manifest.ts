@@ -38,6 +38,12 @@ export const paddleManifest: ProviderManifest = {
       status: "limited",
     },
     {
+      id: "paddle.notification.other",
+      description:
+        "Webhook notifications for entities outside the payment flow (customers, addresses, businesses, catalog and account events)",
+      status: "unsupported",
+    },
+    {
       id: "paddle.list",
       description: "Paddle Billing API list responses ({ data: [...], meta.pagination })",
       status: "unsupported",
@@ -120,6 +126,7 @@ export const paddleManifest: ProviderManifest = {
     "Chargeback adjustments (chargeback, chargeback_warning and their reversals) are shown as disputes with an unknown outcome; their statuses are not documented for the merchant's position.",
     "Subscription ids span many transactions. Subscription events are grouped with each other and, through transaction_id on subscription.created, with the first transaction; renewal transactions stay separate.",
     "The time a payment attempt failed is not documented; attempt events use captured_at or created_at.",
+    "API snapshots of transactions and subscriptions have an event time only where the status has its own timestamp (billed_at, canceled_at, paused_at); otherwise the time is unknown. Webhooks always use occurred_at.",
     "Provider-specific diagnostic rules do not cover Paddle yet; only the generic rules apply.",
   ],
   samples: ["paddle-payment-failed", "paddle-refund-lifecycle"],

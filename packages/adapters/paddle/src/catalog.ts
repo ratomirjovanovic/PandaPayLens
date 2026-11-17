@@ -121,7 +121,7 @@ export const API_ERRORS: Record<string, ApiErrorEntry> = {
     403,
     "configuration",
     "An Authorization header was sent but it is not in a valid format.",
-    "Send the API key as a Bearer token in the Authorization header.",
+    "Check the format of the Authorization header and that no proxy changes it.",
   ),
   authentication_missing: rejected(
     "shared",
@@ -172,7 +172,7 @@ export const API_ERRORS: Record<string, ApiErrorEntry> = {
     400,
     "invalid_request",
     "The entity is archived and cannot be changed.",
-    "Unarchive the entity first, or work with an active one.",
+    "Set the entity's status back to active, or create a new entity.",
   ),
   forbidden: rejected(
     "shared",
@@ -254,7 +254,7 @@ export const API_ERRORS: Record<string, ApiErrorEntry> = {
     404,
     "configuration",
     "The endpoint exists only in the live environment, not in sandbox.",
-    "Test this operation in the live environment, or leave it out of sandbox tests.",
+    "Check that the request uses the URL of the right environment; the API reference marks endpoints that sandbox does not offer.",
   ),
   not_found: rejected(
     "shared",
@@ -545,7 +545,7 @@ export const API_ERRORS: Record<string, ApiErrorEntry> = {
     400,
     "invalid_request",
     "The transaction is no longer draft or ready, so it cannot be changed.",
-    "Check the transaction status; billed and completed transactions can only be canceled or revised.",
+    "Check the transaction status. To correct a billed or completed transaction, create an adjustment.",
   ),
   transaction_immutable_while_processing_payment: later(
     "transactions",
@@ -647,10 +647,10 @@ export const API_ERRORS: Record<string, ApiErrorEntry> = {
     httpStatus: 429,
     category: "rate_limiting",
     explanation: "The daily limit of immediate charges for this subscription is reached.",
-    nextAction: "Check the charges already made today before charging again.",
+    nextAction: "Check the charges made in the last 24 hours before charging again.",
     retry: "retry_conditionally",
     retryExplanation:
-      "Earlier charges went through or are pending. Review them before charging again after the limit window.",
+      "The limit counts immediate charges already made. Check them before charging again; Paddle suggests waiting, or deferring or skipping the charge with proration_billing_mode.",
     confidence: "strong",
   },
   subscription_immediate_charge_hour_limit_exceeded: {
@@ -661,7 +661,7 @@ export const API_ERRORS: Record<string, ApiErrorEntry> = {
     nextAction: "Check the charges already made in the last hour before charging again.",
     retry: "retry_conditionally",
     retryExplanation:
-      "Earlier charges went through or are pending. Review them before charging again after the limit window.",
+      "The limit counts immediate charges already made. Check them before charging again; Paddle suggests waiting, or deferring or skipping the charge with proration_billing_mode.",
     confidence: "strong",
   },
   subscription_is_canceled_action_invalid: rejected(

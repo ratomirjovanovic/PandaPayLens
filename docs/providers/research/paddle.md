@@ -69,7 +69,7 @@ API version headers and how they change payloads: out of scope; the adapter read
 
 ### 3.2 Entity response (S5, S18-S20)
 
-`{ "data": { ...entity }, "meta": { "request_id": "..." } }`. Identifier prefixes (S21 patterns): transaction `txn_`, adjustment `adj_`, subscription `sub_`, customer `ctm_`, address `add_`, business `biz_`, payment method `paymtd_`, event `evt_`, notification `ntf_`. The documented patterns are lowercase alphanumeric of a fixed length; the adapter checks only the prefix.
+`{ "data": { ...entity }, "meta": { "request_id": "..." } }`. Identifier prefixes (S21 patterns and examples): transaction `txn_`, adjustment `adj_`, subscription `sub_`, customer `ctm_`, address `add_`, business `biz_`, payment method `paymtd_`, event `evt_`, notification `ntf_`. The documented patterns are lowercase alphanumeric of a fixed length; the adapter checks only the prefix.
 
 ### 3.3 Webhook notification (S6)
 
@@ -265,7 +265,7 @@ Paddle calls itself a merchant of record (S22) and documents cards, wallets and 
 
 - Webhook signatures cannot be verified offline.
 - Only transaction, adjustment and subscription entities are analyzed. List responses, Paddle Classic payloads and other entity types are recognized or ignored, not analyzed.
-- About half of the documented API error codes are catalogued (section 5); the rest stay unknown.
+- 87 of the 227 documented API error codes are catalogued (section 5); the rest stay unknown.
 - Whether an approved refund adjustment means the funds reached the customer: **NOT DOCUMENTED**.
 - The meaning of the chargeback family statuses for the merchant: **NOT DOCUMENTED** beyond creation.
 - Payment attempt timing: only `created_at` and `captured_at` exist; the time an attempt failed is **NOT DOCUMENTED** separately.
