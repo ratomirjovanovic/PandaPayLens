@@ -1,0 +1,88 @@
+[
+  {
+    "id": "WH-PPLSYNTH0000007-EVT0000000000070",
+    "event_version": "1.0",
+    "create_time": "2026-10-01T10:00:05Z",
+    "event_type": "BILLING.SUBSCRIPTION.CREATED",
+    "summary": "Subscription created",
+    "resource": {
+      "id": "I-PPLSYNTHSUB0007",
+      "plan_id": "P-PPLSYNTHPLAN0007",
+      "status": "APPROVAL_PENDING",
+      "status_update_time": "2026-10-01T10:00:00Z",
+      "custom_id": "PPLsynth-custom-private",
+      "create_time": "2026-10-01T10:00:00Z"
+    }
+  },
+  {
+    "id": "WH-PPLSYNTH0000007-EVT0000000000071",
+    "event_version": "1.0",
+    "create_time": "2026-10-01T10:05:05Z",
+    "event_type": "BILLING.SUBSCRIPTION.ACTIVATED",
+    "summary": "Subscription activated",
+    "resource": {
+      "id": "I-PPLSYNTHSUB0007",
+      "plan_id": "P-PPLSYNTHPLAN0007",
+      "status": "ACTIVE",
+      "status_update_time": "2026-10-01T10:05:00Z",
+      "billing_info": {
+        "outstanding_balance": { "currency_code": "USD", "value": "0.00" },
+        "last_payment": {
+          "amount": { "currency_code": "USD", "value": "15.00" },
+          "time": "2026-10-01T10:04:30Z"
+        },
+        "next_billing_time": "2026-11-01T10:00:00Z",
+        "failed_payments_count": 0
+      }
+    }
+  },
+  {
+    "id": "WH-PPLSYNTH0000007-EVT0000000000072",
+    "event_version": "1.0",
+    "create_time": "2026-11-01T10:10:00Z",
+    "event_type": "BILLING.SUBSCRIPTION.PAYMENT.FAILED",
+    "summary": "Subscription payment failed",
+    "resource": {
+      "id": "I-PPLSYNTHSUB0007",
+      "plan_id": "P-PPLSYNTHPLAN0007",
+      "status": "ACTIVE",
+      "status_change_note": "PPLsynth private note",
+      "subscriber": {
+        "name": { "given_name": "Synthetic", "surname": "Subscriber" },
+        "email_address": "synthetic.subscriber7@example.com"
+      },
+      "billing_info": {
+        "outstanding_balance": { "currency_code": "USD", "value": "15.00" },
+        "last_payment": {
+          "amount": { "currency_code": "USD", "value": "15.00" },
+          "time": "2026-10-01T10:04:30Z"
+        },
+        "last_failed_payment": {
+          "amount": { "currency_code": "USD", "value": "15.00" },
+          "time": "2026-11-01T10:09:30Z",
+          "reason_code": "PAYER_CANNOT_PAY",
+          "next_payment_retry_time": "2026-11-06T10:00:00Z"
+        },
+        "next_billing_time": "2026-12-01T10:00:00Z",
+        "failed_payments_count": 1
+      }
+    }
+  },
+  {
+    "id": "WH-PPLSYNTH0000007-EVT0000000000073",
+    "event_version": "1.0",
+    "create_time": "2026-11-11T10:00:00Z",
+    "event_type": "BILLING.SUBSCRIPTION.SUSPENDED",
+    "summary": "Subscription suspended",
+    "resource": {
+      "id": "I-PPLSYNTHSUB0007",
+      "plan_id": "P-PPLSYNTHPLAN0007",
+      "status": "SUSPENDED",
+      "status_update_time": "2026-11-11T09:59:55Z",
+      "billing_info": {
+        "outstanding_balance": { "currency_code": "USD", "value": "15.00" },
+        "failed_payments_count": 2
+      }
+    }
+  }
+]

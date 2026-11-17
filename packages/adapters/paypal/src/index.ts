@@ -7,9 +7,13 @@
  * - `paypal.payment_resource`       Payments v2 capture, authorization or refund resource
  * - `paypal.webhook`                Webhook event envelope (`event_type`, `resource`)
  * - `paypal.webhook.verify_request` verify-webhook-signature body; only `webhook_event` is used
+ * - `paypal.subscription`           Subscriptions v1 subscription resource
+ * - `paypal.dispute`                Customer Disputes v1 dispute resource
  *
- * Recognized but not supported: subscription webhooks (`BILLING.SUBSCRIPTION.*`)
- * and OAuth token errors (`{ error, error_description }`).
+ * Webhooks cover Orders v2, Payments v2, Subscriptions v1 (`BILLING.SUBSCRIPTION.*`)
+ * and Customer Disputes v1 (`CUSTOMER.DISPUTE.*`) events.
+ *
+ * Recognized but not supported: OAuth token errors (`{ error, error_description }`).
  *
  * The order status never decides the payment outcome: a COMPLETED order can
  * contain a DECLINED capture, and APPROVED only means the buyer consented.
@@ -42,6 +46,11 @@ import {
   CAPTURE_STATUSES,
   CAPTURE_STATUS_URL,
   CARD_DECLINE_URL,
+  DISPUTE_CHANNELS,
+  DISPUTE_LIFE_CYCLE_STAGES,
+  DISPUTE_OUTCOME_CODES,
+  DISPUTE_REASONS,
+  DISPUTE_STATUSES,
   ERRORS_OVERVIEW_URL,
   ERROR_NAMES,
   ERROR_NAME_ALIASES,
@@ -58,7 +67,11 @@ import {
   RESPONSES_URL,
   RISK_FILTER_DECLINE,
   STATUS_REASONS,
-  UNSUPPORTED_EVENT_FAMILIES,
+  SUBSCRIPTION_FAILURE_REASONS,
+  SUBSCRIPTION_PAYMENT_FAILURE_URL,
+  SUBSCRIPTION_STATUSES,
+  SUBSCRIPTION_WEBHOOKS_URL,
+  SUBSCRIPTIONS_API_URL,
   WEBHOOK_EVENTS,
   type CatalogEntry,
   type ResourceKind,
@@ -159,6 +172,76 @@ const StandaloneOrder = Order.extend({
   status: z.string().max(64),
 });
 
+/** Subscriptions v1 `subscription`. Subscriber, plan details, custom_id and notes are not declared and never read. */
+const Subscription = z.looseObject({
+  id: z.string().max(128).optional(),
+  status: z.string().max(64).optional(),
+  status_update_time: z.string().max(64).optional(),
+  plan_id: z.string().max(128).optional(),
+  start_time: z.string().max(64).optional(),
+  create_time: z.string().max(64).optional(),
+  update_time: z.string().max(64).optional(),
+  billing_info: z
+    .looseObject({
+      outstanding_balance: Money.optional(),
+      next_billing_time: z.string().max(64).optional(),
+      final_payment_time: z.string().max(64).optional(),
+      failed_payments_count: z.number().optional(),
+      last_payment: z
+        .looseObject({ amount: Money.optional(), time: z.string().max(64).optional() })
+        .optional(),
+      last_failed_payment: z
+        .looseObject({
+          amount: Money.optional(),
+          time: z.string().max(64).optional(),
+          reason_code: z.string().max(128).optional(),
+          next_payment_retry_time: z.string().max(64).optional(),
+        })
+        .optional(),
+    })
+    .optional(),
+  links: z.array(Link).optional(),
+});
+
+const StandaloneSubscription = Subscription.extend({
+  id: z.string().max(128),
+  status: z.string().max(64),
+});
+
+/**
+ * Customer Disputes v1 `dispute`. Buyer and seller details, messages, evidences,
+ * invoice_number and custom are not declared and never read.
+ */
+const Dispute = z.looseObject({
+  dispute_id: z.string().max(255).optional(),
+  create_time: z.string().max(64).optional(),
+  update_time: z.string().max(64).optional(),
+  status: z.string().max(64).optional(),
+  reason: z.string().max(64).optional(),
+  dispute_life_cycle_stage: z.string().max(64).optional(),
+  dispute_channel: z.string().max(64).optional(),
+  dispute_amount: Money.optional(),
+  external_reason_code: z.string().max(64).optional(),
+  dispute_outcome: z
+    .looseObject({
+      outcome_code: z.string().max(64).optional(),
+      amount_refunded: Money.optional(),
+    })
+    .optional(),
+  disputed_transactions: z
+    .array(
+      z.looseObject({
+        seller_transaction_id: z.string().max(255).optional(),
+        transaction_status: z.string().max(64).optional(),
+      }),
+    )
+    .optional(),
+  seller_response_due_date: z.string().max(64).optional(),
+  buyer_response_due_date: z.string().max(64).optional(),
+});
+
+const StandaloneDispute = Dispute.extend({ dispute_id: z.string().max(255) });
+
 // resource_type, resource_version and links are optional: an official
 // sample (CHECKOUT.PAYMENT-APPROVAL.REVERSED) omits them.
 const Webhook = z.looseObject({
@@ -175,16 +258,22 @@ type ApiErrorT = z.infer<typeof ApiError>;
 type ResourceT = z.infer<typeof Resource>;
 type OrderT = z.infer<typeof Order>;
 type WebhookT = z.infer<typeof Webhook>;
+type SubscriptionT = z.infer<typeof Subscription>;
+type DisputeT = z.infer<typeof Dispute>;
 
 type WebhookResource =
   | { type: "order"; value: OrderT }
   | { type: "payment"; kind: ResourceKind | null; value: ResourceT }
+  | { type: "subscription"; value: SubscriptionT }
+  | { type: "dispute"; value: DisputeT }
   | { type: "other"; value: ResourceT };
 
 export type PaypalParsed =
   | { kind: "api_error"; value: ApiErrorT }
   | { kind: "order"; value: OrderT }
   | { kind: "payment_resource"; resourceKind: ResourceKind | null; value: ResourceT }
+  | { kind: "subscription"; value: SubscriptionT }
+  | { kind: "dispute"; value: DisputeT }
   | {
       kind: "webhook";
       value: WebhookT;
@@ -318,17 +407,6 @@ function detectWebhook(o: Record<string, unknown>): DetectionResult | null {
     c += 0.03;
     reasons.push("has resource_type / resource_version / event_version");
   }
-  const family = UNSUPPORTED_EVENT_FAMILIES.find((f) => eventType.startsWith(f.prefix));
-  if (family) {
-    return {
-      provider: "paypal",
-      format: "paypal.webhook.subscription",
-      confidence: round(c),
-      supported: false,
-      reasons,
-      unsupportedReason: `PayPal ${family.family} webhooks (${safeText(eventType, 64)}) are recognized but not analyzed. PandaPayLens analyzes Orders v2 and Payments v2 events only.`,
-    };
-  }
   return {
     provider: "paypal",
     format: "paypal.webhook",
@@ -368,6 +446,53 @@ function detectError(o: Record<string, unknown>): DetectionResult | null {
     confidence: c,
     supported: true,
     reasons,
+  };
+}
+
+/** Subscriptions v1 subscription. Runs before order detection: APPROVED is also an order status. */
+function detectSubscription(o: Record<string, unknown>): DetectionResult | null {
+  if (
+    typeof o.id !== "string" ||
+    typeof o.plan_id !== "string" ||
+    typeof o.status !== "string" ||
+    !(o.status in SUBSCRIPTION_STATUSES)
+  )
+    return null;
+  const reasons = [`status "${o.status}" is a subscription status`, "has id and plan_id"];
+  const markers = [
+    isObj(o.billing_info) && "billing_info",
+    isObj(o.subscriber) && "subscriber",
+    typeof o.start_time === "string" && "start_time",
+    typeof o.status_update_time === "string" && "status_update_time",
+  ].filter((x): x is string => Boolean(x));
+  reasons.push(...markers.map((m) => `has ${m}`));
+  return {
+    provider: "paypal",
+    format: "paypal.subscription",
+    confidence: markers.length > 0 ? 0.9 : 0.75,
+    supported: true,
+    reasons,
+  };
+}
+
+/** Customer Disputes v1 dispute, keyed on dispute_id plus documented enum values. */
+function detectDispute(o: Record<string, unknown>): DetectionResult | null {
+  if (typeof o.dispute_id !== "string" || !/^[A-Za-z0-9-]{1,255}$/.test(o.dispute_id)) return null;
+  const markers = [
+    typeof o.reason === "string" && o.reason in DISPUTE_REASONS && "a dispute reason",
+    typeof o.status === "string" && o.status in DISPUTE_STATUSES && "a dispute status",
+    typeof o.dispute_life_cycle_stage === "string" &&
+      o.dispute_life_cycle_stage in DISPUTE_LIFE_CYCLE_STAGES &&
+      "a dispute_life_cycle_stage",
+    Array.isArray(o.disputed_transactions) && "disputed_transactions[]",
+  ].filter((x): x is string => Boolean(x));
+  if (markers.length === 0) return null;
+  return {
+    provider: "paypal",
+    format: "paypal.dispute",
+    confidence: markers.length > 1 ? 0.95 : 0.8,
+    supported: true,
+    reasons: ["has dispute_id", ...markers.map((m) => `has ${m}`)],
   };
 }
 
@@ -461,6 +586,8 @@ function detect(input: unknown): DetectionResult {
   return (
     detectWebhook(input) ??
     detectError(input) ??
+    detectSubscription(input) ??
+    detectDispute(input) ??
     detectOrder(input) ??
     detectResource(input) ??
     detectOAuth(input) ??
@@ -489,6 +616,14 @@ function parseWebhook(
     const o = Order.safeParse(raw);
     if (!o.success) return { ok: false, issues: issuesOf(o.error, resPath) };
     resource = { type: "order", value: o.data };
+  } else if (info?.resource === "subscription") {
+    const s = Subscription.safeParse(raw);
+    if (!s.success) return { ok: false, issues: issuesOf(s.error, resPath) };
+    resource = { type: "subscription", value: s.data };
+  } else if (info?.resource === "dispute") {
+    const d = Dispute.safeParse(raw);
+    if (!d.success) return { ok: false, issues: issuesOf(d.error, resPath) };
+    resource = { type: "dispute", value: d.data };
   } else if (info) {
     const p = Resource.safeParse(raw);
     if (!p.success) return { ok: false, issues: issuesOf(p.error, resPath) };
@@ -527,6 +662,18 @@ function parse(
         ok: true,
         value: { kind: "payment_resource", resourceKind: inferKind(r.data), value: r.data },
       };
+    }
+    case "paypal.subscription": {
+      const r = StandaloneSubscription.safeParse(input);
+      return r.success
+        ? { ok: true, value: { kind: "subscription", value: r.data } }
+        : { ok: false, issues: issuesOf(r.error) };
+    }
+    case "paypal.dispute": {
+      const r = StandaloneDispute.safeParse(input);
+      return r.success
+        ? { ok: true, value: { kind: "dispute", value: r.data } }
+        : { ok: false, issues: issuesOf(r.error) };
     }
     case "paypal.webhook":
       return parseWebhook(input, "");
@@ -688,6 +835,114 @@ function describeOrder(o: OrderT, raw: Record<string, unknown>) {
   };
 }
 
+/** An UPPER_SNAKE enum value, or undefined. Undocumented values are kept only as codes. */
+function enumCode(v: unknown): string | undefined {
+  return typeof v === "string" && /^[A-Z][A-Z0-9_]{0,63}$/.test(v) ? v : undefined;
+}
+
+/** Up to 10 defined values, or undefined when there are none. */
+function listOf(values: (string | undefined)[]): string[] | undefined {
+  const out = values.filter((x): x is string => x !== undefined).slice(0, 10);
+  return out.length ? out : undefined;
+}
+
+function moneyAttrs(prefix: string, m: z.infer<typeof Money> | undefined): [string, unknown][] {
+  if (!m) return [];
+  const { amountMinor, currency } = money(m);
+  return [
+    [`${prefix}Minor`, amountMinor],
+    [`${prefix}Currency`, currency],
+  ];
+}
+
+/**
+ * A subscription is identified by its PayPal-generated id. The status is read
+ * only when it is a documented Subscriptions v1 value; event names shared with
+ * the deprecated billing agreements API can carry other shapes.
+ */
+function describeSubscription(s: SubscriptionT) {
+  const id = paypalId(s.id);
+  const statusInfo = s.status ? SUBSCRIPTION_STATUSES[s.status] : undefined;
+  const b = s.billing_info;
+  const failed = b?.last_failed_payment;
+  const reason = enumCode(failed?.reason_code);
+  const count = b?.failed_payments_count;
+  return {
+    id,
+    status: statusInfo ? s.status : undefined,
+    statusInfo,
+    eventTimestamp: toIsoTimestamp(s.update_time ?? s.status_update_time ?? s.create_time),
+    attributes: attrs([
+      ["resourceKind", "subscription"],
+      ["undocumentedStatus", s.status !== undefined && !statusInfo ? true : undefined],
+      ["planId", paypalId(s.plan_id)],
+      ["statusUpdateTime", toIsoTimestamp(s.status_update_time)],
+      ["startTime", toIsoTimestamp(s.start_time)],
+      ["createTime", toIsoTimestamp(s.create_time)],
+      ["updateTime", toIsoTimestamp(s.update_time)],
+      ["nextBillingTime", toIsoTimestamp(b?.next_billing_time)],
+      ["finalPaymentTime", toIsoTimestamp(b?.final_payment_time)],
+      [
+        "failedPaymentsCount",
+        typeof count === "number" && Number.isInteger(count) && count >= 0 ? count : undefined,
+      ],
+      ...moneyAttrs("outstandingBalance", b?.outstanding_balance),
+      ...moneyAttrs("lastPaymentAmount", b?.last_payment?.amount),
+      ["lastPaymentTime", toIsoTimestamp(b?.last_payment?.time)],
+      ...moneyAttrs("lastFailedPaymentAmount", failed?.amount),
+      ["lastFailedPaymentTime", toIsoTimestamp(failed?.time)],
+      ["lastFailedPaymentReason", reason],
+      ["nextPaymentRetryTime", toIsoTimestamp(failed?.next_payment_retry_time)],
+    ]),
+  };
+}
+
+/**
+ * A dispute is identified by dispute_id. The disputed transaction ids are kept
+ * as attributes only: PayPal does not document which payment id they equal.
+ */
+function describeDispute(d: DisputeT) {
+  const id = paypalId(d.dispute_id);
+  const status = enumCode(d.status);
+  const reason = enumCode(d.reason);
+  const stage = enumCode(d.dispute_life_cycle_stage);
+  const channel = enumCode(d.dispute_channel);
+  const outcomeCode = enumCode(d.dispute_outcome?.outcome_code);
+  const txs = d.disputed_transactions ?? [];
+  const { amountMinor, currency } = money(d.dispute_amount);
+  return {
+    id,
+    status: status && status in DISPUTE_STATUSES ? status : undefined,
+    amountMinor,
+    currency,
+    eventTimestamp: toIsoTimestamp(d.update_time ?? d.create_time),
+    attributes: attrs([
+      ["resourceKind", "dispute"],
+      [
+        "undocumentedStatus",
+        d.status !== undefined && !(status && status in DISPUTE_STATUSES) ? true : undefined,
+      ],
+      ["disputeReason", reason],
+      ["disputeReasonDescription", reason ? DISPUTE_REASONS[reason] : undefined],
+      ["lifeCycleStage", stage],
+      ["lifeCycleStageDescription", stage ? DISPUTE_LIFE_CYCLE_STAGES[stage] : undefined],
+      ["disputeChannel", channel],
+      ["disputeChannelDescription", channel ? DISPUTE_CHANNELS[channel] : undefined],
+      ["outcomeCode", outcomeCode],
+      ["outcomeCodeDescription", outcomeCode ? DISPUTE_OUTCOME_CODES[outcomeCode] : undefined],
+      ...moneyAttrs("amountRefunded", d.dispute_outcome?.amount_refunded),
+      ["externalReasonCode", safeId(d.external_reason_code, 64)],
+      ["sellerResponseDueDate", toIsoTimestamp(d.seller_response_due_date)],
+      ["buyerResponseDueDate", toIsoTimestamp(d.buyer_response_due_date)],
+      ["createTime", toIsoTimestamp(d.create_time)],
+      ["updateTime", toIsoTimestamp(d.update_time)],
+      ["disputedTransactionCount", txs.length || undefined],
+      ["disputedTransactionIds", listOf(txs.map((t) => paypalId(t.seller_transaction_id)))],
+      ["disputedTransactionStatuses", listOf(txs.map((t) => enumCode(t.transaction_status)))],
+    ]),
+  };
+}
+
 /** One event per capture, authorization and refund nested in an order's purchase units. */
 function nestedPayments(
   o: OrderT,
@@ -835,6 +1090,47 @@ function normalize(parsed: PaypalParsed, ctx: NormalizeContext): NormalizedEvent
     ];
   }
 
+  if (parsed.kind === "subscription") {
+    const d = describeSubscription(parsed.value);
+    return [
+      clean({
+        sourceFormat: ctx.format,
+        eventType: "subscription.snapshot",
+        eventTypeKnown: true,
+        stage: d.statusInfo?.stage ?? "subscription",
+        providerStatus: d.status,
+        paymentReference: d.id,
+        subscriptionReference: d.id,
+        eventTimestamp: d.eventTimestamp,
+        outcome: d.statusInfo?.outcome ?? "unknown",
+        attributes: { ...d.attributes, ...attrs([["httpStatus", httpStatus]]) },
+        source: { recordIndex: ctx.recordIndex, path: "" },
+        ...observed,
+      }),
+    ];
+  }
+
+  if (parsed.kind === "dispute") {
+    const d = describeDispute(parsed.value);
+    return [
+      clean({
+        sourceFormat: ctx.format,
+        eventType: "dispute.snapshot",
+        eventTypeKnown: true,
+        stage: "dispute",
+        providerStatus: d.status,
+        paymentReference: d.id,
+        eventTimestamp: d.eventTimestamp,
+        amountMinor: d.amountMinor,
+        currency: d.currency,
+        outcome: "unknown",
+        attributes: { ...d.attributes, ...attrs([["httpStatus", httpStatus]]) },
+        source: { recordIndex: ctx.recordIndex, path: "" },
+        ...observed,
+      }),
+    ];
+  }
+
   const w = parsed.value;
   const info = WEBHOOK_EVENTS[w.event_type];
   const eventId = safeId(w.id, 256);
@@ -863,6 +1159,50 @@ function normalize(parsed: PaypalParsed, ctx: NormalizeContext): NormalizedEvent
       clean({
         ...base,
         providerStatus: d.status ? safeText(d.status, 64) : undefined,
+        paymentReference: d.id,
+        amountMinor: d.amountMinor,
+        currency: d.currency,
+        outcome: info!.outcome,
+        attributes: {
+          ...d.attributes,
+          ...attrs([["resourceUpdateTime", d.eventTimestamp]]),
+          ...envelope,
+        },
+      }),
+    ];
+  }
+
+  if (res.type === "subscription") {
+    const d = describeSubscription(res.value);
+    // Only the failed-payment event carries an amount: the failed payment's.
+    const failedAmount =
+      w.event_type === "BILLING.SUBSCRIPTION.PAYMENT.FAILED"
+        ? money(res.value.billing_info?.last_failed_payment?.amount)
+        : undefined;
+    return [
+      clean({
+        ...base,
+        providerStatus: d.status,
+        paymentReference: d.id,
+        subscriptionReference: d.id,
+        amountMinor: failedAmount?.amountMinor,
+        currency: failedAmount?.currency,
+        outcome: info!.outcome,
+        attributes: {
+          ...d.attributes,
+          ...attrs([["resourceUpdateTime", d.eventTimestamp]]),
+          ...envelope,
+        },
+      }),
+    ];
+  }
+
+  if (res.type === "dispute") {
+    const d = describeDispute(res.value);
+    return [
+      clean({
+        ...base,
+        providerStatus: d.status,
         paymentReference: d.id,
         amountMinor: d.amountMinor,
         currency: d.currency,
@@ -1117,6 +1457,65 @@ function decodePaymentFailure(
   };
 }
 
+/** BILLING.SUBSCRIPTION.PAYMENT.FAILED, decoded from billing_info.last_failed_payment.reason_code. */
+function decodeSubscriptionFailure(
+  s: SubscriptionT,
+  ctx: NormalizeContext,
+  path: string,
+): DecodedErrorDraft {
+  const failed = s.billing_info?.last_failed_payment;
+  const reason = enumCode(failed?.reason_code);
+  const entry = reason ? SUBSCRIPTION_FAILURE_REASONS[reason] : undefined;
+  const id = paypalId(s.id);
+
+  const subCodes: Record<string, string> = { event: "BILLING.SUBSCRIPTION.PAYMENT.FAILED" };
+  if (reason) subCodes.reason_code = reason;
+  const count = s.billing_info?.failed_payments_count;
+  if (typeof count === "number" && Number.isInteger(count) && count >= 0)
+    subCodes.failed_payments_count = String(count);
+
+  const missing: string[] = [];
+  if (!reason)
+    missing.push(
+      "No billing_info.last_failed_payment.reason_code was supplied, so the reason is unknown.",
+    );
+  else if (!entry) missing.push(`Reason code "${reason}" is not in the PandaPayLens catalog yet.`);
+  if (!failed?.next_payment_retry_time)
+    missing.push(
+      "No next_payment_retry_time was supplied; the payload does not show whether PayPal will retry this payment.",
+    );
+  if (!id)
+    missing.push(
+      "No subscription id was found; other events of this subscription cannot be linked.",
+    );
+
+  return {
+    sourceFormat: ctx.format,
+    source: { recordIndex: ctx.recordIndex, path },
+    code: reason ?? "BILLING.SUBSCRIPTION.PAYMENT.FAILED",
+    subCodes,
+    category: entry?.category ?? "unknown",
+    explanation: `A subscription payment failed. ${entry?.explanation ?? "PayPal did not say why."}`,
+    nextAction:
+      entry?.nextAction ??
+      "Check the subscription's billing details in the PayPal account before contacting the subscriber.",
+    retry: entry?.retry ?? "unknown",
+    retryExplanation:
+      entry?.retryExplanation ?? "Retry safety cannot be assessed without a known reason.",
+    confidence: entry ? "strong" : "insufficient",
+    documentation: [
+      { title: "PayPal Subscriptions v1 API", url: SUBSCRIPTIONS_API_URL },
+      { title: "PayPal subscriptions webhooks", url: SUBSCRIPTION_WEBHOOKS_URL },
+      {
+        title: "PayPal subscription payment failures and outstanding balances",
+        url: SUBSCRIPTION_PAYMENT_FAILURE_URL,
+      },
+    ],
+    missingInformation: missing,
+    ...(id ? { paymentReference: id } : {}),
+  };
+}
+
 function failureStatus(kind: ResourceKind | null, status: string | undefined): string | undefined {
   if (kind === "capture" && (status === "DECLINED" || status === "FAILED")) return status;
   if (kind === "authorization" && status === "DENIED") return status;
@@ -1167,7 +1566,20 @@ function decodeErrors(parsed: PaypalParsed, ctx: NormalizeContext): DecodedError
     ];
   }
 
+  if (parsed.kind === "subscription" || parsed.kind === "dispute") return [];
+
   const res = parsed.resource;
+  if (
+    res.type === "subscription" &&
+    parsed.value.event_type === "BILLING.SUBSCRIPTION.PAYMENT.FAILED"
+  )
+    return [
+      decodeSubscriptionFailure(
+        res.value,
+        ctx,
+        [parsed.path, "resource"].filter(Boolean).join("."),
+      ),
+    ];
   if (res.type !== "payment" || !res.kind) return [];
   const event = parsed.value.event_type;
   const failedEvent = event === "PAYMENT.CAPTURE.DECLINED" || event === "PAYMENT.CAPTURE.DENIED";
@@ -1211,7 +1623,16 @@ export const paypalAdapter: ProviderAdapter<PaypalParsed> = {
     {
       id: "paypal.webhook",
       description:
-        "Webhook event (id, event_type, create_time, resource) for Orders v2 and Payments v2",
+        "Webhook event (id, event_type, create_time, resource) for Orders v2, Payments v2, Subscriptions v1 and Customer Disputes v1",
+    },
+    {
+      id: "paypal.subscription",
+      description: "Subscriptions v1 subscription resource (id, plan_id, status, billing_info)",
+    },
+    {
+      id: "paypal.dispute",
+      description:
+        "Customer Disputes v1 dispute resource (dispute_id, status, reason, dispute_life_cycle_stage, dispute_outcome)",
     },
     {
       id: "paypal.webhook.verify_request",

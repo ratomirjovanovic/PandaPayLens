@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Providers
+
+- PayPal: subscription webhooks (`BILLING.SUBSCRIPTION.CREATED`, `ACTIVATED`, `UPDATED`, `EXPIRED`, `CANCELLED`, `SUSPENDED`, `PAYMENT.FAILED`) and dispute webhooks (`CUSTOMER.DISPUTE.CREATED`, `UPDATED`, `RESOLVED`) are analyzed, together with the subscription and dispute REST resources. Events are grouped by subscription or dispute id. A suspended subscription is shown as unknown, not as a failure, and disputes are not linked to payments because PayPal does not document that link. Overall status stays limited.
+
 ## [0.16.0] - 2026-11-17
 
 ### GitHub Action
