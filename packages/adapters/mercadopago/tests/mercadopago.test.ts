@@ -265,6 +265,16 @@ describe("mercadopago notifications", () => {
     const r = analyzeFixture("webhook-duplicate.json");
     expect(r.events).toHaveLength(2);
     expect(r.events[0]!.contentFingerprint).toBe(r.events[1]!.contentFingerprint);
+    expect(r.findings.map((x) => x.ruleId)).toContain("DUPLICATE_DELIVERY");
+  });
+
+  it("uses date_created as the event time only for payment.created", () => {
+    const created = analyzeFixture("webhook-payment-created.json").events[0]!;
+    expect(created.eventTimestamp).toBe("2026-11-10T13:00:00.000Z");
+    const updated = analyzeFixture("webhook-duplicate.json").events[0]!;
+    expect(updated.eventTimestamp).toBeUndefined();
+    expect(updated.attributes.resourceCreatedAt).toBe("2026-11-10T13:00:00.000Z");
+    expect(analyzeFixture("webhook-chargeback.json").events[0]!.eventTimestamp).toBeUndefined();
   });
 
   it("reads a pasted HTTP webhook and never copies the signature headers", () => {
@@ -306,6 +316,16 @@ describe("mercadopago notifications", () => {
       outcome: "unknown",
       paymentReference: "9000001101",
     });
+  });
+
+  it("reads a payment IPN pasted as a request line or as a URL", () => {
+    expect(analyzeFixture("ipn-http.txt").events[0]).toMatchObject({
+      sourceFormat: "mercadopago.ipn",
+      paymentReference: "9000001501",
+    });
+    expect(
+      analyze("https://pplsynth.example.com/notifications?topic=payment&id=9000001502").events[0],
+    ).toMatchObject({ paymentReference: "9000001502" });
   });
 
   it("reports a parse issue for a webhook without a payment id", () => {

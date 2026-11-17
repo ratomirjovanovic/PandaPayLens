@@ -1,0 +1,4 @@
+POST /notifications/pplsynth?topic=payment&id=9000001501 HTTP/1.1
+Host: pplsynth.example.com
+Content-Length: 0
+

@@ -120,6 +120,7 @@ export const mercadopagoManifest: ProviderManifest = {
   limitations: [
     "Webhooks and IPN notifications carry only the resource id, never the payment status, so their outcome is unknown. Fetch the payment to learn its state.",
     "No delivery or idempotency key is documented for payment notifications; repeats are recognized only by identical content. Delivery order is not documented.",
+    "Webhooks date_created is documented as the creation date of the notified resource, so it is used as the event time only for payment.created. Later payment notifications and chargeback notifications carry no documented event time, so they have none in the timeline.",
     "Webhook signatures (x-signature with x-request-id) are never verified: that needs the application's secret. IPN signatures cannot be validated at all. Both headers are treated as sensitive.",
     "Error bodies are decoded by HTTP status only. The Payments API reference lists numeric error values but not the body field that carries them, and the structure of cause items is not documented, so cause entries are counted, not interpreted.",
     "Rejections are decoded from status_detail. Category and retry classes are PandaPayLens judgments from the documented descriptions; Mercado Pago does not publish retry guidance per value. The issuer's own response code is not in the payment object.",

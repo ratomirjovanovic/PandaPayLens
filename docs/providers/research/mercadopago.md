@@ -102,9 +102,10 @@ Paraphrased groups from S1, S2, S4, S5 and S6. Kept here for reference only; the
 
 - Authentication and authorization: 5 (access token missing, 401 on S4 and S6, 400 on S1), 4 and 3002 (caller not authorized, 403), `Unauthorized use of live credentials` (401, token without the payment scope, S2), `pa_unauthorized_result_from_policies` (403, policy agent, usually a missing authorization header, S2), 401 on S5 (invalid token).
 - Not found: 2000 (payment not found, 404), 2032 (refund not found, 404, S5 and S6).
-- Duplicate request: 2001 (the same request was posted in the last minute, S1), and on S9 the client-side value 801 with the same meaning.
+- Duplicate request: 2001 (the same request was posted in the last minute, S1), and on S9 (card token page) the value 801 with the same meaning.
 - Idempotency header missing: 4292 (400 on S2, 404 on S5).
-- Invalid state: 3005 (the resource state does not allow the operation, S1 and S2), 2018 and 2016 (invalid status change when cancelling, S4), 2063 (action not valid for the payment state, refunds, S5).
+- Invalid state: 3005 (the resource state does not allow the operation, S1 and S2), 2018 and 2016 (invalid status change when cancelling, S4; 2018 also on S3), 2063 (action not valid for the payment state, refunds, S5).
+- Capture: 2078 and 2079 (the `capture` attribute must be a valid boolean, S3).
 - Refund rules: 2024 and 15016 (payment too old to refund, S5), 3024 (partial refund not supported; 400 on S1 and S2, 404 on S5), 4040 and 4041 (refund amount must be positive and numeric, listed under 401 on S5).
 - Card and token data: 2006, 2062, 3003, 3006, 3008 (card token missing or invalid), 3000, 3001, 3012 to 3023, 3029, 3030 (card and cardholder fields missing or invalid), 3010 (card not on whitelist).
 - Payment method and amount: 2072, 4002, 4003, 4023, 4024, 4037 (transaction amount missing or invalid), 2131 (payment method cannot be inferred), 3011, 3014, 3026 to 3028 (payment method or type invalid), 4033 (invalid installments), 4038 and 4039 (application fee larger than the amount or negative), 2059 (application fee needs an OAuth token).
@@ -155,7 +156,7 @@ S1 lists all values in one enum; S7 and S8 pair them with a `status`. Several va
   - Payer: `payer_unavailable` (payer restricted).
   - Other: `rejected_other_reason` (unclassified).
 
-S11 groups rejections into issuer declines, fraud prevention, and checkout data errors. Mapping each value to a PandaPayLens category and retry class is a PandaPayLens judgment based on these descriptions; Mercado Pago does not publish retry guidance per value except the payer messages in S7 (choose another card or method for `cc_rejected_high_risk`, `cc_rejected_max_attempts`, `cc_rejected_duplicated_payment`, `cc_rejected_card_disabled`).
+S11 groups rejections into data entry errors (the four `cc_rejected_bad_filled_*` values), issuer declines (`cc_rejected_call_for_authorize`, `cc_rejected_card_disabled`, `cc_rejected_duplicated_payment`, `cc_rejected_insufficient_amount`, `cc_rejected_invalid_installments`, `cc_rejected_max_attempts`) and fraud prevention (`cc_rejected_blacklist`, `cc_rejected_high_risk`, `cc_rejected_other_reason`). It says `cc_rejected_other_reason` is given by the bank without a reason and indicates a fraud risk estimate, though other reasons are possible, and that `cc_rejected_high_risk` can follow two near-identical consecutive payments, so integrations should avoid immediate retries with the same payment data. Mapping each value to a PandaPayLens category and retry class is a PandaPayLens judgment based on these descriptions; Mercado Pago does not publish retry guidance per value except the payer messages in S7 (choose another card or method for `cc_rejected_high_risk`, `cc_rejected_max_attempts`, `cc_rejected_duplicated_payment`, `cc_rejected_card_disabled`).
 
 The issuer's own raw response code is NOT DOCUMENTED in the payment object.
 
@@ -176,7 +177,7 @@ A refund does not have its own notification topic in S13; it shows up as a `paym
 ### 7.1 Webhooks (recommended, S12, S13, S16)
 
 - Delivered as HTTP POST with a JSON body. Query parameters `data.id` and `type` accompany the URL (S16).
-- Body fields (S13, paraphrased): `id` (notification id), `live_mode`, `type` (topic, for payments `payment`), `date_created` (S13 says it is the creation date of the notified resource), `user_id` (seller), `api_version` (`v1`), `action` (event, creation or update), `data.id` (id of the payment, merchant order or claim).
+- Body fields (S13, paraphrased): `id` (notification id), `live_mode`, `type` (topic, for payments `payment`), `date_created` (S13 and S16 say it is the creation date of the notified resource, so it is the event time only for `payment.created`; the adapter uses it as the event time only there and keeps it as an attribute otherwise), `user_id` (seller), `api_version` (`v1`), `action` (event, creation or update), `data.id` (id of the payment, merchant order or claim).
 - Payment actions documented: `payment.created` (S13 example) and `payment.updated` (S16 simulation example).
 - The notification carries no status. The receiver must fetch `GET /v1/payments/{id}` to learn the state (S13).
 - Signature: header `x-signature` with `ts` and `v1`, plus `x-request-id`; `v1` is an HMAC-SHA256 over a manifest built from `data.id`, `x-request-id` and `ts`, keyed with the application's secret (S13). Not verifiable offline; PandaPayLens never verifies it and treats both headers as sensitive.
@@ -187,7 +188,7 @@ A refund does not have its own notification topic in S13; it shows up as a `paym
 
 Other topics (S13, S15): `order`/`orders`, `subscription_authorized_payment`, `subscription_preapproval`, `subscription_preapproval_plan`, `mp-connect`, `wallet_connect`, `stop_delivery_op_wh` (fraud alert, example with `data.payment_id`), `topic_claims_integration_wh`, `topic_card_id_wh` (Card Updater example with `type` `automatic-payments` and `action` `card.updated`), `topic_merchant_order_wh`, `topic_chargebacks_wh`, `point_integration_wh`.
 
-Chargebacks topic example (S15): `actions` (array, example value `changed_case_status`), `api_version`, `application_id`, `data` with `checkout`, `date_updated`, `id` (chargeback id), `payment_id`, `product_id`, `site_id`, `transaction_intent_id`, then `date_created`, `id`, `live_mode`, `type` `topic_chargebacks_wh`, `user_id`, `version`. The values of `actions` are not enumerated. The adapter reads it as a dispute signal for `data.payment_id` with outcome unknown. The example's chargeback id (217000061307271000) is above 2^53, so JSON parsers lose precision; the adapter drops unsafe integer ids instead of guessing.
+Chargebacks topic example (S15): `actions` (array, example value `changed_case_status`), `api_version`, `application_id`, `data` with `checkout`, `date_updated`, `id` (chargeback id), `payment_id`, `product_id`, `site_id`, `transaction_intent_id`, then `date_created`, `id`, `live_mode`, `type` `topic_chargebacks_wh`, `user_id`, `version`. The values of `actions` are not enumerated, and `date_created` and `data.date_updated` are not described for this topic, so the adapter does not use them as the event time. The adapter reads it as a dispute signal for `data.payment_id` with outcome unknown. The example's chargeback id (217000061307271000) is above 2^53, so JSON parsers lose precision; the adapter drops unsafe integer ids instead of guessing.
 
 ### 7.2 IPN (legacy, S14)
 
@@ -196,7 +197,7 @@ Chargebacks topic example (S15): `actions` (array, example value `changed_case_s
 - Same 22 second timeout and 15 minute retry policy as Webhooks (S14).
 - The integrator may add `cliente` to the URL to tell sellers apart (S13, S14), and `source_news=ipn` to receive only Webhooks (S14).
 
-The adapter reads a pasted query string or form body with `topic` and `id` (and optionally `cliente` or `source_news`). Only `topic=payment` is analyzed; the notification carries no status, so the outcome is unknown.
+The adapter reads `topic` and `id` from a pasted notification URL, a bare query string, or a pasted HTTP request line with an empty body (and optionally `cliente` or `source_news`). Only `topic=payment` is analyzed; the notification carries no status, so the outcome is unknown.
 
 ## 8. Identifiers and correlation
 

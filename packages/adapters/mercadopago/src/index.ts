@@ -525,8 +525,9 @@ function normalize(parsed: MercadoPagoParsed, ctx: NormalizeContext): Normalized
         stage: known ? "payment" : "other",
         eventReference,
         paymentReference: idString(w.data.id),
-        // Mercado Pago documents date_created as the notified resource's creation date.
-        eventTimestamp: iso(w.date_created),
+        // date_created is documented as the notified resource's creation date,
+        // so it is the event time only for payment.created.
+        eventTimestamp: w.action === "payment.created" ? iso(w.date_created) : undefined,
         // A notification carries no status; the payment must be fetched.
         outcome: "unknown",
         attributes: {
@@ -534,6 +535,7 @@ function normalize(parsed: MercadoPagoParsed, ctx: NormalizeContext): Normalized
             ["topic", w.type],
             ["apiVersion", safeId(w.api_version, 32)],
             ["liveMode", w.live_mode],
+            ["resourceCreatedAt", iso(w.date_created)],
           ]),
           ...httpAttrs(ctx.meta),
         },
@@ -556,14 +558,16 @@ function normalize(parsed: MercadoPagoParsed, ctx: NormalizeContext): Normalized
       eventReference,
       paymentReference: idString(w.data.payment_id),
       relatedReference: idString(w.data.id),
-      eventTimestamp: iso(w.date_created),
+      // The meaning of date_created and data.date_updated is not described for
+      // this topic, so neither is used as the event time.
       outcome: "unknown",
       attributes: {
         ...attrs([
           ["topic", w.type],
           ["apiVersion", safeId(w.api_version, 32)],
           ["liveMode", w.live_mode],
-          ["chargebackUpdatedAt", iso(w.data.date_updated)],
+          ["notificationDateCreated", iso(w.date_created)],
+          ["dataDateUpdated", iso(w.data.date_updated)],
         ]),
         ...(actions.length > 0 ? { actions } : {}),
         ...httpAttrs(ctx.meta),

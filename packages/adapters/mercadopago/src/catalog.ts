@@ -213,7 +213,7 @@ const noRetry = make(
 );
 const conditional = make(
   "retry_conditionally",
-  "The payment was rejected, so it is safe to start a new attempt, but only after the cause is addressed.",
+  "The payment status is rejected. A new attempt makes sense only after the cause is addressed.",
 );
 const unknownRetry = make(
   "unknown",
@@ -285,8 +285,8 @@ export const REJECTION_DETAILS: Record<string, RejectionEntry> = {
   ),
   cc_rejected_other_reason: customer(
     "card_declined",
-    "The card issuer or network did not process the payment (generic decline).",
-    "Ask the payer to use another card or payment method.",
+    "Generic rejection given by the bank without a reason. Mercado Pago lists it under fraud prevention as a risk estimate, but says other reasons are possible.",
+    "Ask the payer to use another payment method or to contact the issuing bank.",
     { confidence: "possible" },
   ),
   cc_rejected_3ds_challenge: customer(
@@ -307,7 +307,7 @@ export const REJECTION_DETAILS: Record<string, RejectionEntry> = {
   cc_rejected_high_risk: noRetry(
     "fraud_or_risk",
     "Rejected by Mercado Pago fraud prevention.",
-    "Do not retry immediately with the same data. Mercado Pago suggests offering another payment method.",
+    "Do not retry immediately with the same payment data; Mercado Pago recommends controls against that. Offer another payment method.",
   ),
   rejected_high_risk: noRetry(
     "fraud_or_risk",
@@ -317,7 +317,7 @@ export const REJECTION_DETAILS: Record<string, RejectionEntry> = {
   cc_rejected_time_out: conditional(
     "network_or_timeout",
     "Mercado Pago did not receive a response in time and rejected the payment.",
-    "The payment is rejected, so a new attempt will not double charge this one. Start a new payment if the payer wants to continue.",
+    "The payment status is rejected. Check the payment in Mercado Pago before starting a new one.",
   ),
   cc_amount_rate_limit_exceeded: customer(
     "payment_method_unavailable",
@@ -350,7 +350,7 @@ export const REJECTION_DETAILS: Record<string, RejectionEntry> = {
   bank_error: conditional(
     "provider_unavailable",
     "Bank transfer payment rejected because of an error with the bank.",
-    "The payment is rejected; start a new payment or offer another method.",
+    "The payment status is rejected. Offer another payment method or check with the bank before a new attempt.",
   ),
   bank_rejected: customer(
     "unknown",
