@@ -6,6 +6,10 @@
  * HTTP status codes:     https://developer.paypal.com/api/rest/responses/
  * Processor responses:   https://developer.paypal.com/api/orders/v2/definitions/processor_response
  * Webhook event names:   https://developer.paypal.com/api/rest/webhooks/event-names/
+ * Subscriptions v1:      https://developer.paypal.com/api/subscriptions/v1
+ * Customer Disputes v1:  https://developer.paypal.com/api/customer-disputes/v1
+ *
+ * Source numbers (S1, S11, S21, ...) refer to docs/providers/research/paypal.md.
  *
  * PayPal does not publish categories or retry guidance. The `category` and
  * `retry` values below are PandaPayLens proposals based on PayPal's wording.
@@ -44,6 +48,15 @@ export const WEBHOOKS_REST_URL = "https://developer.paypal.com/api/rest/webhooks
 export const IDEMPOTENCY_URL = "https://developer.paypal.com/api/rest/reference/idempotency/";
 export const CARD_DECLINE_URL =
   "https://developer.paypal.com/docs/checkout/advanced/card-decline-errors/";
+export const SUBSCRIPTIONS_API_URL = "https://developer.paypal.com/api/subscriptions/v1";
+export const SUBSCRIPTION_WEBHOOKS_URL = "https://developer.paypal.com/subscriptions/webhooks";
+export const SUBSCRIPTION_PAYMENT_FAILURE_URL =
+  "https://developer.paypal.com/subscriptions/payment-failure-retry";
+export const DISPUTES_API_URL = "https://developer.paypal.com/api/customer-disputes/v1";
+export const DISPUTE_WEBHOOKS_URL =
+  "https://developer.paypal.com/limited-release/commerce-platform/manage-risks-liabilities/disputes-chargebacks/webhooks/";
+export const USE_DISPUTES_API_URL =
+  "https://developer.paypal.com/platforms/disputes/handle-disputes/use-disputes-api";
 
 const noRetry = (
   category: ErrorCategory,
@@ -1463,13 +1476,150 @@ export const RISK_FILTER_DECLINE: CatalogEntry = review(
   "Review the fraud filter decision in the PayPal account.",
 );
 
+/**
+ * Subscription status (`subscription_status.status`, Subscriptions v1 spec 1.11).
+ * Statuses describe the subscription, not a payment: none of them means money moved.
+ */
+export const SUBSCRIPTION_STATUSES: Record<string, StatusInfo> = {
+  APPROVAL_PENDING: {
+    stage: "subscription",
+    outcome: "pending",
+    description: "The subscription is created but not yet approved by the buyer.",
+  },
+  APPROVED: {
+    stage: "subscription",
+    outcome: "pending",
+    description: "The buyer has approved the subscription.",
+  },
+  ACTIVE: { stage: "subscription", outcome: "success", description: "The subscription is active." },
+  SUSPENDED: {
+    stage: "subscription",
+    outcome: "unknown",
+    description:
+      "The subscription is suspended. PayPal documents two causes: a suspend request, or consecutive payment failures reaching the plan's payment_failure_threshold.",
+  },
+  CANCELLED: {
+    stage: "cancellation",
+    outcome: "success",
+    description: "The subscription is cancelled.",
+  },
+  EXPIRED: {
+    stage: "subscription",
+    outcome: "success",
+    description: "The subscription is expired.",
+  },
+};
+
+/**
+ * `billing_info.last_failed_payment.reason_code` (Subscriptions v1 `failed_payment_details`).
+ * Descriptions are PayPal's; category and retry are PandaPayLens proposals. PayPal retries
+ * failed subscription payments itself, so none of these suggests a manual retry.
+ */
+export const SUBSCRIPTION_FAILURE_REASONS: Record<string, CatalogEntry> = {
+  PAYMENT_DENIED: customer(
+    "payment_method_unavailable",
+    "PayPal declined the subscription payment because of one or more issues on the customer's side.",
+    "Ask the subscriber to check their PayPal account or update the payment method.",
+  ),
+  INTERNAL_SERVER_ERROR: verifyFirst(
+    "provider_unavailable",
+    "PayPal reported an internal server error for the subscription payment.",
+    "Check the subscription in PayPal (billing_info) before doing anything else.",
+    "PayPal retries failed subscription payments on its own. Check billing_info (outstanding_balance, last_payment, next_payment_retry_time) first; do not charge the subscriber again before that.",
+  ),
+  PAYEE_ACCOUNT_RESTRICTED: review(
+    "configuration",
+    "The payee account is not in good standing and cannot receive payments.",
+    "Check the merchant PayPal account and contact PayPal support.",
+  ),
+  PAYER_ACCOUNT_RESTRICTED: customer(
+    "payment_method_unavailable",
+    "The payer account is not in good standing and cannot make payments.",
+    "Ask the subscriber to resolve the restriction or use another payment method.",
+  ),
+  PAYER_CANNOT_PAY: customer(
+    "payment_method_unavailable",
+    "The payer cannot pay for this transaction.",
+    "Ask the subscriber to update the payment method.",
+  ),
+  SENDING_LIMIT_EXCEEDED: customer(
+    "payment_method_unavailable",
+    "The payment exceeds the payer's sending limit.",
+    "Ask the subscriber to check their PayPal account limits or use another payment method.",
+  ),
+  TRANSACTION_RECEIVING_LIMIT_EXCEEDED: review(
+    "configuration",
+    "The payment exceeds the receiver's receiving limit.",
+    "Check the receiving limits of the merchant PayPal account.",
+  ),
+  CURRENCY_MISMATCH: review(
+    "configuration",
+    "PayPal declined the payment because of a currency mismatch. PayPal does not say which currencies differ.",
+    "Review the subscription and the plan currency in the PayPal account.",
+  ),
+};
+
+/** Overall dispute status (`status`, Customer Disputes v1 spec 1.12). */
+export const DISPUTE_STATUSES: Record<string, string> = {
+  OPEN: "The dispute is open.",
+  WAITING_FOR_BUYER_RESPONSE: "The dispute is waiting for a response from the customer.",
+  WAITING_FOR_SELLER_RESPONSE: "The dispute is waiting for a response from the merchant.",
+  UNDER_REVIEW: "The dispute is under review with PayPal.",
+  RESOLVED: "The dispute is resolved.",
+  OTHER: "The dispute does not have one of the other statuses.",
+};
+
+/** Dispute reason (`reason`). */
+export const DISPUTE_REASONS: Record<string, string> = {
+  MERCHANDISE_OR_SERVICE_NOT_RECEIVED: "The customer did not receive the merchandise or service.",
+  MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED:
+    "The customer reports that the merchandise or service is not as described.",
+  UNAUTHORISED: "The customer did not authorize the purchase of the merchandise or service.",
+  CREDIT_NOT_PROCESSED: "The refund or credit was not processed for the customer.",
+  DUPLICATE_TRANSACTION: "The transaction was a duplicate.",
+  INCORRECT_AMOUNT: "The customer was charged an incorrect amount.",
+  PAYMENT_BY_OTHER_MEANS: "The customer paid for the transaction through other means.",
+  CANCELED_RECURRING_BILLING:
+    "The customer was charged for a subscription or recurring transaction that was canceled.",
+  PROBLEM_WITH_REMITTANCE: "A problem occurred with the remittance.",
+  OTHER: "Other reason.",
+};
+
+/** Dispute life cycle stage (`dispute_life_cycle_stage`). */
+export const DISPUTE_LIFE_CYCLE_STAGES: Record<string, string> = {
+  INQUIRY: "The customer and merchant try to resolve the dispute without escalation to PayPal.",
+  CHARGEBACK:
+    "The dispute was escalated to a claim that PayPal investigates. This is a PayPal stage, not a card chargeback.",
+  PRE_ARBITRATION: "The first appeal stage for merchants.",
+  ARBITRATION: "The second appeal stage for merchants.",
+};
+
+/** Dispute channel (`dispute_channel`). ALERT appears in the API spec only. */
+export const DISPUTE_CHANNELS: Record<string, string> = {
+  INTERNAL: "The customer filed the dispute with PayPal.",
+  EXTERNAL: "The customer asked their card issuer or bank for a refund.",
+  ALERT: "Listed in the API spec without a description.",
+};
+
+/** Outcome of a resolved dispute (`dispute_outcome.outcome_code`). */
+export const DISPUTE_OUTCOME_CODES: Record<string, string> = {
+  RESOLVED_BUYER_FAVOUR: "The dispute was resolved in the customer's favor.",
+  RESOLVED_SELLER_FAVOUR: "The dispute was resolved in the merchant's favor.",
+  RESOLVED_WITH_PAYOUT:
+    "PayPal provided the merchant or customer with protection and the case is resolved.",
+  CANCELED_BY_BUYER: "The customer canceled the dispute.",
+  ACCEPTED: "PayPal accepted the dispute (deprecated value).",
+  DENIED: "PayPal denied the dispute (deprecated value).",
+  NONE: "Closed without a decision because another dispute was created for the same transaction.",
+};
+
 export type ResourceKind = "capture" | "authorization" | "refund";
 
 export type WebhookEventInfo = {
   stage: LifecycleStage;
   outcome: Outcome;
   /** What `resource` holds. `capture_or_refund`: not documented, inferred from the resource. */
-  resource: "order" | ResourceKind | "capture_or_refund";
+  resource: "order" | ResourceKind | "capture_or_refund" | "subscription" | "dispute";
   description: string;
 };
 
@@ -1556,9 +1706,69 @@ export const WEBHOOK_EVENTS: Record<string, WebhookEventInfo> = {
     resource: "refund",
     description: "A refund failed.",
   },
+  // Subscriptions v1 (S11 "Subscriptions", S21). BILLING.SUBSCRIPTION.RE-ACTIVATED is
+  // only listed for the deprecated billing agreements API and stays unknown.
+  "BILLING.SUBSCRIPTION.CREATED": {
+    stage: "subscription",
+    outcome: "success",
+    resource: "subscription",
+    description: "A subscription was created. No payment has been made by this event.",
+  },
+  "BILLING.SUBSCRIPTION.ACTIVATED": {
+    stage: "subscription",
+    outcome: "success",
+    resource: "subscription",
+    description: "A subscription was activated.",
+  },
+  "BILLING.SUBSCRIPTION.UPDATED": {
+    stage: "subscription",
+    outcome: "success",
+    resource: "subscription",
+    description: "A subscription was updated.",
+  },
+  "BILLING.SUBSCRIPTION.EXPIRED": {
+    stage: "subscription",
+    outcome: "success",
+    resource: "subscription",
+    description: "A subscription expired.",
+  },
+  "BILLING.SUBSCRIPTION.CANCELLED": {
+    stage: "cancellation",
+    outcome: "success",
+    resource: "subscription",
+    description: "A subscription was cancelled.",
+  },
+  "BILLING.SUBSCRIPTION.SUSPENDED": {
+    stage: "subscription",
+    outcome: "unknown",
+    resource: "subscription",
+    description:
+      "A subscription was suspended, by a suspend request or because consecutive payment failures reached the plan's threshold.",
+  },
+  "BILLING.SUBSCRIPTION.PAYMENT.FAILED": {
+    stage: "payment",
+    outcome: "failure",
+    resource: "subscription",
+    description: "A payment failed on a subscription.",
+  },
+  // Customer Disputes v1 (S11 "Disputes", S23). RISK.DISPUTE.CREATED is deprecated and stays unknown.
+  "CUSTOMER.DISPUTE.CREATED": {
+    stage: "dispute",
+    outcome: "unknown",
+    resource: "dispute",
+    description: "A dispute was created.",
+  },
+  "CUSTOMER.DISPUTE.UPDATED": {
+    stage: "dispute",
+    outcome: "unknown",
+    resource: "dispute",
+    description: "A dispute was updated.",
+  },
+  "CUSTOMER.DISPUTE.RESOLVED": {
+    stage: "dispute",
+    outcome: "unknown",
+    resource: "dispute",
+    description:
+      "A dispute was resolved. Who it was resolved for is in dispute_outcome.outcome_code, not in the event name.",
+  },
 };
-
-/** Event name prefixes of families that are recognized but not analyzed. */
-export const UNSUPPORTED_EVENT_FAMILIES: { prefix: string; family: string }[] = [
-  { prefix: "BILLING.SUBSCRIPTION.", family: "Subscriptions" },
-];

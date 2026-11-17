@@ -154,6 +154,20 @@
     "description": "Webhook events for one order, correlated through related_ids."
   },
   {
+    "id": "paypal-subscription-payment-failed",
+    "title": "PayPal: subscription payment failed",
+    "provider": "paypal",
+    "file": "paypal/webhook-subscription-payment-failed.json",
+    "description": "Subscription webhooks from creation to suspension, with a failed payment and its reason code."
+  },
+  {
+    "id": "paypal-dispute-lifecycle",
+    "title": "PayPal: dispute webhooks",
+    "provider": "paypal",
+    "file": "paypal/webhook-dispute-lifecycle.json",
+    "description": "A dispute from creation to resolution, grouped by dispute_id. The disputed transaction is not linked to a capture."
+  },
+  {
     "id": "mollie-failed",
     "title": "Mollie: failed payment",
     "provider": "mollie",
