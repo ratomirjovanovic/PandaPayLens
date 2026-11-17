@@ -4,9 +4,9 @@
  * Klarna documents error codes per API (Klarna Payments and Order Management)
  * with an HTTP status, a sample message and handling notes, but no category or
  * retry classification. The PandaPayLens category and retry class of every
- * entry is derived from the documented description. Several codes (NOT_FOUND,
- * BAD_VALUE, BAD_REQUEST, INTERNAL_SERVER_ERROR) appear in both APIs; the
- * error body does not say which API produced it.
+ * entry is derived from the documented description. NOT_FOUND and
+ * INTERNAL_SERVER_ERROR appear in both APIs (NOT_FOUND with different
+ * meanings); the error body does not say which API produced it.
  *
  * Research note: docs/providers/research/klarna.md
  */
@@ -120,7 +120,7 @@ const serverError: CatalogEntry = {
   nextAction:
     "Check the order state before acting, then follow Klarna's escalation and retry policy.",
   retry: "retry_conditionally",
-  retryExplanation: verifyFirst,
+  retryExplanation: `${verifyFirst} Klarna Payments documents no retry policy for this error.`,
   docs: OM_ERRORS_URL,
 };
 
@@ -271,16 +271,17 @@ export const ERROR_CODES: Readonly<Record<string, CodeEntry>> = {
     docs: OM_ERRORS_URL,
   },
   INTERNAL_SERVER_ERROR: serverError,
-  UNEXPECTED_ERROR: { ...serverError, api: "order_management" },
+  UNEXPECTED_ERROR: { ...serverError, api: "order_management", retryExplanation: verifyFirst },
   TEMPORARILY_UNAVAILABLE: {
     ...serverError,
     api: "order_management",
     http: [502, 503, 504],
     explanation: "The Klarna service is temporarily unavailable.",
+    retryExplanation: verifyFirst,
   },
   // Klarna Payments
   BAD_REQUEST: {
-    api: "both",
+    api: "payments",
     http: [400],
     category: "invalid_request",
     explanation: "Klarna treats the request as a client error and will not process it.",
@@ -418,6 +419,9 @@ export const ERROR_CODES: Readonly<Record<string, CodeEntry>> = {
     api: "payments",
     http: [503],
     explanation: "A temporary internal Klarna error occurred.",
+    nextAction: "Check whether the order was created before trying again later.",
+    retryExplanation:
+      "Klarna says to try again later. The original request may or may not have taken effect, so check for the order first and resend only with the same Klarna-Idempotency-Key.",
     docs: CREATE_ORDER_URL,
   },
 };

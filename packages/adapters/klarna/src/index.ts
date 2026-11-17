@@ -588,7 +588,8 @@ function normalize(parsed: KlarnaParsed, ctx: NormalizeContext): NormalizedEvent
   }
 }
 
-const SHARED_CODES = new Set(["NOT_FOUND", "BAD_VALUE", "BAD_REQUEST", "INTERNAL_SERVER_ERROR"]);
+/** Codes that Klarna Payments and Order Management both document with different meanings. */
+const SHARED_CODES = new Set(["NOT_FOUND"]);
 
 function decodeErrors(parsed: KlarnaParsed, ctx: NormalizeContext): DecodedErrorDraft[] {
   if (parsed.kind !== "error_response") return [];
@@ -613,8 +614,6 @@ function decodeErrors(parsed: KlarnaParsed, ctx: NormalizeContext): DecodedError
       missing.push(
         `Klarna documents ${code} with different meanings per HTTP status; the status was not supplied.`,
       );
-    } else if (SHARED_CODES.has(code) && entry.api === "both" && confidence === "strong") {
-      confidence = "possible";
     }
     if (status !== undefined && entry.http && !entry.http.includes(status))
       missing.push(`Klarna documents ${code} with HTTP ${entry.http.join("/")}, not ${status}.`);

@@ -126,7 +126,7 @@ Customer-token order errors (S8):
 | 400  | BAD_REQUEST                | (no description)                                                                                 | invalid_request            | do_not_retry        |
 | 503  | SERVICE_UNAVAILABLE        | Temporary internal error; try again later                                                        | provider_unavailable       | retry_conditionally |
 
-`NOT_FOUND`, `BAD_VALUE`, `BAD_REQUEST` and `INTERNAL_SERVER_ERROR` occur in both APIs. The error body does not say which API produced it. The HTTP status (when the pasted message includes it) is used only to choose between documented meanings of the same code.
+`NOT_FOUND` and `INTERNAL_SERVER_ERROR` occur in both APIs; `NOT_FOUND` has different meanings in each, `INTERNAL_SERVER_ERROR` the same. `BAD_VALUE` and `BAD_REQUEST` are documented by Klarna Payments only (`BAD_VALUE` with different meanings for 400 and 409). The error body does not say which API produced it. The HTTP status (when the pasted message includes it) is used only to choose between documented meanings of the same code.
 
 ### 3.4 Retry policy (S7)
 
@@ -264,6 +264,7 @@ Never copied: `authorization_token`, `session_id`, `client_token`, `customer_tok
 - Capture and refund creation responses have no body (201 with headers), so they are not analyzed; Capture and Refund objects from GET calls and the order's `captures[]`/`refunds[]` are.
 - Bare Capture and Refund objects carry no order id and no currency.
 - Refunds have no status; the docs do not say when the customer receives the money.
+- Captures and refunds are read from each pasted order snapshot. Several snapshots of the same order repeat the same capture or refund, and amount checks can count it more than once.
 - The retry policy is documented for Order Management only.
 - HPP session ids and authorization callback values are sensitive; callbacks before an order exists cannot be linked to an order.
 
