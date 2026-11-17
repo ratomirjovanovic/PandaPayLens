@@ -726,5 +726,19 @@
     "provider": "flutterwave",
     "file": "flutterwave/v3-preauth-then-void.json",
     "description": "A held payment that is voided; the void is not shown as a payment success."
+  },
+  {
+    "id": "klarna-capture-not-allowed",
+    "title": "Klarna: capture not allowed",
+    "provider": "klarna",
+    "file": "klarna/error-capture-not-allowed.json",
+    "description": "An Order Management error with error_code, error_messages and correlation_id."
+  },
+  {
+    "id": "klarna-order-lifecycle",
+    "title": "Klarna: order, capture and refund",
+    "provider": "klarna",
+    "file": "klarna/order-lifecycle.json",
+    "description": "A Klarna Payments order and its Order Management state, grouped by order_id."
   }
 ]

@@ -36,7 +36,7 @@ Paste a payment error, webhook or event log from a supported provider. PandaPayL
 
 <!-- providers:start -->
 
-40 of 42 roadmap providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Research candidates and planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
+41 of 43 roadmap providers can be analyzed today. "Supported" means implemented and covered by tests; "limited" means it works with documented gaps. Research candidates and planned providers are listed on the [providers page](https://ratomirjovanovic.github.io/PandaPayLens/providers/) and are not counted here.
 
 | Provider       | Overall   | Errors    | API responses | Webhooks     | Timeline     | Correlation |
 | -------------- | --------- | --------- | ------------- | ------------ | ------------ | ----------- |
@@ -80,6 +80,7 @@ Paste a payment error, webhook or event log from a supported provider. PandaPayL
 | PXP Financial  | limited   | supported | supported     | limited      | limited      | limited     |
 | Verotel        | limited   | limited   | limited       | limited      | limited      | supported   |
 | NETbilling     | limited   | limited   | supported     | experimental | limited      | limited     |
+| Klarna         | limited   | limited   | limited       | limited      | limited      | limited     |
 
 <!-- providers:end -->
 

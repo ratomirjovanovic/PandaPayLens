@@ -83,6 +83,14 @@ export default defineConfig({
         replacement: src("./packages/adapters/verotel/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/klarna\/manifest$/,
+        replacement: src("./packages/adapters/klarna/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/klarna$/,
+        replacement: src("./packages/adapters/klarna/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/netbilling\/manifest$/,
         replacement: src("./packages/adapters/netbilling/src/manifest.ts"),
       },

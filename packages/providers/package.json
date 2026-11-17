@@ -49,6 +49,7 @@
     "@pandapaylens/finrax": "workspace:*",
     "@pandapaylens/flutterwave": "workspace:*",
     "@pandapaylens/inpay": "workspace:*",
+    "@pandapaylens/klarna": "workspace:*",
     "@pandapaylens/mifinity": "workspace:*",
     "@pandapaylens/mollie": "workspace:*",
     "@pandapaylens/netbilling": "workspace:*",
