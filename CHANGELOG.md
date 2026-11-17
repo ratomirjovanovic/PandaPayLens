@@ -10,6 +10,12 @@ All notable changes to this project are documented here. The format follows [Kee
 
 - Braintree: decoded notification XML (`<notification>` with `kind` and `subject`) is read like the parsed JSON notification. Its shape follows Braintree's SDK source, because no documentation page shows it. All 217 Transaction validation codes of the reference are mapped individually, with category and retry guidance.
 
+## [Unreleased]
+
+### Documentation
+
+- Flutterwave documentation links point to the rebuilt developer site, and Trustly's removed MerchantSettlement page is no longer cited. Flutterwave no longer publishes the v4 payout error code table or the text `beneficiary_name is required`, and Trustly code 621 is on no current page; the adapters still decode them as read on 2026-10-25, and the limitations say so.
+
 ## [0.16.0] - 2026-11-17
 
 ### GitHub Action
