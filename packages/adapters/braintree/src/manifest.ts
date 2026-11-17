@@ -130,7 +130,7 @@ export const braintreeManifest: ProviderManifest = {
     "Order ids, retried transactions, duplicateOf links and disbursement transaction lists are not used for correlation.",
     "The JSON serialization of SDK objects is not documented. snake_case and camelCase field names are accepted; other spellings (for example .NET PascalCase) are not recognized.",
     "Category and retry mappings are PandaPayLens proposals derived from the documented descriptions and Hard/Soft decline types.",
-    "Every code in the Transaction section of the validation error reference is mapped individually. Codes from the other sections (credit card, customer, PayPal, 3D Secure and others) are decoded by GraphQL errorClass or as a generic validation error.",
+    "Every code in the Transaction section of the validation error reference is mapped individually, with a short description in PandaPayLens' own words; the published error text is in the linked reference. Codes from the other sections (credit card, customer, PayPal, 3D Secure and others) are decoded by GraphQL errorClass or as a generic validation error.",
     "Category and retry mappings for validation codes are PandaPayLens proposals from the documented text; codes whose text gives no clearer signal are treated as invalid input that should not be retried unchanged.",
     "GraphQL errorClass values have no published descriptions; their mapping is a PandaPayLens proposal.",
     "Five GraphQL gateway rejection reasons are documented by name only.",

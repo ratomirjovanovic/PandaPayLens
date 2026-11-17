@@ -801,9 +801,15 @@ describe("braintree validation errors", () => {
     expect(r.errors[0]).toMatchObject({ code, category, retry, confidence: "strong" });
   });
 
-  it("uses the current documented texts", () => {
-    expect(VALIDATION_ERRORS["91512"]!.text).toBe("Transaction has already been fully refunded");
-    expect(VALIDATION_ERRORS["91506"]!.text).toBe("Cannot refund transaction unless it is settled");
+  it("describes codes in its own words, not with the published text", () => {
+    expect(VALIDATION_ERRORS["91512"]!.description).toBe(
+      "Nothing is left to refund; the transaction was refunded in full",
+    );
+    expect(VALIDATION_ERRORS["91506"]!.description).toBe(
+      "A refund needs the transaction to be settled first",
+    );
+    expect(VALIDATION_ERRORS["91512"]!.explanation).toContain("refunded in full");
+    expect(VALIDATION_ERRORS["91512"]).not.toHaveProperty("text");
     expect(VALIDATION_ERRORS["915191"]!.group).toBe("special");
     expect(VALIDATION_ERRORS["91512"]).toMatchObject({
       category: "duplicate_request",
@@ -1340,7 +1346,7 @@ describe("braintree manifest and catalog", () => {
     for (const [code, v] of Object.entries(VALIDATION_ERRORS)) {
       expect(code).toMatch(/^\d{5,6}$/);
       expect(v.code).toBe(code);
-      expect(v.text, code).not.toMatch(/[.:]$/);
+      expect(v.description, code).not.toMatch(/[.:]$/);
       expect(v.explanation, code).toContain(code);
     }
   });
