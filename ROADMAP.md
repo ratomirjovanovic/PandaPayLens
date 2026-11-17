@@ -23,6 +23,8 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 | 0.13.0  | Plain `name: value` text, Verotel FlexPay status page                                                    |
 | 0.14.0  | npm package `pandapaylens` (CLI and library)                                                             |
 | 0.15.0  | Source available under the Elastic License 2.0; demo video                                               |
+| 0.15.1  | Security fixes: linear-time redaction, worker CSP, admin hardening                                       |
+| 0.16.0  | CLI `--output`, GitHub Action, dependency security updates                                               |
 
 ## In progress
 
@@ -41,7 +43,7 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 
 ### CLI and packages
 
-- Done in the next release: `--output <file>` for reports ([#4](https://github.com/ratomirjovanovic/PandaPayLens/issues/4)).
+- Nothing planned right now.
 
 ### Documentation
 

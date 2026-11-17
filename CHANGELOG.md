@@ -2,11 +2,15 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.16.0] - 2026-11-17
 
 ### GitHub Action
 
 - `action.yml` at the repository root runs the npm package in a workflow: Markdown report in the job summary, `fail-on` threshold, optional `provider`, `version` and `include-identifiers`. A workflow tests it against fixtures for a passing and a failing case.
+
+### Dependencies
+
+- Next.js 16.4.6 (the 16.4.3 line had a medium severity information disclosure advisory for `use cache` functions called through `unstable_cache()`), better-auth and passkey 1.7.23, `ws` 8.23.0 and updated CI actions.
 
 ### CLI
 

@@ -8,6 +8,16 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.16.0",
+    date: "2026-11-17",
+    status: "released",
+    changes: [
+      "CLI: --output writes the report of analyze, decode and timeline to a file.",
+      "GitHub Action: run pandapaylens in CI, with the report in the job summary and a fail-on threshold.",
+      "Dependencies: Next.js 16.4.6 closes an information disclosure advisory; better-auth, ws and CI actions updated.",
+    ],
+  },
+  {
     version: "0.15.1",
     date: "2026-10-28",
     status: "released",
