@@ -18,6 +18,7 @@ npx pandapaylens analyze events.json
 npx pandapaylens decode - < error.json
 npx pandapaylens timeline webhooks.jsonl --format markdown
 npx pandapaylens analyze log.json --fail-on medium    # exit 1 on medium or worse
+npx pandapaylens analyze log.json -f markdown -o report.md   # write the report to a file
 npx pandapaylens examples                             # bundled synthetic samples
 npx pandapaylens providers --supported
 ```

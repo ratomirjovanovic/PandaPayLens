@@ -105,6 +105,7 @@ npx pandapaylens analyze events.json
 npx pandapaylens decode - < error.json
 npx pandapaylens analyze events.jsonl --format markdown
 npx pandapaylens analyze log.json --fail-on medium
+npx pandapaylens analyze log.json -f markdown -o report.md   # write the report to a file
 npx pandapaylens providers --supported
 npx pandapaylens examples
 ```
