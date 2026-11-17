@@ -8,6 +8,15 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.18.0",
+    date: "2026-11-17",
+    status: "released",
+    changes: [
+      "Five new providers: Klarna, Mercado Pago, GoCardless, Xendit and Paddle. 45 of 47 roadmap providers can now be analyzed.",
+      "Stripe no longer claims Paddle-shaped api_error bodies with high confidence.",
+    ],
+  },
+  {
     version: "0.17.0",
     date: "2026-11-17",
     status: "released",
