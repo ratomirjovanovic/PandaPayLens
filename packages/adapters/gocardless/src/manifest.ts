@@ -122,6 +122,7 @@ export const gocardlessManifest: ProviderManifest = {
     "Webhook signatures (Webhook-Signature header) cannot be verified without the endpoint secret; only the header's presence is reported.",
     "meta.webhook_id is documented by name only; it is shown as an attribute and is not used to recognize repeats.",
     "API errors are decoded from the first errors[].reason only; further reasons and field names are listed as sub-codes.",
+    "GoCardless documents only the prefix of its ids (EV, PM, RF, MD, PO, SB). An id with two digits after the prefix can look like a bank account number (IBAN) to the generic sensitive-data scan: the input is then flagged and such ids may be hidden in exports, while references and grouping still work.",
     "Provider-specific diagnostic rules do not cover GoCardless yet; only the generic rules apply.",
   ],
   samples: ["gocardless-payment-failed", "gocardless-lifecycle", "gocardless-validation-error"],

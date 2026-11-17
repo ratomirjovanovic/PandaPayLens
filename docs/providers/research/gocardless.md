@@ -50,7 +50,7 @@ Every resource is wrapped in a key named after the resource collection (S11, S12
 - Event list (`GET /events`): `{"meta": {"cursors": {...}, "limit": n}, "events": [ ... ], "linked": {...}}`; `linked` only with `include` (S4).
 - Webhook body: `{"events": [ ... ]}` with one or more events, at most 250 (S3). S2 names a `meta.webhook_id` field in the webhook payload. Its exact position next to `events` is not shown in any example: **NOT DOCUMENTED** beyond the name. The adapter reads it only as an optional attribute.
 
-Identifier prefixes (S4, S11-S15): events `EV`, payments `PM`, refunds `RF`, mandates `MD`, payouts `PO`, subscriptions `SB`, creditors `CR`, customers `CU`.
+Identifier prefixes (S4, S11-S15): events `EV`, payments `PM`, refunds `RF`, mandates `MD`, payouts `PO`, subscriptions `SB`, creditors `CR`, customers `CU`. The rest of the id format (length, character set) is **NOT DOCUMENTED**; examples use short values such as `PM123`. An id with two digits after its two-letter prefix matches the generic IBAN pattern of the PandaPayLens sensitive-data scan, so such input is flagged and the ids can be masked in exports.
 
 Amounts are integers in the lowest currency unit (S11, S12). Timestamps (`created_at`) are ISO 8601 with a `Z` suffix in all examples.
 
@@ -161,4 +161,5 @@ Payment and refund snapshots are analyzed. Mandate, payout and subscription snap
 - Billing request, instalment schedule and other resource events are recognized but not interpreted.
 - Mandate, payout and subscription snapshots are not analyzed.
 - Signatures cannot be verified.
+- Ids shaped like an IBAN (prefix, two digits, more letters or digits) are flagged by the generic sensitive-data scan; see section 3.
 - Event times are when GoCardless created the event; event creation is asynchronous (S4), so it can lag the underlying change.

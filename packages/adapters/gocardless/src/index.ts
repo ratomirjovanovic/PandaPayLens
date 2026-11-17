@@ -250,9 +250,10 @@ function detect(input: unknown, _meta?: RecordMeta): DetectionResult {
     const prefixed = snap.prefix.test(r.id);
     if (!prefixed && !isObj(r.links)) continue;
     const reasons = [`has a ${key} object with id and status`];
-    let score = 0.45;
+    // Without the documented prefix the shape is too generic to claim.
+    let score = 0.35;
     if (prefixed) {
-      score += 0.4;
+      score += 0.5;
       reasons.push("id has the documented GoCardless prefix");
     }
     if (isObj(r.links)) {
@@ -270,7 +271,7 @@ function detect(input: unknown, _meta?: RecordMeta): DetectionResult {
       };
     }
     const statuses = key === "payments" ? PAYMENT_STATUSES : REFUND_STATUSES;
-    if (lookup(statuses, r.status)) {
+    if (prefixed && lookup(statuses, r.status)) {
       score += 0.05;
       reasons.push(`status "${r.status}" is documented for ${key}`);
     }
@@ -534,6 +535,9 @@ function normalize(parsed: GoCardlessParsed, ctx: NormalizeContext): NormalizedE
   ];
 }
 
+const FIELD_NAME = /^[\w.[\]-]{1,64}$/;
+const MAX_LISTED = 10;
+
 function decodeApiError(
   parsed: Extract<GoCardlessParsed, { kind: "api_error" }>,
   ctx: NormalizeContext,
@@ -569,8 +573,13 @@ function decodeApiError(
 
   const subCodes: Record<string, string> = { type: e.type };
   if (typeof e.code === "number") subCodes.httpStatus = String(e.code);
-  if (reasons.length > 1) subCodes.otherReasons = reasons.slice(1).join(", ");
-  if (fields.length) subCodes.fields = [...new Set(fields)].join(", ");
+  // Field names and reasons are machine names; anything else (or a long list) is dropped.
+  const names = (list: string[]) =>
+    [...new Set(list.filter((x) => FIELD_NAME.test(x)))].slice(0, MAX_LISTED).join(", ");
+  const otherReasons = names(reasons.slice(1));
+  const fieldNames = names(fields);
+  if (otherReasons) subCodes.otherReasons = otherReasons;
+  if (fieldNames) subCodes.fields = fieldNames;
 
   const message = safeText(items[0]?.message ?? e.message);
   return {

@@ -170,7 +170,6 @@ export const ERROR_REASONS: Record<string, CatalogEntry & { type: string }> = {
       "The credentials were not recognized.",
       "Check the access token and the environment (live or sandbox) it belongs to.",
     ),
-    category: "authentication_failed",
   },
   forbidden: {
     type: "invalid_api_usage",
@@ -221,12 +220,10 @@ export const ERROR_REASONS: Record<string, CatalogEntry & { type: string }> = {
       "No access token with the given ID exists.",
       "Check the access token configured in the integration.",
     ),
-    category: "authentication_failed",
   },
   access_token_not_active: {
     type: "invalid_api_usage",
     ...config("The access token has been disabled.", "Use an active access token."),
-    category: "authentication_failed",
   },
   access_token_revoked: {
     type: "invalid_api_usage",
@@ -234,7 +231,6 @@ export const ERROR_REASONS: Record<string, CatalogEntry & { type: string }> = {
       "The user revoked the access token.",
       "Obtain a new access token from the account owner.",
     ),
-    category: "authentication_failed",
   },
   missing_authorization_header: {
     type: "invalid_api_usage",
@@ -242,7 +238,6 @@ export const ERROR_REASONS: Record<string, CatalogEntry & { type: string }> = {
       "The request had no Authorization header.",
       "Send the access token as a bearer token in the Authorization header.",
     ),
-    category: "authentication_failed",
   },
   invalid_authorization_header: {
     type: "invalid_api_usage",
@@ -250,7 +245,6 @@ export const ERROR_REASONS: Record<string, CatalogEntry & { type: string }> = {
       "The Authorization header was malformed.",
       "Send the header as Authorization: Bearer followed by the access token.",
     ),
-    category: "authentication_failed",
   },
   insufficient_permissions: {
     type: "invalid_api_usage",

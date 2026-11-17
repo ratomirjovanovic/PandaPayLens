@@ -82,6 +82,14 @@ describe("gocardless detection", () => {
     expect(gocardlessAdapter.detect(input)).toMatchObject({ format, confidence, supported });
   });
 
+  it("keeps resource objects without the documented id prefix below the acceptance threshold", () => {
+    for (const key of ["payments", "refunds", "mandates"])
+      expect(
+        gocardlessAdapter.detect({ [key]: { id: "PPLsynth1", status: "paid", links: {} } })
+          .confidence,
+      ).toBeLessThan(0.5);
+  });
+
   it("does not claim generic shapes or match on the provider name", () => {
     const zero = [
       { provider: "gocardless", message: "GoCardless error" },
@@ -322,6 +330,29 @@ describe("gocardless mandates, subscriptions and payouts", () => {
 });
 
 describe("gocardless refunds", () => {
+  it.each([
+    ["created", "pending"],
+    ["pending_submission", "pending"],
+    ["submitted", "pending"],
+    ["paid", "success"],
+    ["cancelled", "failure"],
+    ["bounced", "failure"],
+    ["funds_returned", "failure"],
+    ["PPLsynth_new_status", "unknown"],
+  ])("maps refund status %s", (status, outcome) => {
+    const r = analyze(
+      JSON.stringify({
+        refunds: { id: "RFPPLSYNTH990002", status, links: { payment: "PMPPLSYNTH990002" } },
+      }),
+    );
+    expect(r.events[0]).toMatchObject({
+      stage: "refund",
+      outcome,
+      paymentReference: "PMPPLSYNTH990002",
+      relatedReference: "RFPPLSYNTH990002",
+    });
+  });
+
   it("links refund events to the payment through the refund resource", () => {
     const r = analyzeFixture("refund-lifecycle.json");
     expect(r.events.map((e) => [e.eventType, e.stage, e.outcome])).toEqual([
@@ -391,7 +422,7 @@ describe("gocardless API errors", () => {
     const r = analyzeFixture("api-error-unauthorized.json");
     expect(r.errors[0]).toMatchObject({
       code: "unauthorized",
-      category: "authentication_failed",
+      category: "configuration",
       retry: "do_not_retry",
       subCodes: { httpStatus: "401" },
     });
@@ -532,6 +563,47 @@ describe("gocardless unknowns and robustness", () => {
     ]) {
       expect(() => analyze(JSON.stringify(input))).not.toThrow();
     }
+  });
+
+  it("keeps references of ids that resemble bank account numbers", () => {
+    // Prefix, two digits, then letters and digits: the free-text IBAN pattern
+    // matches this shape. GoCardless documents only the prefix of its ids.
+    const r = analyze(
+      JSON.stringify({
+        events: [
+          event({ id: "EV08PPLSYNTH0001", links: { payment: "PM08PPLSYNTH0001" } }),
+          event({
+            id: "EV08PPLSYNTH0002",
+            action: "paid_out",
+            links: { payment: "PM08PPLSYNTH0001", parent_event: "EV08PPLSYNTH0001" },
+          }),
+        ],
+      }),
+    );
+    expect(r.events.map((e) => [e.paymentReference, e.deliveryKey])).toEqual([
+      ["PM08PPLSYNTH0001", "EV08PPLSYNTH0001"],
+      ["PM08PPLSYNTH0001", "EV08PPLSYNTH0002"],
+    ]);
+    expect(r.events[1]!.attributes.parentEvent).toBe("EV08PPLSYNTH0001");
+    expect(r.groups).toHaveLength(1);
+    // The raw input is flagged by the generic sensitive-data scan.
+    expect(r.warnings.map((w) => w.code)).toContain("SENSITIVE_DATA_DETECTED");
+  });
+
+  it("lists only machine-readable field names from validation errors", () => {
+    const r = analyze(
+      JSON.stringify(
+        apiError({
+          type: "validation_failed",
+          errors: [
+            { field: "amount", message: "x" },
+            { field: "pplsynth.planted@example.com", message: "x" },
+          ],
+        }),
+      ),
+    );
+    expect(r.errors[0]!.subCodes.fields).toBe("amount");
+    expect(toJsonReport(r)).not.toContain("pplsynth.planted@example.com");
   });
 
   it("never copies metadata, descriptions or messages from unknown fields", () => {
