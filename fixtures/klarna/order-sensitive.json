@@ -1,0 +1,59 @@
+{
+  "order_id": "PPLsynth-order-0000-0000-000000000009",
+  "status": "CAPTURED",
+  "fraud_status": "ACCEPTED",
+  "order_amount": 3000,
+  "original_order_amount": 3000,
+  "captured_amount": 3000,
+  "refunded_amount": 0,
+  "remaining_authorized_amount": 0,
+  "purchase_currency": "GBP",
+  "purchase_country": "GB",
+  "locale": "en-GB",
+  "klarna_reference": "PPLSYNTHREF",
+  "merchant_reference1": "PPLsynth-merchant-ref-1",
+  "merchant_reference2": "PPLsynth-merchant-ref-2",
+  "merchant_data": "PPLsynth merchant data note",
+  "billing_address": {
+    "given_name": "PPLsynth Given",
+    "family_name": "PPLsynth Family",
+    "email": "pplsynth.customer@example.com",
+    "street_address": "PPLsynth Billing Street 1",
+    "postal_code": "PPL 5YN",
+    "city": "PPLsynth City",
+    "phone": "+440000000000",
+    "country": "GB"
+  },
+  "shipping_address": {
+    "given_name": "PPLsynth Given",
+    "family_name": "PPLsynth Family",
+    "street_address": "PPLsynth Shipping Road 2",
+    "postal_code": "PPL 5YN",
+    "city": "PPLsynth City",
+    "country": "GB"
+  },
+  "customer": {
+    "date_of_birth": "1970-01-01",
+    "national_identification_number": "PPLsynthNIN0001"
+  },
+  "order_lines": [
+    {
+      "type": "physical",
+      "name": "PPLsynth product name",
+      "quantity": 1,
+      "unit_price": 3000,
+      "total_amount": 3000
+    }
+  ],
+  "captures": [
+    {
+      "capture_id": "PPLsynth-capture-0000-0000-000000000003",
+      "captured_amount": 3000,
+      "captured_at": "2026-11-14T10:00:00Z",
+      "description": "PPLsynth capture description",
+      "reference": "PPLsynth-capture-reference",
+      "klarna_reference": "PPLSYNTHREF-1",
+      "billing_address": { "email": "pplsynth.customer@example.com" }
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+{
+  "error_code": "CAPTURE_NOT_ALLOWED",
+  "error_messages": ["Capture not allowed"],
+  "correlation_id": "PPLsynth-corr-0000-0000-000000000001"
+}

@@ -1,0 +1,8 @@
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+
+{
+  "error_code": "INTERNAL_SERVER_ERROR",
+  "error_messages": ["Internal error"],
+  "correlation_id": "PPLsynth-corr-0000-0000-000000000003"
+}

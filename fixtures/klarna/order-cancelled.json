@@ -1,0 +1,12 @@
+{
+  "order_id": "PPLsynth-order-0000-0000-000000000005",
+  "status": "CANCELLED",
+  "fraud_status": "ACCEPTED",
+  "order_amount": 1500,
+  "original_order_amount": 1500,
+  "captured_amount": 0,
+  "refunded_amount": 0,
+  "remaining_authorized_amount": 0,
+  "purchase_currency": "USD",
+  "created_at": "2026-11-01T15:00:00Z"
+}

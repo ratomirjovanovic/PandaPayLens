@@ -1,0 +1,12 @@
+POST /klarna/status?secretToken=PPLsynth-secret-0001 HTTP/1.1
+Content-Type: application/json
+
+{
+  "event_id": "PPLsynth-event-0000-0000-000000000003",
+  "session": {
+    "session_id": "PPLsynth-hpp-session-0002",
+    "status": "FAILED",
+    "updated_at": "2026-11-16T16:00:00.000Z",
+    "expires_at": "2026-11-18T16:00:00.000Z"
+  }
+}
