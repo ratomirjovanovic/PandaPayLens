@@ -25,6 +25,7 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 | 0.15.0  | Source available under the Elastic License 2.0; demo video                                               |
 | 0.15.1  | Security fixes: linear-time redaction, worker CSP, admin hardening                                       |
 | 0.16.0  | CLI `--output`, GitHub Action, dependency security updates                                               |
+| 0.17.0  | PayPal subscriptions and disputes, Braintree XML and validation codes, documentation link fixes          |
 
 ## In progress
 
