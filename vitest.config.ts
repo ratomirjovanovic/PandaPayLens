@@ -83,6 +83,14 @@ export default defineConfig({
         replacement: src("./packages/adapters/verotel/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/gocardless\/manifest$/,
+        replacement: src("./packages/adapters/gocardless/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/gocardless$/,
+        replacement: src("./packages/adapters/gocardless/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/netbilling\/manifest$/,
         replacement: src("./packages/adapters/netbilling/src/manifest.ts"),
       },

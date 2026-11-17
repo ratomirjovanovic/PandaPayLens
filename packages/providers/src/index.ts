@@ -43,6 +43,7 @@ import { trustPaymentsAdapter } from "@pandapaylens/trust-payments";
 import { pxpAdapter } from "@pandapaylens/pxp";
 import { verotelAdapter } from "@pandapaylens/verotel";
 import { netbillingAdapter } from "@pandapaylens/netbilling";
+import { gocardlessAdapter } from "@pandapaylens/gocardless";
 
 export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   stripeAdapter,
@@ -85,6 +86,7 @@ export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   pxpAdapter,
   verotelAdapter,
   netbillingAdapter,
+  gocardlessAdapter,
 ];
 
 export {

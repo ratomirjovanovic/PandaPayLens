@@ -726,5 +726,26 @@
     "provider": "flutterwave",
     "file": "flutterwave/v3-preauth-then-void.json",
     "description": "A held payment that is voided; the void is not shown as a payment success."
+  },
+  {
+    "id": "gocardless-payment-failed",
+    "title": "GoCardless: payment failed, insufficient funds",
+    "provider": "gocardless",
+    "file": "gocardless/webhook-payment-failed.json",
+    "description": "A webhook with a failed Direct Debit payment. The cause is decoded; the bank reason code is shown but not interpreted."
+  },
+  {
+    "id": "gocardless-lifecycle",
+    "title": "GoCardless: payment created to paid out",
+    "provider": "gocardless",
+    "file": "gocardless/webhook-payment-lifecycle.json",
+    "description": "Confirmed means collected and held by GoCardless; only paid_out is settlement to the merchant."
+  },
+  {
+    "id": "gocardless-validation-error",
+    "title": "GoCardless: validation failed",
+    "provider": "gocardless",
+    "file": "gocardless/api-error-validation-failed.json",
+    "description": "A 422 API error with field errors; the fields are listed and the user is asked to correct them."
   }
 ]

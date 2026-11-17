@@ -313,6 +313,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/gocardless:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/inpay:
     dependencies:
       '@pandapaylens/core':
@@ -596,6 +605,9 @@ importers:
       '@pandapaylens/flutterwave':
         specifier: workspace:*
         version: link:../adapters/flutterwave
+      '@pandapaylens/gocardless':
+        specifier: workspace:*
+        version: link:../adapters/gocardless
       '@pandapaylens/inpay':
         specifier: workspace:*
         version: link:../adapters/inpay

@@ -43,6 +43,7 @@ import { trustPaymentsManifest } from "@pandapaylens/trust-payments/manifest";
 import { pxpManifest } from "@pandapaylens/pxp/manifest";
 import { verotelManifest } from "@pandapaylens/verotel/manifest";
 import { netbillingManifest } from "@pandapaylens/netbilling/manifest";
+import { gocardlessManifest } from "@pandapaylens/gocardless/manifest";
 
 export const MANIFESTS: readonly ProviderManifest[] = [
   stripeManifest,
@@ -85,6 +86,7 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   pxpManifest,
   verotelManifest,
   netbillingManifest,
+  gocardlessManifest,
 ];
 
 /** Roadmap focus areas, used for directory filters. Taken from the roadmap, not verified claims about the provider. */
@@ -395,6 +397,13 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     researchStatus: "blocked",
     focus: ["high_risk", "subscription"],
     note: "Integration documentation is provided only after merchant sign-up, so it cannot be verified publicly. No adapter will be built from guesses.",
+  },
+  {
+    id: "gocardless",
+    displayName: "GoCardless",
+    wave: 5,
+    researchStatus: "tested",
+    focus: ["general", "pay_by_bank"],
   },
 ];
 
