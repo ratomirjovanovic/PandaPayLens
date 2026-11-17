@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### GitHub Action
+
+- `action.yml` at the repository root runs the npm package in a workflow: Markdown report in the job summary, `fail-on` threshold, optional `provider`, `version` and `include-identifiers`. A workflow tests it against fixtures for a passing and a failing case.
+
 ### CLI
 
 - `--output <file>` (`-o`) writes the report of `analyze`, `decode` and `timeline` to a file instead of stdout. Nothing is printed to stdout, and a file that cannot be written exits with code 4.

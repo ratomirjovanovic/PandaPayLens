@@ -114,6 +114,17 @@ The [`pandapaylens`](https://www.npmjs.com/package/pandapaylens) package also wo
 
 Exit codes: `0` ok, `1` findings at or above `--fail-on`, `2` invalid input, `3` unsupported provider or format, `4` internal error. A declined payment does not fail the run unless you ask for it.
 
+### GitHub Action
+
+```yaml
+- uses: ratomirjovanovic/PandaPayLens@main # pin a release tag or commit SHA
+  with:
+    file: tests/fixtures/webhooks.jsonl
+    fail-on: medium
+```
+
+The action runs the npm package, adds the Markdown report to the job summary and fails the step when a finding is at or above `fail-on`. Other inputs: `provider`, `version` and `include-identifiers` (off by default; use it only with synthetic data). The output `exit-code` holds the CLI exit code.
+
 ## Privacy model
 
 - Imported payloads are processed only in the browser and never sent to a server, analytics or logs.

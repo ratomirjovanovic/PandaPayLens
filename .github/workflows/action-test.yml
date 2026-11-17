@@ -1,0 +1,50 @@
+name: Action
+
+on:
+  pull_request:
+    paths:
+      - action.yml
+      - .github/workflows/action-test.yml
+  push:
+    branches: [main]
+    paths:
+      - action.yml
+      - .github/workflows/action-test.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: action-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  action:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Clean run passes
+        id: clean
+        uses: ./
+        with:
+          file: fixtures/stripe/successful-payment.json
+          fail-on: medium
+      - name: Run with findings fails at the threshold
+        id: findings
+        continue-on-error: true
+        uses: ./
+        with:
+          file: fixtures/adyen/retry-risk.json
+          fail-on: medium
+      - name: Check outcomes
+        env:
+          CLEAN_CODE: ${{ steps.clean.outputs.exit-code }}
+          FINDINGS_OUTCOME: ${{ steps.findings.outcome }}
+          FINDINGS_CODE: ${{ steps.findings.outputs.exit-code }}
+        run: |
+          test "$CLEAN_CODE" = "0"
+          test "$FINDINGS_OUTCOME" = "failure"
+          test "$FINDINGS_CODE" = "1"

@@ -1,0 +1,63 @@
+name: PandaPayLens
+description: Analyze a payment error, webhook or event log offline and fail the job on findings.
+author: Ratomir Jovanovic
+branding:
+  icon: search
+  color: gray-dark
+
+inputs:
+  file:
+    description: Path of the file to analyze (JSON, JSON Lines, form data, XML, name:value text or a raw HTTP message).
+    required: true
+  fail-on:
+    description: Fail the step when a finding is at or above this severity (critical, high, medium, low, info or none).
+    required: false
+    default: none
+  provider:
+    description: Provider id. Leave empty to detect it from the input.
+    required: false
+    default: ""
+  version:
+    description: Version of the pandapaylens npm package to run.
+    required: false
+    default: "0.15.1"
+  include-identifiers:
+    description: Show payment and event identifiers instead of masked values. Use only with synthetic data.
+    required: false
+    default: "false"
+
+outputs:
+  exit-code:
+    description: Exit code of the CLI (0 ok, 1 findings at or above fail-on, 2 invalid input, 3 unsupported provider or format, 4 internal error).
+    value: ${{ steps.analyze.outputs.exit-code }}
+
+runs:
+  using: composite
+  steps:
+    - id: analyze
+      shell: bash
+      env:
+        PPL_FILE: ${{ inputs.file }}
+        PPL_FAIL_ON: ${{ inputs.fail-on }}
+        PPL_PROVIDER: ${{ inputs.provider }}
+        PPL_VERSION: ${{ inputs.version }}
+        PPL_IDENTIFIERS: ${{ inputs.include-identifiers }}
+      run: |
+        set -u
+        args=(analyze "$PPL_FILE" --format markdown --fail-on "$PPL_FAIL_ON")
+        if [ -n "$PPL_PROVIDER" ]; then args+=(--provider "$PPL_PROVIDER"); fi
+        if [ "$PPL_IDENTIFIERS" = "true" ]; then args+=(--include-identifiers); fi
+
+        report="${RUNNER_TEMP:-/tmp}/pandapaylens-report.md"
+        code=0
+        npx --yes "pandapaylens@${PPL_VERSION}" "${args[@]}" > "$report" || code=$?
+
+        if [ -s "$report" ]; then
+          cat "$report" >> "${GITHUB_STEP_SUMMARY:-/dev/null}"
+          cat "$report"
+        fi
+        echo "exit-code=$code" >> "${GITHUB_OUTPUT:-/dev/null}"
+        if [ "$code" -ne 0 ]; then
+          echo "::error::pandapaylens exited with code $code"
+        fi
+        exit "$code"
