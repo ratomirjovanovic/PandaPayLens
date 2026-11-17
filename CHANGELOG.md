@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Providers
+
+- Braintree: decoded notification XML (`<notification>` with `kind` and `subject`) is read like the parsed JSON notification. Its shape follows Braintree's SDK source, because no documentation page shows it. All 217 Transaction validation codes of the reference are mapped individually, with category and retry guidance.
+
 ## [0.16.0] - 2026-11-17
 
 ### GitHub Action
