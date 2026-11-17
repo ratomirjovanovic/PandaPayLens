@@ -194,6 +194,21 @@ npx pandapaylens examples                            # list bundled samples`}</c
         unsupported provider or format, 4 internal error.
       </p>
 
+      <h2>GitHub Action</h2>
+      <pre>
+        <code>{`- uses: ratomirjovanovic/PandaPayLens@main   # pin a release tag or commit SHA
+  with:
+    file: tests/fixtures/webhooks.jsonl
+    fail-on: medium`}</code>
+      </pre>
+      <p>
+        The action runs the npm package, adds the Markdown report to the job summary and fails the
+        step when a finding is at or above <code>fail-on</code>. Other inputs: <code>provider</code>
+        , <code>version</code> and <code>include-identifiers</code> (off by default, use it only
+        with synthetic data). The output <code>exit-code</code> holds the CLI exit code. The only
+        network access is the npm download of the package.
+      </p>
+
       <h2>Library</h2>
       <pre>
         <code>{`// npm install pandapaylens
