@@ -726,5 +726,19 @@
     "provider": "flutterwave",
     "file": "flutterwave/v3-preauth-then-void.json",
     "description": "A held payment that is voided; the void is not shown as a payment success."
+  },
+  {
+    "id": "mercadopago-payment-lifecycle",
+    "title": "Mercado Pago: authorized, captured and partly refunded",
+    "provider": "mercadopago",
+    "file": "mercadopago/payment-lifecycle.json",
+    "description": "Payment snapshots, notifications without a status and a refund, linked by the payment id."
+  },
+  {
+    "id": "mercadopago-rejected-insufficient",
+    "title": "Mercado Pago: rejected, insufficient amount",
+    "provider": "mercadopago",
+    "file": "mercadopago/payment-rejected-insufficient-amount.json",
+    "description": "A rejected card payment decoded from its documented status_detail."
   }
 ]

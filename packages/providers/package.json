@@ -52,6 +52,7 @@
     "@pandapaylens/mifinity": "workspace:*",
     "@pandapaylens/mollie": "workspace:*",
     "@pandapaylens/netbilling": "workspace:*",
+    "@pandapaylens/mercadopago": "workspace:*",
     "@pandapaylens/nmi": "workspace:*",
     "@pandapaylens/nuvei": "workspace:*",
     "@pandapaylens/payabl": "workspace:*",

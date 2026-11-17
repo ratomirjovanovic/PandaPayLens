@@ -43,6 +43,7 @@ import { trustPaymentsManifest } from "@pandapaylens/trust-payments/manifest";
 import { pxpManifest } from "@pandapaylens/pxp/manifest";
 import { verotelManifest } from "@pandapaylens/verotel/manifest";
 import { netbillingManifest } from "@pandapaylens/netbilling/manifest";
+import { mercadopagoManifest } from "@pandapaylens/mercadopago/manifest";
 
 export const MANIFESTS: readonly ProviderManifest[] = [
   stripeManifest,
@@ -85,6 +86,7 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   pxpManifest,
   verotelManifest,
   netbillingManifest,
+  mercadopagoManifest,
 ];
 
 /** Roadmap focus areas, used for directory filters. Taken from the roadmap, not verified claims about the provider. */
@@ -140,7 +142,7 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     displayName: "PayPal",
     wave: 1,
     researchStatus: "released",
-    focus: ["general", "wallet"],
+    focus: ["general"],
   },
   {
     id: "braintree",
@@ -186,7 +188,7 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     displayName: "Paysafe",
     wave: 2,
     researchStatus: "tested",
-    focus: ["general", "wallet"],
+    focus: ["general"],
   },
   {
     id: "airwallex",
@@ -249,6 +251,13 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     id: "flutterwave",
     displayName: "Flutterwave",
     wave: 3,
+    researchStatus: "tested",
+    focus: ["general"],
+  },
+  {
+    id: "mercadopago",
+    displayName: "Mercado Pago",
+    wave: 5,
     researchStatus: "tested",
     focus: ["general"],
   },

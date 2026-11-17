@@ -91,6 +91,14 @@ export default defineConfig({
         replacement: src("./packages/adapters/netbilling/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/mercadopago\/manifest$/,
+        replacement: src("./packages/adapters/mercadopago/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/mercadopago$/,
+        replacement: src("./packages/adapters/mercadopago/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/pxp\/manifest$/,
         replacement: src("./packages/adapters/pxp/src/manifest.ts"),
       },
