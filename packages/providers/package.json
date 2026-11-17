@@ -57,6 +57,7 @@
     "@pandapaylens/mercadopago": "workspace:*",
     "@pandapaylens/nmi": "workspace:*",
     "@pandapaylens/nuvei": "workspace:*",
+    "@pandapaylens/paddle": "workspace:*",
     "@pandapaylens/payabl": "workspace:*",
     "@pandapaylens/paymentwall": "workspace:*",
     "@pandapaylens/paypal": "workspace:*",

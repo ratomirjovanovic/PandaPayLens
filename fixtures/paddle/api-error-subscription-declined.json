@@ -1,0 +1,11 @@
+{
+  "error": {
+    "type": "request_error",
+    "code": "subscription_payment_declined",
+    "detail": "Payment declined.",
+    "documentation_url": "https://developer.paddle.com/errors/subscriptions/subscription_payment_declined"
+  },
+  "meta": {
+    "request_id": "PPLsynth-request-subscription_payment_declined"
+  }
+}

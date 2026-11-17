@@ -789,5 +789,19 @@
     "provider": "xendit",
     "file": "xendit/payout-failed-webhook.json",
     "description": "A v3_payout.failed webhook with failure code INVALID_DESTINATION. Sender and recipient details are hidden."
+  },
+  {
+    "id": "paddle-payment-failed",
+    "title": "Paddle: renewal payment declined",
+    "provider": "paddle",
+    "file": "paddle/renewal-past-due.json",
+    "description": "A subscription renewal is declined; the transaction and the subscription become past due."
+  },
+  {
+    "id": "paddle-refund-lifecycle",
+    "title": "Paddle: refund pending approval, then approved",
+    "provider": "paddle",
+    "file": "paddle/refund-lifecycle.json",
+    "description": "A completed transaction and a refund adjustment that Paddle approves after review."
   }
 ]

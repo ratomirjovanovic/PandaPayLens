@@ -1,0 +1,11 @@
+{
+  "error": {
+    "type": "request_error",
+    "code": "customer_already_exists",
+    "detail": "Customer already exists.",
+    "documentation_url": "https://developer.paddle.com/errors/customers/customer_already_exists"
+  },
+  "meta": {
+    "request_id": "PPLsynth-request-customer_already_exists"
+  }
+}

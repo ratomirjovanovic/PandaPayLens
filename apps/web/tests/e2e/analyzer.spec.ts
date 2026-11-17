@@ -185,7 +185,7 @@ test("provider directory lists all roadmap providers honestly and filters them",
   await expect(page.getByRole("listitem").filter({ hasText: "Epoch" })).toContainText("blocked");
   await page.getByLabel("Category").selectOption("");
   await page.getByLabel("Provider", { exact: true }).fill("stripe");
-  await expect(page.getByText("1 of 43 providers")).toBeVisible();
+  await expect(page.getByText("1 of 43 providers", { exact: true })).toBeVisible();
   await page.getByRole("link", { name: "Details" }).click();
   await expect(page).toHaveURL(/\/providers\/stripe$/);
   await expect(page.getByRole("heading", { name: "Capabilities" })).toBeVisible();

@@ -1,0 +1,39 @@
+{
+  "data": {
+    "id": "sub_PPLsynth0801",
+    "status": "canceled",
+    "customer_id": "ctm_PPLsynth0001customer",
+    "address_id": "add_PPLsynth0001address",
+    "business_id": null,
+    "currency_code": "USD",
+    "created_at": "2026-11-02T10:00:04.000000Z",
+    "updated_at": "2026-11-02T10:00:04.000000Z",
+    "started_at": "2026-11-02T10:00:03.000000Z",
+    "first_billed_at": "2026-11-02T10:00:03.000000Z",
+    "next_billed_at": null,
+    "paused_at": null,
+    "canceled_at": "2026-11-20T00:00:00.000000Z",
+    "discount": null,
+    "collection_mode": "automatic",
+    "billing_details": null,
+    "current_billing_period": {
+      "starts_at": "2026-11-02T10:00:03.000000Z",
+      "ends_at": "2026-12-02T10:00:03.000000Z"
+    },
+    "billing_cycle": {
+      "interval": "month",
+      "frequency": 1
+    },
+    "scheduled_change": null,
+    "items": [],
+    "custom_data": null,
+    "import_meta": null,
+    "management_urls": {
+      "update_payment_method": "https://example.invalid/PPLsynth/update",
+      "cancel": "https://example.invalid/PPLsynth/cancel"
+    }
+  },
+  "meta": {
+    "request_id": "PPLsynth-request-0801"
+  }
+}
