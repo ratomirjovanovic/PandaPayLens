@@ -1,0 +1,4 @@
+HTTP/1.1 500 Internal Server Error
+Content-Type: application/json
+
+{"error":{"type":"api_error","code":"internal_error","detail":"Problem processing your request. The Paddle team has been notified.","documentation_url":"https://developer.paddle.com/errors/shared/internal_error"},"meta":{"request_id":"PPLsynth-request-internal_error"}}
