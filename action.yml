@@ -20,7 +20,7 @@ inputs:
   version:
     description: Version of the pandapaylens npm package to run.
     required: false
-    default: "0.15.1"
+    default: "0.16.0"
   include-identifiers:
     description: Show payment and event identifiers instead of masked values. Use only with synthetic data.
     required: false
