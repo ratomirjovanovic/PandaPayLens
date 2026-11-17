@@ -16,39 +16,42 @@
 import type { ErrorCategory, LifecycleStage, Outcome, RetryGuidance } from "@pandapaylens/core";
 
 const D = "https://developer.flutterwave.com";
-const D4 = `${D}/v4.0.0`;
+const D4 = `${D}/v4`;
 
-export const V3_COMMON_ERRORS_URL = `${D}/docs/common-errors`;
-export const V3_TIMEOUTS_URL = `${D}/docs/handling-error-timeouts`;
+// Flutterwave rebuilt its developer site in 2026. The pages below were checked
+// at their current addresses on 2026-11-17; the research note (section 12)
+// maps the old paths and records what changed.
+export const V3_COMMON_ERRORS_URL = `${D}/docs/errors`;
+export const V3_TIMEOUTS_URL = `${D}/docs/error-timeouts`;
 export const V3_RATE_LIMIT_URL = `${D}/docs/rate-limit`;
 export const V3_WEBHOOKS_URL = `${D}/docs/webhooks`;
 export const V3_VERIFY_URL = `${D}/docs/transaction-verification`;
-export const V3_REFUNDS_URL = `${D}/docs/refunds`;
-export const V3_CHARGEBACKS_URL = `${D}/docs/chargebacks`;
+export const V3_REFUNDS_URL = `${D}/docs/payment-operations/refunds`;
+export const V3_CHARGEBACKS_URL = `${D}/docs/payment-operations/chargebacks`;
 export const V3_TESTING_URL = `${D}/docs/testing`;
-export const V3_TRANSFERS_URL = `${D}/docs/introduction-6`;
-export const V3_CARD_URL = `${D}/docs/direct-card-charge`;
-export const V3_PREAUTH_URL = `${D}/docs/preauthorization`;
-export const V3_MOBILE_MONEY_URL = `${D}/docs/mobile-money-1`;
-export const V3_BANK_TRANSFER_URL = `${D}/docs/ngn-bank-transfer`;
-export const V3_CREATE_TRANSFER_URL = `${D}/reference/create-a-transfer`;
-export const V3_GET_TRANSFER_URL = `${D}/reference/get-a-transfer`;
-export const V3_VALIDATE_CHARGE_URL = `${D}/reference/validate-a-charge`;
-export const V3_RESEND_HOOK_URL = `${D}/reference/resend-transaction-webhook`;
-export const V3_REFUND_LOOKUP_URL = `${D}/reference/get-transaction-refunds`;
-export const V3_OTP_URL = `${D}/reference/create-otp`;
-export const V3_MPESA_URL = `${D}/reference/charge-via-mpesa`;
-export const V3_CAPITEC_URL = `${D}/reference/capitec`;
-export const V3_NG_ACCOUNT_URL = `${D}/reference/charge-nigerian-bank-accounts`;
-export const V3_TOKEN_CHARGE_URL = `${D}/reference/charge-with-token-1`;
-export const V3_GHANA_MOMO_URL = `${D}/reference/charge-via-ghana-mobile-money`;
-export const V3_ACH_URL = `${D}/docs/ach-payment`;
-export const V3_SA_ACCOUNT_URL = `${D}/docs/south-africa-account-charge`;
+export const V3_TRANSFERS_URL = `${D}/docs/payout-outflow/introduction`;
+export const V3_BULK_TRANSFERS_URL = `${D}/docs/payout-outflow/bulk-transfers`;
+export const V3_CARD_URL = `${D}/docs/collections-inflow/cards`;
+export const V3_PREAUTH_URL = `${D}/docs/collections-inflow/preauthorization`;
+export const V3_MOBILE_MONEY_URL = `${D}/docs/collections-inflow/mobile-money`;
+export const V3_BANK_TRANSFER_URL = `${D}/docs/collections-inflow/bank-transfer/ngn`;
+export const V3_CREATE_TRANSFER_URL = `${D}/api/transfers/create-a-transfer`;
+export const V3_VALIDATE_CHARGE_URL = `${D}/api/validate-charge`;
+export const V3_RESEND_HOOK_URL = `${D}/api/transactions/resend-transaction-webhook`;
+export const V3_REFUND_LOOKUP_URL = `${D}/api/transactions/get-transaction-refunds`;
+export const V3_OTP_URL = `${D}/api/otps/create-otp`;
+export const V3_MPESA_URL = `${D}/api/charge/mpesa`;
+export const V3_CAPITEC_URL = `${D}/api/charge/capitec`;
+export const V3_NG_ACCOUNT_URL = `${D}/api/charge/pay-with-bank-ng`;
+export const V3_TOKEN_CHARGE_URL = `${D}/api/tokenized-charges/charge-with-token-1`;
+export const V3_GHANA_MOMO_URL = `${D}/api/charge/ghana-mobile-money`;
+export const V3_ACH_URL = `${D}/docs/collections-inflow/ach`;
+export const V3_SA_ACCOUNT_URL = `${D}/docs/collections-inflow/bank-accounts/south-africa`;
 export const V4_ERRORS_URL = `${D4}/docs/common-errors`;
 export const V4_WEBHOOKS_URL = `${D4}/docs/webhooks`;
 export const V4_TESTING_URL = `${D4}/docs/testing`;
-export const V4_CHARGE_URL = `${D4}/reference/charges_get`;
-export const V4_TRANSFER_URL = `${D4}/reference/transfer_get`;
+export const V4_CHARGE_URL = `${D4}/api/charges/charges_get`;
+export const V4_TRANSFER_URL = `${D4}/api/transfers/transfer_get`;
 export const V4_TRANSFER_FLOW_URL = `${D4}/docs/general-transfer-flow`;
 export const V4_REFUNDS_URL = `${D4}/docs/refunds`;
 export const V4_CHARGEBACKS_URL = `${D4}/docs/chargebacks-1`;
@@ -494,7 +497,7 @@ export const V3_ERROR_MESSAGES: readonly TextEntry[] = [
     "The transfer was created and failed; the reason is in data.complete_message",
     "unknown",
     "manual_review",
-    V3_CREATE_TRANSFER_URL,
+    V3_TRANSFERS_URL,
     { definitive: true },
   ),
   msg(
@@ -504,12 +507,14 @@ export const V3_ERROR_MESSAGES: readonly TextEntry[] = [
     "do_not_retry",
     V3_CREATE_TRANSFER_URL,
   ),
+  // Read on 2026-10-25 as a create-transfer error. Since 2026-11-17 the docs
+  // show it only as a per-item bulk transfer error (meta.errors[].message).
   msg(
     "Payout with this ref already exists",
     "The transfer reference was already used",
     "duplicate_request",
     "do_not_retry",
-    V3_CREATE_TRANSFER_URL,
+    V3_BULK_TRANSFERS_URL,
   ),
   msg(
     "Payout was made to a blacklisted account number",
@@ -524,7 +529,7 @@ export const V3_ERROR_MESSAGES: readonly TextEntry[] = [
     "The transfer id does not exist (HTTP 404)",
     "invalid_request",
     "do_not_retry",
-    V3_GET_TRANSFER_URL,
+    V3_TRANSFERS_URL,
   ),
   msg(
     "Insufficient funds in merchant's NGN wallet",
@@ -689,6 +694,9 @@ export const V3_TRANSFER_FAILURES: readonly TextEntry[] = [
     V3_TRANSFERS_URL,
     { definitive: true },
   ),
+  // Read on 2026-10-25 in a create-transfer "Processor Error" example. The
+  // rebuilt docs (2026-11-17) no longer show this text anywhere; the entry is
+  // kept from the earlier reading and links to the nearest current page.
   msg(
     "beneficiary_name is required",
     "The beneficiary name is missing",
@@ -1354,7 +1362,13 @@ export const V4_COLLECTION_ERRORS: readonly V4CodeEntry[] = rows("collections", 
   ],
 ]);
 
-/** v4 payout error codes: 70 rows, 68 distinct codes. */
+/**
+ * v4 payout error codes: 70 rows, 68 distinct codes, read on 2026-10-25. On
+ * 2026-11-17 the v4 errors page still has a "Payout Error Codes" heading but no
+ * table. Three codes (201409, 228400, 301404) appear only in examples, 10500
+ * is still in the general table, and the lower-case types of 0301-0314 remain
+ * in the transfer schema's provider_response.type enum.
+ */
 export const V4_PAYOUT_ERRORS: readonly V4CodeEntry[] = rows("payouts", [
   [
     "0301",

@@ -1902,7 +1902,8 @@ function decodeV4Transfer(o: Obj, loc: Loc): DecodedErrorDraft | null {
     confidence: entry ? "strong" : "insufficient",
     documentation: [
       { title: "Flutterwave v4 transfer schema", url: V4_TRANSFER_URL },
-      { title: "Flutterwave v4 payout error codes", url: V4_ERRORS_URL },
+      // The payout code table was removed from this page (re-checked 2026-11-17).
+      { title: "Flutterwave v4 errors", url: V4_ERRORS_URL },
     ],
     missingInformation: missing,
     outcomeKnown: true,

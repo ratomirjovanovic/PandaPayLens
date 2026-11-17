@@ -3,7 +3,7 @@ import type { ProviderManifest } from "@pandapaylens/core";
 export const FLUTTERWAVE_ADAPTER_VERSION = "0.1.0";
 
 const D = "https://developer.flutterwave.com";
-const D4 = `${D}/v4.0.0`;
+const D4 = `${D}/v4`;
 
 export const flutterwaveManifest: ProviderManifest = {
   id: "flutterwave",
@@ -24,7 +24,7 @@ export const flutterwaveManifest: ProviderManifest = {
     { sector: "Telecommunications", source: `${D4}/docs/telecommunications` },
   ],
   regions:
-    "Transfers to Nigeria, the United States, the United Kingdom, SEPA, Ghana, Kenya, Uganda, Tanzania, South Africa, Cameroon, Ivory Coast, Sierra Leone, Senegal, Rwanda and over 30 other countries, as Flutterwave states them. Mobile money collections in francophone Africa, Ghana, Kenya (M-PESA), Rwanda, Tanzania, Uganda and Zambia. Payouts to Zambia only for merchants registered in Zambia (code 229400); XAF-to-XAF transfers only without approval (226400); XOF mobile money destination limits (230400); NGN-only bank transfer collections; refund minimums NGN 100 and KES 10. Direct card charges need PCI DSS certification and transfers need IP whitelisting. Licences are published for the Send remittance app (US FinCEN MSB and state money transmitter licences, Central Bank of Nigeria licences, UK and EU partners); which entity contracts with API merchants is not documented. A listed sector does not mean a merchant will be approved.",
+    "Transfers to Nigeria, the United States, the United Kingdom, SEPA, Ghana, Kenya, Uganda, Tanzania, South Africa, Cameroon, Ivory Coast, Sierra Leone, Senegal, Rwanda and over 30 other countries, as Flutterwave states them. Mobile money collections in francophone Africa, Ghana, Kenya (M-PESA), Rwanda, Tanzania, Uganda and Zambia. As read on 2026-10-25 in the v4 payout code table, which Flutterwave no longer publishes: payouts to Zambia only for merchants registered in Zambia (code 229400), XAF-to-XAF transfers only without approval (226400) and XOF mobile money destination limits (230400). NGN-only bank transfer collections; refund minimums NGN 100 and KES 10. Direct card charges need PCI DSS certification and transfers need IP whitelisting. Licences are published for the Send remittance app (US FinCEN MSB and state money transmitter licences, Central Bank of Nigeria licences, UK and EU partners); which entity contracts with API merchants is not documented. A listed sector does not mean a merchant will be approved.",
   documentationAccess: "public",
   fixtureProvenance:
     "Synthetic fixtures with PPLsynth identifiers. Shapes follow the v3 and v4 examples transcribed from Flutterwave's developer documentation (verify response, charge and transfer webhooks, refund and chargeback objects, the v4 error object, charge and transfer webhooks) with synthetic values; customer, card and bank blocks are reduced to synthetic placeholders. Decline fixtures use only the documented processor_response, message and complete_message texts. None is an official Flutterwave example.",
@@ -119,11 +119,11 @@ export const flutterwaveManifest: ProviderManifest = {
     diagnosticRules: "limited",
   },
   documentation: [
-    { topic: "errors", title: "v3 common errors", url: `${D}/docs/common-errors` },
+    { topic: "errors", title: "v3 common errors", url: `${D}/docs/errors` },
     {
       topic: "timeouts",
       title: "v3 handling error timeouts",
-      url: `${D}/docs/handling-error-timeouts`,
+      url: `${D}/docs/error-timeouts`,
     },
     { topic: "webhooks", title: "v3 webhooks", url: `${D}/docs/webhooks` },
     {
@@ -131,16 +131,28 @@ export const flutterwaveManifest: ProviderManifest = {
       title: "v3 transaction verification",
       url: `${D}/docs/transaction-verification`,
     },
-    { topic: "card", title: "v3 direct card charge", url: `${D}/docs/direct-card-charge` },
-    { topic: "preauth", title: "v3 preauthorization", url: `${D}/docs/preauthorization` },
-    { topic: "refunds", title: "v3 refunds", url: `${D}/docs/refunds` },
-    { topic: "chargebacks", title: "v3 chargebacks", url: `${D}/docs/chargebacks` },
-    { topic: "transfers", title: "v3 transfers", url: `${D}/docs/introduction-6` },
+    { topic: "card", title: "v3 card charges", url: `${D}/docs/collections-inflow/cards` },
+    {
+      topic: "preauth",
+      title: "v3 preauthorization",
+      url: `${D}/docs/collections-inflow/preauthorization`,
+    },
+    { topic: "refunds", title: "v3 refunds", url: `${D}/docs/payment-operations/refunds` },
+    {
+      topic: "chargebacks",
+      title: "v3 chargebacks",
+      url: `${D}/docs/payment-operations/chargebacks`,
+    },
+    { topic: "transfers", title: "v3 transfers", url: `${D}/docs/payout-outflow/introduction` },
     { topic: "testing", title: "v3 testing", url: `${D}/docs/testing` },
-    { topic: "v4-errors", title: "v4 errors and code tables", url: `${D4}/docs/common-errors` },
+    {
+      topic: "v4-errors",
+      title: "v4 errors and collections code table",
+      url: `${D4}/docs/common-errors`,
+    },
     { topic: "v4-webhooks", title: "v4 webhooks", url: `${D4}/docs/webhooks` },
-    { topic: "v4-charges", title: "v4 charge schema", url: `${D4}/reference/charges_get` },
-    { topic: "v4-transfers", title: "v4 transfer schema", url: `${D4}/reference/transfer_get` },
+    { topic: "v4-charges", title: "v4 charge schema", url: `${D4}/api/charges/charges_get` },
+    { topic: "v4-transfers", title: "v4 transfer schema", url: `${D4}/api/transfers/transfer_get` },
     { topic: "v4-testing", title: "v4 testing and issuer responses", url: `${D4}/docs/testing` },
   ],
   verifiedAt: "2026-10-25",
@@ -163,7 +175,9 @@ export const flutterwaveManifest: ProviderManifest = {
     "v3 objects carry only their creation time (created_at). It is used as the event time, so several states of one transaction share one time and keep the order of the input. Webhook delivery order is not documented.",
     "v3 transfer.completed also reports wallet funding and payout sub-account inflows (narration WALLET FUNDING or debit_currency PSA); those are shown as stage other, not as payouts. Transfer retries get a new id and the reference <original>_RETRY_<n>; retries are linked to the original by that reference.",
     "v3 chargeback webhooks link to the charge only through flw_ref. Refund webhooks link through TransactionId. v3 numeric ids and v4 prefixed ids cannot be linked to each other.",
-    "v4 error codes are decoded by the pair error.code and error.type, because v4 reuses numbers across tables (for example 301404 and 209400 have two meanings each). A code whose type is missing or unknown is decoded with possible confidence only when it has a single meaning.",
+    "v4 error codes are decoded by the pair error.code and error.type, because v4 reuses numbers across and within tables (for example 1100409 and 1144400 have several meanings). A code whose type is missing or unknown is decoded with possible confidence only when it has a single meaning.",
+    "The v4 payout error codes (70 rows, 68 codes) were read on 2026-10-25. When re-checked on 2026-11-17, the v4 errors page kept the Payout Error Codes heading without its table. No current page lists the codes; three of them (201409, 228400, 301404) appear only in examples, 10500 is still in the general table, and the lower-case provider_response.type values of 0301 to 0314 remain in the transfer schema. The payout codes are still decoded from the earlier reading.",
+    "Two v3 transfer messages are no longer shown as create-transfer errors in the rebuilt documentation (re-checked 2026-11-17): beneficiary_name is required (a complete_message read on 2026-10-25) appears nowhere, and Payout with this ref already exists appears only as a per-item bulk transfer error. Both are still decoded from the earlier reading.",
     "v4 card processor_response is decoded by its type; the timeout example uses type pending with code 02, outside the documented list, so a code alone is never trusted. The v4 payout provider_response type invalid_wallet_currency has no documented meaning.",
     "v4 webhook ids are documented as webhook_id (schema) and id (webhooks page); both are read. Whether a retried v4 webhook keeps its id is not documented. The payload of order.authorization is not documented and is shown without interpretation; v4 chargeback webhooks are not documented.",
     "Signatures are never verified or copied: the v3 verif-hash header carries the merchant's secret hash itself and the v4 flutterwave-signature header is an HMAC of the body. A pasted webhook is never treated as authentic.",
