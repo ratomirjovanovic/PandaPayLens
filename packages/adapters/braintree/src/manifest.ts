@@ -122,7 +122,7 @@ export const braintreeManifest: ProviderManifest = {
   },
   limitations: [
     "Raw webhook deliveries (bt_signature and bt_payload) are recognized but not decoded or verified: verification needs the merchant's private API key. Parse the notification with a Braintree SDK and paste the parsed notification, or paste the decoded XML, instead.",
-    "Decoded webhook XML (the base64-decoded bt_payload) is read with the conversion rules of the official Braintree SDK source, because no documentation page shows the XML. It is not verified: anyone can write such a document. A base64 bt_payload on its own is not decoded.",
+    "Decoded webhook XML (the base64-decoded bt_payload) is read with the conversion rules of the official Braintree SDK source, because no documentation page shows the XML. It is not verified: anyone can write such a document. A base64 bt_payload on its own is not decoded, and other Braintree XML (for example gateway API responses) is not recognized.",
     "Card, PayPal, Venmo and wallet transactions produce no transaction webhooks; only ACH and SEPA Direct Debit settlements do. Timelines come from the supplied snapshots and statusHistory entries, and missing states are not inferred.",
     "A statusHistory without timestamps (as in some GraphQL responses) is shown as one snapshot event that lists the statuses.",
     "Braintree documents no notification id, so repeated deliveries of the same notification are not identified (no delivery key).",

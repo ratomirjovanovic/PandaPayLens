@@ -858,7 +858,38 @@ describe("braintree decoded notification XML", () => {
     expect(r.events[0]).toMatchObject({ stage: "settlement", outcome: "failure" });
   });
 
-  it("links XML and parsed notifications of the same transaction", () => {
+  it("reads an XML notification exactly like the same parsed notification", () => {
+    const fromXml = analyzeFixture("webhook-xml-transaction-settled.xml").events[0]!;
+    const fromJson = analyzeJson({
+      kind: "transaction_settled",
+      timestamp: "2026-10-25T06:00:00Z",
+      transaction: {
+        id: "PPLsynthACHX1",
+        status: "settled",
+        type: "sale",
+        currency_iso_code: "USD",
+        amount: "100.00",
+        merchant_account_id: "PPLsynthMerchantUSD",
+        refund_ids: [],
+      },
+    }).events[0]!;
+    const view = (e: typeof fromXml) => ({
+      eventType: e.eventType,
+      stage: e.stage,
+      outcome: e.outcome,
+      providerStatus: e.providerStatus,
+      paymentReference: e.paymentReference,
+      eventTimestamp: e.eventTimestamp,
+      amountMinor: e.amountMinor,
+      currency: e.currency,
+      attributes: e.attributes,
+    });
+    expect(view(fromXml)).toEqual(view(fromJson));
+    expect(fromXml.sourceFormat).toBe("braintree.webhook.notification_xml");
+    expect(fromJson.sourceFormat).toBe("braintree.webhook.notification");
+  });
+
+  it("refers XML notifications to the transaction by its id", () => {
     const text = [
       fixture("braintree/webhook-xml-transaction-settled.xml"),
       fixture("braintree/webhook-xml-settlement-declined.xml"),
@@ -883,8 +914,8 @@ describe("braintree decoded notification XML", () => {
     ]);
   });
 
-  it("reads XML inside an HTTP message, with a one-item array and nil elements", () => {
-    const r = analyzeFixture("webhook-xml-disbursement-http.txt");
+  it("reads a one-item array and nil elements", () => {
+    const r = analyzeFixture("webhook-xml-disbursement.xml");
     expect(r.records[0]).toMatchObject({
       status: "analyzed",
       format: "braintree.webhook.notification_xml",
@@ -900,6 +931,18 @@ describe("braintree decoded notification XML", () => {
       },
     });
     expect(r.events[0]!.paymentReference).toBeUndefined();
+  });
+
+  it("reads the XML document from the body of a pasted HTTP message", () => {
+    // Braintree itself posts form-encoded bt_signature and bt_payload; this is
+    // a decoded document forwarded or logged as an HTTP message.
+    const body = fixture("braintree/webhook-xml-dispute-opened.xml");
+    const r = analyze(`HTTP/1.1 200 OK\nContent-Type: application/xml\n\n${body}`);
+    expect(r.records[0]).toMatchObject({
+      status: "analyzed",
+      format: "braintree.webhook.notification_xml",
+    });
+    expect(r.events[0]).toMatchObject({ eventType: "dispute_opened" });
   });
 
   const xml = (kind: string, subject: string, timestamp = "2026-10-25T08:00:00Z") =>
