@@ -8,6 +8,16 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.17.0",
+    date: "2026-11-17",
+    status: "released",
+    changes: [
+      "PayPal: subscription and dispute webhooks and resources are analyzed.",
+      "Braintree: decoded notification XML is read, and all Transaction validation codes are mapped.",
+      "Documentation links for Flutterwave and Trustly point to the current pages; content that is no longer published is stated in the limitations.",
+    ],
+  },
+  {
     version: "0.16.0",
     date: "2026-11-17",
     status: "released",
