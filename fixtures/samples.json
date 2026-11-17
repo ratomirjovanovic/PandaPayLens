@@ -740,5 +740,19 @@
     "provider": "klarna",
     "file": "klarna/order-lifecycle.json",
     "description": "A Klarna Payments order and its Order Management state, grouped by order_id."
+  },
+  {
+    "id": "mercadopago-payment-lifecycle",
+    "title": "Mercado Pago: authorized, captured and partly refunded",
+    "provider": "mercadopago",
+    "file": "mercadopago/payment-lifecycle.json",
+    "description": "Payment snapshots, notifications without a status and a refund, linked by the payment id."
+  },
+  {
+    "id": "mercadopago-rejected-insufficient",
+    "title": "Mercado Pago: rejected, insufficient amount",
+    "provider": "mercadopago",
+    "file": "mercadopago/payment-rejected-insufficient-amount.json",
+    "description": "A rejected card payment decoded from its documented status_detail."
   }
 ]

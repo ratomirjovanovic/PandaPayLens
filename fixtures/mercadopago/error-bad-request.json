@@ -1,0 +1,6 @@
+{
+  "message": "PPLsynth invalid parameter",
+  "error": "pplsynth_error_400",
+  "status": 400,
+  "cause": [{}]
+}

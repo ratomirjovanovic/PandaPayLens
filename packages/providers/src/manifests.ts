@@ -44,6 +44,7 @@ import { pxpManifest } from "@pandapaylens/pxp/manifest";
 import { verotelManifest } from "@pandapaylens/verotel/manifest";
 import { netbillingManifest } from "@pandapaylens/netbilling/manifest";
 import { klarnaManifest } from "@pandapaylens/klarna/manifest";
+import { mercadopagoManifest } from "@pandapaylens/mercadopago/manifest";
 
 export const MANIFESTS: readonly ProviderManifest[] = [
   stripeManifest,
@@ -87,6 +88,7 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   verotelManifest,
   netbillingManifest,
   klarnaManifest,
+  mercadopagoManifest,
 ];
 
 /** Roadmap focus areas, used for directory filters. Taken from the roadmap, not verified claims about the provider. */
@@ -261,6 +263,13 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     researchStatus: "tested",
     focus: ["general"],
     note: "Klarna Payments v1 and Order Management v1 for direct merchants. Klarna Network (v2) APIs used by acquiring partners are separate.",
+  },
+  {
+    id: "mercadopago",
+    displayName: "Mercado Pago",
+    wave: 5,
+    researchStatus: "tested",
+    focus: ["general"],
   },
   // High-risk expansion. Research candidates until the
   // qualification gate and tests are passed.

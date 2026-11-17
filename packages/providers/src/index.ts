@@ -44,6 +44,7 @@ import { pxpAdapter } from "@pandapaylens/pxp";
 import { verotelAdapter } from "@pandapaylens/verotel";
 import { netbillingAdapter } from "@pandapaylens/netbilling";
 import { klarnaAdapter } from "@pandapaylens/klarna";
+import { mercadopagoAdapter } from "@pandapaylens/mercadopago";
 
 export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   stripeAdapter,
@@ -87,6 +88,7 @@ export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   verotelAdapter,
   netbillingAdapter,
   klarnaAdapter,
+  mercadopagoAdapter,
 ];
 
 export {
