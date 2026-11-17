@@ -41,7 +41,7 @@ export const EU_REFUND_URL = `${EU}/refund`;
 export const EU_ACCOUNT_PAYOUT_URL = `${EU}/accountpayout`;
 export const EU_APPROVE_WITHDRAWAL_URL = `${EU}/approvewithdrawal`;
 export const EU_GET_WITHDRAWALS_URL = `${EU}/getwithdrawals`;
-export const EU_MERCHANT_SETTLEMENT_URL = `${EU}/merchantsettlement`;
+export const EU_SETTLEMENT_CSV_URL = `${EU}/viewautomaticsettlementdetailscsv`;
 export const EU_SWISH_URL = `${EU}/swish`;
 export const EU_SWISH_PAYOUT_URL = `${EU}/swish-payout`;
 export const EU_SWISH_REFUND_URL = `${EU}/swish-refund`;
@@ -110,10 +110,10 @@ const EU_ROWS: readonly EuRow[] = [
   [
     603,
     "ERROR_INSUFFICIENT_FUNDS",
-    "The merchant balance at Trustly is too low (refund, settlement)",
+    "The merchant balance at Trustly is too low (refund)",
     "insufficient_funds",
     "manual_review",
-    [EU_REFUND_URL, EU_MERCHANT_SETTLEMENT_URL],
+    [EU_REFUND_URL],
   ],
   [
     607,
@@ -152,13 +152,14 @@ const EU_ROWS: readonly EuRow[] = [
     "unknown",
     "retry_conditionally",
   ],
+  // Read on 2026-10-25 on the MerchantSettlement page, which Trustly removed
+  // (re-checked 2026-11-17); no current page lists this code.
   [
     621,
     "ERROR_NO_SUITABLE_BANK_ACCOUNT_FOUND",
     "No earlier settlement in this currency (MerchantSettlement)",
     "configuration",
     "manual_review",
-    [EU_MERCHANT_SETTLEMENT_URL],
   ],
   [622, "ERROR_INVALID_CURRENCY_CODE", "Invalid currency code", "invalid_request", "do_not_retry"],
   [
@@ -189,7 +190,7 @@ const EU_ROWS: readonly EuRow[] = [
     "Settlements for the date could not be executed because the requirements were not met",
     "configuration",
     "manual_review",
-    [EU_MERCHANT_SETTLEMENT_URL],
+    [EU_SETTLEMENT_CSV_URL],
   ],
   [
     636,
@@ -267,7 +268,7 @@ const EU_ROWS: readonly EuRow[] = [
     "Settlements for that date are not processed yet",
     "provider_unavailable",
     "retry_conditionally",
-    [EU_MERCHANT_SETTLEMENT_URL],
+    [EU_SETTLEMENT_CSV_URL],
   ],
   [
     688,

@@ -167,13 +167,13 @@ Arrives in `error.code` (number) and `error.message` (name); repeated in `error.
 | ---- | ------------------------------------------------- | --------------------------------------------------------------------- | -------------------------- | ------------------------ |
 | 102  | ERROR_RATE_LIMIT                                  | Third-party limit; request denied but can be retried later (CoP/VoP)  | rate_limiting              | retry_conditionally      |
 | 602  | ERROR_FUNCTION_ACCESS_DENIED                      | Merchant has no access to this method                                 | configuration              | do_not_retry             |
-| 603  | ERROR_INSUFFICIENT_FUNDS                          | Merchant balance at Trustly too low (refund, settlement)              | insufficient_funds         | manual_review            |
+| 603  | ERROR_INSUFFICIENT_FUNDS                          | Merchant balance at Trustly too low (refund; see section 12)          | insufficient_funds         | manual_review            |
 | 607  | ERROR_HOST_ACCESS_DENIED                          | Caller IP not whitelisted                                             | configuration              | do_not_retry             |
 | 615  | ERROR_INVALID_AMOUNT                              | Amount must be > 0 with 2 decimals (refund: not above original)       | invalid_amount             | do_not_retry             |
 | 616  | ERROR_INVALID_CREDENTIALS                         | Wrong API username/password                                           | configuration              | do_not_retry             |
 | 619  | ERROR_NETWORK                                     | Temporary connectivity issue with the payment system provider (iDEAL) | network_or_timeout         | retry_conditionally      |
 | 620  | ERROR_UNKNOWN                                     | Unspecified; some pages say a retry might succeed                     | unknown                    | retry_conditionally      |
-| 621  | ERROR_NO_SUITABLE_BANK_ACCOUNT_FOUND              | No earlier settlement in this currency (MerchantSettlement)           | configuration              | manual_review            |
+| 621  | ERROR_NO_SUITABLE_BANK_ACCOUNT_FOUND              | No earlier settlement in this currency (removed page, section 12)     | configuration              | manual_review            |
 | 622  | ERROR_INVALID_CURRENCY_CODE                       | Invalid currency code                                                 | invalid_request            | do_not_retry             |
 | 623  | ERROR_INVALID_PARAMETERS                          | A value does not match the expected format                            | invalid_request            | do_not_retry             |
 | 624  | ERROR_INVALID_BANK_ACCOUNT_NUMBER                 | Bank account, IBAN or AccountID invalid (text varies by page)         | invalid_request            | customer_action_required |
@@ -476,3 +476,20 @@ Versus other supported providers: Stripe (`object`, `evt_` IDs), Adyen (`notific
 | webhookParsing   | **supported** (EU), **limited** (AMER) | EU notifications have a fixed envelope, named methods, `notificationid` and examples for every type; signature verification stays out of scope. AMER has a field table and one form-encoded example, with content-type inconsistency. |
 | timeline         | **limited**                            | Clear semantics (pending, credit, debit, cancel, payoutconfirmation, payoutfailed; AMER status 0 to 14 and event types), but ordering is not guaranteed, several notifications are opt-in, and reversals can arrive days later.       |
 | correlation      | **supported** (EU), **limited** (AMER) | Every EU notification carries `orderid` and `messageid`; `notificationid` deduplicates. Refund-to-payout ID semantics are ambiguous. AMER relies on `objectId`, `parentObjectId` and `merchantReference` with less example coverage.  |
+
+---
+
+## 12. Documentation re-check (2026-11-17)
+
+The link check reported https://docs.trustly.com/api/merchantsettlement as not found (HTTP 404). On 2026-11-17 the MerchantSettlement method page is no longer listed in https://docs.trustly.com/sitemap.xml. The site navigation (Reporting section) still shows a MerchantSettlement entry, but it links to `/docs/api/merchantsettlement`, which also returns 404. No replacement page was found: every page listed in the sitemap was fetched and none documents the MerchantSettlement method or the code `ERROR_NO_SUITABLE_BANK_ACCOUNT_FOUND`. The closest current pages are https://docs.trustly.com/get-started/settle-your-funds-from-trustly (manual and automatic settlements in Trustly Back Office, no API method) and https://docs.trustly.com/api/viewautomaticsettlementdetailscsv.
+
+Effect on the codes that cited MerchantSettlement:
+
+| Code | Name                                 | Current source (2026-11-17)                                                                                                                           | Adapter change                                                                                                                           |
+| ---- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| 603  | ERROR_INSUFFICIENT_FUNDS             | /api/refund and /api/swish-refund ("not enough balance on their Trustly account to execute the refund")                                               | Settlement link removed; the meaning now names only refunds                                                                              |
+| 621  | ERROR_NO_SUITABLE_BANK_ACCOUNT_FOUND | **NOT DOCUMENTED** on any current page                                                                                                                | Entry kept from the 2026-10-25 reading, without a page link (the error handling page is still shown); stated in the manifest limitations |
+| 627  | ERROR_NOT_FOUND                      | /api/viewautomaticsettlementdetailscsv ("could not be executed because one or more of the requirements described in section 1 was not met")           | Link moved to the ViewAutomaticSettlementDetailsCSV page; meaning unchanged                                                              |
+| 676  | ERROR_SETTLEMENTS_NOT_PROCESSED      | /api/viewautomaticsettlementdetailscsv ("have not been processed yet. This does NOT mean that no settlements will be executed on the specified date") | Link moved to the ViewAutomaticSettlementDetailsCSV page; meaning unchanged                                                              |
+
+The 74-code count in section 4.1 is the union read on 2026-10-25; on 2026-11-17 every one of them except 621 still appears on at least one current page.
