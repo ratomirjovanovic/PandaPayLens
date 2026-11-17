@@ -7,6 +7,12 @@ describe("stripe detection", () => {
     [{ error: { type: "card_error", code: "card_declined" } }, "stripe.api_error", 0.95, true],
     [{ error: { type: "something_else" } }, "stripe.api_error", 0.3, true],
     [
+      { error: { type: "api_error", code: "x", detail: "y", documentation_url: "https://z" } },
+      "stripe.api_error",
+      0.3,
+      true,
+    ],
+    [
       { id: "evt_1", object: "event", type: "x", data: { object: {} } },
       "stripe.event.snapshot",
       0.98,
