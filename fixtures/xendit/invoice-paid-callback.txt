@@ -1,0 +1,7 @@
+POST /webhooks/xendit/invoice HTTP/1.1
+Host: merchant.example
+Content-Type: application/json
+x-callback-token: PPLsynthCALLBACKTOKEN0000000000000000000000000000
+webhook-id: PPLsynth-webhook-8001
+
+{"id":"PPLsynthINV0000000000001","external_id":"PPLsynth-invoice-8001","user_id":"PPLsynthUSER00000000001","is_high":false,"payment_method":"BANK_TRANSFER","status":"PAID","merchant_name":"PPLsynth Merchant","amount":150000,"paid_amount":150000,"bank_code":"MANDIRI","paid_at":"2026-11-16T04:10:00.000Z","payer_email":"pplsynth.payer@example.com","description":"PPLsynth invoice","created":"2026-11-16T04:00:00.000Z","updated":"2026-11-16T04:10:01.000Z","currency":"IDR","payment_channel":"MANDIRI","payment_destination":"PPLSYNTH8800001"}

@@ -1,0 +1,4 @@
+{
+  "error_code": "REFUND_IN_PROGRESS",
+  "message": "Please wait for the pending refund request to be completed before initiating a new one."
+}

@@ -775,5 +775,19 @@
     "provider": "gocardless",
     "file": "gocardless/api-error-validation-failed.json",
     "description": "A 422 API error with field errors; the fields are listed and the user is asked to correct them."
+  },
+  {
+    "id": "xendit-card-payment-lifecycle",
+    "title": "Xendit: card payment, capture and refund",
+    "provider": "xendit",
+    "file": "xendit/card-payment-lifecycle.json",
+    "description": "A Payments API v3 card payment request authorized, captured manually and partly refunded. Card, cardholder and 3DS fields are hidden."
+  },
+  {
+    "id": "xendit-payout-failed",
+    "title": "Xendit: payout failed",
+    "provider": "xendit",
+    "file": "xendit/payout-failed-webhook.json",
+    "description": "A v3_payout.failed webhook with failure code INVALID_DESTINATION. Sender and recipient details are hidden."
   }
 ]

@@ -1,0 +1,81 @@
+[
+  {
+    "business_id": "PPLsynthBUSINESS0001",
+    "reference_id": "PPLsynth-va-4000",
+    "payment_request_id": "pr-PPLsynth-4000",
+    "type": "REUSABLE_PAYMENT_CODE",
+    "country": "ID",
+    "currency": "IDR",
+    "request_amount": 100000,
+    "capture_method": "AUTOMATIC",
+    "channel_code": "BRI_VIRTUAL_ACCOUNT",
+    "channel_properties": {
+      "expires_at": "2026-12-31T23:59:59Z",
+      "display_name": "PPLsynth Customer"
+    },
+    "actions": [
+      {
+        "type": "PRESENT_TO_CUSTOMER",
+        "descriptor": "VIRTUAL_ACCOUNT_NUMBER",
+        "value": "PPLSYNTH77001"
+      }
+    ],
+    "status": "ACCEPTING_PAYMENTS",
+    "created": "2026-11-01T00:00:00Z",
+    "updated": "2026-11-01T00:00:00Z"
+  },
+  {
+    "event": "payment.capture",
+    "business_id": "PPLsynthBUSINESS0001",
+    "created": "2026-11-05T10:00:00Z",
+    "data": {
+      "business_id": "PPLsynthBUSINESS0001",
+      "payment_id": "py-PPLsynth-4001",
+      "reference_id": "PPLsynth-va-4000",
+      "payment_request_id": "pr-PPLsynth-4000",
+      "type": "REUSABLE_PAYMENT_CODE",
+      "country": "ID",
+      "currency": "IDR",
+      "request_amount": 100000,
+      "capture_method": "AUTOMATIC",
+      "channel_code": "BRI_VIRTUAL_ACCOUNT",
+      "status": "SUCCEEDED",
+      "captures": [
+        {
+          "capture_id": "cptr-PPLsynth-4001",
+          "capture_timestamp": "2026-11-05T10:00:00Z",
+          "capture_amount": 100000
+        }
+      ],
+      "created": "2026-11-05T10:00:00Z",
+      "updated": "2026-11-05T10:00:00Z"
+    }
+  },
+  {
+    "event": "payment.capture",
+    "business_id": "PPLsynthBUSINESS0001",
+    "created": "2026-11-09T10:00:00Z",
+    "data": {
+      "business_id": "PPLsynthBUSINESS0001",
+      "payment_id": "py-PPLsynth-4002",
+      "reference_id": "PPLsynth-va-4000",
+      "payment_request_id": "pr-PPLsynth-4000",
+      "type": "REUSABLE_PAYMENT_CODE",
+      "country": "ID",
+      "currency": "IDR",
+      "request_amount": 100000,
+      "capture_method": "AUTOMATIC",
+      "channel_code": "BRI_VIRTUAL_ACCOUNT",
+      "status": "SUCCEEDED",
+      "captures": [
+        {
+          "capture_id": "cptr-PPLsynth-4002",
+          "capture_timestamp": "2026-11-09T10:00:00Z",
+          "capture_amount": 100000
+        }
+      ],
+      "created": "2026-11-09T10:00:00Z",
+      "updated": "2026-11-09T10:00:00Z"
+    }
+  }
+]

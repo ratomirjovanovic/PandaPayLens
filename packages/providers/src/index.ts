@@ -46,6 +46,7 @@ import { netbillingAdapter } from "@pandapaylens/netbilling";
 import { klarnaAdapter } from "@pandapaylens/klarna";
 import { mercadopagoAdapter } from "@pandapaylens/mercadopago";
 import { gocardlessAdapter } from "@pandapaylens/gocardless";
+import { xenditAdapter } from "@pandapaylens/xendit";
 
 export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   stripeAdapter,
@@ -91,6 +92,7 @@ export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   klarnaAdapter,
   mercadopagoAdapter,
   gocardlessAdapter,
+  xenditAdapter,
 ];
 
 export {
