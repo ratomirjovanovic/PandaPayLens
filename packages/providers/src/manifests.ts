@@ -45,6 +45,7 @@ import { verotelManifest } from "@pandapaylens/verotel/manifest";
 import { netbillingManifest } from "@pandapaylens/netbilling/manifest";
 import { klarnaManifest } from "@pandapaylens/klarna/manifest";
 import { mercadopagoManifest } from "@pandapaylens/mercadopago/manifest";
+import { gocardlessManifest } from "@pandapaylens/gocardless/manifest";
 
 export const MANIFESTS: readonly ProviderManifest[] = [
   stripeManifest,
@@ -89,6 +90,7 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   netbillingManifest,
   klarnaManifest,
   mercadopagoManifest,
+  gocardlessManifest,
 ];
 
 /** Roadmap focus areas, used for directory filters. Taken from the roadmap, not verified claims about the provider. */
@@ -270,6 +272,13 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     wave: 5,
     researchStatus: "tested",
     focus: ["general"],
+  },
+  {
+    id: "gocardless",
+    displayName: "GoCardless",
+    wave: 5,
+    researchStatus: "tested",
+    focus: ["general", "pay_by_bank"],
   },
   // High-risk expansion. Research candidates until the
   // qualification gate and tests are passed.

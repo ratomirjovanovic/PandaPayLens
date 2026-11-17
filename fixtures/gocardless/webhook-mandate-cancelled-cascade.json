@@ -1,0 +1,75 @@
+{
+  "events": [
+    {
+      "id": "EVPPLSYNTH040001",
+      "created_at": "2026-11-07T06:00:00.000Z",
+      "resource_type": "mandates",
+      "action": "cancelled",
+      "links": {
+        "mandate": "MDPPLSYNTH040001"
+      },
+      "details": {
+        "origin": "bank",
+        "cause": "bank_account_closed",
+        "scheme": "bacs",
+        "reason_code": "ADDACS-B",
+        "description": "The mandate was cancelled as the customer's bank account has been closed."
+      },
+      "metadata": {}
+    },
+    {
+      "id": "EVPPLSYNTH040002",
+      "created_at": "2026-11-07T06:00:02.000Z",
+      "resource_type": "payments",
+      "action": "cancelled",
+      "links": {
+        "payment": "PMPPLSYNTH040001",
+        "parent_event": "EVPPLSYNTH040001"
+      },
+      "details": {
+        "origin": "bank",
+        "cause": "bank_account_closed",
+        "scheme": "bacs",
+        "reason_code": "ADDACS-B",
+        "description": "The mandate for this payment was cancelled as the customer's bank account has been closed."
+      },
+      "metadata": {}
+    },
+    {
+      "id": "EVPPLSYNTH040003",
+      "created_at": "2026-11-07T06:00:02.000Z",
+      "resource_type": "payments",
+      "action": "cancelled",
+      "links": {
+        "payment": "PMPPLSYNTH040002",
+        "parent_event": "EVPPLSYNTH040001"
+      },
+      "details": {
+        "origin": "bank",
+        "cause": "bank_account_closed",
+        "scheme": "bacs",
+        "reason_code": "ADDACS-B",
+        "description": "The mandate for this payment was cancelled as the customer's bank account has been closed."
+      },
+      "metadata": {}
+    },
+    {
+      "id": "EVPPLSYNTH040004",
+      "created_at": "2026-11-07T06:00:03.000Z",
+      "resource_type": "subscriptions",
+      "action": "cancelled",
+      "links": {
+        "subscription": "SBPPLSYNTH040001",
+        "parent_event": "EVPPLSYNTH040001"
+      },
+      "details": {
+        "origin": "bank",
+        "cause": "bank_account_closed",
+        "scheme": "bacs",
+        "reason_code": "ADDACS-B",
+        "description": "The mandate for this subscription was cancelled as the customer's bank account has been closed."
+      },
+      "metadata": {}
+    }
+  ]
+}

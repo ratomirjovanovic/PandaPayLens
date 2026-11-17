@@ -48,6 +48,7 @@
     "@pandapaylens/ezeewallet": "workspace:*",
     "@pandapaylens/finrax": "workspace:*",
     "@pandapaylens/flutterwave": "workspace:*",
+    "@pandapaylens/gocardless": "workspace:*",
     "@pandapaylens/inpay": "workspace:*",
     "@pandapaylens/klarna": "workspace:*",
     "@pandapaylens/mifinity": "workspace:*",

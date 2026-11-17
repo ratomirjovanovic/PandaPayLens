@@ -1,0 +1,20 @@
+{
+  "events": {
+    "id": "EVPPLSYNTH160001",
+    "created_at": "2026-11-16T10:00:00.000Z",
+    "resource_type": "mandates",
+    "action": "failed",
+    "links": {
+      "mandate": "MDPPLSYNTH160001"
+    },
+    "details": {
+      "origin": "bank",
+      "cause": "invalid_bank_details",
+      "description": "The specified bank account does not exist or was closed.",
+      "scheme": "sepa_core",
+      "reason_code": "AC01"
+    },
+    "metadata": {},
+    "resource_metadata": {}
+  }
+}

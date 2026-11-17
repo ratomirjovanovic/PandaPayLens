@@ -1,0 +1,15 @@
+{
+  "error": {
+    "message": "Internal server error",
+    "documentation_url": "/docs/api-reference/responses-and-errors#gocardless",
+    "type": "gocardless",
+    "code": 500,
+    "request_id": "PPLsynth-req-0013",
+    "errors": [
+      {
+        "reason": "internal_server_error",
+        "message": "Internal server error"
+      }
+    ]
+  }
+}

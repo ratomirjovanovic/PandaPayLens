@@ -107,6 +107,30 @@ export default defineConfig({
         replacement: src("./packages/adapters/mercadopago/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/gocardless\/manifest$/,
+        replacement: src("./packages/adapters/gocardless/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/gocardless$/,
+        replacement: src("./packages/adapters/gocardless/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/xendit\/manifest$/,
+        replacement: src("./packages/adapters/xendit/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/xendit$/,
+        replacement: src("./packages/adapters/xendit/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paddle\/manifest$/,
+        replacement: src("./packages/adapters/paddle/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paddle$/,
+        replacement: src("./packages/adapters/paddle/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/pxp\/manifest$/,
         replacement: src("./packages/adapters/pxp/src/manifest.ts"),
       },
