@@ -6,8 +6,13 @@ import { defaultRules } from "@pandapaylens/rules";
 import { stripeAdapter } from "@pandapaylens/stripe";
 import { adyenAdapter } from "@pandapaylens/adyen";
 import {
+  DISPUTE_OUTCOME_CODES,
+  DISPUTE_REASONS,
   ISSUES,
   PROCESSOR_RESPONSE_CODES,
+  SUBSCRIPTION_FAILURE_REASONS,
+  SUBSCRIPTION_STATUSES,
+  WEBHOOK_EVENTS,
   paypalAdapter,
   paypalManifest,
   PAYPAL_ADAPTER_VERSION,
@@ -55,7 +60,7 @@ const apiError = (fields: Record<string, unknown>) => ({
 describe("paypal manifest", () => {
   it("is honest about limited capabilities", () => {
     expect(paypalAdapter.id).toBe("paypal");
-    expect(PAYPAL_ADAPTER_VERSION).toBe("0.1.0");
+    expect(PAYPAL_ADAPTER_VERSION).toBe("0.2.0");
     expect(paypalManifest).toMatchObject({
       id: "paypal",
       wave: 1,
@@ -74,7 +79,15 @@ describe("paypal manifest", () => {
   });
 
   it("contains no dash characters other than the hyphen", () => {
-    const text = json(paypalManifest) + json(ISSUES) + json(PROCESSOR_RESPONSE_CODES);
+    const text =
+      json(paypalManifest) +
+      json(ISSUES) +
+      json(PROCESSOR_RESPONSE_CODES) +
+      json(WEBHOOK_EVENTS) +
+      json(SUBSCRIPTION_STATUSES) +
+      json(SUBSCRIPTION_FAILURE_REASONS) +
+      json(DISPUTE_REASONS) +
+      json(DISPUTE_OUTCOME_CODES);
     const dashes = new RegExp(`[${String.fromCharCode(0x2013, 0x2014)}]`);
     expect(text).not.toMatch(dashes);
   });
@@ -117,7 +130,28 @@ describe("paypal detection", () => {
     ],
     [webhook("PAYMENT.CAPTURE.COMPLETED", capture()), "paypal.webhook", 0.98, true],
     [{ event_type: "PAYMENT.CAPTURE.COMPLETED", resource: {} }, "paypal.webhook", 0.75, true],
-    [webhook("BILLING.SUBSCRIPTION.CREATED", {}), "paypal.webhook.subscription", 0.98, false],
+    [webhook("BILLING.SUBSCRIPTION.CREATED", {}), "paypal.webhook", 0.98, true],
+    [webhook("CUSTOMER.DISPUTE.CREATED", {}), "paypal.webhook", 0.98, true],
+    [{ id: "I-S1", plan_id: "P-1", status: "ACTIVE" }, "paypal.subscription", 0.75, true],
+    [
+      {
+        id: "I-S1",
+        plan_id: "P-1",
+        status: "APPROVED",
+        billing_info: {},
+        links: [{ rel: "approve" }],
+      },
+      "paypal.subscription",
+      0.9,
+      true,
+    ],
+    [{ dispute_id: "PP-D-1", status: "OPEN" }, "paypal.dispute", 0.8, true],
+    [
+      { dispute_id: "PP-D-1", reason: "OTHER", disputed_transactions: [] },
+      "paypal.dispute",
+      0.95,
+      true,
+    ],
     [{ error: "invalid_client", error_description: "x" }, "paypal.oauth_error", 0.3, false],
   ])("detects %j", (input, format, confidence, supported) => {
     expect(paypalAdapter.detect(input)).toMatchObject({ format, confidence, supported });
@@ -137,6 +171,9 @@ describe("paypal detection", () => {
       { error: "server_error", message: "x" },
       { status: "COMPLETED", id: "x", amount: 100 },
       { name: "VALIDATION_ERROR", message: "x" },
+      { id: "sub_1", plan_id: "p", status: "active" },
+      { dispute_id: "d1" },
+      { dispute_id: "d1", status: "needs_response" },
     ]) {
       expect(paypalAdapter.detect(generic).confidence).toBeLessThanOrEqual(0.5);
     }
@@ -727,14 +764,21 @@ describe("paypal webhooks", () => {
     expect(ruleIds(r)).toEqual(["MISSING_REFERENCE", "UNKNOWN_EVENT_TYPE"]);
   });
 
-  it("recognizes subscription webhooks without decoding them", () => {
-    const r = analyzeFixture("webhook-subscription.json");
-    expect(r.records[0]).toMatchObject({
-      status: "unsupported",
-      format: "paypal.webhook.subscription",
+  it.each([
+    "BILLING.SUBSCRIPTION.RE-ACTIVATED",
+    "BILLING.SUBSCRIPTION.PAYMENT.SUCCEEDED",
+    "BILLING.PLAN.CREATED",
+    "RISK.DISPUTE.CREATED",
+  ])("keeps %s an unknown event type", (eventType) => {
+    const r = analyze(
+      json(webhook(eventType, { id: "I-PPLSYNTHSUB0099", dispute_id: "PP-D-PPLSYNTH0099" })),
+    );
+    expect(r.events[0]).toMatchObject({
+      eventTypeKnown: false,
+      outcome: "unknown",
+      stage: "other",
     });
-    expect(r.warnings[0]!.message).toMatch(/Subscriptions webhooks .* not analyzed/);
-    expect(r.events).toEqual([]);
+    expect(r.events[0]!.paymentReference).toBeUndefined();
   });
 
   it("analyzes the event inside a verify-webhook-signature body and drops the signature data", () => {
@@ -761,6 +805,298 @@ describe("paypal webhooks", () => {
     for (const secret of ["SIGNATUREdoNotDisplay", "WEBHOOKIDprivate", "CERT-PPLSYNTH", "certs/"])
       expect(out).not.toContain(secret);
     expect(ruleIds(r)).toEqual(["UNRESOLVED_OUTCOME"]);
+  });
+});
+
+const subscription = (fields: Record<string, unknown> = {}) => ({
+  id: "I-PPLSYNTHSUBX001",
+  plan_id: "P-PPLSYNTHPLANX01",
+  status: "ACTIVE",
+  ...fields,
+});
+const dispute = (fields: Record<string, unknown> = {}) => ({
+  dispute_id: "PP-D-PPLSYNTHX01",
+  status: "OPEN",
+  reason: "OTHER",
+  dispute_life_cycle_stage: "INQUIRY",
+  ...fields,
+});
+
+describe("paypal subscriptions", () => {
+  it("analyzes a BILLING.SUBSCRIPTION.ACTIVATED event", () => {
+    const r = analyzeFixture("webhook-subscription.json");
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "paypal.webhook" });
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0]).toMatchObject({
+      eventType: "BILLING.SUBSCRIPTION.ACTIVATED",
+      eventTypeKnown: true,
+      stage: "subscription",
+      outcome: "success",
+      providerStatus: "ACTIVE",
+      paymentReference: "I-PPLSYNTHSUB0001",
+      subscriptionReference: "I-PPLSYNTHSUB0001",
+      deliveryKey: "WH-PPLSYNTH0000006-EVT0000000000061",
+    });
+    // The last payment is context only: it never becomes a payment event or an amount.
+    expect(r.events[0]!.amountMinor).toBeUndefined();
+    expect(r.events[0]!.attributes).toMatchObject({
+      resourceKind: "subscription",
+      planId: "P-PPLSYNTHPLAN0001",
+      lastPaymentAmountMinor: "999",
+      lastPaymentAmountCurrency: "EUR",
+      failedPaymentsCount: 0,
+      nextBillingTime: "2026-11-25T10:00:00.000Z",
+    });
+    expect(r.errors).toEqual([]);
+    expect(r.findings).toEqual([]);
+  });
+
+  it("groups a subscription lifecycle and decodes the failed payment reason", () => {
+    const r = analyzeFixture("webhook-subscription-payment-failed.json");
+    expect(r.events.map((e) => [e.eventType, e.stage, e.outcome, e.providerStatus])).toEqual([
+      ["BILLING.SUBSCRIPTION.CREATED", "subscription", "pending", "APPROVAL_PENDING"],
+      ["BILLING.SUBSCRIPTION.ACTIVATED", "subscription", "success", "ACTIVE"],
+      ["BILLING.SUBSCRIPTION.PAYMENT.FAILED", "payment", "failure", "ACTIVE"],
+      ["BILLING.SUBSCRIPTION.SUSPENDED", "subscription", "unknown", "SUSPENDED"],
+    ]);
+    expect(r.groups).toHaveLength(1);
+    // Only the planted subscriber or buyer data is flagged; no time or order warnings.
+    expect(r.warnings.map((w) => w.code)).toEqual(["SENSITIVE_DATA_DETECTED"]);
+    const failed = r.events[2]!;
+    expect(failed).toMatchObject({
+      amountMinor: "1500",
+      currency: "USD",
+      eventTimestamp: "2026-11-01T10:10:00.000Z",
+    });
+    expect(failed.attributes).toMatchObject({
+      lastFailedPaymentReason: "PAYER_CANNOT_PAY",
+      nextPaymentRetryTime: "2026-11-06T10:00:00.000Z",
+      failedPaymentsCount: 1,
+    });
+    expect(r.errors).toHaveLength(1);
+    expect(r.errors[0]).toMatchObject({
+      code: "PAYER_CANNOT_PAY",
+      category: "payment_method_unavailable",
+      retry: "customer_action_required",
+      confidence: "strong",
+      paymentReference: "I-PPLSYNTHSUB0007",
+      subCodes: { reason_code: "PAYER_CANNOT_PAY", failed_payments_count: "1" },
+      source: { path: "resource" },
+    });
+    expect(r.errors[0]!.missingInformation).toEqual([]);
+    expect(ruleIds(r)).toEqual(["PAYMENT_FAILURE"]);
+  });
+
+  it.each(Object.keys(SUBSCRIPTION_FAILURE_REASONS))("decodes reason code %s", (code) => {
+    const r = analyze(
+      json(
+        webhook(
+          "BILLING.SUBSCRIPTION.PAYMENT.FAILED",
+          subscription({ billing_info: { last_failed_payment: { reason_code: code } } }),
+        ),
+      ),
+    );
+    expect(r.errors[0]).toMatchObject({ code, confidence: "strong" });
+    expect(r.errors[0]!.retry).not.toBe("safe_to_retry_technical_request");
+    if (r.errors[0]!.retry === "retry_conditionally")
+      expect(r.errors[0]!.retryExplanation).toMatch(/check|verify|first/i);
+  });
+
+  it("reports a failed payment without a reason or with an unknown reason honestly", () => {
+    const none = analyze(json(webhook("BILLING.SUBSCRIPTION.PAYMENT.FAILED", subscription())));
+    expect(none.errors[0]).toMatchObject({
+      code: "BILLING.SUBSCRIPTION.PAYMENT.FAILED",
+      category: "unknown",
+      retry: "unknown",
+      confidence: "insufficient",
+    });
+    expect(none.errors[0]!.missingInformation.join(" ")).toMatch(/reason_code was supplied/);
+    const unknown = analyze(
+      json(
+        webhook(
+          "BILLING.SUBSCRIPTION.PAYMENT.FAILED",
+          subscription({ billing_info: { last_failed_payment: { reason_code: "BRAND_NEW" } } }),
+        ),
+      ),
+    );
+    expect(unknown.errors[0]).toMatchObject({ code: "BRAND_NEW", category: "unknown" });
+    expect(unknown.errors[0]!.missingInformation.join(" ")).toMatch(/not in the PandaPayLens/);
+  });
+
+  it.each([
+    ["BILLING.SUBSCRIPTION.CREATED", "subscription", "pending"],
+    ["BILLING.SUBSCRIPTION.UPDATED", "subscription", "success"],
+    ["BILLING.SUBSCRIPTION.EXPIRED", "subscription", "success"],
+    ["BILLING.SUBSCRIPTION.CANCELLED", "cancellation", "success"],
+    ["BILLING.SUBSCRIPTION.SUSPENDED", "subscription", "unknown"],
+  ])("maps %s to %s / %s without a decoded error", (eventType, stage, outcome) => {
+    const r = analyze(json(webhook(eventType, subscription())));
+    expect(r.events[0]).toMatchObject({ eventTypeKnown: true, stage, outcome });
+    expect(r.errors).toEqual([]);
+  });
+
+  it("does not show an undocumented status, for example from a billing agreement", () => {
+    const r = analyze(
+      json(
+        webhook("BILLING.SUBSCRIPTION.CANCELLED", {
+          id: "I-PPLSYNTHAGR0001",
+          state: "Cancelled",
+          status: "Cancelled",
+        }),
+      ),
+    );
+    expect(r.events[0]).toMatchObject({
+      eventTypeKnown: true,
+      stage: "cancellation",
+      paymentReference: "I-PPLSYNTHAGR0001",
+    });
+    expect(r.events[0]!.providerStatus).toBeUndefined();
+    expect(r.events[0]!.attributes.undocumentedStatus).toBe(true);
+  });
+
+  it("analyzes a subscription resource from the REST API", () => {
+    const r = analyzeFixture("subscription.json");
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "paypal.subscription" });
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0]).toMatchObject({
+      eventType: "subscription.snapshot",
+      stage: "cancellation",
+      outcome: "success",
+      providerStatus: "CANCELLED",
+      paymentReference: "I-PPLSYNTHSUB0008",
+      eventTimestamp: "2026-10-20T08:00:00.000Z",
+    });
+    expect(r.errors).toEqual([]);
+  });
+
+  it("correlates the REST resource with the webhooks of the same subscription only", () => {
+    const r = analyze(
+      `[${fixture("paypal/webhook-subscription-payment-failed.json").trim().slice(1, -1)},${json(
+        subscription({ id: "I-PPLSYNTHSUB0007" }),
+      )},${fixture("paypal/subscription.json")}]`,
+    );
+    expect(r.groups).toHaveLength(2);
+  });
+
+  it("reports parse issues for a malformed subscription", () => {
+    expect(paypalAdapter.parse({ id: "I-1" }, "paypal.subscription").ok).toBe(false);
+    const r = paypalAdapter.parse(
+      webhook(
+        "BILLING.SUBSCRIPTION.PAYMENT.FAILED",
+        subscription({ billing_info: { failed_payments_count: "2" } }),
+      ),
+      "paypal.webhook",
+    );
+    expect(!r.ok && r.issues[0]).toMatch(/^resource\.billing_info\.failed_payments_count:/);
+  });
+});
+
+describe("paypal disputes", () => {
+  it("groups a dispute lifecycle by dispute_id and keeps the outcome as data", () => {
+    const r = analyzeFixture("webhook-dispute-lifecycle.json");
+    expect(r.events.map((e) => [e.eventType, e.stage, e.outcome, e.providerStatus])).toEqual([
+      ["CUSTOMER.DISPUTE.CREATED", "dispute", "unknown", "OPEN"],
+      ["CUSTOMER.DISPUTE.UPDATED", "dispute", "unknown", "WAITING_FOR_SELLER_RESPONSE"],
+      ["CUSTOMER.DISPUTE.RESOLVED", "dispute", "unknown", "RESOLVED"],
+    ]);
+    for (const e of r.events)
+      expect(e).toMatchObject({ paymentReference: "PP-D-PPLSYNTH0009", amountMinor: "4000" });
+    expect(r.events[2]!.eventTimestamp).toBe("2026-11-10T09:00:05.000Z");
+    expect(r.groups).toHaveLength(1);
+    // Only the planted subscriber or buyer data is flagged; no time or order warnings.
+    expect(r.warnings.map((w) => w.code)).toEqual(["SENSITIVE_DATA_DETECTED"]);
+    expect(r.events[0]!.attributes).toMatchObject({
+      disputeReason: "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+      lifeCycleStage: "INQUIRY",
+      disputeChannel: "INTERNAL",
+      disputedTransactionIds: ["PPLSYNTHCAPT00009"],
+      sellerResponseDueDate: "2026-11-15T09:00:00.000Z",
+    });
+    expect(r.events[1]!.attributes.lifeCycleStageDescription).toMatch(/not a card chargeback/);
+    expect(r.events[2]!.attributes).toMatchObject({
+      outcomeCode: "RESOLVED_BUYER_FAVOUR",
+      amountRefundedMinor: "4000",
+      amountRefundedCurrency: "USD",
+    });
+    // A dispute outcome never becomes a refund event.
+    expect(r.events.filter((e) => e.stage === "refund")).toEqual([]);
+    expect(r.errors).toEqual([]);
+    expect(ruleIds(r)).toEqual(["CHARGEBACK_REPORTED"]);
+  });
+
+  it("does not link a dispute to a capture through the disputed transaction id", () => {
+    const r = analyze(
+      `[${json(
+        webhook("PAYMENT.CAPTURE.COMPLETED", capture({ id: "PPLSYNTHCAPT00009" })),
+      )},${fixture("paypal/webhook-dispute-lifecycle.json").trim().slice(1, -1)}]`,
+    );
+    expect(r.groups).toHaveLength(2);
+    const keys = r.events
+      .filter((e) => e.stage === "dispute")
+      .flatMap((e) => paypalAdapter.correlationKeys(e));
+    expect(new Set(keys)).toEqual(new Set(["PP-D-PPLSYNTH0009"]));
+  });
+
+  it("analyzes a dispute resource from the REST API", () => {
+    const r = analyzeFixture("dispute.json");
+    expect(r.records[0]).toMatchObject({ status: "analyzed", format: "paypal.dispute" });
+    expect(r.events[0]).toMatchObject({
+      eventType: "dispute.snapshot",
+      stage: "dispute",
+      outcome: "unknown",
+      providerStatus: "UNDER_REVIEW",
+      paymentReference: "PP-R-PPLSYNTH0010",
+      amountMinor: "7500",
+      currency: "EUR",
+    });
+    expect(r.events[0]!.attributes).toMatchObject({
+      disputeReason: "UNAUTHORISED",
+      disputeChannel: "EXTERNAL",
+      externalReasonCode: "PPLSYNTH-RC1",
+    });
+  });
+
+  it.each(Object.keys(DISPUTE_OUTCOME_CODES))(
+    "shows outcome code %s without an outcome",
+    (code) => {
+      const r = analyze(
+        json(
+          webhook(
+            "CUSTOMER.DISPUTE.RESOLVED",
+            dispute({ status: "RESOLVED", dispute_outcome: { outcome_code: code } }),
+          ),
+        ),
+      );
+      expect(r.events[0]).toMatchObject({ stage: "dispute", outcome: "unknown" });
+      expect(r.events[0]!.attributes.outcomeCode).toBe(code);
+      expect(r.events[0]!.attributes.outcomeCodeDescription).toBe(DISPUTE_OUTCOME_CODES[code]);
+    },
+  );
+
+  it("keeps undocumented dispute values as codes without descriptions", () => {
+    const r = analyze(
+      json(
+        webhook(
+          "CUSTOMER.DISPUTE.UPDATED",
+          dispute({ status: "NEW_STATUS", reason: "NEW_REASON" }),
+        ),
+      ),
+    );
+    expect(r.events[0]!.providerStatus).toBeUndefined();
+    expect(r.events[0]!.attributes).toMatchObject({
+      undocumentedStatus: true,
+      disputeReason: "NEW_REASON",
+    });
+    expect(r.events[0]!.attributes.disputeReasonDescription).toBeUndefined();
+  });
+
+  it("reports parse issues for a malformed dispute", () => {
+    expect(paypalAdapter.parse({ status: "OPEN" }, "paypal.dispute").ok).toBe(false);
+    const r = paypalAdapter.parse(
+      webhook("CUSTOMER.DISPUTE.CREATED", dispute({ disputed_transactions: "x" })),
+      "paypal.webhook",
+    );
+    expect(!r.ok && r.issues[0]).toMatch(/^resource\.disputed_transactions:/);
   });
 });
 
@@ -810,6 +1146,48 @@ describe("paypal sensitive data", () => {
         toJsonReport(r, { includeIdentifiers: true });
       for (const p of planted)
         expect({ file, leaked: out.includes(p) ? p : null }).toEqual({ file, leaked: null });
+    }
+  });
+
+  it("keeps subscriber, buyer, seller and dispute message data out of events and reports", () => {
+    const planted = [
+      "Synthetic",
+      "Subscriber",
+      "synthetic.subscriber",
+      "1 Synthetic Street",
+      "10115",
+      "PPLSYNTHPAYER00",
+      "PPLsynth-custom-private",
+      "PPLsynth private note",
+      "Synthetic Buyer",
+      "Synthetic Merchant",
+      "synthetic.merchant@example.com",
+      "PPLSYNTHMERCH00",
+      "PPLsynth-invoice-private",
+      "PPLsynth private message",
+      "PPLsynth evidence note",
+      "PPLsynth-doc",
+      "PPLSYNTHBUYTX0009",
+    ];
+    for (const file of [
+      "webhook-subscription.json",
+      "webhook-subscription-payment-failed.json",
+      "subscription.json",
+      "webhook-dispute-lifecycle.json",
+      "dispute.json",
+    ]) {
+      const r = analyzeFixture(file);
+      const out =
+        json(r.events) +
+        json(r.errors) +
+        toJsonReport(r) +
+        toJsonReport(r, { includeIdentifiers: true });
+      for (const p of planted)
+        expect({ file, leaked: out.includes(p) ? p : null }).toEqual({ file, leaked: null });
+      // Subscription, plan, dispute and disputed transaction ids are masked in a default report.
+      const masked = toJsonReport(r);
+      for (const id of ["PPLSYNTHSUB000", "PPLSYNTHPLAN000", "PPLSYNTH0009", "PPLSYNTHCAPT0000"])
+        expect({ file, leaked: masked.includes(id) ? id : null }).toEqual({ file, leaked: null });
     }
   });
 

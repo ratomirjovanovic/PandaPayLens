@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ### Providers
 
+- PayPal: subscription webhooks (`BILLING.SUBSCRIPTION.CREATED`, `ACTIVATED`, `UPDATED`, `EXPIRED`, `CANCELLED`, `SUSPENDED`, `PAYMENT.FAILED`) and dispute webhooks (`CUSTOMER.DISPUTE.CREATED`, `UPDATED`, `RESOLVED`) are analyzed, together with the subscription and dispute REST resources. Events are grouped by subscription or dispute id. A suspended subscription is shown as unknown, not as a failure, and disputes are not linked to payments because PayPal does not document that link. Overall status stays limited.
+
 - Braintree: decoded notification XML (`<notification>` with `kind` and `subject`) is read like the parsed JSON notification. Its shape follows Braintree's SDK source, because no documentation page shows it. All 217 Transaction validation codes of the reference are mapped individually, with category and retry guidance.
 
 ## [0.16.0] - 2026-11-17

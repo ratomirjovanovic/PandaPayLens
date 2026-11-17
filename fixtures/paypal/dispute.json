@@ -1,0 +1,28 @@
+{
+  "dispute_id": "PP-R-PPLSYNTH0010",
+  "create_time": "2026-10-27T11:00:00Z",
+  "update_time": "2026-10-28T11:00:00Z",
+  "disputed_transactions": [
+    {
+      "seller_transaction_id": "PPLSYNTHCAPT00010",
+      "transaction_status": "COMPLETED",
+      "gross_amount": { "currency_code": "EUR", "value": "75.00" },
+      "buyer": { "name": "Synthetic Buyer" },
+      "seller": { "merchant_id": "PPLSYNTHMERCH0010", "name": "Synthetic Merchant" }
+    }
+  ],
+  "reason": "UNAUTHORISED",
+  "status": "UNDER_REVIEW",
+  "dispute_amount": { "currency_code": "EUR", "value": "75.00" },
+  "external_reason_code": "PPLSYNTH-RC1",
+  "dispute_life_cycle_stage": "CHARGEBACK",
+  "dispute_channel": "EXTERNAL",
+  "seller_response_due_date": "2026-11-07T11:00:00Z",
+  "links": [
+    {
+      "href": "https://api-m.sandbox.paypal.com/v1/customer/disputes/PP-R-PPLSYNTH0010",
+      "rel": "self",
+      "method": "GET"
+    }
+  ]
+}

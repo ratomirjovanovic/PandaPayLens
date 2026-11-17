@@ -1,6 +1,6 @@
 import type { ProviderManifest } from "@pandapaylens/core";
 
-export const PAYPAL_ADAPTER_VERSION = "0.1.0";
+export const PAYPAL_ADAPTER_VERSION = "0.2.0";
 
 export const paypalManifest: ProviderManifest = {
   id: "paypal",
@@ -35,7 +35,7 @@ export const paypalManifest: ProviderManifest = {
     {
       id: "paypal.webhook",
       description:
-        "Webhook event envelopes for CHECKOUT.ORDER.*, CHECKOUT.PAYMENT-APPROVAL.* and PAYMENT.* (v2)",
+        "Webhook event envelopes for CHECKOUT.ORDER.*, CHECKOUT.PAYMENT-APPROVAL.*, PAYMENT.* (v2), BILLING.SUBSCRIPTION.* and CUSTOMER.DISPUTE.*",
       status: "limited",
     },
     {
@@ -46,8 +46,25 @@ export const paypalManifest: ProviderManifest = {
     },
     {
       id: "paypal.webhook.subscription",
-      description: "Subscription webhooks (BILLING.SUBSCRIPTION.*)",
-      status: "unsupported",
+      description:
+        "Subscriptions v1 webhooks (BILLING.SUBSCRIPTION.CREATED, ACTIVATED, UPDATED, EXPIRED, CANCELLED, SUSPENDED, PAYMENT.FAILED)",
+      status: "limited",
+    },
+    {
+      id: "paypal.webhook.dispute",
+      description: "Customer Disputes v1 webhooks (CUSTOMER.DISPUTE.CREATED, UPDATED, RESOLVED)",
+      status: "limited",
+    },
+    {
+      id: "paypal.subscription",
+      description: "Subscriptions v1 subscription resource (status, plan_id, billing_info)",
+      status: "limited",
+    },
+    {
+      id: "paypal.dispute",
+      description:
+        "Customer Disputes v1 dispute resource (status, reason, life cycle stage, outcome)",
+      status: "limited",
     },
     {
       id: "paypal.oauth_error",
@@ -105,6 +122,26 @@ export const paypalManifest: ProviderManifest = {
       url: "https://developer.paypal.com/api/rest/webhooks/",
     },
     {
+      topic: "subscriptions-api",
+      title: "Subscriptions v1 API",
+      url: "https://developer.paypal.com/api/subscriptions/v1",
+    },
+    {
+      topic: "subscriptions-webhooks",
+      title: "Subscriptions webhooks",
+      url: "https://developer.paypal.com/subscriptions/webhooks",
+    },
+    {
+      topic: "disputes-api",
+      title: "Customer Disputes v1 API",
+      url: "https://developer.paypal.com/api/customer-disputes/v1",
+    },
+    {
+      topic: "disputes-webhooks",
+      title: "Disputes webhooks",
+      url: "https://developer.paypal.com/limited-release/commerce-platform/manage-risks-liabilities/disputes-chargebacks/webhooks/",
+    },
+    {
       topic: "idempotency",
       title: "Idempotency (PayPal-Request-Id)",
       url: "https://developer.paypal.com/api/rest/reference/idempotency/",
@@ -133,7 +170,21 @@ export const paypalManifest: ProviderManifest = {
     "processor_response.response_code meanings are one-word tokens; their categories are inferred. payment_advice_code depends on the card network and is shown without interpretation.",
     "When an error has several details[] entries, the first issue is decoded; PayPal does not document an order or priority.",
     "Webhook signatures cannot be verified offline; a pasted payload is never proof that it came from PayPal.",
-    "Subscriptions (BILLING.SUBSCRIPTION.*) and OAuth token errors are recognized but not analyzed. Disputes, payouts, legacy v1 payments and NVP/SOAP are not supported; their events appear as unknown event types.",
+    "PayPal publishes no sample payload for BILLING.SUBSCRIPTION.* webhooks: the resource is read as a Subscriptions v1 subscription (id, status, plan_id, billing_info), and a status outside the documented subscription statuses is not shown.",
+    "BILLING.SUBSCRIPTION.CREATED, UPDATED, CANCELLED and SUSPENDED are also listed for the deprecated billing agreements API, whose resource shape is not analyzed. BILLING.SUBSCRIPTION.RE-ACTIVATED (billing agreements only) and BILLING.SUBSCRIPTION.PAYMENT.SUCCEEDED (named on one page but missing from the event list) stay unknown event types.",
+    "Subscription payments themselves arrive as PAYMENT.SALE.* events (legacy v1), which are not analyzed. billing_info.last_payment and outstanding_balance are shown as attributes and never become payment events.",
+    "A suspended subscription is not treated as a failure: PayPal documents both a suspend request and reaching the payment failure threshold as causes.",
+    "PayPal retries failed subscription payments on its own; the retry schedule is not decoded and PandaPayLens never suggests a manual retry.",
+    "Dispute events are grouped by dispute_id only. PayPal does not document which payment id disputed_transactions[].seller_transaction_id equals, so disputes are not linked to orders or captures; the transaction ids are shown as attributes.",
+    "Dispute outcomes (dispute_outcome.outcome_code) are shown as data; a resolved dispute is not reported as a success or failure. The CHARGEBACK life cycle stage is a PayPal claim stage, not a card chargeback.",
+    "RISK.DISPUTE.CREATED (deprecated), BILLING.PLAN.*, CATALOG.PRODUCT.* and the subscription transactions and dispute list endpoints are not analyzed; their events appear as unknown event types.",
+    "OAuth token errors are recognized but not analyzed. Payouts, legacy v1 payments (PAY-..., PAYMENT.SALE.*) and NVP/SOAP are not supported; their events appear as unknown event types.",
   ],
-  samples: ["paypal-completed-declined", "paypal-instrument-declined", "paypal-webhook-lifecycle"],
+  samples: [
+    "paypal-completed-declined",
+    "paypal-instrument-declined",
+    "paypal-webhook-lifecycle",
+    "paypal-subscription-payment-failed",
+    "paypal-dispute-lifecycle",
+  ],
 };

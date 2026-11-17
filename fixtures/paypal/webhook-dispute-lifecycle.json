@@ -1,0 +1,90 @@
+[
+  {
+    "id": "WH-PPLSYNTH0000009-EVT0000000000090",
+    "event_version": "1.0",
+    "create_time": "2026-10-26T09:00:05Z",
+    "event_type": "CUSTOMER.DISPUTE.CREATED",
+    "summary": "A new dispute opened",
+    "resource": {
+      "dispute_id": "PP-D-PPLSYNTH0009",
+      "create_time": "2026-10-26T09:00:00Z",
+      "update_time": "2026-10-26T09:00:00Z",
+      "disputed_transactions": [
+        {
+          "buyer_transaction_id": "PPLSYNTHBUYTX0009",
+          "seller_transaction_id": "PPLSYNTHCAPT00009",
+          "create_time": "2026-10-20T12:00:00Z",
+          "transaction_status": "COMPLETED",
+          "gross_amount": { "currency_code": "USD", "value": "40.00" },
+          "invoice_number": "PPLsynth-invoice-private",
+          "custom": "PPLsynth-custom-private",
+          "buyer": { "name": "Synthetic Buyer" },
+          "seller": {
+            "email": "synthetic.merchant@example.com",
+            "merchant_id": "PPLSYNTHMERCH0009",
+            "name": "Synthetic Merchant"
+          }
+        }
+      ],
+      "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+      "status": "OPEN",
+      "dispute_amount": { "currency_code": "USD", "value": "40.00" },
+      "dispute_life_cycle_stage": "INQUIRY",
+      "dispute_channel": "INTERNAL",
+      "messages": [
+        {
+          "posted_by": "BUYER",
+          "time_posted": "2026-10-26T09:00:00Z",
+          "content": "PPLsynth private message"
+        }
+      ],
+      "seller_response_due_date": "2026-11-15T09:00:00Z"
+    }
+  },
+  {
+    "id": "WH-PPLSYNTH0000009-EVT0000000000091",
+    "event_version": "1.0",
+    "create_time": "2026-10-30T09:00:05Z",
+    "event_type": "CUSTOMER.DISPUTE.UPDATED",
+    "summary": "A dispute was updated",
+    "resource": {
+      "dispute_id": "PP-D-PPLSYNTH0009",
+      "create_time": "2026-10-26T09:00:00Z",
+      "update_time": "2026-10-30T09:00:00Z",
+      "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+      "status": "WAITING_FOR_SELLER_RESPONSE",
+      "dispute_amount": { "currency_code": "USD", "value": "40.00" },
+      "dispute_life_cycle_stage": "CHARGEBACK",
+      "dispute_channel": "INTERNAL",
+      "evidences": [
+        {
+          "evidence_type": "PROOF_OF_FULFILLMENT",
+          "notes": "PPLsynth evidence note",
+          "documents": [{ "name": "receipt.pdf", "url": "https://example.com/PPLsynth-doc" }]
+        }
+      ],
+      "seller_response_due_date": "2026-11-09T09:00:00Z"
+    }
+  },
+  {
+    "id": "WH-PPLSYNTH0000009-EVT0000000000092",
+    "event_version": "1.0",
+    "create_time": "2026-11-10T09:00:05Z",
+    "event_type": "CUSTOMER.DISPUTE.RESOLVED",
+    "summary": "A dispute was resolved",
+    "resource": {
+      "dispute_id": "PP-D-PPLSYNTH0009",
+      "create_time": "2026-10-26T09:00:00Z",
+      "update_time": "2026-11-10T09:00:00Z",
+      "reason": "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
+      "status": "RESOLVED",
+      "dispute_amount": { "currency_code": "USD", "value": "40.00" },
+      "dispute_outcome": {
+        "outcome_code": "RESOLVED_BUYER_FAVOUR",
+        "amount_refunded": { "currency_code": "USD", "value": "40.00" }
+      },
+      "dispute_life_cycle_stage": "CHARGEBACK",
+      "dispute_channel": "INTERNAL"
+    }
+  }
+]
