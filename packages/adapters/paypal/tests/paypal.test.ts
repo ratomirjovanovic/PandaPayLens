@@ -60,7 +60,7 @@ const apiError = (fields: Record<string, unknown>) => ({
 describe("paypal manifest", () => {
   it("is honest about limited capabilities", () => {
     expect(paypalAdapter.id).toBe("paypal");
-    expect(PAYPAL_ADAPTER_VERSION).toBe("0.1.0");
+    expect(PAYPAL_ADAPTER_VERSION).toBe("0.2.0");
     expect(paypalManifest).toMatchObject({
       id: "paypal",
       wave: 1,
@@ -854,14 +854,20 @@ describe("paypal subscriptions", () => {
   it("groups a subscription lifecycle and decodes the failed payment reason", () => {
     const r = analyzeFixture("webhook-subscription-payment-failed.json");
     expect(r.events.map((e) => [e.eventType, e.stage, e.outcome, e.providerStatus])).toEqual([
-      ["BILLING.SUBSCRIPTION.CREATED", "subscription", "success", "APPROVAL_PENDING"],
+      ["BILLING.SUBSCRIPTION.CREATED", "subscription", "pending", "APPROVAL_PENDING"],
       ["BILLING.SUBSCRIPTION.ACTIVATED", "subscription", "success", "ACTIVE"],
       ["BILLING.SUBSCRIPTION.PAYMENT.FAILED", "payment", "failure", "ACTIVE"],
       ["BILLING.SUBSCRIPTION.SUSPENDED", "subscription", "unknown", "SUSPENDED"],
     ]);
     expect(r.groups).toHaveLength(1);
+    // Only the planted subscriber or buyer data is flagged; no time or order warnings.
+    expect(r.warnings.map((w) => w.code)).toEqual(["SENSITIVE_DATA_DETECTED"]);
     const failed = r.events[2]!;
-    expect(failed).toMatchObject({ amountMinor: "1500", currency: "USD" });
+    expect(failed).toMatchObject({
+      amountMinor: "1500",
+      currency: "USD",
+      eventTimestamp: "2026-11-01T10:10:00.000Z",
+    });
     expect(failed.attributes).toMatchObject({
       lastFailedPaymentReason: "PAYER_CANNOT_PAY",
       nextPaymentRetryTime: "2026-11-06T10:00:00.000Z",
@@ -918,7 +924,7 @@ describe("paypal subscriptions", () => {
   });
 
   it.each([
-    ["BILLING.SUBSCRIPTION.CREATED", "subscription", "success"],
+    ["BILLING.SUBSCRIPTION.CREATED", "subscription", "pending"],
     ["BILLING.SUBSCRIPTION.UPDATED", "subscription", "success"],
     ["BILLING.SUBSCRIPTION.EXPIRED", "subscription", "success"],
     ["BILLING.SUBSCRIPTION.CANCELLED", "cancellation", "success"],
@@ -995,7 +1001,10 @@ describe("paypal disputes", () => {
     ]);
     for (const e of r.events)
       expect(e).toMatchObject({ paymentReference: "PP-D-PPLSYNTH0009", amountMinor: "4000" });
+    expect(r.events[2]!.eventTimestamp).toBe("2026-11-10T09:00:05.000Z");
     expect(r.groups).toHaveLength(1);
+    // Only the planted subscriber or buyer data is flagged; no time or order warnings.
+    expect(r.warnings.map((w) => w.code)).toEqual(["SENSITIVE_DATA_DETECTED"]);
     expect(r.events[0]!.attributes).toMatchObject({
       disputeReason: "MERCHANDISE_OR_SERVICE_NOT_RECEIVED",
       lifeCycleStage: "INQUIRY",

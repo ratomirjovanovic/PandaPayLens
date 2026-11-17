@@ -1521,11 +1521,11 @@ export const SUBSCRIPTION_FAILURE_REASONS: Record<string, CatalogEntry> = {
     "PayPal declined the subscription payment because of one or more issues on the customer's side.",
     "Ask the subscriber to check their PayPal account or update the payment method.",
   ),
-  INTERNAL_SERVER_ERROR: verifyFirst(
+  INTERNAL_SERVER_ERROR: review(
     "provider_unavailable",
     "PayPal reported an internal server error for the subscription payment.",
-    "Check the subscription in PayPal (billing_info) before doing anything else.",
-    "PayPal retries failed subscription payments on its own. Check billing_info (outstanding_balance, last_payment, next_payment_retry_time) first; do not charge the subscriber again before that.",
+    "Check the subscription in PayPal (billing_info: outstanding_balance, last_payment, next_payment_retry_time) before doing anything else.",
+    "PayPal retries failed subscription payments on its own. Do not charge the subscriber again before checking the subscription.",
   ),
   PAYEE_ACCOUNT_RESTRICTED: review(
     "configuration",
@@ -1589,7 +1589,7 @@ export const DISPUTE_REASONS: Record<string, string> = {
 export const DISPUTE_LIFE_CYCLE_STAGES: Record<string, string> = {
   INQUIRY: "The customer and merchant try to resolve the dispute without escalation to PayPal.",
   CHARGEBACK:
-    "The dispute was escalated to a claim that PayPal investigates. This is a PayPal stage, not a card chargeback.",
+    "The dispute is a claim that PayPal investigates. This is a PayPal stage, not a card chargeback.",
   PRE_ARBITRATION: "The first appeal stage for merchants.",
   ARBITRATION: "The second appeal stage for merchants.",
 };
@@ -1710,9 +1710,10 @@ export const WEBHOOK_EVENTS: Record<string, WebhookEventInfo> = {
   // only listed for the deprecated billing agreements API and stays unknown.
   "BILLING.SUBSCRIPTION.CREATED": {
     stage: "subscription",
-    outcome: "success",
+    outcome: "pending",
     resource: "subscription",
-    description: "A subscription was created. No payment has been made by this event.",
+    description:
+      "A subscription was created. It still needs the buyer's approval and no payment has been made by this event.",
   },
   "BILLING.SUBSCRIPTION.ACTIVATED": {
     stage: "subscription",

@@ -593,7 +593,7 @@ If a user pastes these headers, or a `verify-webhook-signature` request body, th
 
 | Event                                 | Trigger (S21)                     | Related method (S21)                | Stage (proposal) | Outcome (proposal) |
 | ------------------------------------- | --------------------------------- | ----------------------------------- | ---------------- | ------------------ |
-| `BILLING.SUBSCRIPTION.CREATED`        | "A subscription is created."      | Create subscription                 | subscription     | success            |
+| `BILLING.SUBSCRIPTION.CREATED`        | "A subscription is created."      | Create subscription                 | subscription     | pending            |
 | `BILLING.SUBSCRIPTION.ACTIVATED`      | "A subscription is activated."    | Activate subscription               | subscription     | success            |
 | `BILLING.SUBSCRIPTION.UPDATED`        | "A subscription is updated."      | Update subscription                 | subscription     | success            |
 | `BILLING.SUBSCRIPTION.EXPIRED`        | "A subscription expires."         | Show subscription details           | subscription     | success            |
@@ -606,6 +606,7 @@ If a user pastes these headers, or a `verify-webhook-signature` request body, th
 - S21 says subscription payments are reported as `PAYMENT.SALE.COMPLETED` ("A payment is made on a subscription"), `PAYMENT.SALE.REFUNDED` and `PAYMENT.SALE.REVERSED`. These are legacy v1 sale events and stay out of scope.
 - **Resource shape: NOT DOCUMENTED.** No subscription webhook sample was found. S21's "Related method" column points to the Subscriptions v1 methods, and `.PAYMENT.FAILED` points to the `subscriptions-get` response ("Subscription failed payment details"). The adapter therefore reads the resource as a Subscriptions v1 `subscription`, reads only the fields below, and tolerates their absence.
 - `.SUSPENDED` is not a failure. S20 says `failed_payments_count` reaching `payment_failure_threshold` moves the subscription to `SUSPENDED`, and S21 links the event to the "Suspend subscription" method, so a merchant can also suspend.
+- `.CREATED` is reported as pending: S20 describes `APPROVAL_PENDING` as "created but not yet approved by the buyer".
 
 **Subscription fields used** (S20): `id` ("The PayPal-generated ID for the subscription", 3 to 50 characters; example `I-BW452GLLEP1G` in S22), `plan_id`, `status`, `status_update_time`, `start_time`, `create_time`, `update_time`, and `billing_info`: `outstanding_balance`, `next_billing_time`, `final_payment_time`, `failed_payments_count` ("The number of consecutive payment failures. Resets to `0` after a successful payment."), `last_payment` {`amount`, `time`}, `last_failed_payment` {`amount`, `time`, `reason_code`, `next_payment_retry_time`}. No sample with values exists in S20 (the spec has no examples).
 
@@ -613,16 +614,16 @@ If a user pastes these headers, or a `verify-webhook-signature` request body, th
 
 **`last_failed_payment.reason_code`** (S20; category and retry are proposals):
 
-| reason_code                            | S20 description (paraphrase where not quoted)                         | Category                   | Retry                                                                     |
-| -------------------------------------- | --------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------------- |
-| `PAYMENT_DENIED`                       | "PayPal declined the payment due to one or more customer issues."     | payment_method_unavailable | customer_action_required                                                  |
-| `INTERNAL_SERVER_ERROR`                | "An internal server error has occurred."                              | provider_unavailable       | retry_conditionally (check billing_info first; PayPal retries on its own) |
-| `PAYEE_ACCOUNT_RESTRICTED`             | The payee account is not in good standing and cannot receive payments | configuration              | manual_review                                                             |
-| `PAYER_ACCOUNT_RESTRICTED`             | The payer account is not in good standing and cannot make payments    | payment_method_unavailable | customer_action_required                                                  |
-| `PAYER_CANNOT_PAY`                     | "Payer cannot pay for this transaction."                              | payment_method_unavailable | customer_action_required                                                  |
-| `SENDING_LIMIT_EXCEEDED`               | The transaction exceeds the payer's sending limit                     | payment_method_unavailable | customer_action_required                                                  |
-| `TRANSACTION_RECEIVING_LIMIT_EXCEEDED` | The transaction exceeds the receiver's receiving limit                | configuration              | manual_review                                                             |
-| `CURRENCY_MISMATCH`                    | "The transaction is declined due to a currency mismatch."             | configuration              | manual_review                                                             |
+| reason_code                            | S20 description (paraphrase where not quoted)                         | Category                   | Retry                                                               |
+| -------------------------------------- | --------------------------------------------------------------------- | -------------------------- | ------------------------------------------------------------------- |
+| `PAYMENT_DENIED`                       | "PayPal declined the payment due to one or more customer issues."     | payment_method_unavailable | customer_action_required                                            |
+| `INTERNAL_SERVER_ERROR`                | "An internal server error has occurred."                              | provider_unavailable       | manual_review (check billing_info first; PayPal retries on its own) |
+| `PAYEE_ACCOUNT_RESTRICTED`             | The payee account is not in good standing and cannot receive payments | configuration              | manual_review                                                       |
+| `PAYER_ACCOUNT_RESTRICTED`             | The payer account is not in good standing and cannot make payments    | payment_method_unavailable | customer_action_required                                            |
+| `PAYER_CANNOT_PAY`                     | "Payer cannot pay for this transaction."                              | payment_method_unavailable | customer_action_required                                            |
+| `SENDING_LIMIT_EXCEEDED`               | The transaction exceeds the payer's sending limit                     | payment_method_unavailable | customer_action_required                                            |
+| `TRANSACTION_RECEIVING_LIMIT_EXCEEDED` | The transaction exceeds the receiver's receiving limit                | configuration              | manual_review                                                       |
+| `CURRENCY_MISMATCH`                    | "The transaction is declined due to a currency mismatch."             | configuration              | manual_review                                                       |
 
 **Retries.** S22: when a payment fails, "PayPal retries the payment every 5 days. PayPal retries the payment up to twice per billing cycle", and a failure after the second retry is added to the outstanding balance. S4 describes an "intelligent retry" that uses "a proprietary algorithm" to pick the timing. The two pages do not describe the same schedule, so the adapter decodes no schedule, shows `next_payment_retry_time` when present, and never suggests a manual retry.
 
@@ -646,7 +647,7 @@ If a user pastes these headers, or a `verify-webhook-signature` request body, th
 
 - **`status`**: `OPEN`, `WAITING_FOR_BUYER_RESPONSE`, `WAITING_FOR_SELLER_RESPONSE`, `UNDER_REVIEW`, `RESOLVED`, `OTHER`. S25 lists the same values without `OTHER`.
 - **`reason`**: `MERCHANDISE_OR_SERVICE_NOT_RECEIVED`, `MERCHANDISE_OR_SERVICE_NOT_AS_DESCRIBED`, `UNAUTHORISED`, `CREDIT_NOT_PROCESSED`, `DUPLICATE_TRANSACTION`, `INCORRECT_AMOUNT`, `PAYMENT_BY_OTHER_MEANS`, `CANCELED_RECURRING_BILLING`, `PROBLEM_WITH_REMITTANCE`, `OTHER`.
-- **`dispute_life_cycle_stage`**: `INQUIRY`, `CHARGEBACK`, `PRE_ARBITRATION`, `ARBITRATION`. S24: `CHARGEBACK` "is a PayPal dispute lifecycle stage and not a credit card or debit card chargeback".
+- **`dispute_life_cycle_stage`**: `INQUIRY`, `CHARGEBACK`, `PRE_ARBITRATION`, `ARBITRATION`. S24: `CHARGEBACK` "is a PayPal dispute lifecycle stage and not a credit card or debit card chargeback". S24 says this stage "Occurs only when the dispute channel is `INTERNAL`", while S23 says non-merchandise and external disputes are created directly in this stage, so it can occur for both `INTERNAL` and `EXTERNAL`. The adapter describes the stage without relying on either rule.
 - **`dispute_channel`**: `INTERNAL`, `EXTERNAL` (S23, S24). `ALERT` appears in the S24 enum only, without a description.
 - **`dispute_outcome.outcome_code`**: `RESOLVED_BUYER_FAVOUR`, `RESOLVED_SELLER_FAVOUR`, `RESOLVED_WITH_PAYOUT`, `CANCELED_BY_BUYER`, `ACCEPTED` and `DENIED` (both marked DEPRECATED in S24 but not in S23), `NONE`.
 - **`disputed_transactions[].transaction_status`**: `COMPLETED`, `UNCLAIMED`, `DENIED`, `FAILED`, `HELD`, `PENDING`, `PARTIALLY_REFUNDED`, `REFUNDED`, `REVERSED`, `CANCELLED`.
