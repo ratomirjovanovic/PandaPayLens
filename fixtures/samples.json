@@ -210,6 +210,13 @@
     "description": "A raw bt_signature/bt_payload webhook. PandaPayLens explains what to paste instead."
   },
   {
+    "id": "braintree-xml-settlement-declined",
+    "title": "Braintree: decoded webhook XML",
+    "provider": "braintree",
+    "file": "braintree/webhook-xml-settlement-declined.xml",
+    "description": "A decoded transaction_settlement_declined notification. The settlement response code is decoded; the signature is not verified."
+  },
+  {
     "id": "netbilling-decline",
     "title": "NETbilling: declined, insufficient funds",
     "provider": "netbilling",

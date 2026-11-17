@@ -475,34 +475,394 @@ export const GATEWAY_REJECTION_REASONS: Record<string, GatewayRejection> = Objec
 // Validation errors (SDK `code`, GraphQL `extensions.legacyCode`)
 // ---------------------------------------------------------------------------
 
-export type ValidationError = CatalogEntry & { code: string; text: string };
+/**
+ * How a validation code is explained. The groups are PandaPayLens proposals
+ * derived from each code's documented text and explanation.
+ */
+export type ValidationGroup =
+  "input" | "amount" | "state" | "duplicate" | "configuration" | "blocked" | "special";
 
-type ValidationRow = readonly [code: string, text: string, category: C, retry: R];
+export type ValidationError = CatalogEntry & { code: string; text: string; group: ValidationGroup };
+
+type ValidationRow = readonly [code: string, text: string, group: ValidationGroup];
 
 /**
- * Only the Transaction validation codes transcribed in the research file. The
- * full list has 99 Transaction codes; the others fall back to the GraphQL
- * errorClass or a generic validation entry.
+ * Every code in the Transaction section of the validation error reference, with
+ * its documented text (trailing period removed). The same numbers are returned
+ * as GraphQL extensions.legacyCode.
  */
 // prettier-ignore
 const VALIDATION_ROWS: readonly ValidationRow[] = [
-  ["81501", "Amount cannot be negative", "invalid_amount", "do_not_retry"],
-  ["81502", "Amount is required", "invalid_amount", "do_not_retry"],
-  ["81503", "Amount is an invalid format", "invalid_amount", "do_not_retry"],
-  ["81528", "Amount is too large", "invalid_amount", "do_not_retry"],
-  ["81531", "Amount must be greater than zero", "invalid_amount", "do_not_retry"],
-  ["91504", "Transaction can only be voided if status is authorized or submitted_for_settlement", "invalid_request", "manual_review"],
-  ["91506", "Cannot refund a transaction unless it is settled", "invalid_request", "manual_review"],
-  ["91507", "Cannot submit for settlement unless status is authorized", "invalid_request", "manual_review"],
-  ["91512", "Transaction has already been completely refunded", "duplicate_request", "do_not_retry"],
-  ["91521", "Refund amount is too large", "invalid_amount", "do_not_retry"],
-  ["91522", "Settlement amount is too large", "invalid_amount", "do_not_retry"],
-  ["91565", "Unknown or expired payment_method_nonce", "invalid_request", "do_not_retry"],
+  ["81501", "Amount cannot be negative", "amount"],
+  ["81502", "Amount is required", "amount"],
+  ["81503", "Amount is an invalid format", "amount"],
+  ["815245", "Payment method nonce is not vaultable. Valid number and/or expiration date must be provided", "input"],
+  ["81528", "Amount is too large", "amount"],
+  ["81509", "Credit card type is not accepted by this merchant account", "configuration"],
+  ["81527", "Custom field is too long", "input"],
+  ["91501", "Order ID is too long", "input"],
+  ["91504", "Transaction can only be voided if status is authorized, submitted_for_settlement, or - for PayPal - settlement_pending", "state"],
+  ["91505", "Credit transactions cannot be refunded", "input"],
+  ["91506", "Cannot refund transaction unless it is settled", "state"],
+  ["91507", "Cannot submit for settlement unless status is authorized", "state"],
+  ["91508", "Cannot determine payment method", "input"],
+  ["91526", "Custom field is invalid", "input"],
+  ["91510", "Customer ID is invalid", "input"],
+  ["91511", "Customer does not have any credit cards", "input"],
+  ["91512", "Transaction has already been fully refunded", "duplicate"],
+  ["91513", "Merchant account ID is invalid", "configuration"],
+  ["91514", "Merchant account is suspended", "configuration"],
+  ["91515", "Cannot provide both payment_method_token and credit_card attributes", "input"],
+  ["91516", "Cannot provide both payment_method_token and customer_id unless the payment_method belongs to the customer", "input"],
+  ["91527", "Cannot provide both payment_method_token and subscription_id unless the payment_method belongs to the subscription", "input"],
+  ["91517", "Payment instrument type is not accepted by this merchant account", "configuration"],
+  ["91518", "Payment method token is invalid", "input"],
+  ["91519", "Processor authorization code cannot be set unless for a voice authorization", "input"],
+  ["91521", "Refund amount is too large", "amount"],
+  ["91533", "The submitted funding source does not allow refunds", "input"],
+  ["91538", "Cannot refund a transaction with a suspended merchant account", "configuration"],
+  ["91522", "Settlement amount is too large", "amount"],
+  ["91529", "Cannot provide both subscription_id and customer_id unless the subscription belongs to the customer", "input"],
+  ["91528", "Subscription ID is invalid", "input"],
+  ["91523", "Transaction type is invalid", "input"],
+  ["91524", "Transaction type is required", "input"],
+  ["91525", "Vault is disabled", "configuration"],
+  ["91531", "Subscription status must be Past Due in order to retry", "state"],
+  ["91547", "Merchant account does not support refunds", "configuration"],
+  ["81531", "Amount must be greater than zero", "amount"],
+  ["81534", "Tax amount cannot be negative", "amount"],
+  ["81535", "Tax amount is an invalid format", "amount"],
+  ["81536", "Tax amount is too large", "amount"],
+  ["81571", "Failed to authenticate, please try a different form of payment", "special"],
+  ["91537", "Purchase order number is too long", "input"],
+  ["91539", "Voice Authorization is not allowed for this card type", "configuration"],
+  ["91540", "Transaction cannot be cloned if payment method is stored in vault", "input"],
+  ["91541", "Cannot clone voice authorization transactions", "input"],
+  ["91542", "Unsuccessful transaction cannot be cloned", "input"],
+  ["91543", "Credits cannot be cloned", "input"],
+  ["91544", "Cannot clone transaction without submit_for_settlement flag", "input"],
+  ["91545", "Voice Authorizations are not supported for this processor", "configuration"],
+  ["91546", "Credits are not supported by this processor", "configuration"],
+  ["91548", "Purchase order number is invalid", "input"],
+  ["81520", "Processor authorization code must be 6 characters", "input"],
+  ["91549", "Cannot provide more than one of payment_method_token, payment_method_nonce, credit_card, and venmo_sdk_payment_method_code attributes", "input"],
+  ["91550", "Channel is too long", "input"],
+  ["91551", "Settlement amount cannot be less than the service fee amount", "amount"],
+  ["91552", "Credits not allowed with service fee", "input"],
+  ["91553", "Sub-merchant account requires a service fee", "configuration"],
+  ["91554", "Amount cannot be negative", "amount"],
+  ["91555", "Amount is an invalid format", "amount"],
+  ["91556", "Service fee amount is larger than transaction amount", "amount"],
+  ["91557", "Service fee not supported on master merchant account", "configuration"],
+  ["91558", "Merchant account does not support MOTO transactions unless configured by processor", "configuration"],
+  ["91559", "Cannot refund a transaction with a pending merchant account", "configuration"],
+  ["91560", "Transaction could not be held in escrow", "input"],
+  ["91561", "Cannot release a transaction that is not escrowed", "state"],
+  ["91562", "Release can only be cancelled if the transaction is submitted for release", "state"],
+  ["91563", "Escrowed transactions cannot be partially refunded", "input"],
+  ["91564", "Cannot use a payment_method_nonce more than once", "special"],
+  ["91565", "Unknown or expired payment_method_nonce", "special"],
+  ["91567", "Payment instrument type is not accepted by this merchant account", "configuration"],
+  ["91568", "Three D Secure Token is invalid", "input"],
+  ["91569", "payment_method_nonce does not contain a valid payment instrument type", "input"],
+  ["91572", "Current payment method does not support use_billing_for_shipping flag", "input"],
+  ["91575", "Cannot transition transaction to settled, settlement_confirmed, or settlement_declined", "state"],
+  ["91576", "PayPal is not enabled for your merchant account", "configuration"],
+  ["91577", "Merchant account does not support payment instrument", "configuration"],
+  ["91570", "Transaction data does not match data from Three D Secure verify call", "input"],
+  ["91573", "Transaction cannot be cloned if payment method is a PayPal account", "input"],
+  ["91574", "Cannot refund a transaction transaction in settling status on this merchant account. Try again after the transaction has settled", "state"],
+  ["91578", "Service fee can not be applied on PayPal transactions", "configuration"],
+  ["91580", "PayPal custom field must be less than 256 characters in length", "input"],
+  ["91581", "Shipping address customer does not match customer in request", "input"],
+  ["91582", "PayPal unilateral transactions must also be submitted for settlement", "input"],
+  ["91583", "This PayPal account was not vaulted with the required data", "input"],
+  ["91584", "Merchant account must match the 3D Secure authorization merchant account", "input"],
+  ["91585", "Amount must match the 3D Secure authorization amount", "amount"],
+  ["91586", "Shared billing address ID cannot be used in the same call as a standard billing address ID", "input"],
+  ["91587", "Shared customer ID cannot be used in the same call as a standard customer ID", "input"],
+  ["91588", "Shared payment method token cannot be used in the same call as a standard payment method token", "input"],
+  ["91589", "Shared payment method token cannot be used in the same call as a non-shared identifier param", "input"],
+  ["91590", "Shared identifier param cannot be used with non-shared payment method token", "input"],
+  ["91591", "Shared shipping address ID cannot be used in the same call as a standard shipping address ID", "input"],
+  ["91592", "Shared payment methods cannot be vaulted", "input"],
+  ["91593", "Shared payment methods cannot be vaulted", "input"],
+  ["91594", "Shared shipping addresses cannot be vaulted", "input"],
+  ["91595", "Shared payment methods cannot be updated", "input"],
+  ["91597", "Cannot provide both shared_payment_method_token and shared_customer_id unless the payment_method belongs to the customer", "input"],
+  ["91598", "Payment instrument type is not accepted by this merchant account", "configuration"],
+  ["91599", "Shared Shipping address customer does not match customer in request", "input"],
+  ["91596", "Shared payment method token is invalid", "input"],
+  ["915100", "Shared Customer ID is invalid", "input"],
+  ["915103", "Cannot submit for partial settlement", "input"],
+  ["915101", "Payment instrument type is not accepted", "configuration"],
+  ["915102", "Partial settlements are not supported by this processor", "configuration"],
+  ["915104", "Delayed settlements are not supported for this processor. The submit for settlement option is required", "configuration"],
+  ["915105", "Merchant account does not support Amex rewards", "configuration"],
+  ["915106", "Points amount is too large", "amount"],
+  ["915152", "request_id is required in a rewards payment request", "input"],
+  ["915153", "points is required in a rewards payments required", "input"],
+  ["915154", "currency_amount is required in a rewards payments required", "input"],
+  ["915155", "currency_iso_code is required in a rewards payments required", "input"],
+  ["915107", "Updating order_id on submit_for_settlement is not supported by this processor", "configuration"],
+  ["915108", "Updating descriptor on submit_for_settlement is not supported by this processor", "configuration"],
+  ["915109", "PayPal supplementary data fields must be less than 4001 characters in length", "input"],
+  ["915110", "Cannot clone facilitated transactions", "input"],
+  ["915111", "PayPal supplementary data field count must be less than 101", "input"],
+  ["915112", "Shared payment method token originated from another merchant and is not allowed to be shared", "input"],
+  ["915113", "EciFlag is required", "input"],
+  ["915114", "EciFlag is invalid", "input"],
+  ["915116", "Cavv is required for specified EciFlag", "input"],
+  ["915119", "The version of 3D Secure authentication must be composed only of digits and separated by periods (e.g. 1.0.2)", "input"],
+  ["915131", "Merchant account does not support 3D Secure transactions for card type", "configuration"],
+  ["915156", "Third party vault status must be either vaulted or will_vault", "input"],
+  ["915133", "Transaction source must be either moto, recurring_first, recurring, installment_first, installment, estimated, estimated_moto, or unscheduled", "input"],
+  ["915134", "submit_for_settlement is required and must be true", "input"],
+  ["915135", "shared_payment_method_nonce does not contain valid payment instrument type", "input"],
+  ["915136", "Payment instrument type is not accepted by this merchant", "configuration"],
+  ["915137", "Cannot clone Braintree Marketplace transactions via the API", "input"],
+  ["915157", "Too many line items", "input"],
+  ["915158", "Expected a collection of line items but none provided", "input"],
+  ["915145", "Line items not allowed for this transaction", "input"],
+  ["915159", "Discount amount is an invalid format", "amount"],
+  ["915160", "Discount amount cannot be negative", "amount"],
+  ["915161", "Discount amount is too large", "amount"],
+  ["915162", "Shipping amount is an invalid format", "amount"],
+  ["915163", "Shipping amount cannot be negative", "amount"],
+  ["915164", "Shipping amount is too large", "amount"],
+  ["915165", "Ships from postal code is too long", "input"],
+  ["915166", "Ships from postal code must be a string", "input"],
+  ["915167", "Ships from Postal code can only contain letters, numbers, spaces, and hyphens", "input"],
+  ["915147", "Vaulted cards from this payment method can only be used for recurring transactions", "input"],
+  ["915148", "Transaction can not be voided if status of a PayPal partial settlement child transaction is settlement_pending", "state"],
+  ["915149", "Too many concurrent attempts to refund this transaction. Try again later", "special"],
+  ["915151", "Too many concurrent attempts to void this transaction. Try again later", "special"],
+  ["915168", "Device session id must be less than 256 characters", "input"],
+  ["915169", "Merchant account does not support 3D Secure", "configuration"],
+  ["915170", "Venmo Profile ID does not exist", "input"],
+  ["915171", "US bank account payment_method_nonce must originate from Plaid or be vaulted prior to transaction", "input"],
+  ["915172", "US bank account payment method must be verified prior to transaction", "blocked"],
+  ["915173", "PayPal payee ID is not permitted for an un-vaulted PayPal nonce", "input"],
+  ["915174", "PayPal payee ID is not permitted for a PayPal Order payment method", "input"],
+  ["915175", "Status must be either vaulted or will_vault", "input"],
+  ["915176", "External vault may only be used with credit card transactions", "input"],
+  ["915177", "Status must be vaulted when used with previous network transaction ID", "input"],
+  ["915178", "Temporarily blocked as bank account was closed or could not be located. Please contact Braintree Support if unblocking is required", "blocked"],
+  ["915179", "Previous network transaction ID must be a 15 digit number", "input"],
+  ["915180", "Merchant account id must match the subscription's merchant account", "input"],
+  ["915181", "Shared payment method nonce originated from another merchant and is not allowed to be shared", "input"],
+  ["915183", "Cannot void a transaction that has already been captured", "state"],
+  ["915195", "Processor does not support MOTO transactions for this card type", "configuration"],
+  ["915189", "Merchant account must match the merchant account used to create the payment", "input"],
+  ["915190", "Fake payment method nonce cannot be used in production", "input"],
+  ["915191", "Settlement failed with a soft processor decline", "special"],
+  ["915192", "Local payment transaction has already been processed", "duplicate"],
+  ["815193", "Transaction amount not supported by processor", "amount"],
+  ["915200", "Failed to refund transaction", "special"],
+  ["915201", "Failed to refund transaction. Please try again at a later time", "special"],
+  ["915205", "The three_d_secure_authentication_id was already used and cannot be processed more than once", "input"],
+  ["915207", "Refund limit exceeded. Please try using an alternate payment method", "special"],
+  ["915208", "The installment amounts are invalid", "amount"],
+  ["915209", "The specified number of installments are not supported in this region", "input"],
+  ["915210", "Installments are not supported in this region", "input"],
+  ["915211", "Installments may not be processed on debit cards in this region", "input"],
+  ["915212", "EMV data is invalid", "input"],
+  ["915215", "Cannot create offline decline without EMV payment method", "input"],
+  ["915216", "Cannot update EMV data unless the transaction is an EMV transaction and status is authorized", "state"],
+  ["915217", "Cannot submit EMV contact transaction for settlement without a transaction certificate", "input"],
+  ["915218", "Transaction can only be adjusted when status is authorized", "state"],
+  ["915219", "Transaction is not eligible for adjustment", "state"],
+  ["915220", "Incremental auth on transaction is not supported for this processor", "configuration"],
+  ["915221", "Partial auth reversal on transaction is not supported for this processor", "configuration"],
+  ["915222", "Processor does not support multi incremental auth adjustment", "configuration"],
+  ["915223", "Offline decline transactions not supported by merchant account", "configuration"],
+  ["915224", "Payment initiated at is an invalid format", "input"],
+  ["815224", "Tax amount is required for domestic transactions in Sweden", "amount"],
+  ["915225", "Cashback amount cannot be negative", "amount"],
+  ["915226", "Cashback amount is an invalid format", "amount"],
+  ["915227", "Cashback amount is not allowed for this payment instrument", "input"],
+  ["915228", "Cashback amount is too large", "amount"],
+  ["915229", "Exchange Rate Quote ID is too long", "input"],
+  ["915238", "Third party card-on-file network token cannot be vaulted", "input"],
+  ["915240", "Your account has not been configured with a processor that supports Third Party Card-On-File network tokens", "configuration"],
+  ["815256", "This merchant account does not support 3DS transactions with third party card-on-file network tokens", "configuration"],
+  ["915246", "Venmo requires that refunds are issued within 180 days of the sale. This refund can't be successfully processed", "special"],
+  ["915247", "Your account has not been configured with a processor that supports subscriptions with your chosen payment instrument type", "configuration"],
+  ["915248", "Surcharge amount is an invalid format", "amount"],
+  ["915249", "Surcharge amount cannot be negative", "amount"],
+  ["915250", "Surcharge amount is too large", "amount"],
+  ["915251", "A connectivity error occurred when voiding. Please wait a moment and try again", "special"],
+  ["915252", "Shipping tax amount cannot be negative", "amount"],
+  ["915253", "Shipping tax amount is too large", "amount"],
+  ["915254", "Shipping tax amount is an invalid format", "amount"],
+  ["915255", "Duplicate order ID detected", "duplicate"],
+  ["915258", "Bank account ACH mandate is missing", "input"],
+  ["915259", "Bank account ACH mandate accepted_at needs to be a string timestamp in the ISO 8601 format (e.g. YYYY-MM-DDTHH:mm:SSZ). Timestamp string will be interpreted as a UTC time", "input"],
+  ["915260", "Bank account ACH mandate text is required", "input"],
+  ["915262", "Bank account is temporarily blocked as customer advises not authorized. Please contact customer to remediate issue first then contact Braintree Support if unblocking is required", "blocked"],
+  ["915263", "The standard entry class (SEC) code must be one of WEB, TEL, PPD, or CCD", "input"],
+  ["915264", "TEL is not a valid standard entry class (SEC) code for US bank credits", "input"],
+  ["915265", "Processing merchant category code is invalid", "input"],
+  ["915266", "Transaction amount exceeds the payment method maximum amount", "amount"],
+  ["915267", "Transaction currency does not match the payment method currency", "input"],
+  ["915268", "Valid values for ach_type are standard and same_day", "input"],
+  ["915269", "ach_type is not available for this merchant", "configuration"],
+  ["915270", "The merchant category code associated with this transaction is not allowed for refund operations", "configuration"],
+  ["915271", "Processing merchant category code is not supported", "configuration"],
+  ["915274", "Third Party Card-On-File network token transactions cannot be cloned", "input"],
 ];
 
+const REJECTED = "Braintree rejected the request before processing it.";
+const SAME_ERROR = "Repeating the same request returns the same validation error.";
+
+type GroupEntry = Omit<CatalogEntry, "explanation">;
+
+const VALIDATION_GROUPS: Record<Exclude<ValidationGroup, "special">, GroupEntry> = {
+  input: {
+    category: "invalid_request",
+    nextAction: "Correct the request input named in the error and send a new request.",
+    retry: "do_not_retry",
+    retryExplanation: SAME_ERROR,
+  },
+  amount: {
+    category: "invalid_amount",
+    nextAction: "Correct the amount named in the error and send a new request.",
+    retry: "do_not_retry",
+    retryExplanation: SAME_ERROR,
+  },
+  state: {
+    category: "invalid_request",
+    nextAction:
+      "Check the transaction status first; the operation is not allowed in its current status.",
+    retry: "manual_review",
+    retryExplanation:
+      "The request is invalid for the transaction's current status. Repeating it unchanged fails again; check the status first.",
+  },
+  duplicate: {
+    category: "duplicate_request",
+    nextAction: "Do not send the request again. Look up the earlier operation instead.",
+    retry: "do_not_retry",
+    retryExplanation: "Braintree reports that this was already done; repeating it fails again.",
+  },
+  configuration: {
+    category: "configuration",
+    nextAction:
+      "Check the merchant account and processor setup in the Braintree Control Panel, or contact Braintree support.",
+    retry: "manual_review",
+    retryExplanation:
+      "The merchant account or processor setup does not allow this request. Repeating it unchanged fails again.",
+  },
+  blocked: {
+    category: "payment_method_unavailable",
+    nextAction:
+      "Ask the customer to resolve the issue with the bank account or to use another payment method. Contact Braintree support if the block must be lifted.",
+    retry: "customer_action_required",
+    retryExplanation:
+      "The payment method cannot be used until the customer or Braintree resolves the issue.",
+  },
+};
+
+const NEW_NONCE =
+  "Obtain a new payment method nonce from the client and send a new request. Nonces are single-use.";
+
+/** Codes whose documented meaning does not fit a group. */
+const VALIDATION_SPECIAL: Record<string, CatalogEntry> = {
+  "81571": {
+    category: "authentication_failed",
+    explanation:
+      "Validation error 81571: authentication failed, and Braintree asks for a different form of payment.",
+    nextAction: "Ask the customer to use a different payment method.",
+    retry: "customer_action_required",
+    retryExplanation:
+      "The same payment method is not expected to authenticate on a repeated request.",
+  },
+  "91564": {
+    category: "invalid_request",
+    explanation: `Validation error 91564: the payment method nonce was already used. ${REJECTED}`,
+    nextAction: NEW_NONCE,
+    retry: "do_not_retry",
+    retryExplanation: SAME_ERROR,
+  },
+  "91565": {
+    category: "invalid_request",
+    explanation: `Validation error 91565: Unknown or expired payment_method_nonce. ${REJECTED}`,
+    nextAction: NEW_NONCE,
+    retry: "do_not_retry",
+    retryExplanation: SAME_ERROR,
+  },
+  "915149": {
+    category: "rate_limiting",
+    explanation:
+      "Validation error 915149: too many concurrent attempts to refund this transaction.",
+    nextAction:
+      "Wait, check whether one of the concurrent refunds succeeded, and only then try again.",
+    retry: "retry_conditionally",
+    retryExplanation:
+      "Braintree says to try again later. Another refund attempt may already have succeeded, so check before retrying.",
+  },
+  "915151": {
+    category: "rate_limiting",
+    explanation: "Validation error 915151: too many concurrent attempts to void this transaction.",
+    nextAction:
+      "Wait, check whether one of the concurrent voids succeeded, and only then try again.",
+    retry: "retry_conditionally",
+    retryExplanation:
+      "Braintree says to try again later. Another void attempt may already have succeeded, so check before retrying.",
+  },
+  "915191": {
+    category: "card_declined",
+    explanation:
+      "Validation error 915191: settlement failed with a soft processor decline. The processor did not capture the funds, but the authorization is still open.",
+    nextAction: "Submit the transaction for settlement again.",
+    retry: "safe_to_retry_technical_request",
+    retryExplanation:
+      "Braintree documents that this request may safely be retried because the authorization is still open.",
+  },
+  "915200": {
+    category: "card_declined",
+    explanation:
+      "Validation error 915200: the issuer hard declined the authorization for the refund.",
+    nextAction: "Do not repeat the refund on this payment method. Refund the customer another way.",
+    retry: "do_not_retry",
+    retryExplanation: "A hard decline is not temporary, so repeating the refund will likely fail.",
+  },
+  "915201": {
+    category: "card_declined",
+    explanation:
+      "Validation error 915201: the issuer soft declined the authorization for the refund.",
+    nextAction: "Try the refund again later.",
+    retry: "retry_conditionally",
+    retryExplanation: "A soft decline is temporary; Braintree says to try again at a later time.",
+  },
+  "915207": {
+    category: "rate_limiting",
+    explanation:
+      "Validation error 915207: the refund could not be completed and the number of refund attempts exceeded the limit.",
+    nextAction: "Do not retry the refund on this payment method. Refund the customer another way.",
+    retry: "do_not_retry",
+    retryExplanation: "The refund attempt limit is reached; further attempts are refused.",
+  },
+  "915246": {
+    category: "invalid_request",
+    explanation:
+      "Validation error 915246: Venmo refunds must be issued within 180 days of the sale.",
+    nextAction: "Refund the customer another way; this Venmo refund cannot be processed.",
+    retry: "do_not_retry",
+    retryExplanation: "The refund window has passed; repeating the request fails again.",
+  },
+  "915251": {
+    category: "provider_unavailable",
+    explanation:
+      "Validation error 915251: a connectivity error occurred while voiding the transaction.",
+    nextAction:
+      "Wait a moment, check the transaction status, and void again only if it is still not voided.",
+    retry: "retry_conditionally",
+    retryExplanation:
+      "Braintree says to wait a moment and try again. Check the status first so the void is not sent twice.",
+  },
+};
+
 const VALIDATION_ACTIONS: Record<string, string> = {
-  "91565":
-    "Obtain a new payment method nonce from the client and send a new request. Nonces are single-use.",
   "91512": "Do not send another refund. The transaction has nothing left to refund.",
   "91504":
     "Check the transaction status first. After settling or settled, refund instead of voiding.",
@@ -511,24 +871,19 @@ const VALIDATION_ACTIONS: Record<string, string> = {
     "Check the transaction status; only an authorized transaction can be submitted for settlement.",
 };
 
+function validationEntry(code: string, text: string, group: ValidationGroup): ValidationError {
+  const base: CatalogEntry =
+    group === "special"
+      ? VALIDATION_SPECIAL[code]!
+      : {
+          ...VALIDATION_GROUPS[group],
+          explanation: `Validation error ${code}: ${text}. ${REJECTED}`,
+        };
+  return { ...base, nextAction: VALIDATION_ACTIONS[code] ?? base.nextAction, code, text, group };
+}
+
 export const VALIDATION_ERRORS: Record<string, ValidationError> = Object.fromEntries(
-  VALIDATION_ROWS.map(([code, text, category, retry]) => [
-    code,
-    {
-      code,
-      text,
-      category,
-      retry,
-      explanation: `Validation error ${code}: ${text}. Braintree rejected the request before processing it.`,
-      nextAction:
-        VALIDATION_ACTIONS[code] ??
-        "Correct the request input named in the error and send a new request.",
-      retryExplanation:
-        retry === "manual_review"
-          ? "The request is invalid for the transaction's current status. Repeating it unchanged fails again; check the status first."
-          : "Repeating the same request returns the same validation error.",
-    },
-  ]),
+  VALIDATION_ROWS.map(([code, text, group]) => [code, validationEntry(code, text, group)]),
 );
 
 /** Fallback for validation codes not transcribed above. */
