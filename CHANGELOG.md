@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Providers
+
+- Five new providers, each limited with its gaps listed on its provider page: Klarna (Payments and Order Management errors, orders, captures, refunds, hosted payment page callbacks), Mercado Pago (payments, refunds, IPN and webhooks), GoCardless (payments, mandates, refunds, payouts and subscription events, webhook batches), Xendit (payment requests, payments, refunds, payouts, invoices and disbursements, errors and callbacks) and Paddle (Paddle Billing transactions, subscriptions and adjustments, errors and webhooks). 45 of 47 roadmap providers can now be analyzed.
+- Stripe: an `api_error` body that carries `detail` and `documentation_url` but no `message` or `doc_url` is no longer claimed with high confidence, because Paddle uses the same shape.
+
 ## [0.17.0] - 2026-11-17
 
 ### Providers
