@@ -33,6 +33,8 @@ export type Io = {
   stderr: (s: string) => void;
   readStdin: () => string;
   readFile: (path: string) => string;
+  /** Needed only for --output. */
+  writeFile?: (path: string, data: string) => void;
   color: boolean;
 };
 
@@ -53,6 +55,7 @@ Options:
       --fail-on <severity>         Exit 1 if a finding is at or above this
                                    severity: critical|high|medium|low|info|none
                                    (default: none)
+  -o, --output <file>              Write the report to a file instead of stdout
       --include-identifiers        Do not mask payment/event identifiers
       --no-color                   Disable colored output
   -h, --help                       Show this help
@@ -76,6 +79,7 @@ export function run(argv: string[], io: Io): number {
         provider: { type: "string", short: "p" },
         format: { type: "string", short: "f", default: "text" },
         "fail-on": { type: "string", default: "none" },
+        output: { type: "string", short: "o" },
         "include-identifiers": { type: "boolean", default: false },
         "no-color": { type: "boolean", default: false },
         supported: { type: "boolean", default: false },
@@ -172,12 +176,26 @@ export function run(argv: string[], io: Io): number {
 
   const result = r.result;
   const reportOpts = { includeIdentifiers: values["include-identifiers"] };
-  if (format === "json") io.stdout(toJsonReport(result, reportOpts));
-  else if (format === "markdown") io.stdout(toMarkdownReport(result, reportOpts));
+  const outputFile = values.output;
+  const useColor = color && !outputFile;
+  let report: string;
+  if (format === "json") report = toJsonReport(result, reportOpts);
+  else if (format === "markdown") report = toMarkdownReport(result, reportOpts);
   else
-    io.stdout(
-      renderText(result, command, { color, includeIdentifiers: values["include-identifiers"] }),
-    );
+    report = renderText(result, command, {
+      color: useColor,
+      includeIdentifiers: values["include-identifiers"],
+    });
+  if (outputFile) {
+    try {
+      if (!io.writeFile) throw new Error("not supported");
+      io.writeFile(outputFile, report);
+    } catch {
+      io.stderr(`Could not write ${outputFile}.
+`);
+      return EXIT.INTERNAL;
+    }
+  } else io.stdout(report);
 
   if (!result.records.some((rec) => rec.status === "analyzed")) return EXIT.UNSUPPORTED;
   if (failOn !== "none") {

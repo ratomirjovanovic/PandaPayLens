@@ -5,10 +5,14 @@ import { EXIT, run, stripControl } from "../src/cli.js";
 
 const fixtures = fileURLToPath(new URL("../../../fixtures/", import.meta.url));
 
-function exec(args: string[], stdin = "") {
+function exec(args: string[], stdin = "", files: Record<string, string> = {}) {
   let out = "";
   let err = "";
   const code = run(args, {
+    writeFile: (p, d) => {
+      if (p.startsWith("/nowhere/")) throw new Error("denied");
+      files[p] = d;
+    },
     stdout: (s) => (out += s),
     stderr: (s) => (err += s),
     readStdin: () => stdin,
@@ -44,6 +48,32 @@ describe("cli", () => {
     expect(available.every((p) => all.some((a) => a.id === p.id && a.status !== "planned"))).toBe(
       true,
     );
+  });
+
+  it("writes the report to a file with --output and keeps stdout empty", () => {
+    const files: Record<string, string> = {};
+    const r = exec(
+      ["analyze", "fx:stripe/successful-payment.json", "-f", "markdown", "--output", "report.md"],
+      "",
+      files,
+    );
+    expect(r.code).toBe(EXIT.OK);
+    expect(r.out).toBe("");
+    expect(files["report.md"]).toMatch(/^# /);
+    expect(files["report.md"]).toMatch(/Stripe/i);
+  });
+
+  it("writes plain text without control characters to a file", () => {
+    const files: Record<string, string> = {};
+    exec(["analyze", "fx:stripe/successful-payment.json", "-o", "report.txt"], "", files);
+    expect(files["report.txt"]).toBeTruthy();
+    expect(files["report.txt"]).not.toMatch(/\[/);
+  });
+
+  it("reports a file that cannot be written and still honors the exit code", () => {
+    const r = exec(["analyze", "fx:stripe/successful-payment.json", "-o", "/nowhere/report.txt"]);
+    expect(r.code).toBe(EXIT.INTERNAL);
+    expect(r.err).toMatch(/Could not write \/nowhere\/report\.txt/);
   });
 
   it("analyzes a file and masks identifiers by default", () => {

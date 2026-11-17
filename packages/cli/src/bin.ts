@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { EXIT, run } from "./cli.js";
 
 let code: number;
@@ -9,6 +9,7 @@ try {
     stderr: (s) => process.stderr.write(s),
     readStdin: () => readFileSync(0, "utf8"),
     readFile: (p) => readFileSync(p, "utf8"),
+    writeFile: (p, d) => writeFileSync(p, d, "utf8"),
     color: Boolean(process.stdout.isTTY) && !process.env.NO_COLOR,
   });
 } catch (e) {

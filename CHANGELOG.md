@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### CLI
+
+- `--output <file>` (`-o`) writes the report of `analyze`, `decode` and `timeline` to a file instead of stdout. Nothing is printed to stdout, and a file that cannot be written exits with code 4.
+
 ## [0.15.1] - 2026-10-28
 
 ### Security

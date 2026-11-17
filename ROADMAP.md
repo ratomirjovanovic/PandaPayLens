@@ -41,7 +41,7 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 
 ### CLI and packages
 
-- `--output <file>` for reports ([#4](https://github.com/ratomirjovanovic/PandaPayLens/issues/4)).
+- Done in the next release: `--output <file>` for reports ([#4](https://github.com/ratomirjovanovic/PandaPayLens/issues/4)).
 
 ### Documentation
 
