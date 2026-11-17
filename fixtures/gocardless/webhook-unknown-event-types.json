@@ -1,0 +1,30 @@
+{
+  "events": [
+    {
+      "id": "EVPPLSYNTH150001",
+      "created_at": "2026-11-16T09:00:00.000Z",
+      "resource_type": "billing_requests",
+      "action": "fulfilled",
+      "links": {
+        "billing_request": "BRQPPLSYNTH15"
+      },
+      "details": {
+        "origin": "api",
+        "cause": "billing_request_fulfilled"
+      }
+    },
+    {
+      "id": "EVPPLSYNTH150002",
+      "created_at": "2026-11-16T09:00:05.000Z",
+      "resource_type": "payments",
+      "action": "pplsynth_future_action",
+      "links": {
+        "payment": "PMPPLSYNTH150001"
+      },
+      "details": {
+        "origin": "gocardless",
+        "cause": "pplsynth_future_cause"
+      }
+    }
+  ]
+}

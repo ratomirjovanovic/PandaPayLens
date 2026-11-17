@@ -1,0 +1,21 @@
+{
+  "error": {
+    "message": "Validation failed",
+    "documentation_url": "/docs/api-reference/responses-and-errors#validation-failed",
+    "type": "validation_failed",
+    "code": 422,
+    "request_id": "PPLsynth-req-0009",
+    "errors": [
+      {
+        "message": "must be greater than 0",
+        "field": "amount",
+        "request_pointer": "/payments/amount"
+      },
+      {
+        "message": "is not a supported currency",
+        "field": "currency",
+        "request_pointer": "/payments/currency"
+      }
+    ]
+  }
+}

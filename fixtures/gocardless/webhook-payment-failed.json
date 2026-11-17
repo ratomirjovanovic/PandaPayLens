@@ -1,0 +1,29 @@
+{
+  "events": [
+    {
+      "id": "EVPPLSYNTH020001",
+      "created_at": "2026-11-05T10:02:15.000Z",
+      "resource_type": "payments",
+      "action": "failed",
+      "links": {
+        "payment": "PMPPLSYNTH020001"
+      },
+      "details": {
+        "origin": "bank",
+        "cause": "insufficient_funds",
+        "description": "The customer's account had insufficient funds to make this payment.",
+        "scheme": "sepa_core",
+        "reason_code": "AM04",
+        "will_attempt_retry": false,
+        "not_retried_reason": "failure_filter_applied"
+      },
+      "metadata": {},
+      "resource_metadata": {
+        "order": "PPLsynth-order-0002"
+      }
+    }
+  ],
+  "meta": {
+    "webhook_id": "WBPPLSYNTH020001"
+  }
+}

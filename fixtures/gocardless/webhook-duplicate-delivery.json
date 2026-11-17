@@ -1,0 +1,42 @@
+[
+  {
+    "events": [
+      {
+        "id": "EVPPLSYNTH140001",
+        "created_at": "2026-11-16T08:00:00.000Z",
+        "resource_type": "payments",
+        "action": "confirmed",
+        "links": {
+          "payment": "PMPPLSYNTH140001"
+        },
+        "details": {
+          "origin": "gocardless",
+          "cause": "payment_confirmed"
+        }
+      }
+    ],
+    "meta": {
+      "webhook_id": "WBPPLSYNTH140001"
+    }
+  },
+  {
+    "events": [
+      {
+        "id": "EVPPLSYNTH140001",
+        "created_at": "2026-11-16T08:00:00.000Z",
+        "resource_type": "payments",
+        "action": "confirmed",
+        "links": {
+          "payment": "PMPPLSYNTH140001"
+        },
+        "details": {
+          "origin": "gocardless",
+          "cause": "payment_confirmed"
+        }
+      }
+    ],
+    "meta": {
+      "webhook_id": "WBPPLSYNTH140002"
+    }
+  }
+]

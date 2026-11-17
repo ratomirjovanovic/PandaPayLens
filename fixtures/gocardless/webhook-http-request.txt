@@ -1,0 +1,7 @@
+POST /webhooks/gocardless HTTP/1.1
+User-Agent: gocardless-webhook-service/1.1
+Content-Type: application/json
+Origin: https://api-sandbox.gocardless.com
+Webhook-Signature: 0000pplsynth0000000000000000000000000000000000000000000000000000
+
+{"events": [{"id": "EVPPLSYNTH170001", "created_at": "2026-11-16T11:00:00.000Z", "resource_type": "payouts", "action": "paid", "links": {"payout": "POPPLSYNTH170001"}, "details": {"origin": "gocardless", "cause": "payout_paid"}}]}

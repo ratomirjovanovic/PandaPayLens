@@ -1,0 +1,18 @@
+{
+  "error": {
+    "message": "A resource has already been created with this idempotency key",
+    "documentation_url": "/docs/api-reference/responses-and-errors#invalid-state",
+    "type": "invalid_state",
+    "code": 409,
+    "request_id": "PPLsynth-req-0012",
+    "errors": [
+      {
+        "reason": "idempotent_creation_conflict",
+        "message": "A resource has already been created with this idempotency key",
+        "links": {
+          "conflicting_resource_id": "PMPPLSYNTH120001"
+        }
+      }
+    ]
+  }
+}
