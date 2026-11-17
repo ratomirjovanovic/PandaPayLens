@@ -91,6 +91,14 @@ export default defineConfig({
         replacement: src("./packages/adapters/netbilling/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/paddle\/manifest$/,
+        replacement: src("./packages/adapters/paddle/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paddle$/,
+        replacement: src("./packages/adapters/paddle/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/pxp\/manifest$/,
         replacement: src("./packages/adapters/pxp/src/manifest.ts"),
       },
