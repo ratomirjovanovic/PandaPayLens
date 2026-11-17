@@ -1,0 +1,24 @@
+<notification>
+  <timestamp type="datetime">2026-10-29T03:00:00Z</timestamp>
+  <kind>disbursement</kind>
+  <subject>
+    <disbursement>
+      <id>PPLsynthDISBX1</id>
+      <transaction-ids type="array">
+        <item>PPLsynthACHX1</item>
+      </transaction-ids>
+      <success type="boolean">true</success>
+      <retry type="boolean">false</retry>
+      <merchant-account>
+        <id>PPLsynthMerchantUSD</id>
+        <currency-iso-code>USD</currency-iso-code>
+        <sub-merchant-account type="boolean">false</sub-merchant-account>
+        <status>active</status>
+      </merchant-account>
+      <amount>100.00</amount>
+      <disbursement-date type="date">2026-10-29</disbursement-date>
+      <exception-message nil="true"/>
+      <follow-up-action nil="true"/>
+    </disbursement>
+  </subject>
+</notification>

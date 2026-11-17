@@ -12,7 +12,7 @@ export const braintreeManifest: ProviderManifest = {
   sectors: [],
   documentationAccess: "public",
   fixtureProvenance:
-    "Synthetic payloads modelled on the provider's public documentation; not official examples.",
+    "Synthetic payloads modelled on the provider's public documentation; not official examples. Decoded notification XML follows the sample notifications in the official Braintree SDK source, since no documentation page shows the XML.",
   status: "limited",
   apiFamilies: [
     {
@@ -36,6 +36,12 @@ export const braintreeManifest: ProviderManifest = {
       id: "braintree.webhook.notification",
       description:
         "Webhook notifications already parsed by a Braintree SDK (kind, timestamp, subject)",
+      status: "limited",
+    },
+    {
+      id: "braintree.webhook.notification_xml",
+      description:
+        "Decoded webhook notification XML (<notification> with timestamp, kind and subject, kebab-case elements), read like the parsed notification; the signature is not verified",
       status: "limited",
     },
     {
@@ -115,8 +121,8 @@ export const braintreeManifest: ProviderManifest = {
     docsUrl: "https://developer.paypal.com/braintree/docs/guides/webhooks/parse",
   },
   limitations: [
-    "Raw webhook deliveries (bt_signature and bt_payload) are recognized but not decoded or verified: verification needs the merchant's private API key. Parse the notification with a Braintree SDK and paste the parsed notification instead.",
-    "Decoded webhook XML is not accepted; PandaPayLens reads JSON and form data only.",
+    "Raw webhook deliveries (bt_signature and bt_payload) are recognized but not decoded or verified: verification needs the merchant's private API key. Parse the notification with a Braintree SDK and paste the parsed notification, or paste the decoded XML, instead.",
+    "Decoded webhook XML (the base64-decoded bt_payload) is read with the conversion rules of the official Braintree SDK source, because no documentation page shows the XML. It is not verified: anyone can write such a document. A base64 bt_payload on its own is not decoded, and other Braintree XML (for example gateway API responses) is not recognized.",
     "Card, PayPal, Venmo and wallet transactions produce no transaction webhooks; only ACH and SEPA Direct Debit settlements do. Timelines come from the supplied snapshots and statusHistory entries, and missing states are not inferred.",
     "A statusHistory without timestamps (as in some GraphQL responses) is shown as one snapshot event that lists the statuses.",
     "Braintree documents no notification id, so repeated deliveries of the same notification are not identified (no delivery key).",
@@ -124,7 +130,8 @@ export const braintreeManifest: ProviderManifest = {
     "Order ids, retried transactions, duplicateOf links and disbursement transaction lists are not used for correlation.",
     "The JSON serialization of SDK objects is not documented. snake_case and camelCase field names are accepted; other spellings (for example .NET PascalCase) are not recognized.",
     "Category and retry mappings are PandaPayLens proposals derived from the documented descriptions and Hard/Soft decline types.",
-    "Only 12 of the documented Transaction validation codes are mapped individually; other codes are decoded by GraphQL errorClass or as a generic validation error.",
+    "Every code in the Transaction section of the validation error reference is mapped individually, with a short description in PandaPayLens' own words; the published error text is in the linked reference. Codes from the other sections (credit card, customer, PayPal, 3D Secure and others) are decoded by GraphQL errorClass or as a generic validation error.",
+    "Category and retry mappings for validation codes are PandaPayLens proposals from the documented text; codes whose text gives no clearer signal are treated as invalid input that should not be retried unchanged.",
     "GraphQL errorClass values have no published descriptions; their mapping is a PandaPayLens proposal.",
     "Five GraphQL gateway rejection reasons are documented by name only.",
     "Codes 2109 to 2999 share one generic Processor Declined meaning.",
@@ -135,5 +142,6 @@ export const braintreeManifest: ProviderManifest = {
     "braintree-processor-declined",
     "braintree-sale-refund-dispute",
     "braintree-signed-webhook",
+    "braintree-xml-settlement-declined",
   ],
 };

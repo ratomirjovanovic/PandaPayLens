@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notification>
+  <timestamp type="datetime">2026-10-28T09:00:00Z</timestamp>
+  <kind>dispute_opened</kind>
+  <subject>
+    <dispute>
+      <amount>100.00</amount>
+      <amount-disputed>100.00</amount-disputed>
+      <currency-iso-code>USD</currency-iso-code>
+      <received-date type="date">2026-10-28</received-date>
+      <reply-by-date type="date">2026-11-17</reply-by-date>
+      <kind>chargeback</kind>
+      <status>open</status>
+      <reason>fraud</reason>
+      <id>PPLsynthDSPX1</id>
+      <transaction>
+        <id>PPLsynthACHX1</id>
+        <amount>100.00</amount>
+      </transaction>
+      <date-opened type="date">2026-10-28</date-opened>
+    </dispute>
+  </subject>
+</notification>

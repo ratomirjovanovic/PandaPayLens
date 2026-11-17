@@ -742,6 +742,312 @@ describe("braintree validation errors", () => {
       category: "invalid_request",
       confidence: "possible",
     });
+    // A credit card section code is documented, but not in the Transaction section.
+    const other = analyzeJson({
+      success: false,
+      errors: [{ attribute: "number", code: "81715", message: "Credit card number is invalid." }],
+    });
+    expect(other.errors[0]).toMatchObject({ code: "81715", confidence: "possible" });
+    expect(other.errors[0]!.missingInformation.join(" ")).toMatch(
+      /not in the PandaPayLens catalog/,
+    );
+  });
+
+  // One code per group, as an SDK validation error and as a GraphQL legacyCode.
+  const groups: [string, string, string, string][] = [
+    ["91501", "orderId", "invalid_request", "do_not_retry"],
+    ["81534", "taxAmount", "invalid_amount", "do_not_retry"],
+    ["91554", "serviceFeeAmount", "invalid_amount", "do_not_retry"],
+    ["915218", "base", "invalid_request", "manual_review"],
+    ["915255", "orderId", "duplicate_request", "do_not_retry"],
+    ["91547", "base", "configuration", "manual_review"],
+    ["915178", "base", "payment_method_unavailable", "customer_action_required"],
+    ["81571", "base", "authentication_failed", "customer_action_required"],
+    ["91564", "paymentMethodNonce", "invalid_request", "do_not_retry"],
+    ["915149", "base", "rate_limiting", "retry_conditionally"],
+    ["915191", "base", "card_declined", "safe_to_retry_technical_request"],
+    ["915200", "base", "card_declined", "do_not_retry"],
+    ["915201", "base", "card_declined", "retry_conditionally"],
+    ["915207", "base", "rate_limiting", "do_not_retry"],
+    ["915246", "base", "invalid_request", "do_not_retry"],
+    ["915251", "base", "provider_unavailable", "retry_conditionally"],
+  ];
+
+  it.each(groups)("decodes SDK validation code %s", (code, attribute, category, retry) => {
+    const r = analyzeJson({
+      success: false,
+      errors: { transaction: { errors: [{ attribute, code, message: "PPLsynth message" }] } },
+    });
+    expect(r.records[0]).toMatchObject({
+      status: "analyzed",
+      format: "braintree.sdk.validation_errors",
+    });
+    expect(r.errors[0]).toMatchObject({ code, category, retry, confidence: "strong" });
+    expect(r.errors[0]!.missingInformation).toEqual([]);
+  });
+
+  it.each(groups)("decodes GraphQL legacyCode %s", (code, _attribute, category, retry) => {
+    const r = analyzeJson({
+      data: { chargePaymentMethod: null },
+      errors: [
+        {
+          message: "PPLsynth message",
+          path: ["chargePaymentMethod"],
+          extensions: { errorClass: "VALIDATION", legacyCode: code },
+        },
+      ],
+      extensions: { requestId: "PPLsynth-request-v" },
+    });
+    expect(r.errors[0]).toMatchObject({ code, category, retry, confidence: "strong" });
+  });
+
+  it("describes codes in its own words, not with the published text", () => {
+    expect(VALIDATION_ERRORS["91512"]!.description).toBe(
+      "Nothing is left to refund; the transaction was refunded in full",
+    );
+    expect(VALIDATION_ERRORS["91506"]!.description).toBe(
+      "A refund needs the transaction to be settled first",
+    );
+    expect(VALIDATION_ERRORS["91512"]!.explanation).toContain("refunded in full");
+    expect(VALIDATION_ERRORS["91512"]).not.toHaveProperty("text");
+    expect(VALIDATION_ERRORS["915191"]!.group).toBe("special");
+    expect(VALIDATION_ERRORS["91512"]).toMatchObject({
+      category: "duplicate_request",
+      nextAction: "Do not send another refund. The transaction has nothing left to refund.",
+    });
+  });
+});
+
+describe("braintree decoded notification XML", () => {
+  it("reads a transaction_settled notification like the parsed form", () => {
+    const r = analyzeFixture("webhook-xml-transaction-settled.xml");
+    expect(r.records[0]).toMatchObject({
+      status: "analyzed",
+      provider: "braintree",
+      format: "braintree.webhook.notification_xml",
+      confidence: 0.95,
+    });
+    expect(r.events).toHaveLength(1);
+    expect(r.events[0]).toMatchObject({
+      eventType: "transaction_settled",
+      eventTypeKnown: true,
+      stage: "settlement",
+      outcome: "success",
+      providerStatus: "settled",
+      paymentReference: "PPLsynthACHX1",
+      eventTimestamp: "2026-10-25T06:00:00.000Z",
+      amountMinor: "10000",
+      currency: "USD",
+      attributes: { notificationKind: "transaction_settled", subjectType: "transaction" },
+    });
+    expect(r.events[0]!.deliveryKey).toBeUndefined();
+    expect(r.events[0]!.merchantReference).toBeUndefined();
+    for (const out of [JSON.stringify(r.events), toJsonReport(r)]) {
+      expect(out).not.toContain("PPLsynthRoutingX0");
+      expect(out).not.toContain("PPLsynth XML Account Holder");
+    }
+  });
+
+  it("decodes the settlement response of a transaction_settlement_declined notification", () => {
+    const r = analyzeFixture("webhook-xml-settlement-declined.xml");
+    expect(r.records[0]!.format).toBe("braintree.webhook.notification_xml");
+    expect(r.errors).toHaveLength(1);
+    expect(r.errors[0]).toMatchObject({
+      code: "4001",
+      category: "card_declined",
+      retry: "manual_review",
+      confidence: "strong",
+      providerMessage: "Settlement Declined",
+      paymentReference: "PPLsynthACHX1",
+    });
+    expect(r.errors[0]!.source.path).toBe("notification.subject.transaction");
+    expect(r.events[0]).toMatchObject({ stage: "settlement", outcome: "failure" });
+  });
+
+  it("reads an XML notification exactly like the same parsed notification", () => {
+    const fromXml = analyzeFixture("webhook-xml-transaction-settled.xml").events[0]!;
+    const fromJson = analyzeJson({
+      kind: "transaction_settled",
+      timestamp: "2026-10-25T06:00:00Z",
+      transaction: {
+        id: "PPLsynthACHX1",
+        status: "settled",
+        type: "sale",
+        currency_iso_code: "USD",
+        amount: "100.00",
+        merchant_account_id: "PPLsynthMerchantUSD",
+        refund_ids: [],
+      },
+    }).events[0]!;
+    const view = (e: typeof fromXml) => ({
+      eventType: e.eventType,
+      stage: e.stage,
+      outcome: e.outcome,
+      providerStatus: e.providerStatus,
+      paymentReference: e.paymentReference,
+      eventTimestamp: e.eventTimestamp,
+      amountMinor: e.amountMinor,
+      currency: e.currency,
+      attributes: e.attributes,
+    });
+    expect(view(fromXml)).toEqual(view(fromJson));
+    expect(fromXml.sourceFormat).toBe("braintree.webhook.notification_xml");
+    expect(fromJson.sourceFormat).toBe("braintree.webhook.notification");
+  });
+
+  it("refers XML notifications to the transaction by its id", () => {
+    const text = [
+      fixture("braintree/webhook-xml-transaction-settled.xml"),
+      fixture("braintree/webhook-xml-settlement-declined.xml"),
+      fixture("braintree/webhook-xml-dispute-opened.xml"),
+    ];
+    const results = text.map((t) => analyze(t));
+    const events = results.flatMap((r) => r.events);
+    expect(events.map((e) => [e.eventType, e.paymentReference])).toEqual([
+      ["transaction_settled", "PPLsynthACHX1"],
+      ["transaction_settlement_declined", "PPLsynthACHX1"],
+      ["dispute_opened", "PPLsynthACHX1"],
+    ]);
+    expect(results[2]!.events[0]!.attributes).toMatchObject({
+      disputeId: "PPLsynthDSPX1",
+      disputeStatus: "open",
+      disputeKind: "chargeback",
+      disputeReason: "fraud",
+    });
+    expect(braintreeAdapter.correlationKeys(results[2]!.events[0]!)).toEqual([
+      "PPLsynthACHX1",
+      "dispute:PPLsynthDSPX1",
+    ]);
+  });
+
+  it("reads a one-item array and nil elements", () => {
+    const r = analyzeFixture("webhook-xml-disbursement.xml");
+    expect(r.records[0]).toMatchObject({
+      status: "analyzed",
+      format: "braintree.webhook.notification_xml",
+    });
+    expect(r.events[0]).toMatchObject({
+      eventType: "disbursement",
+      outcome: "success",
+      attributes: {
+        disbursementId: "PPLsynthDISBX1",
+        disbursementSuccess: true,
+        disbursementRetry: false,
+        transactionCount: 1,
+      },
+    });
+    expect(r.events[0]!.paymentReference).toBeUndefined();
+  });
+
+  it("reads the XML document from the body of a pasted HTTP message", () => {
+    // Braintree itself posts form-encoded bt_signature and bt_payload; this is
+    // a decoded document forwarded or logged as an HTTP message.
+    const body = fixture("braintree/webhook-xml-dispute-opened.xml");
+    const r = analyze(`HTTP/1.1 200 OK\nContent-Type: application/xml\n\n${body}`);
+    expect(r.records[0]).toMatchObject({
+      status: "analyzed",
+      format: "braintree.webhook.notification_xml",
+    });
+    expect(r.events[0]).toMatchObject({ eventType: "dispute_opened" });
+  });
+
+  const xml = (kind: string, subject: string, timestamp = "2026-10-25T08:00:00Z") =>
+    `<notification><timestamp type="datetime">${timestamp}</timestamp><kind>${kind}</kind><subject>${subject}</subject></notification>`;
+
+  it("reads a transaction review and never copies the reviewer's details", () => {
+    const r = analyze(
+      xml(
+        "transaction_reviewed",
+        '<transaction-review><transaction-id>PPLsynthTRX1</transaction-id><decision>Reject</decision><reviewer-email>pplsynth.xml.reviewer@example.com</reviewer-email><reviewer-note>PPLsynth XML private note</reviewer-note><reviewed-time type="datetime">2026-10-25T07:59:00Z</reviewed-time></transaction-review>',
+      ),
+    );
+    expect(r.events[0]).toMatchObject({
+      eventType: "transaction_reviewed",
+      paymentReference: "PPLsynthTRX1",
+      attributes: { reviewDecision: "Reject", subjectType: "transaction_review" },
+    });
+    for (const out of [JSON.stringify(r.events), toJsonReport(r)]) {
+      expect(out).not.toContain("pplsynth.xml.reviewer@example.com");
+      expect(out).not.toContain("PPLsynth XML private note");
+    }
+  });
+
+  it("unwraps a subject held in api-error-response, as the SDK does", () => {
+    const r = analyze(
+      xml(
+        "transaction_settlement_declined",
+        "<api-error-response><transaction><id>PPLsynthAER1</id><status>settlement_declined</status><processor-settlement-response-code>4001</processor-settlement-response-code></transaction></api-error-response>",
+      ),
+    );
+    expect(r.records[0]!.status).toBe("analyzed");
+    expect(r.errors[0]).toMatchObject({ code: "4001", paymentReference: "PPLsynthAER1" });
+    expect(r.errors[0]!.source.path).toBe("notification.subject.api_error_response.transaction");
+  });
+
+  it("shows an undocumented kind without semantics and with low confidence", () => {
+    const r = analyze(
+      xml(
+        "brand_new_kind",
+        "<transaction><id>PPLsynthT7</id><status>settled</status></transaction>",
+      ),
+    );
+    expect(r.records[0]).toMatchObject({ provider: "braintree", confidence: 0.5 });
+    expect(r.events[0]).toMatchObject({
+      eventTypeKnown: false,
+      stage: "other",
+      outcome: "unknown",
+      paymentReference: "PPLsynthT7",
+    });
+  });
+
+  it("reports notifications with missing parts as invalid, without throwing", () => {
+    const noSubject = analyze(xml("transaction_settled", ""));
+    expect(noSubject.records[0]).toMatchObject({ status: "invalid" });
+    expect(noSubject.records[0]!.reasons.join(" ")).toMatch(/notification\./);
+    const badDate = analyze(
+      xml("transaction_settled", "<transaction><id>x</id></transaction>", "soon"),
+    );
+    expect(badDate.records[0]).toMatchObject({ status: "invalid" });
+    expect(badDate.records[0]!.reasons.join(" ")).toMatch(/notification\.timestamp/);
+  });
+
+  it("does not claim other XML documents", () => {
+    for (const text of [
+      "<notification><kind>transaction_settled</kind></notification>",
+      '<notification xmlns="urn:example:other"><timestamp>2026-10-25T08:00:00Z</timestamp><kind>transaction_settled</kind><subject/></notification>',
+      "<payment_response><status>approved</status></payment_response>",
+      "<transaction><id>PPLsynthT1</id><status>settled</status></transaction>",
+    ]) {
+      const r = analyzeText(text, options);
+      expect(r.ok, text).toBe(true);
+      if (r.ok) expect(r.result.records[0]!.provider, text).toBeNull();
+    }
+    for (const dir of [
+      "authorize_net",
+      "bluesnap",
+      "emerchantpay",
+      "inpay",
+      "skrill",
+      "worldpay",
+    ]) {
+      for (const file of readdirSync(fileURLToPath(new URL(`${dir}/`, fixturesDir)))) {
+        if (!/xml/i.test(file)) continue;
+        const parsed = parseInput(fixture(`${dir}/${file}`));
+        if (!parsed.ok) continue;
+        parsed.value.records.forEach((record, i) => {
+          expect(braintreeAdapter.detect(record, parsed.value.meta[i]).confidence, file).toBe(0);
+        });
+      }
+    }
+  });
+
+  it("rejects a document with a DOCTYPE before any adapter sees it", () => {
+    const r = analyzeText(
+      `<!DOCTYPE notification [<!ENTITY x "PPLsynth">]>${xml("transaction_settled", "<transaction><id>&x;</id></transaction>")}`,
+      options,
+    );
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.error.code).toBe("INVALID_XML");
   });
 });
 
@@ -1035,7 +1341,14 @@ describe("braintree manifest and catalog", () => {
     expect(types.filter((t) => t === "Hard")).toHaveLength(83);
     expect(Object.keys(SETTLEMENT_RESPONSES)).toHaveLength(16);
     expect(Object.keys(GATEWAY_REJECTION_REASONS)).toHaveLength(14);
-    expect(Object.keys(VALIDATION_ERRORS)).toHaveLength(12);
+    // Every code of the Transaction section of the validation error reference.
+    expect(Object.keys(VALIDATION_ERRORS)).toHaveLength(217);
+    for (const [code, v] of Object.entries(VALIDATION_ERRORS)) {
+      expect(code).toMatch(/^\d{5,6}$/);
+      expect(v.code).toBe(code);
+      expect(v.description, code).not.toMatch(/[.:]$/);
+      expect(v.explanation, code).toContain(code);
+    }
   });
 
   it("uses no en or em dash characters in source files", () => {

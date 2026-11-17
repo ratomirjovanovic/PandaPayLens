@@ -7,10 +7,13 @@
  *                                     object with a transaction, or a GraphQL Transaction/Refund object)
  * - `braintree.sdk.validation_errors` SDK result object with validation errors (`attribute`, `code`, `message`)
  * - `braintree.webhook.notification`  Notification already parsed by an SDK (`kind`, `timestamp`, subject)
+ * - `braintree.webhook.notification_xml` Decoded notification XML (`<notification>` with
+ *                                     `<timestamp>`, `<kind>`, `<subject>`), read like the parsed form
  *
  * Recognized but not supported: `braintree.webhook.signed`, the raw form-encoded
  * delivery (`bt_signature`, `bt_payload`). It can only be verified with the
- * merchant's private key, so it is never decoded.
+ * merchant's private key, so it is never decoded. Decoded notification XML is
+ * accepted, but it is not verified either.
  *
  * GraphQL always answers with HTTP 200. Processor declines and gateway
  * rejections are not GraphQL errors: they arrive in `data` as a transaction with
@@ -63,6 +66,7 @@ import {
 } from "./catalog.js";
 
 import { braintreeManifest, BRAINTREE_ADAPTER_VERSION } from "./manifest.js";
+import { notificationFromXml, XML_NOTIFICATION_ROOT } from "./xml.js";
 
 export { braintreeManifest, BRAINTREE_ADAPTER_VERSION };
 
@@ -73,6 +77,7 @@ export const BRAINTREE_FORMATS = {
   transaction: "braintree.transaction",
   validation: "braintree.sdk.validation_errors",
   notification: "braintree.webhook.notification",
+  notificationXml: "braintree.webhook.notification_xml",
   signed: "braintree.webhook.signed",
 } as const;
 
@@ -1162,6 +1167,58 @@ const SUBJECT_KEYS = [
   "subject",
 ];
 
+function detectNotification(input: Obj): DetectionResult | null {
+  if (typeof input.kind !== "string" || !/^[a-z0-9_]{1,128}$/.test(input.kind)) return null;
+  const known = own(WEBHOOK_KINDS, input.kind) !== undefined;
+  const hasTs = typeof input.timestamp === "string";
+  const hasSubject = SUBJECT_KEYS.some((k) => isObj(input[k]));
+  if (known && (hasTs || hasSubject))
+    return {
+      provider: PROVIDER,
+      format: F.notification,
+      confidence: hasTs && hasSubject ? 0.95 : 0.85,
+      supported: true,
+      reasons: [
+        `kind "${input.kind}" is a documented Braintree notification kind`,
+        ...(hasTs ? ["has timestamp"] : []),
+        ...(hasSubject ? ["has a subject object"] : []),
+      ],
+    };
+  if (!known && hasTs && hasSubject)
+    return {
+      provider: PROVIDER,
+      format: F.notification,
+      confidence: 0.6,
+      supported: true,
+      reasons: ["has kind, timestamp and a subject object like a Braintree notification"],
+    };
+  return null;
+}
+
+/**
+ * Decoded notification XML: a <notification> root without a namespace that
+ * holds <kind>, <timestamp> and <subject>. The root name alone is generic, so
+ * an undocumented kind is only a weak match.
+ */
+function detectNotificationXml(input: Obj, meta: RecordMeta): DetectionResult | null {
+  const n = notificationFromXml(input, meta)?.value;
+  if (!n || typeof n.kind !== "string" || !/^[a-z0-9_]{1,128}$/.test(n.kind)) return null;
+  if (typeof n.timestamp !== "string" || !("subject" in n)) return null;
+  const known = own(WEBHOOK_KINDS, n.kind) !== undefined;
+  return {
+    provider: PROVIDER,
+    format: F.notificationXml,
+    confidence: known ? 0.95 : 0.5,
+    supported: true,
+    reasons: [
+      `XML root element <${XML_NOTIFICATION_ROOT}> with kind, timestamp and subject`,
+      known
+        ? `kind "${n.kind}" is a documented Braintree notification kind`
+        : `kind "${n.kind}" is not a documented Braintree notification kind`,
+    ],
+  };
+}
+
 function detect(input: unknown, meta?: RecordMeta): DetectionResult {
   const none: DetectionResult = {
     provider: PROVIDER,
@@ -1171,6 +1228,9 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
     reasons: [],
   };
   if (!isObj(input)) return none;
+  // An XML record keeps its root element as the only key; the JSON and form
+  // shapes below never apply to it.
+  if (meta?.xml) return detectNotificationXml(input, meta) ?? none;
 
   // Raw webhook delivery. The signature value is never echoed.
   if ("bt_signature" in input || "bt_payload" in input) {
@@ -1188,35 +1248,12 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
         ...(form ? ["arrived as form-encoded data"] : []),
       ],
       unsupportedReason:
-        "This is a raw Braintree webhook delivery (bt_signature and bt_payload). It can only be verified and decoded with the merchant's private API key, so PandaPayLens does not decode it. Parse it with a Braintree server SDK and paste the parsed notification (kind, timestamp and subject) instead.",
+        "This is a raw Braintree webhook delivery (bt_signature and bt_payload). It can only be verified with the merchant's private API key, so PandaPayLens does not decode it. Parse it with a Braintree server SDK and paste the parsed notification (kind, timestamp and subject), or paste the decoded notification XML, instead.",
     };
   }
 
-  if (typeof input.kind === "string" && /^[a-z0-9_]{1,128}$/.test(input.kind)) {
-    const known = own(WEBHOOK_KINDS, input.kind) !== undefined;
-    const hasTs = typeof input.timestamp === "string";
-    const hasSubject = SUBJECT_KEYS.some((k) => isObj(input[k]));
-    if (known && (hasTs || hasSubject))
-      return {
-        provider: PROVIDER,
-        format: F.notification,
-        confidence: hasTs && hasSubject ? 0.95 : 0.85,
-        supported: true,
-        reasons: [
-          `kind "${input.kind}" is a documented Braintree notification kind`,
-          ...(hasTs ? ["has timestamp"] : []),
-          ...(hasSubject ? ["has a subject object"] : []),
-        ],
-      };
-    if (!known && hasTs && hasSubject)
-      return {
-        provider: PROVIDER,
-        format: F.notification,
-        confidence: 0.6,
-        supported: true,
-        reasons: ["has kind, timestamp and a subject object like a Braintree notification"],
-      };
-  }
+  const notification = detectNotification(input);
+  if (notification) return notification;
 
   const graphql = detectGraphql(input);
   if (graphql) return graphql;
@@ -1229,7 +1266,8 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
     const triples: ValidationTriple[] = [];
     collectTriples(input.errors, "errors", 0, triples);
     if (triples.length > 0) {
-      const fiveDigit = triples.some((t) => /^\d{5}$/.test(t.code));
+      // Validation codes have five or six digits (for example 81502, 915191).
+      const fiveDigit = triples.some((t) => /^\d{5,6}$/.test(t.code));
       return {
         provider: PROVIDER,
         format: F.validation,
@@ -1238,7 +1276,7 @@ function detect(input: unknown, meta?: RecordMeta): DetectionResult {
         reasons: [
           "success is false",
           "errors contain attribute, code and message entries",
-          ...(fiveDigit ? ["codes are 5-digit Braintree validation codes"] : []),
+          ...(fiveDigit ? ["codes have the 5 or 6 digits of Braintree validation codes"] : []),
         ],
       };
     }
@@ -1346,8 +1384,34 @@ function parseNotification(input: unknown): ParseResult {
   };
 }
 
-function parse(input: unknown, format: string): ParseResult {
+function parseNotificationXml(input: unknown, meta: RecordMeta | undefined): ParseResult {
+  const xml = notificationFromXml(input, meta);
+  if (!xml)
+    return {
+      ok: false,
+      issues: [`(root): not a <${XML_NOTIFICATION_ROOT}> document without a namespace`],
+    };
+  const r = parseNotification(xml.value);
+  const prefix = (p: string) =>
+    join(
+      XML_NOTIFICATION_ROOT,
+      xml.unwrapped && p.startsWith("subject") ? `subject.api_error_response${p.slice(7)}` : p,
+    );
+  if (!r.ok)
+    return {
+      ok: false,
+      issues: r.issues.map((i) =>
+        i.startsWith("(root)") ? `${XML_NOTIFICATION_ROOT}${i.slice(6)}` : prefix(i),
+      ),
+    };
+  if (r.value.kind !== "notification") return r;
+  return { ok: true, value: { ...r.value, entityPath: prefix(r.value.entityPath) } };
+}
+
+function parse(input: unknown, format: string, meta?: RecordMeta): ParseResult {
   switch (format) {
+    case F.notificationXml:
+      return parseNotificationXml(input, meta);
     case F.graphql:
       return parseGraphql(input);
     case F.transaction:
@@ -1574,6 +1638,11 @@ export const braintreeAdapter: ProviderAdapter<BraintreeParsed> = {
     {
       id: F.notification,
       description: "Webhook notification parsed by a Braintree SDK (kind, timestamp, subject)",
+    },
+    {
+      id: F.notificationXml,
+      description:
+        "Decoded webhook notification XML (<notification> with timestamp, kind and subject); the signature is not verified",
     },
   ],
   detect,

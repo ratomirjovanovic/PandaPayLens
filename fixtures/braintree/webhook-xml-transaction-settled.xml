@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notification>
+  <timestamp type="datetime">2026-10-25T06:00:00Z</timestamp>
+  <kind>transaction_settled</kind>
+  <subject>
+    <transaction>
+      <id>PPLsynthACHX1</id>
+      <status>settled</status>
+      <type>sale</type>
+      <currency-iso-code>USD</currency-iso-code>
+      <amount>100.00</amount>
+      <merchant-account-id>PPLsynthMerchantUSD</merchant-account-id>
+      <order-id nil="true"/>
+      <payment-instrument-type>us_bank_account</payment-instrument-type>
+      <refund-ids type="array"/>
+      <us-bank-account>
+        <routing-number>PPLsynthRoutingX0</routing-number>
+        <last-4>0000</last-4>
+        <account-type>checking</account-type>
+        <account-holder-name>PPLsynth XML Account Holder</account-holder-name>
+      </us-bank-account>
+    </transaction>
+  </subject>
+</notification>
