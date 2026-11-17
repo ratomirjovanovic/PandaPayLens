@@ -26,6 +26,7 @@ Ideas and feedback are welcome in [Discussions](https://github.com/ratomirjovano
 | 0.15.1  | Security fixes: linear-time redaction, worker CSP, admin hardening                                       |
 | 0.16.0  | CLI `--output`, GitHub Action, dependency security updates                                               |
 | 0.17.0  | PayPal subscriptions and disputes, Braintree XML and validation codes, documentation link fixes          |
+| 0.18.0  | Wave 5 adapters: Klarna, Mercado Pago, GoCardless, Xendit, Paddle                                        |
 
 ## In progress
 
