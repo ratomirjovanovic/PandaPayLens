@@ -1,0 +1,13 @@
+{
+  "event_id": "evt_PPLsynth1201customer",
+  "event_type": "customer.created",
+  "occurred_at": "2026-11-06T09:00:00.000000Z",
+  "notification_id": "ntf_PPLsynth1201customer",
+  "data": {
+    "id": "ctm_PPLsynth1201",
+    "name": "PPLsynth Customer",
+    "email": "pplsynth-customer@example.invalid",
+    "status": "active",
+    "created_at": "2026-11-06T09:00:00.000000Z"
+  }
+}

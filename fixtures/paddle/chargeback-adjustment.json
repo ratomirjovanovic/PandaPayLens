@@ -1,0 +1,43 @@
+{
+  "event_id": "evt_PPLsynth0401chargeback",
+  "event_type": "adjustment.created",
+  "occurred_at": "2026-11-10T12:00:00.000000Z",
+  "notification_id": "ntf_PPLsynth0401chargeback",
+  "data": {
+    "id": "adj_PPLsynth0401",
+    "action": "chargeback",
+    "type": "full",
+    "transaction_id": "txn_PPLsynth0401",
+    "subscription_id": null,
+    "customer_id": "ctm_PPLsynth0001customer",
+    "reason": "PPLsynth chargeback",
+    "credit_applied_to_balance": null,
+    "currency_code": "USD",
+    "status": "approved",
+    "items": [
+      {
+        "id": "adjitm_PPLsynth0301",
+        "item_id": "txnitm_PPLsynth0301",
+        "type": "partial",
+        "amount": "1000",
+        "proration": null,
+        "totals": {
+          "subtotal": "910",
+          "tax": "90",
+          "total": "1000"
+        }
+      }
+    ],
+    "totals": {
+      "subtotal": "910",
+      "tax": "90",
+      "total": "1000",
+      "fee": "50",
+      "earnings": "860",
+      "retained_fee": "50",
+      "currency_code": "USD"
+    },
+    "created_at": "2026-11-03T08:00:00.000000Z",
+    "updated_at": "2026-11-10T12:00:00.000000Z"
+  }
+}

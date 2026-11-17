@@ -1,0 +1,58 @@
+{
+  "events": [
+    {
+      "id": "EVPPLSYNTH050001",
+      "created_at": "2026-10-20T08:30:00.000Z",
+      "resource_type": "payments",
+      "action": "confirmed",
+      "links": {
+        "payment": "PMPPLSYNTH050001"
+      },
+      "details": {
+        "origin": "gocardless",
+        "cause": "payment_confirmed"
+      }
+    },
+    {
+      "id": "EVPPLSYNTH050002",
+      "created_at": "2026-10-23T07:45:00.000Z",
+      "resource_type": "payments",
+      "action": "paid_out",
+      "links": {
+        "payment": "PMPPLSYNTH050001"
+      },
+      "details": {
+        "origin": "gocardless",
+        "cause": "payment_paid_out"
+      }
+    },
+    {
+      "id": "EVPPLSYNTH050003",
+      "created_at": "2026-11-10T09:15:00.000Z",
+      "resource_type": "payments",
+      "action": "charged_back",
+      "links": {
+        "payment": "PMPPLSYNTH050001"
+      },
+      "details": {
+        "origin": "bank",
+        "cause": "authorisation_disputed",
+        "scheme": "bacs",
+        "reason_code": "DDICA-5"
+      }
+    },
+    {
+      "id": "EVPPLSYNTH050004",
+      "created_at": "2026-11-12T07:45:00.000Z",
+      "resource_type": "payments",
+      "action": "chargeback_settled",
+      "links": {
+        "payment": "PMPPLSYNTH050001"
+      },
+      "details": {
+        "origin": "gocardless",
+        "cause": "chargeback_settled"
+      }
+    }
+  ]
+}

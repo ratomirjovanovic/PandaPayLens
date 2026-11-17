@@ -43,6 +43,11 @@ import { trustPaymentsAdapter } from "@pandapaylens/trust-payments";
 import { pxpAdapter } from "@pandapaylens/pxp";
 import { verotelAdapter } from "@pandapaylens/verotel";
 import { netbillingAdapter } from "@pandapaylens/netbilling";
+import { klarnaAdapter } from "@pandapaylens/klarna";
+import { mercadopagoAdapter } from "@pandapaylens/mercadopago";
+import { gocardlessAdapter } from "@pandapaylens/gocardless";
+import { xenditAdapter } from "@pandapaylens/xendit";
+import { paddleAdapter } from "@pandapaylens/paddle";
 
 export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   stripeAdapter,
@@ -85,6 +90,11 @@ export const ADAPTERS: readonly ProviderAdapter<any>[] = [
   pxpAdapter,
   verotelAdapter,
   netbillingAdapter,
+  klarnaAdapter,
+  mercadopagoAdapter,
+  gocardlessAdapter,
+  xenditAdapter,
+  paddleAdapter,
 ];
 
 export {

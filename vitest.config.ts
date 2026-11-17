@@ -83,12 +83,52 @@ export default defineConfig({
         replacement: src("./packages/adapters/verotel/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/klarna\/manifest$/,
+        replacement: src("./packages/adapters/klarna/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/klarna$/,
+        replacement: src("./packages/adapters/klarna/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/netbilling\/manifest$/,
         replacement: src("./packages/adapters/netbilling/src/manifest.ts"),
       },
       {
         find: /^@pandapaylens\/netbilling$/,
         replacement: src("./packages/adapters/netbilling/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/mercadopago\/manifest$/,
+        replacement: src("./packages/adapters/mercadopago/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/mercadopago$/,
+        replacement: src("./packages/adapters/mercadopago/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/gocardless\/manifest$/,
+        replacement: src("./packages/adapters/gocardless/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/gocardless$/,
+        replacement: src("./packages/adapters/gocardless/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/xendit\/manifest$/,
+        replacement: src("./packages/adapters/xendit/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/xendit$/,
+        replacement: src("./packages/adapters/xendit/src/index.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paddle\/manifest$/,
+        replacement: src("./packages/adapters/paddle/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/paddle$/,
+        replacement: src("./packages/adapters/paddle/src/index.ts"),
       },
       {
         find: /^@pandapaylens\/pxp\/manifest$/,

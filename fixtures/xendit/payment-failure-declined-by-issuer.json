@@ -1,0 +1,27 @@
+{
+  "event": "payment.failure",
+  "business_id": "PPLsynthBUSINESS0001",
+  "created": "2026-11-12T07:30:02Z",
+  "data": {
+    "business_id": "PPLsynthBUSINESS0001",
+    "payment_id": "py-PPLsynth-2001",
+    "reference_id": "PPLsynth-order-2001",
+    "payment_request_id": "pr-PPLsynth-2001",
+    "type": "PAY",
+    "country": "PH",
+    "currency": "PHP",
+    "request_amount": 1500.5,
+    "capture_method": "AUTOMATIC",
+    "channel_code": "CARDS",
+    "status": "FAILED",
+    "failure_code": "DECLINED_BY_ISSUER",
+    "payment_details": {
+      "authorization_data": {
+        "network_response_code": "05",
+        "network_response_code_descriptor": "Do not honor"
+      }
+    },
+    "created": "2026-11-12T07:29:40Z",
+    "updated": "2026-11-12T07:30:00Z"
+  }
+}

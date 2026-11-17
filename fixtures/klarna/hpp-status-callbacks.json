@@ -1,0 +1,33 @@
+[
+  {
+    "event_id": "PPLsynth-event-0000-0000-000000000001",
+    "session": {
+      "session_id": "PPLsynth-hpp-session-0001",
+      "status": "IN_PROGRESS",
+      "updated_at": "2026-11-16T14:51:46.288Z",
+      "expires_at": "2026-11-18T13:51:43.507Z"
+    }
+  },
+  {
+    "event_id": "PPLsynth-event-0000-0000-000000000002",
+    "session": {
+      "session_id": "PPLsynth-hpp-session-0001",
+      "status": "COMPLETED",
+      "order_id": "PPLsynth-order-0000-0000-000000000006",
+      "klarna_reference": "PPLSYNTH1",
+      "updated_at": "2026-11-16T14:54:04.675Z",
+      "expires_at": "2026-11-18T13:51:43.507Z"
+    }
+  },
+  {
+    "event_id": "PPLsynth-event-0000-0000-000000000002",
+    "session": {
+      "session_id": "PPLsynth-hpp-session-0001",
+      "status": "COMPLETED",
+      "order_id": "PPLsynth-order-0000-0000-000000000006",
+      "klarna_reference": "PPLSYNTH1",
+      "updated_at": "2026-11-16T14:54:04.675Z",
+      "expires_at": "2026-11-18T13:51:43.507Z"
+    }
+  }
+]

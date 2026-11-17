@@ -1,0 +1,5 @@
+HTTP/1.1 503 Service Unavailable
+Content-Type: application/json
+Request-Id: PPLsynth-req-5001
+
+{"error_code":"CHANNEL_UNAVAILABLE","message":"The channel requested is currently experiencing unexpected issues."}

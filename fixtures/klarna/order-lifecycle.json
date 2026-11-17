@@ -1,0 +1,47 @@
+[
+  {
+    "order_id": "PPLsynth-order-0000-0000-000000000003",
+    "fraud_status": "ACCEPTED",
+    "authorized_payment_method": {
+      "type": "pay_by_card"
+    }
+  },
+  {
+    "capture_id": "PPLsynth-capture-0000-0000-000000000001",
+    "captured_amount": 12000,
+    "captured_at": "2026-11-11T10:00:00Z",
+    "refunded_amount": 2000
+  },
+  {
+    "order_id": "PPLsynth-order-0000-0000-000000000003",
+    "status": "PART_CAPTURED",
+    "fraud_status": "ACCEPTED",
+    "order_amount": 20000,
+    "original_order_amount": 20000,
+    "captured_amount": 12000,
+    "refunded_amount": 2000,
+    "remaining_authorized_amount": 8000,
+    "purchase_currency": "EUR",
+    "purchase_country": "DE",
+    "created_at": "2026-11-10T09:00:00Z",
+    "expires_at": "2026-12-08T09:00:00Z",
+    "initial_payment_method": {
+      "type": "PAY_BY_CARD"
+    },
+    "captures": [
+      {
+        "capture_id": "PPLsynth-capture-0000-0000-000000000001",
+        "captured_amount": 12000,
+        "captured_at": "2026-11-11T10:00:00Z",
+        "refunded_amount": 2000
+      }
+    ],
+    "refunds": [
+      {
+        "refund_id": "PPLsynth-refund-0000-0000-000000000001",
+        "refunded_amount": 2000,
+        "refunded_at": "2026-11-12T08:30:00Z"
+      }
+    ]
+  }
+]

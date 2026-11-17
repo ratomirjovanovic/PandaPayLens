@@ -1,0 +1,48 @@
+{
+  "event": "v3_payout.failed",
+  "business_id": "PPLsynthBUSINESS0001",
+  "created": "2026-11-15T02:10:02Z",
+  "data": {
+    "business_id": "PPLsynthBUSINESS0001",
+    "payout_id": "po-PPLsynth-7002",
+    "status": "FAILED",
+    "reference_id": "PPLsynth-payout-7002",
+    "type": "B2C",
+    "source_currency": "PHP",
+    "source_amount": 50000,
+    "destination_currency": "PHP",
+    "destination_amount": 50000,
+    "sender": {
+      "type": "BUSINESS",
+      "business_name": "PPLsynth Sender Corp"
+    },
+    "recipient": {
+      "type": "INDIVIDUAL",
+      "given_name": "PPLsynthGiven",
+      "surname": "PPLsynthSurname",
+      "relationship": "CUSTOMER",
+      "details": {
+        "personal_mobile_number": "+630000PPLSYNTH"
+      },
+      "address": {
+        "country": "PH",
+        "street_line_1": "PPLsynth Street 1",
+        "city": "PPLsynth City"
+      },
+      "account_details": {
+        "currency": "PHP",
+        "account_country": "PH",
+        "account_holder_name": "PPLsynth Holder",
+        "account_number": "PPLSYNTH000777",
+        "routing_type_1": "WALLET",
+        "routing_value_1": "PH_GCASH"
+      }
+    },
+    "source_of_fund": "BUSINESS_REVENUE",
+    "purpose_code": "SALARY",
+    "description": "PPLsynth payout",
+    "created": "2026-11-15T01:00:00Z",
+    "updated": "2026-11-15T02:10:00Z",
+    "failure_code": "INVALID_DESTINATION"
+  }
+}

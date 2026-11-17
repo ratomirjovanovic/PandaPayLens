@@ -1,0 +1,15 @@
+{
+  "events": [
+    {
+      "resource_type": "payments",
+      "action": "confirmed",
+      "links": {
+        "payment": "PMPPLSYNTH190001"
+      },
+      "details": {
+        "origin": "gocardless",
+        "cause": "payment_confirmed"
+      }
+    }
+  ]
+}

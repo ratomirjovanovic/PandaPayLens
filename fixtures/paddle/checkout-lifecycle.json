@@ -1,0 +1,271 @@
+[
+  {
+    "event_id": "evt_PPLsynth0201created",
+    "event_type": "transaction.created",
+    "occurred_at": "2026-11-02T10:00:00.000000Z",
+    "notification_id": "ntf_PPLsynth0201created",
+    "data": {
+      "id": "txn_PPLsynth0201",
+      "status": "draft",
+      "customer_id": "ctm_PPLsynth0001customer",
+      "address_id": "add_PPLsynth0001address",
+      "business_id": null,
+      "custom_data": null,
+      "origin": "web",
+      "collection_mode": "automatic",
+      "subscription_id": null,
+      "invoice_id": null,
+      "invoice_number": null,
+      "billing_details": null,
+      "billing_period": null,
+      "currency_code": "USD",
+      "discount_id": null,
+      "created_at": "2026-11-02T09:00:00.000000Z",
+      "updated_at": "2026-11-02T09:00:05.000000Z",
+      "billed_at": null,
+      "revised_at": null,
+      "items": [],
+      "details": {
+        "totals": {
+          "fee": null,
+          "tax": "500",
+          "total": "5500",
+          "credit": "0",
+          "balance": "5500",
+          "discount": "0",
+          "earnings": null,
+          "subtotal": "5000",
+          "grand_total": "5500",
+          "grand_total_tax": "500",
+          "currency_code": "USD",
+          "credit_to_balance": "0"
+        },
+        "line_items": []
+      },
+      "payments": []
+    }
+  },
+  {
+    "event_id": "evt_PPLsynth0202ready",
+    "event_type": "transaction.ready",
+    "occurred_at": "2026-11-02T10:00:01.000000Z",
+    "notification_id": "ntf_PPLsynth0202ready",
+    "data": {
+      "id": "txn_PPLsynth0201",
+      "status": "ready",
+      "customer_id": "ctm_PPLsynth0001customer",
+      "address_id": "add_PPLsynth0001address",
+      "business_id": null,
+      "custom_data": null,
+      "origin": "web",
+      "collection_mode": "automatic",
+      "subscription_id": null,
+      "invoice_id": null,
+      "invoice_number": null,
+      "billing_details": null,
+      "billing_period": null,
+      "currency_code": "USD",
+      "discount_id": null,
+      "created_at": "2026-11-02T09:00:00.000000Z",
+      "updated_at": "2026-11-02T09:00:05.000000Z",
+      "billed_at": null,
+      "revised_at": null,
+      "items": [],
+      "details": {
+        "totals": {
+          "fee": null,
+          "tax": "500",
+          "total": "5500",
+          "credit": "0",
+          "balance": "5500",
+          "discount": "0",
+          "earnings": null,
+          "subtotal": "5000",
+          "grand_total": "5500",
+          "grand_total_tax": "500",
+          "currency_code": "USD",
+          "credit_to_balance": "0"
+        },
+        "line_items": []
+      },
+      "payments": []
+    }
+  },
+  {
+    "event_id": "evt_PPLsynth0203paid",
+    "event_type": "transaction.paid",
+    "occurred_at": "2026-11-02T10:00:03.000000Z",
+    "notification_id": "ntf_PPLsynth0203paid",
+    "data": {
+      "id": "txn_PPLsynth0201",
+      "status": "paid",
+      "customer_id": "ctm_PPLsynth0001customer",
+      "address_id": "add_PPLsynth0001address",
+      "business_id": null,
+      "custom_data": null,
+      "origin": "web",
+      "collection_mode": "automatic",
+      "subscription_id": null,
+      "invoice_id": null,
+      "invoice_number": null,
+      "billing_details": null,
+      "billing_period": null,
+      "currency_code": "USD",
+      "discount_id": null,
+      "created_at": "2026-11-02T09:00:00.000000Z",
+      "updated_at": "2026-11-02T09:00:05.000000Z",
+      "billed_at": null,
+      "revised_at": null,
+      "items": [],
+      "details": {
+        "totals": {
+          "fee": null,
+          "tax": "500",
+          "total": "5500",
+          "credit": "0",
+          "balance": "5500",
+          "discount": "0",
+          "earnings": null,
+          "subtotal": "5000",
+          "grand_total": "5500",
+          "grand_total_tax": "500",
+          "currency_code": "USD",
+          "credit_to_balance": "0"
+        },
+        "line_items": []
+      },
+      "payments": [
+        {
+          "payment_attempt_id": "PPLsynth-attempt-0201",
+          "stored_payment_method_id": "PPLsynth-stored-method-0001",
+          "payment_method_id": "paymtd_PPLsynth0001method",
+          "amount": "5500",
+          "status": "captured",
+          "error_code": null,
+          "method_details": {
+            "type": "card",
+            "underlying_details": null,
+            "south_korea_local_card": null,
+            "card": {
+              "type": "visa",
+              "last4": "4242",
+              "expiry_year": 2031,
+              "expiry_month": 7,
+              "cardholder_name": "PPLsynth Cardholder"
+            },
+            "paypal": null
+          },
+          "created_at": "2026-11-02T09:01:00.000000Z",
+          "captured_at": "2026-11-02T09:01:02.000000Z"
+        }
+      ]
+    }
+  },
+  {
+    "event_id": "evt_PPLsynth0204subcreated",
+    "event_type": "subscription.created",
+    "occurred_at": "2026-11-02T10:00:04.000000Z",
+    "notification_id": "ntf_PPLsynth0204subcreated",
+    "data": {
+      "id": "sub_PPLsynth0201",
+      "status": "active",
+      "customer_id": "ctm_PPLsynth0001customer",
+      "address_id": "add_PPLsynth0001address",
+      "business_id": null,
+      "currency_code": "USD",
+      "created_at": "2026-11-02T10:00:04.000000Z",
+      "updated_at": "2026-11-02T10:00:04.000000Z",
+      "started_at": "2026-11-02T10:00:03.000000Z",
+      "first_billed_at": "2026-11-02T10:00:03.000000Z",
+      "next_billed_at": "2026-12-02T10:00:03.000000Z",
+      "paused_at": null,
+      "canceled_at": null,
+      "discount": null,
+      "collection_mode": "automatic",
+      "billing_details": null,
+      "current_billing_period": {
+        "starts_at": "2026-11-02T10:00:03.000000Z",
+        "ends_at": "2026-12-02T10:00:03.000000Z"
+      },
+      "billing_cycle": {
+        "interval": "month",
+        "frequency": 1
+      },
+      "scheduled_change": null,
+      "items": [],
+      "custom_data": null,
+      "import_meta": null,
+      "transaction_id": "txn_PPLsynth0201"
+    }
+  },
+  {
+    "event_id": "evt_PPLsynth0205completed",
+    "event_type": "transaction.completed",
+    "occurred_at": "2026-11-02T10:00:06.000000Z",
+    "notification_id": "ntf_PPLsynth0205completed",
+    "data": {
+      "id": "txn_PPLsynth0201",
+      "status": "completed",
+      "customer_id": "ctm_PPLsynth0001customer",
+      "address_id": "add_PPLsynth0001address",
+      "business_id": null,
+      "custom_data": null,
+      "origin": "web",
+      "collection_mode": "automatic",
+      "subscription_id": "sub_PPLsynth0201",
+      "invoice_id": "inv_PPLsynth0201",
+      "invoice_number": "PPLsynth-0201",
+      "billing_details": null,
+      "billing_period": null,
+      "currency_code": "USD",
+      "discount_id": null,
+      "created_at": "2026-11-02T09:00:00.000000Z",
+      "updated_at": "2026-11-02T09:00:05.000000Z",
+      "billed_at": null,
+      "revised_at": null,
+      "items": [],
+      "details": {
+        "totals": {
+          "fee": null,
+          "tax": "500",
+          "total": "5500",
+          "credit": "0",
+          "balance": "5500",
+          "discount": "0",
+          "earnings": null,
+          "subtotal": "5000",
+          "grand_total": "5500",
+          "grand_total_tax": "500",
+          "currency_code": "USD",
+          "credit_to_balance": "0"
+        },
+        "line_items": []
+      },
+      "payments": [
+        {
+          "payment_attempt_id": "PPLsynth-attempt-0201",
+          "stored_payment_method_id": "PPLsynth-stored-method-0001",
+          "payment_method_id": "paymtd_PPLsynth0001method",
+          "amount": "5500",
+          "status": "captured",
+          "error_code": null,
+          "method_details": {
+            "type": "card",
+            "underlying_details": null,
+            "south_korea_local_card": null,
+            "card": {
+              "type": "visa",
+              "last4": "4242",
+              "expiry_year": 2031,
+              "expiry_month": 7,
+              "cardholder_name": "PPLsynth Cardholder"
+            },
+            "paypal": null
+          },
+          "created_at": "2026-11-02T09:01:00.000000Z",
+          "captured_at": "2026-11-02T09:01:02.000000Z"
+        }
+      ]
+    }
+  }
+]

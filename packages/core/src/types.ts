@@ -223,7 +223,7 @@ export type ProviderResearchStatus =
   | "released"
   | "blocked";
 
-export type RolloutWave = 0 | 1 | 2 | 3 | "HR-1" | "HR-2" | "HR-3";
+export type RolloutWave = 0 | 1 | 2 | 3 | 5 | "HR-1" | "HR-2" | "HR-3";
 
 export type CapabilityStatus =
   "supported" | "limited" | "experimental" | "unsupported" | "deprecated";

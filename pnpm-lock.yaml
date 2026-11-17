@@ -313,7 +313,34 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/gocardless:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/adapters/inpay:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/klarna:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/mercadopago:
     dependencies:
       '@pandapaylens/core':
         specifier: workspace:*
@@ -359,6 +386,15 @@ importers:
         version: 4.6.7
 
   packages/adapters/nuvei:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
+  packages/adapters/paddle:
     dependencies:
       '@pandapaylens/core':
         specifier: workspace:*
@@ -520,6 +556,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/xendit:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/cli:
     devDependencies:
       '@pandapaylens/core':
@@ -596,9 +641,18 @@ importers:
       '@pandapaylens/flutterwave':
         specifier: workspace:*
         version: link:../adapters/flutterwave
+      '@pandapaylens/gocardless':
+        specifier: workspace:*
+        version: link:../adapters/gocardless
       '@pandapaylens/inpay':
         specifier: workspace:*
         version: link:../adapters/inpay
+      '@pandapaylens/klarna':
+        specifier: workspace:*
+        version: link:../adapters/klarna
+      '@pandapaylens/mercadopago':
+        specifier: workspace:*
+        version: link:../adapters/mercadopago
       '@pandapaylens/mifinity':
         specifier: workspace:*
         version: link:../adapters/mifinity
@@ -614,6 +668,9 @@ importers:
       '@pandapaylens/nuvei':
         specifier: workspace:*
         version: link:../adapters/nuvei
+      '@pandapaylens/paddle':
+        specifier: workspace:*
+        version: link:../adapters/paddle
       '@pandapaylens/payabl':
         specifier: workspace:*
         version: link:../adapters/payabl
@@ -665,6 +722,9 @@ importers:
       '@pandapaylens/worldpay':
         specifier: workspace:*
         version: link:../adapters/worldpay
+      '@pandapaylens/xendit':
+        specifier: workspace:*
+        version: link:../adapters/xendit
 
   packages/rules:
     dependencies:

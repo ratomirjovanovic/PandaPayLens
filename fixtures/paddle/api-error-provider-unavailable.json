@@ -1,0 +1,11 @@
+{
+  "error": {
+    "type": "api_error",
+    "code": "subscription_payment_provider_unavailable",
+    "detail": "A downstream payment provider was temporarily unavailable. Please retry after a short period of time.",
+    "documentation_url": "https://developer.paddle.com/errors/subscriptions/subscription_payment_provider_unavailable"
+  },
+  "meta": {
+    "request_id": "PPLsynth-request-subscription_payment_provider_unavailable"
+  }
+}

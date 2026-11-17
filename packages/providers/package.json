@@ -48,12 +48,16 @@
     "@pandapaylens/ezeewallet": "workspace:*",
     "@pandapaylens/finrax": "workspace:*",
     "@pandapaylens/flutterwave": "workspace:*",
+    "@pandapaylens/gocardless": "workspace:*",
     "@pandapaylens/inpay": "workspace:*",
+    "@pandapaylens/klarna": "workspace:*",
     "@pandapaylens/mifinity": "workspace:*",
     "@pandapaylens/mollie": "workspace:*",
     "@pandapaylens/netbilling": "workspace:*",
+    "@pandapaylens/mercadopago": "workspace:*",
     "@pandapaylens/nmi": "workspace:*",
     "@pandapaylens/nuvei": "workspace:*",
+    "@pandapaylens/paddle": "workspace:*",
     "@pandapaylens/payabl": "workspace:*",
     "@pandapaylens/paymentwall": "workspace:*",
     "@pandapaylens/paypal": "workspace:*",
@@ -70,6 +74,7 @@
     "@pandapaylens/trust-payments": "workspace:*",
     "@pandapaylens/trustly": "workspace:*",
     "@pandapaylens/verotel": "workspace:*",
-    "@pandapaylens/worldpay": "workspace:*"
+    "@pandapaylens/worldpay": "workspace:*",
+    "@pandapaylens/xendit": "workspace:*"
   }
 }

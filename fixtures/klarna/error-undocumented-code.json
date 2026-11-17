@@ -1,0 +1,5 @@
+{
+  "error_code": "PPLSYNTH_UNDOCUMENTED_CODE",
+  "error_messages": ["Synthetic message for an unknown code"],
+  "correlation_id": "PPLsynth-corr-0000-0000-000000000006"
+}

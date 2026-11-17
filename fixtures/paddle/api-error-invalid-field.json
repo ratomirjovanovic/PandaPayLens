@@ -1,0 +1,21 @@
+{
+  "error": {
+    "type": "request_error",
+    "code": "invalid_field",
+    "detail": "Request does not pass validation.",
+    "documentation_url": "https://developer.paddle.com/errors/shared/invalid_field",
+    "errors": [
+      {
+        "field": "items",
+        "message": "must be provided as part of the request"
+      },
+      {
+        "field": "currency_code",
+        "message": "must be a valid currency code"
+      }
+    ]
+  },
+  "meta": {
+    "request_id": "PPLsynth-request-invalid_field"
+  }
+}

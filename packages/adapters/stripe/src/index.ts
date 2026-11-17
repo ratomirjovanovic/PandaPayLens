@@ -186,7 +186,16 @@ function detect(input: unknown): DetectionResult {
   if (!isObj(input)) return { ...base, format: null, confidence: 0, supported: false, reasons: [] };
 
   if (isObj(input.error) && typeof input.error.type === "string") {
-    if (ERROR_TYPE_SET.has(input.error.type)) {
+    // Stripe errors carry `message` and `doc_url`. An error with `detail` and
+    // `documentation_url` instead uses another provider's field names, even
+    // when its type is "api_error".
+    const e = input.error;
+    const foreign =
+      typeof e.detail === "string" &&
+      typeof e.documentation_url === "string" &&
+      !("message" in e) &&
+      !("doc_url" in e);
+    if (ERROR_TYPE_SET.has(e.type as string) && !foreign) {
       return {
         ...base,
         format: "stripe.api_error",
@@ -200,7 +209,11 @@ function detect(input: unknown): DetectionResult {
       format: "stripe.api_error",
       confidence: 0.3,
       supported: true,
-      reasons: ["Has an error object, but error.type is not a known Stripe type"],
+      reasons: [
+        foreign
+          ? "Has an error object with detail and documentation_url, which are not Stripe error fields"
+          : "Has an error object, but error.type is not a known Stripe type",
+      ],
     };
   }
 

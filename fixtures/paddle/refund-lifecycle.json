@@ -1,0 +1,158 @@
+[
+  {
+    "event_id": "evt_PPLsynth0301completed",
+    "event_type": "transaction.completed",
+    "occurred_at": "2026-11-02T11:00:00.000000Z",
+    "notification_id": "ntf_PPLsynth0301completed",
+    "data": {
+      "id": "txn_PPLsynth0301",
+      "status": "completed",
+      "customer_id": "ctm_PPLsynth0001customer",
+      "address_id": "add_PPLsynth0001address",
+      "business_id": null,
+      "custom_data": null,
+      "origin": "web",
+      "collection_mode": "automatic",
+      "subscription_id": null,
+      "invoice_id": null,
+      "invoice_number": null,
+      "billing_details": null,
+      "billing_period": null,
+      "currency_code": "USD",
+      "discount_id": null,
+      "created_at": "2026-11-02T09:00:00.000000Z",
+      "updated_at": "2026-11-02T09:00:05.000000Z",
+      "billed_at": null,
+      "revised_at": null,
+      "items": [],
+      "details": {
+        "totals": {
+          "fee": null,
+          "tax": "500",
+          "total": "5500",
+          "credit": "0",
+          "balance": "5500",
+          "discount": "0",
+          "earnings": null,
+          "subtotal": "5000",
+          "grand_total": "5500",
+          "grand_total_tax": "500",
+          "currency_code": "USD",
+          "credit_to_balance": "0"
+        },
+        "line_items": []
+      },
+      "payments": [
+        {
+          "payment_attempt_id": "PPLsynth-attempt-0301",
+          "stored_payment_method_id": "PPLsynth-stored-method-0001",
+          "payment_method_id": "paymtd_PPLsynth0001method",
+          "amount": "5500",
+          "status": "captured",
+          "error_code": null,
+          "method_details": {
+            "type": "card",
+            "underlying_details": null,
+            "south_korea_local_card": null,
+            "card": {
+              "type": "visa",
+              "last4": "4242",
+              "expiry_year": 2031,
+              "expiry_month": 7,
+              "cardholder_name": "PPLsynth Cardholder"
+            },
+            "paypal": null
+          },
+          "created_at": "2026-11-02T09:01:00.000000Z",
+          "captured_at": "2026-11-02T09:01:02.000000Z"
+        }
+      ]
+    }
+  },
+  {
+    "event_id": "evt_PPLsynth0302adjcreated",
+    "event_type": "adjustment.created",
+    "occurred_at": "2026-11-03T08:00:00.200000Z",
+    "notification_id": "ntf_PPLsynth0302adjcreated",
+    "data": {
+      "id": "adj_PPLsynth0301",
+      "action": "refund",
+      "type": "partial",
+      "transaction_id": "txn_PPLsynth0301",
+      "subscription_id": null,
+      "customer_id": "ctm_PPLsynth0001customer",
+      "reason": "PPLsynth customer asked for a refund",
+      "credit_applied_to_balance": null,
+      "currency_code": "USD",
+      "status": "pending_approval",
+      "items": [
+        {
+          "id": "adjitm_PPLsynth0301",
+          "item_id": "txnitm_PPLsynth0301",
+          "type": "partial",
+          "amount": "1000",
+          "proration": null,
+          "totals": {
+            "subtotal": "910",
+            "tax": "90",
+            "total": "1000"
+          }
+        }
+      ],
+      "totals": {
+        "subtotal": "910",
+        "tax": "90",
+        "total": "1000",
+        "fee": "50",
+        "earnings": "860",
+        "retained_fee": "50",
+        "currency_code": "USD"
+      },
+      "created_at": "2026-11-03T08:00:00.000000Z",
+      "updated_at": "2026-11-03T08:00:00.000000Z"
+    }
+  },
+  {
+    "event_id": "evt_PPLsynth0303adjupdated",
+    "event_type": "adjustment.updated",
+    "occurred_at": "2026-11-03T09:30:00.200000Z",
+    "notification_id": "ntf_PPLsynth0303adjupdated",
+    "data": {
+      "id": "adj_PPLsynth0301",
+      "action": "refund",
+      "type": "partial",
+      "transaction_id": "txn_PPLsynth0301",
+      "subscription_id": null,
+      "customer_id": "ctm_PPLsynth0001customer",
+      "reason": "PPLsynth customer asked for a refund",
+      "credit_applied_to_balance": null,
+      "currency_code": "USD",
+      "status": "approved",
+      "items": [
+        {
+          "id": "adjitm_PPLsynth0301",
+          "item_id": "txnitm_PPLsynth0301",
+          "type": "partial",
+          "amount": "1000",
+          "proration": null,
+          "totals": {
+            "subtotal": "910",
+            "tax": "90",
+            "total": "1000"
+          }
+        }
+      ],
+      "totals": {
+        "subtotal": "910",
+        "tax": "90",
+        "total": "1000",
+        "fee": "50",
+        "earnings": "860",
+        "retained_fee": "50",
+        "currency_code": "USD"
+      },
+      "created_at": "2026-11-03T08:00:00.000000Z",
+      "updated_at": "2026-11-03T09:30:00.000000Z"
+    }
+  }
+]

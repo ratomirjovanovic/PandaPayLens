@@ -1,0 +1,10 @@
+{
+  "error_code": "API_VALIDATION_ERROR",
+  "message": "Inputs are failing validation. The errors field contains details about which fields are violating validation.",
+  "errors": [
+    {
+      "path": "request_amount",
+      "message": "must be a number"
+    }
+  ]
+}

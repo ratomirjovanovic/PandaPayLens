@@ -1,0 +1,4 @@
+HTTP/1.1 422 Unprocessable Entity
+Content-Type: application/json
+
+{"error": {"message": "Mandate is inactive", "documentation_url": "/docs/api-reference/responses-and-errors#invalid-state", "type": "invalid_state", "code": 422, "request_id": "PPLsynth-req-0010", "errors": [{"reason": "mandate_is_inactive", "message": "Mandate is inactive"}]}}

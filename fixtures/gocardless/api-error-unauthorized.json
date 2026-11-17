@@ -1,0 +1,15 @@
+{
+  "error": {
+    "message": "Credentials not recognised",
+    "documentation_url": "/docs/api-reference/responses-and-errors#invalid-api-usage",
+    "type": "invalid_api_usage",
+    "code": 401,
+    "request_id": "PPLsynth-req-0011",
+    "errors": [
+      {
+        "reason": "unauthorized",
+        "message": "Credentials not recognised"
+      }
+    ]
+  }
+}

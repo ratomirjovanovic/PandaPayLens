@@ -1,0 +1,11 @@
+{
+  "error": {
+    "type": "request_error",
+    "code": "adjustment_pending_refund_request",
+    "detail": "Transaction has a pending refund request.",
+    "documentation_url": "https://developer.paddle.com/errors/adjustments/adjustment_pending_refund_request"
+  },
+  "meta": {
+    "request_id": "PPLsynth-request-adjustment_pending_refund_request"
+  }
+}

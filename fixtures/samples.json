@@ -726,5 +726,82 @@
     "provider": "flutterwave",
     "file": "flutterwave/v3-preauth-then-void.json",
     "description": "A held payment that is voided; the void is not shown as a payment success."
+  },
+  {
+    "id": "klarna-capture-not-allowed",
+    "title": "Klarna: capture not allowed",
+    "provider": "klarna",
+    "file": "klarna/error-capture-not-allowed.json",
+    "description": "An Order Management error with error_code, error_messages and correlation_id."
+  },
+  {
+    "id": "klarna-order-lifecycle",
+    "title": "Klarna: order, capture and refund",
+    "provider": "klarna",
+    "file": "klarna/order-lifecycle.json",
+    "description": "A Klarna Payments order and its Order Management state, grouped by order_id."
+  },
+  {
+    "id": "mercadopago-payment-lifecycle",
+    "title": "Mercado Pago: authorized, captured and partly refunded",
+    "provider": "mercadopago",
+    "file": "mercadopago/payment-lifecycle.json",
+    "description": "Payment snapshots, notifications without a status and a refund, linked by the payment id."
+  },
+  {
+    "id": "mercadopago-rejected-insufficient",
+    "title": "Mercado Pago: rejected, insufficient amount",
+    "provider": "mercadopago",
+    "file": "mercadopago/payment-rejected-insufficient-amount.json",
+    "description": "A rejected card payment decoded from its documented status_detail."
+  },
+  {
+    "id": "gocardless-payment-failed",
+    "title": "GoCardless: payment failed, insufficient funds",
+    "provider": "gocardless",
+    "file": "gocardless/webhook-payment-failed.json",
+    "description": "A webhook with a failed Direct Debit payment. The cause is decoded; the bank reason code is shown but not interpreted."
+  },
+  {
+    "id": "gocardless-lifecycle",
+    "title": "GoCardless: payment created to paid out",
+    "provider": "gocardless",
+    "file": "gocardless/webhook-payment-lifecycle.json",
+    "description": "Confirmed means collected and held by GoCardless; only paid_out is settlement to the merchant."
+  },
+  {
+    "id": "gocardless-validation-error",
+    "title": "GoCardless: validation failed",
+    "provider": "gocardless",
+    "file": "gocardless/api-error-validation-failed.json",
+    "description": "A 422 API error with field errors; the fields are listed and the user is asked to correct them."
+  },
+  {
+    "id": "xendit-card-payment-lifecycle",
+    "title": "Xendit: card payment, capture and refund",
+    "provider": "xendit",
+    "file": "xendit/card-payment-lifecycle.json",
+    "description": "A Payments API v3 card payment request authorized, captured manually and partly refunded. Card, cardholder and 3DS fields are hidden."
+  },
+  {
+    "id": "xendit-payout-failed",
+    "title": "Xendit: payout failed",
+    "provider": "xendit",
+    "file": "xendit/payout-failed-webhook.json",
+    "description": "A v3_payout.failed webhook with failure code INVALID_DESTINATION. Sender and recipient details are hidden."
+  },
+  {
+    "id": "paddle-payment-failed",
+    "title": "Paddle: renewal payment declined",
+    "provider": "paddle",
+    "file": "paddle/renewal-past-due.json",
+    "description": "A subscription renewal is declined; the transaction and the subscription become past due."
+  },
+  {
+    "id": "paddle-refund-lifecycle",
+    "title": "Paddle: refund pending approval, then approved",
+    "provider": "paddle",
+    "file": "paddle/refund-lifecycle.json",
+    "description": "A completed transaction and a refund adjustment that Paddle approves after review."
   }
 ]

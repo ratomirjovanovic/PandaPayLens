@@ -1,0 +1,22 @@
+{
+  "payments": {
+    "id": "PMPPLSYNTH080001",
+    "created_at": "2026-11-01T10:00:00.000Z",
+    "charge_date": "2026-11-05",
+    "amount": 2500,
+    "description": "PPLsynth subscription fee",
+    "currency": "EUR",
+    "status": "paid_out",
+    "reference": "PPLSYNTH08",
+    "metadata": {},
+    "amount_refunded": 0,
+    "links": {
+      "mandate": "MDPPLSYNTH080001",
+      "creditor": "CRPPLSYNTH080001",
+      "payout": "POPPLSYNTH080001",
+      "subscription": "SBPPLSYNTH080001"
+    },
+    "retry_if_possible": false,
+    "scheme": "sepa_core"
+  }
+}

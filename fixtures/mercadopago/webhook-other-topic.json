@@ -1,0 +1,16 @@
+{
+  "action": "card.updated",
+  "api_version": "v1",
+  "application_id": 9000000003,
+  "data": {
+    "customer_id": "PPLsynth-customer-01",
+    "new_card_id": 9400000002,
+    "old_card_id": 9400000001
+  },
+  "date_created": "2026-11-14T12:00:00-03:00",
+  "id": "PPLsynth0000000000000000000000a1",
+  "live_mode": false,
+  "type": "automatic-payments",
+  "user_id": 9000000001,
+  "version": 1
+}

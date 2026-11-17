@@ -43,6 +43,11 @@ import { trustPaymentsManifest } from "@pandapaylens/trust-payments/manifest";
 import { pxpManifest } from "@pandapaylens/pxp/manifest";
 import { verotelManifest } from "@pandapaylens/verotel/manifest";
 import { netbillingManifest } from "@pandapaylens/netbilling/manifest";
+import { klarnaManifest } from "@pandapaylens/klarna/manifest";
+import { mercadopagoManifest } from "@pandapaylens/mercadopago/manifest";
+import { gocardlessManifest } from "@pandapaylens/gocardless/manifest";
+import { xenditManifest } from "@pandapaylens/xendit/manifest";
+import { paddleManifest } from "@pandapaylens/paddle/manifest";
 
 export const MANIFESTS: readonly ProviderManifest[] = [
   stripeManifest,
@@ -85,6 +90,11 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   pxpManifest,
   verotelManifest,
   netbillingManifest,
+  klarnaManifest,
+  mercadopagoManifest,
+  gocardlessManifest,
+  xenditManifest,
+  paddleManifest,
 ];
 
 /** Roadmap focus areas, used for directory filters. Taken from the roadmap, not verified claims about the provider. */
@@ -251,6 +261,42 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     wave: 3,
     researchStatus: "tested",
     focus: ["general"],
+  },
+  {
+    id: "klarna",
+    displayName: "Klarna",
+    wave: 5,
+    researchStatus: "tested",
+    focus: ["general"],
+    note: "Klarna Payments v1 and Order Management v1 for direct merchants. Klarna Network (v2) APIs used by acquiring partners are separate.",
+  },
+  {
+    id: "mercadopago",
+    displayName: "Mercado Pago",
+    wave: 5,
+    researchStatus: "tested",
+    focus: ["general"],
+  },
+  {
+    id: "gocardless",
+    displayName: "GoCardless",
+    wave: 5,
+    researchStatus: "tested",
+    focus: ["general", "pay_by_bank"],
+  },
+  {
+    id: "xendit",
+    displayName: "Xendit",
+    wave: 5,
+    researchStatus: "tested",
+    focus: ["general"],
+  },
+  {
+    id: "paddle",
+    displayName: "Paddle",
+    wave: 5,
+    researchStatus: "tested",
+    focus: ["general", "subscription"],
   },
   // High-risk expansion. Research candidates until the
   // qualification gate and tests are passed.

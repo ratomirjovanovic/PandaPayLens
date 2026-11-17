@@ -1,0 +1,6 @@
+{
+  "order_id": "PPLsynth-order-0000-0000-000000000001",
+  "redirect_url": "https://payments.klarna.com/redirect/PPLsynth-redirect-0001",
+  "fraud_status": "ACCEPTED",
+  "authorized_payment_method": { "type": "invoice", "number_of_days": 30 }
+}

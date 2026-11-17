@@ -1,0 +1,12 @@
+[
+  {
+    "order_id": "PPLsynth-order-0000-0000-000000000007",
+    "fraud_status": "ACCEPTED",
+    "authorized_payment_method": { "type": "invoice" }
+  },
+  {
+    "order_id": "PPLsynth-order-0000-0000-000000000008",
+    "fraud_status": "ACCEPTED",
+    "authorized_payment_method": { "type": "card" }
+  }
+]
