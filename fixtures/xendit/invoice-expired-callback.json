@@ -1,0 +1,15 @@
+{
+  "id": "PPLsynthINV0000000000002",
+  "user_id": "PPLsynthUSER00000000001",
+  "external_id": "PPLsynth-invoice-8002",
+  "is_high": false,
+  "status": "EXPIRED",
+  "merchant_name": "PPLsynth Merchant",
+  "amount": 1000,
+  "created": "2026-11-16T05:00:00.000Z",
+  "updated": "2026-11-17T05:00:00.000Z",
+  "description": "PPLsynth invoice",
+  "currency": "PHP",
+  "success_redirect_url": "https://merchant.example/success",
+  "failure_redirect_url": "https://merchant.example/failure"
+}

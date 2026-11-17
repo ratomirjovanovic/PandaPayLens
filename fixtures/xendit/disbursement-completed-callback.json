@@ -1,0 +1,14 @@
+{
+  "id": "PPLsynthDISB000000009002",
+  "created": "2026-11-16T07:00:00.000Z",
+  "updated": "2026-11-16T07:05:00.000Z",
+  "external_id": "PPLsynth-disb-9002",
+  "user_id": "PPLsynthUSER00000000001",
+  "amount": 150000,
+  "bank_code": "BCA",
+  "account_holder_name": "PPLSYNTH HOLDER",
+  "account_number": "PPLSYNTH0099",
+  "disbursement_description": "PPLsynth refund",
+  "status": "COMPLETED",
+  "is_instant": true
+}

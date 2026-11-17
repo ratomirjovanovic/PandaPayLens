@@ -83,6 +83,14 @@ export default defineConfig({
         replacement: src("./packages/adapters/verotel/src/index.ts"),
       },
       {
+        find: /^@pandapaylens\/xendit\/manifest$/,
+        replacement: src("./packages/adapters/xendit/src/manifest.ts"),
+      },
+      {
+        find: /^@pandapaylens\/xendit$/,
+        replacement: src("./packages/adapters/xendit/src/index.ts"),
+      },
+      {
         find: /^@pandapaylens\/netbilling\/manifest$/,
         replacement: src("./packages/adapters/netbilling/src/manifest.ts"),
       },

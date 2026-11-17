@@ -1,0 +1,59 @@
+[
+  {
+    "business_id": "PPLsynthBUSINESS0001",
+    "reference_id": "PPLsynth-order-3001",
+    "payment_request_id": "pr-PPLsynth-3001",
+    "type": "PAY",
+    "country": "ID",
+    "currency": "IDR",
+    "request_amount": 75000,
+    "capture_method": "AUTOMATIC",
+    "channel_code": "DANA",
+    "channel_properties": {
+      "success_return_url": "https://merchant.example/success",
+      "failure_return_url": "https://merchant.example/failure"
+    },
+    "actions": [
+      {
+        "type": "REDIRECT_CUSTOMER",
+        "descriptor": "WEB_URL",
+        "value": "https://redirect.example/PPLsynth-3001"
+      }
+    ],
+    "status": "REQUIRES_ACTION",
+    "created": "2026-11-13T05:00:00Z",
+    "updated": "2026-11-13T05:00:00Z"
+  },
+  {
+    "event": "payment.capture",
+    "business_id": "PPLsynthBUSINESS0001",
+    "created": "2026-11-13T05:02:01Z",
+    "data": {
+      "business_id": "PPLsynthBUSINESS0001",
+      "payment_id": "py-PPLsynth-3001",
+      "reference_id": "PPLsynth-order-3001",
+      "payment_request_id": "pr-PPLsynth-3001",
+      "type": "PAY",
+      "country": "ID",
+      "currency": "IDR",
+      "request_amount": 75000,
+      "capture_method": "AUTOMATIC",
+      "channel_code": "DANA",
+      "status": "SUCCEEDED",
+      "captures": [
+        {
+          "capture_id": "cptr-PPLsynth-3001",
+          "capture_timestamp": "2026-11-13T05:01:58Z",
+          "capture_amount": 75000
+        }
+      ],
+      "payment_details": {
+        "payer_name": "PPLsynth Payer",
+        "payer_account_number": "08PPLSYNTH0001",
+        "receipt_id": "PPLsynth-receipt-3001"
+      },
+      "created": "2026-11-13T05:00:00Z",
+      "updated": "2026-11-13T05:01:58Z"
+    }
+  }
+]

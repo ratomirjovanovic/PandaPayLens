@@ -173,19 +173,19 @@ test("provider directory lists all roadmap providers honestly and filters them",
   page,
 }) => {
   await page.goto("/providers");
-  await expect(page.getByText(/of 42 providers$/)).toBeVisible();
+  await expect(page.getByText(/of 43 providers$/)).toBeVisible();
   await page.getByLabel("Status").selectOption("planned");
   const planned = page.getByRole("listitem").filter({ hasText: "Not implemented yet" });
   expect(await planned.count()).toBeGreaterThan(0);
   await page.getByLabel("Status").selectOption("");
   await page.getByLabel("Category").selectOption("high_risk");
-  await expect(page.getByText("20 of 42 providers")).toBeVisible();
+  await expect(page.getByText("20 of 43 providers")).toBeVisible();
   await expect(page.getByRole("listitem").filter({ hasText: "CCBill" })).toContainText("limited");
   await expect(page.getByRole("listitem").filter({ hasText: "Trustly" })).toContainText("limited");
   await expect(page.getByRole("listitem").filter({ hasText: "Epoch" })).toContainText("blocked");
   await page.getByLabel("Category").selectOption("");
   await page.getByLabel("Provider", { exact: true }).fill("stripe");
-  await expect(page.getByText("1 of 42 providers")).toBeVisible();
+  await expect(page.getByText("1 of 43 providers")).toBeVisible();
   await page.getByRole("link", { name: "Details" }).click();
   await expect(page).toHaveURL(/\/providers\/stripe$/);
   await expect(page.getByRole("heading", { name: "Capabilities" })).toBeVisible();

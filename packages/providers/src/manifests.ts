@@ -43,6 +43,7 @@ import { trustPaymentsManifest } from "@pandapaylens/trust-payments/manifest";
 import { pxpManifest } from "@pandapaylens/pxp/manifest";
 import { verotelManifest } from "@pandapaylens/verotel/manifest";
 import { netbillingManifest } from "@pandapaylens/netbilling/manifest";
+import { xenditManifest } from "@pandapaylens/xendit/manifest";
 
 export const MANIFESTS: readonly ProviderManifest[] = [
   stripeManifest,
@@ -85,6 +86,7 @@ export const MANIFESTS: readonly ProviderManifest[] = [
   pxpManifest,
   verotelManifest,
   netbillingManifest,
+  xenditManifest,
 ];
 
 /** Roadmap focus areas, used for directory filters. Taken from the roadmap, not verified claims about the provider. */
@@ -249,6 +251,13 @@ export const ROADMAP: readonly RoadmapEntry[] = [
     id: "flutterwave",
     displayName: "Flutterwave",
     wave: 3,
+    researchStatus: "tested",
+    focus: ["general"],
+  },
+  {
+    id: "xendit",
+    displayName: "Xendit",
+    wave: 5,
     researchStatus: "tested",
     focus: ["general"],
   },

@@ -70,6 +70,7 @@
     "@pandapaylens/trust-payments": "workspace:*",
     "@pandapaylens/trustly": "workspace:*",
     "@pandapaylens/verotel": "workspace:*",
-    "@pandapaylens/worldpay": "workspace:*"
+    "@pandapaylens/worldpay": "workspace:*",
+    "@pandapaylens/xendit": "workspace:*"
   }
 }

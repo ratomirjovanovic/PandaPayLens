@@ -12,8 +12,8 @@ describe("provider registry", () => {
   });
 
   it("lists 42 roadmap providers with unique ids, and every manifest is on the roadmap", () => {
-    expect(ROADMAP).toHaveLength(42);
-    expect(new Set(ROADMAP.map((r) => r.id)).size).toBe(42);
+    expect(ROADMAP).toHaveLength(43);
+    expect(new Set(ROADMAP.map((r) => r.id)).size).toBe(43);
     for (const m of MANIFESTS) expect(ROADMAP.some((r) => r.id === m.id)).toBe(true);
   });
 

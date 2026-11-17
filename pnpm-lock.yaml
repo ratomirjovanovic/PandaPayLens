@@ -520,6 +520,15 @@ importers:
         specifier: 4.6.7
         version: 4.6.7
 
+  packages/adapters/xendit:
+    dependencies:
+      '@pandapaylens/core':
+        specifier: workspace:*
+        version: link:../../core
+      zod:
+        specifier: 4.6.7
+        version: 4.6.7
+
   packages/cli:
     devDependencies:
       '@pandapaylens/core':
@@ -665,6 +674,9 @@ importers:
       '@pandapaylens/worldpay':
         specifier: workspace:*
         version: link:../adapters/worldpay
+      '@pandapaylens/xendit':
+        specifier: workspace:*
+        version: link:../adapters/xendit
 
   packages/rules:
     dependencies:

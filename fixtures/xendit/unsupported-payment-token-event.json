@@ -1,0 +1,14 @@
+{
+  "event": "payment_token.activation",
+  "business_id": "PPLsynthBUSINESS0001",
+  "created": "2026-11-16T08:00:02Z",
+  "data": {
+    "business_id": "PPLsynthBUSINESS0001",
+    "payment_token_id": "pt-PPLsynth-1101",
+    "reference_id": "PPLsynth-token-1101",
+    "status": "ACTIVE",
+    "channel_code": "CARDS",
+    "created": "2026-11-16T08:00:00Z",
+    "updated": "2026-11-16T08:00:00Z"
+  }
+}

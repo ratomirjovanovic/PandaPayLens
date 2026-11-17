@@ -1,0 +1,207 @@
+[
+  {
+    "business_id": "PPLsynthBUSINESS0001",
+    "reference_id": "PPLsynth-order-1001",
+    "payment_request_id": "pr-PPLsynth-1001",
+    "type": "PAY",
+    "country": "ID",
+    "currency": "IDR",
+    "request_amount": 250000,
+    "capture_method": "MANUAL",
+    "channel_code": "CARDS",
+    "channel_properties": {
+      "card_details": {
+        "masked_card_number": "400000XXXXXX1091",
+        "expiry_month": "12",
+        "expiry_year": "2030",
+        "cardholder_first_name": "PPLsynthFirst",
+        "cardholder_last_name": "PPLsynthLast",
+        "cardholder_email": "pplsynth@example.com"
+      },
+      "skip_three_ds": false,
+      "success_return_url": "https://merchant.example/success",
+      "failure_return_url": "https://merchant.example/failure"
+    },
+    "actions": [
+      {
+        "type": "REDIRECT_CUSTOMER",
+        "descriptor": "WEB_URL",
+        "value": "https://redirect.example/PPLsynth-3ds"
+      }
+    ],
+    "status": "REQUIRES_ACTION",
+    "description": "PPLsynth order",
+    "metadata": {
+      "order": "PPLsynth-order-1001"
+    },
+    "created": "2026-11-10T08:00:00Z",
+    "updated": "2026-11-10T08:00:00Z"
+  },
+  {
+    "event": "payment.authorization",
+    "business_id": "PPLsynthBUSINESS0001",
+    "created": "2026-11-10T08:01:10Z",
+    "data": {
+      "business_id": "PPLsynthBUSINESS0001",
+      "payment_id": "py-PPLsynth-1001",
+      "reference_id": "PPLsynth-order-1001",
+      "payment_request_id": "pr-PPLsynth-1001",
+      "customer_id": "cust-PPLsynth-0001",
+      "type": "PAY",
+      "country": "ID",
+      "currency": "IDR",
+      "request_amount": 250000,
+      "capture_method": "MANUAL",
+      "channel_code": "CARDS",
+      "status": "AUTHORIZED",
+      "payment_details": {
+        "authorization_data": {
+          "authorization_code": "PPLSY1",
+          "network_response_code": "00",
+          "network_response_code_descriptor": "Approved",
+          "retrieval_reference_number": "PPLsynth-rrn-1001",
+          "cvn_verification_result": "M",
+          "address_verification_result": "M"
+        },
+        "authentication_data": {
+          "flow": "FULL_AUTH",
+          "a_res": {
+            "eci": "05",
+            "authentication_value": "PPLsynthCAVV0000000000000000=",
+            "ds_trans_id": "PPLsynth-ds-1001"
+          }
+        }
+      },
+      "metadata": {
+        "order": "PPLsynth-order-1001"
+      },
+      "created": "2026-11-10T08:00:00Z",
+      "updated": "2026-11-10T08:01:05Z"
+    }
+  },
+  {
+    "payment_id": "py-PPLsynth-1001",
+    "business_id": "PPLsynthBUSINESS0001",
+    "reference_id": "PPLsynth-order-1001",
+    "payment_request_id": "pr-PPLsynth-1001",
+    "customer_id": "cust-PPLsynth-0001",
+    "type": "PAY",
+    "country": "ID",
+    "currency": "IDR",
+    "request_amount": 250000,
+    "capture_method": "MANUAL",
+    "channel_code": "CARDS",
+    "status": "SUCCEEDED",
+    "payment_details": {
+      "authorization_data": {
+        "authorization_code": "PPLSY1",
+        "network_response_code": "00",
+        "network_response_code_descriptor": "Approved",
+        "retrieval_reference_number": "PPLsynth-rrn-1001",
+        "cvn_verification_result": "M",
+        "address_verification_result": "M"
+      },
+      "authentication_data": {
+        "flow": "FULL_AUTH",
+        "a_res": {
+          "eci": "05",
+          "authentication_value": "PPLsynthCAVV0000000000000000=",
+          "ds_trans_id": "PPLsynth-ds-1001"
+        }
+      }
+    },
+    "metadata": {
+      "order": "PPLsynth-order-1001"
+    },
+    "created": "2026-11-10T08:00:00Z",
+    "updated": "2026-11-10T09:00:00Z",
+    "captures": [
+      {
+        "capture_id": "cptr-PPLsynth-1001",
+        "capture_timestamp": "2026-11-10T09:00:00Z",
+        "capture_amount": 250000
+      }
+    ]
+  },
+  {
+    "event": "payment.capture",
+    "business_id": "PPLsynthBUSINESS0001",
+    "created": "2026-11-10T09:00:03Z",
+    "data": {
+      "business_id": "PPLsynthBUSINESS0001",
+      "payment_id": "py-PPLsynth-1001",
+      "reference_id": "PPLsynth-order-1001",
+      "payment_request_id": "pr-PPLsynth-1001",
+      "customer_id": "cust-PPLsynth-0001",
+      "type": "PAY",
+      "country": "ID",
+      "currency": "IDR",
+      "request_amount": 250000,
+      "capture_method": "MANUAL",
+      "channel_code": "CARDS",
+      "status": "SUCCEEDED",
+      "payment_details": {
+        "authorization_data": {
+          "authorization_code": "PPLSY1",
+          "network_response_code": "00",
+          "network_response_code_descriptor": "Approved",
+          "retrieval_reference_number": "PPLsynth-rrn-1001",
+          "cvn_verification_result": "M",
+          "address_verification_result": "M"
+        },
+        "authentication_data": {
+          "flow": "FULL_AUTH",
+          "a_res": {
+            "eci": "05",
+            "authentication_value": "PPLsynthCAVV0000000000000000=",
+            "ds_trans_id": "PPLsynth-ds-1001"
+          }
+        }
+      },
+      "metadata": {
+        "order": "PPLsynth-order-1001"
+      },
+      "created": "2026-11-10T08:00:00Z",
+      "updated": "2026-11-10T09:00:00Z",
+      "captures": [
+        {
+          "capture_id": "cptr-PPLsynth-1001",
+          "capture_timestamp": "2026-11-10T09:00:00Z",
+          "capture_amount": 250000
+        }
+      ]
+    }
+  },
+  {
+    "refund_id": "rfd-PPLsynth-1001",
+    "reference_id": "PPLsynth-refund-1001",
+    "business_id": "PPLsynthBUSINESS0001",
+    "payment_id": "py-PPLsynth-1001",
+    "status": "PENDING",
+    "amount": 50000,
+    "currency": "IDR",
+    "channel_code": "CARDS",
+    "reason": "REQUESTED_BY_CUSTOMER",
+    "created": "2026-11-11T10:00:00Z",
+    "updated": "2026-11-11T10:00:00Z"
+  },
+  {
+    "event": "refund.succeeded",
+    "business_id": "PPLsynthBUSINESS0001",
+    "created": "2026-11-11T10:05:02Z",
+    "api_version": "v3",
+    "data": {
+      "business_id": "PPLsynthBUSINESS0001",
+      "refund_id": "rfd-PPLsynth-1001",
+      "reference_id": "PPLsynth-refund-1001",
+      "payment_id": "py-PPLsynth-1001",
+      "status": "SUCCEEDED",
+      "amount": 50000,
+      "currency": "IDR",
+      "channel_code": "CARDS",
+      "reason": "REQUESTED_BY_CUSTOMER",
+      "created": "2026-11-11T10:00:00Z",
+      "updated": "2026-11-11T10:05:00Z"
+    }
+  }
+]

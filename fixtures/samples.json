@@ -726,5 +726,19 @@
     "provider": "flutterwave",
     "file": "flutterwave/v3-preauth-then-void.json",
     "description": "A held payment that is voided; the void is not shown as a payment success."
+  },
+  {
+    "id": "xendit-card-payment-lifecycle",
+    "title": "Xendit: card payment, capture and refund",
+    "provider": "xendit",
+    "file": "xendit/card-payment-lifecycle.json",
+    "description": "A Payments API v3 card payment request authorized, captured manually and partly refunded. Card, cardholder and 3DS fields are hidden."
+  },
+  {
+    "id": "xendit-payout-failed",
+    "title": "Xendit: payout failed",
+    "provider": "xendit",
+    "file": "xendit/payout-failed-webhook.json",
+    "description": "A v3_payout.failed webhook with failure code INVALID_DESTINATION. Sender and recipient details are hidden."
   }
 ]
