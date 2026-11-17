@@ -17,7 +17,7 @@
     "@pandapaylens/fixtures": "workspace:*",
     "@pandapaylens/providers": "workspace:*",
     "@pandapaylens/rules": "workspace:*",
-    "next": "16.4.3",
+    "next": "16.4.5",
     "react": "19.3.1",
     "react-dom": "19.3.1"
   },
