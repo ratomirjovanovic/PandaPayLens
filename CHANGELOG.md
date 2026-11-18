@@ -4,6 +4,10 @@ All notable changes to this project are documented here. The format follows [Kee
 
 ## [Unreleased]
 
+### Providers
+
+- Flutterwave and Trustly: error codes that the current documentation no longer shows (the v4 payout table, the v3 message `beneficiary_name is required`, Trustly 621) are now reported with possible confidence and a note, instead of strong.
+
 ### Security
 
 - Redaction now hides `authorization_token` and `client_token` keys in raw payloads.
