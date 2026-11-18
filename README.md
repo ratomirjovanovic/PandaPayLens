@@ -122,7 +122,7 @@ Exit codes: `0` ok, `1` findings at or above `--fail-on`, `2` invalid input, `3`
 ### GitHub Action
 
 ```yaml
-- uses: ratomirjovanovic/PandaPayLens@v0.16.0 # or pin a commit SHA
+- uses: ratomirjovanovic/PandaPayLens@v0.18.1 # or pin a commit SHA
   with:
     file: tests/fixtures/webhooks.jsonl
     fail-on: medium

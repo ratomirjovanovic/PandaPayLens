@@ -196,7 +196,7 @@ npx pandapaylens examples                            # list bundled samples`}</c
 
       <h2>GitHub Action</h2>
       <pre>
-        <code>{`- uses: ratomirjovanovic/PandaPayLens@v0.16.0   # or pin a commit SHA
+        <code>{`- uses: ratomirjovanovic/PandaPayLens@v0.18.1   # or pin a commit SHA
   with:
     file: tests/fixtures/webhooks.jsonl
     fail-on: medium`}</code>
