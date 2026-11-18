@@ -8,6 +8,15 @@ export type Release = {
 /** Public release history. Keep in sync with CHANGELOG.md. */
 export const RELEASES: Release[] = [
   {
+    version: "0.18.1",
+    date: "2026-11-18",
+    status: "released",
+    changes: [
+      "Flutterwave and Trustly error codes that the current documentation no longer shows are reported with possible confidence and a note.",
+      "Redaction hides authorization_token and client_token keys.",
+    ],
+  },
+  {
     version: "0.18.0",
     date: "2026-11-17",
     status: "released",
