@@ -128,6 +128,19 @@ describe("redactDeep", () => {
   });
 });
 
+describe("session tokens", () => {
+  it("hides authorization and client tokens by key", () => {
+    const out = redactDeep({
+      authorization_token: "PPLsynth-token-1",
+      client_token: "PPLsynth-token-2",
+      status: "ok",
+    }) as Record<string, string>;
+    expect(out.authorization_token).toBe("[redacted]");
+    expect(out.client_token).toBe("[redacted]");
+    expect(out.status).toBe("ok");
+  });
+});
+
 describe("maskIdentifier", () => {
   it("keeps the prefix and last four characters", () => {
     expect(maskIdentifier("pi_3PPLsynthOK000001")).toBe("pi_••••0001");

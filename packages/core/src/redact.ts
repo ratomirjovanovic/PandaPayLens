@@ -28,6 +28,8 @@ const BLOCKED_KEYS = new Set([
   "clientsecret",
   "apikey",
   "secretkey",
+  "authorizationtoken",
+  "clienttoken",
   "token",
   "accesstoken",
   "refreshtoken",
