@@ -2,6 +2,12 @@
 
 All notable changes to this project are documented here. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project uses [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Security
+
+- Redaction now hides `authorization_token` and `client_token` keys in raw payloads.
+
 ## [0.18.0] - 2026-11-17
 
 ### Providers
