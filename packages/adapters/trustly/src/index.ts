@@ -1154,6 +1154,12 @@ function decodeEuCode(
       );
     if (code === "620")
       missing.push("ERROR_UNKNOWN gives no cause; the outcome of the request is not known.");
+    if (code === "621") {
+      confidence = "possible";
+      missing.push(
+        "No current Trustly page lists code 621 (the MerchantSettlement page was removed); the meaning comes from an earlier reading.",
+      );
+    }
     return decoded(loc, {
       code,
       mapping: entry,

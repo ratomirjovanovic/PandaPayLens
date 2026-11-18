@@ -719,6 +719,12 @@ describe("trustly EU errors", () => {
     expect(unknown.missingInformation.join(" ")).toMatch(/no cause/);
   });
 
+  it("reports code 621 with possible confidence because no current page lists it", () => {
+    const e = analyze(json(euError(621, "ERROR_NO_SUITABLE_BANK_ACCOUNT_FOUND"))).errors[0]!;
+    expect(e.confidence).toBe("possible");
+    expect(e.missingInformation.join(" ")).toMatch(/No current Trustly page lists code 621/);
+  });
+
   it("lowers confidence when the name and code disagree and resolves a name-only error", () => {
     const mismatch = analyze(json(euError(616, "ERROR_INVALID_AMOUNT"))).errors[0]!;
     expect(mismatch).toMatchObject({ code: "616", confidence: "possible" });

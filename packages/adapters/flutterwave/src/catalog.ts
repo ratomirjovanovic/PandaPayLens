@@ -302,6 +302,8 @@ export type TextEntry = ErrorEntry & {
   /** For `prefix`, the documented part that must start the message. */
   prefix?: string;
   confidence: "strong" | "possible";
+  /** True when the current documentation no longer shows this text. */
+  unpublished?: boolean;
   docs: string;
 };
 
@@ -311,7 +313,9 @@ const msg = (
   category: ErrorCategory,
   retry: RetryGuidance,
   docs: string,
-  extra: Partial<Pick<TextEntry, "match" | "prefix" | "definitive" | "confidence">> = {},
+  extra: Partial<
+    Pick<TextEntry, "match" | "prefix" | "definitive" | "confidence" | "unpublished">
+  > = {},
 ): TextEntry => ({
   text,
   meaning,
@@ -322,6 +326,7 @@ const msg = (
   confidence: extra.confidence ?? "strong",
   ...(extra.prefix ? { prefix: extra.prefix } : {}),
   ...(extra.definitive ? { definitive: true } : {}),
+  ...(extra.unpublished ? { unpublished: true } : {}),
 });
 
 /** v3 error envelope `message` values (status "error"): 27 documented messages. */
@@ -703,7 +708,7 @@ export const V3_TRANSFER_FAILURES: readonly TextEntry[] = [
     "invalid_request",
     "do_not_retry",
     V3_CREATE_TRANSFER_URL,
-    { definitive: true },
+    { definitive: true, confidence: "possible", unpublished: true },
   ),
 ];
 
@@ -1824,6 +1829,17 @@ export const V4_PAYOUT_ERRORS: readonly V4CodeEntry[] = rows("payouts", [
     "invalid_request",
     "do_not_retry",
   ],
+]);
+
+/**
+ * Payout codes whose meaning is still shown in current documentation
+ * examples. Every other row of the payout table was removed (2026-11-17), so a
+ * match on it is reported with possible confidence.
+ */
+export const V4_PAYOUT_CODES_STILL_SHOWN: ReadonlySet<string> = new Set([
+  "201409",
+  "228400",
+  "301404",
 ]);
 
 /**

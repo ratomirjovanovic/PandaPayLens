@@ -83,6 +83,7 @@ import {
   V4_ERRORS_BY_PAIR,
   V4_ERRORS_URL,
   V4_NEXT_ACTIONS,
+  V4_PAYOUT_CODES_STILL_SHOWN,
   V4_PAYOUT_ERRORS,
   V4_PROCESSOR_BY_TYPE,
   V4_PROCESSOR_RESPONSES,
@@ -1540,7 +1541,11 @@ function fromTextEntry(
   if (e.category === "network_or_timeout" && e.docs !== V3_TIMEOUTS_URL)
     docs.push({ title: "Flutterwave error timeouts", url: V3_TIMEOUTS_URL });
   const missing: string[] = [];
-  if (e.confidence === "possible")
+  if (e.unpublished)
+    missing.push(
+      "The current Flutterwave documentation no longer shows this message; the meaning comes from an earlier reading.",
+    );
+  else if (e.confidence === "possible")
     missing.push(
       "Flutterwave names this card error on its velocity limit page but does not show the exact response text, so the match is by name only.",
     );
@@ -1751,6 +1756,12 @@ export function decodeV4Error(
         );
     }
   }
+  if (entry?.table === "payouts" && !V4_PAYOUT_CODES_STILL_SHOWN.has(entry.code)) {
+    if (confidence === "strong") confidence = "possible";
+    missing.push(
+      "Flutterwave no longer publishes the v4 payout error table; this meaning comes from an earlier reading.",
+    );
+  }
   const category = entry?.category ?? "unknown";
   const retry = entry?.retry ?? "unknown";
   const retryParts = [RETRY_TEXT[retry]];
@@ -1876,6 +1887,10 @@ function decodeV4Transfer(o: Obj, loc: Loc): DecodedErrorDraft | null {
     missing.push(
       `provider_response.code ${safeText(code, 8)} differs from the documented code ${entry.code}.`,
     );
+  if (entry)
+    missing.push(
+      "The type is listed in the current transfer schema, but its meaning comes from the payout error table Flutterwave no longer publishes.",
+    );
   const category = entry?.category ?? "unknown";
   const retry = entry?.retry ?? "unknown";
   const retryParts = [RETRY_TEXT[retry]];
@@ -1899,7 +1914,7 @@ function decodeV4Transfer(o: Obj, loc: Loc): DecodedErrorDraft | null {
     nextAction: NEXT_ACTION[category],
     retry,
     retryExplanation: retryParts.join(" "),
-    confidence: entry ? "strong" : "insufficient",
+    confidence: entry ? "possible" : "insufficient",
     documentation: [
       { title: "Flutterwave v4 transfer schema", url: V4_TRANSFER_URL },
       // The payout code table was removed from this page (re-checked 2026-11-17).

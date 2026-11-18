@@ -454,7 +454,9 @@ describe("v3 transfers", () => {
     expect(r.errors[0]).toMatchObject({
       code: "beneficiary_name is required",
       subCodes: { field: "complete_message", envelope_message: "Transfer creation failed" },
+      confidence: "possible",
     });
+    expect(r.errors[0]!.missingInformation.join(" ")).toMatch(/no longer shows this message/);
   });
 
   it("links a retry to the original transfer and flags repeated failing attempts", () => {
@@ -856,8 +858,9 @@ describe("v4", () => {
     expect(r.errors[0]).toMatchObject({
       code: "0307",
       category: "insufficient_funds",
-      confidence: "strong",
+      confidence: "possible",
     });
+    expect(r.errors[0]!.missingInformation.join(" ")).toMatch(/no longer publishes/);
     expect(JSON.stringify(r.events)).not.toContain("PPLsynth-session-2200");
     expect(ruleIds(r)).toContain("PAYOUT_STATUS");
   });
